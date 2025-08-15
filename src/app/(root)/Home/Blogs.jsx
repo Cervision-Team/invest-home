@@ -110,7 +110,7 @@ const Blogs = () => {
                       title={data.title}
                       description={data.description}
                       day={data.day}
-                      weekday={data.weekday}
+                      month={data.month}
                     />
                   </SwiperSlide>
                 </>

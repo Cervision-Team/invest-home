@@ -2,13 +2,12 @@
 import { blogData } from '@/components/core/BlogsData';
 import Image from 'next/image';
 // import markdownit from "markdown-it"
-import WhiteStar from "../../../../../public/icons/whiteStar.svg"
-import YellowStar from "../../../../../public/icons/yellowStar.svg"
 import RatingStars from '@/components/ui/RatingStars';
 import RoundedBlackButton from '@/components/ui/RoundedBlackButton';
 import InstagramIcon from "../../../../../public/icons/Instagram.svg"
 import { FaWhatsapp } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
+import ReturnBack from '@/components/ui/ReturnBack';
 
 
 
@@ -30,18 +29,24 @@ const Page = ({ params }) => {
 //   const parsedContent = md.render(blog.description);
 
   return (
-    <div className='max-w-[1600px] mx-auto w-auto h-auto flex flex-col justify-center px-[80px] mt-[46px]'>
+    <>
+
+    <div className='max-w-[1600px] mx-auto w-auto h-auto flex flex-col justify-center px-[80px] mt-[46px] max-lg:px-[16px] max-md:mt-[72px] relative'>
+      <div className='absolute top-[-40px] left-[16px] md:hidden'>
+
+       <ReturnBack />
+      </div>
         <div className=' flex flex-col flex-wrap justify-center items-center'>
 
       <div className='max-w-[768px] w-auto h-auto flex flex-col flex-wrap justify-center items-center'>
         <h1 className='text-[#1B1F27] text-center text-[32px] font-medium'>
-          {blog.title} - {blog.description}
+          {blog.title}
         </h1>
       </div>
         </div>
         
 
-      <div className='w-full h-[500px] relative mt-[68px]'>
+      <div className='w-full h-[500px] relative mt-[68px] max-md:h-[300px]'>
         <Image
           src={blog.image}
           alt={blog.title}
@@ -113,15 +118,15 @@ Bu yazıda ev alarkən ən çox diqqətdən yayınan məqamları sənə peşəka
         </div>
       </div>
 
-      <div className='flex flex-col items-end mt-[80px]'>
-        <div className='flex flex-col items-start gap-[28px]'>
+      <div className='flex flex-col items-end mt-[80px] max-lg:items-center'>
+        <div className='flex flex-col items-start gap-[28px] max-lg:items-center'>
 
-        <div className='flex flex-row items-start gap-[28px]'>
+        <div className='flex flex-row items-start gap-[28px] max-lg:flex-col max-lg:items-center'>
         <p className='text-black text-[20px]/[30px]'>Məqalani qiymətləndirin</p>
             <RatingStars />
         </div>
 
-        <div className='flex flex-row items-center gap-[28px]'>
+        <div className='flex flex-row items-center gap-[28px] max-lg:flex-col max-lg:items-center'>
         <p className='text-black text-[20px]/[30px]'>Məqalani paylaşın</p>
 
         <div className='flex flex-row items-center gap-[12px]'>
@@ -146,6 +151,7 @@ Bu yazıda ev alarkən ən çox diqqətdən yayınan məqamları sənə peşəka
             </div>
       </div>
     </div>
+    </>
   );
 };
 

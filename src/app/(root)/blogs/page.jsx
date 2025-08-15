@@ -1,5 +1,5 @@
 'use client'
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { blogData } from '@/components/core/BlogsData';
 import Image from 'next/image';
 import BlogCard from '@/components/ui/BlogCard';
@@ -15,8 +15,9 @@ import {
 import Link from 'next/link';
 
 const Page = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const blogsRef = useRef(null);
 
   const totalPages = Math.ceil(blogData.length / itemsPerPage);
 
@@ -27,38 +28,46 @@ const Page = () => {
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+ if (blogsRef.current) {
+      const offset = 100;
+      const elementTop = blogsRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementTop - offset,
+        behavior: 'smooth'
+      });
+    }
     }
   };
 
-const getVisiblePages = (currentPage, totalPages) => {
-  const visibleCount = 4;
-  let startPage = 1;
+  const getVisiblePages = (currentPage, totalPages) => {
+    const visibleCount = 4;
+    let startPage = 1;
 
-  if (totalPages <= visibleCount) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
+    if (totalPages <= visibleCount) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
 
-  if (currentPage <= 4) {
-    return [1, 2, 3, 4];
-  }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4];
+    }
 
-  startPage = currentPage - 1;
+    startPage = currentPage - 1;
 
-  if (startPage + visibleCount - 1 > totalPages) {
-    startPage = totalPages - visibleCount + 1;
-  }
+    if (startPage + visibleCount - 1 > totalPages) {
+      startPage = totalPages - visibleCount + 1;
+    }
 
-  return Array.from({ length: visibleCount }, (_, i) => startPage + i);
-};
-
+    return Array.from({ length: visibleCount }, (_, i) => startPage + i);
+  };
 
   return (
     <>
-      <div className='max-w-[1600px] mx-auto w-auto h-auto flex flex-row justify-between items-center px-[80px] mt-[64px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
+
+      <div className='max-w-[1600px] mx-auto w-auto h-auto flex flex-row justify-between items-center px-[80px] mt-[64px] relative max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[1300px]:justify-center'>
         {blogData.slice(0, 1).map((data, index) => (
         <Link href={`/blogs/${data.id}`}>
           <div key={data.id} className='flex flex-col items-start justify-center'>
-            <div className='w-[737px] h-[398px] relative'>
+            <div className='w-[737px] h-[398px] relative max-[768px]:w-full max-[768px]:h-[300px]'>
               <Image
                 src={data.image}
                 alt={data.title}
@@ -67,7 +76,7 @@ const getVisiblePages = (currentPage, totalPages) => {
               />
             </div>
             <p className='text-[#161A20] text-center text-[32px] font-medium mt-[10px]'>"{data.title}"</p>
-            <p className='text-[#828080] text-[16px]/[20px] font-normal ml-3'>{data.description}</p>
+            <p className='text-[#828080] text-[16px]/[20px] font-normal ml-3 text-center'>{data.description}</p>
           </div>
           </Link>
         //           <div className="flex flex-col items-start justify-center">
@@ -80,7 +89,7 @@ const getVisiblePages = (currentPage, totalPages) => {
         // </div>
         ))}
 
-        <div className='flex flex-row items-center justify-center gap-[18px]'>
+        <div className='flex flex-row items-center justify-center gap-[18px] max-[1300px]:hidden'>
           <div className='bg-[rgba(0,0,0,0.20)] w-[1px] h-[473px]'></div>
 
           <div className='flex flex-col justify-between gap-[34px]'>
@@ -117,11 +126,14 @@ const getVisiblePages = (currentPage, totalPages) => {
              ))}
            </div> */}
 
-        </div>
+        </div> 
       </div>
 
-      <div className='max-w-[1600px] mx-auto w-auto h-auto flex flex-col justify-between items-center px-[80px] mt-[92px]'>
-        <div className='w-full h-auto flex flex-row justify-between items-center text-[#121212] text-[20px]/[20px] font-semibold tracking-[0.2px]'>
+<div 
+        ref={blogsRef} 
+        className='max-w-[1600px] mx-auto w-auto h-auto flex flex-col justify-between items-center px-[80px] mt-[92px] max-lg:px-[16px]'
+      >
+        <div className='w-full h-auto flex flex-row justify-between items-center text-[#121212] text-[20px]/[20px] font-semibold tracking-[0.2px] max-[431px]:flex-col max-[431px]:items-start max-[431px]:gap-[10px]'>
           <p>Ən çox baxılanlar</p>
           <select className='focus:outline-none custom-select'>
             <option value="latest">Ən son</option>
@@ -130,7 +142,9 @@ const getVisiblePages = (currentPage, totalPages) => {
           </select>
         </div>
 
-        <div className='w-full h-auto flex flex-row justify-between items-start mt-[20px] flex-wrap'>
+        <div 
+          className='w-full h-auto flex flex-row justify-between items-start mt-[20px] flex-wrap gap-y-[70px] mb-[64px] max-lg:gap-y-[30px] max-lg:mb-[38px]'
+        >
           {currentItems.map((data) => (
             <BlogCard
               key={data.id}
@@ -139,7 +153,7 @@ const getVisiblePages = (currentPage, totalPages) => {
               title={data.title}
               description={data.description}
               day={data.day}
-              weekday={data.weekday}
+              month={data.month}
               titleColor="black"
             />
           ))}
@@ -184,7 +198,7 @@ const getVisiblePages = (currentPage, totalPages) => {
           </PaginationContent>
         </Pagination>
       </div>
-    </>
+          </>
   );
 };
 
