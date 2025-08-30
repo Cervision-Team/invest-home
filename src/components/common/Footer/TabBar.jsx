@@ -18,7 +18,7 @@ const TabBar = () => {
                             <i className="text-white text-[40px] fa-solid fa-plus"></i>
                         </button>
                         <div className="flex justify-center">
-                            <div className="bg-[#02836F] w-full h-[95px]"></div>
+                            <div className="bg-[#02836F] w-full h-[71px]"></div>
                             <Image
                                 src={TabBarBg}
                                 alt="bg"
@@ -26,13 +26,13 @@ const TabBar = () => {
                                 height={0}
                                 className='max-w-none'
                             />
-                            <div className="bg-[#02836F] w-full h-[95px]"></div>
+                            <div className="bg-[#02836F] w-full h-[71px]"></div>
                         </div>
                         <div
-                            className="gap-[60px] box-border p-[16px] flex justify-between absolute top-0 h-[95px] w-full">
+                            className="gap-[60px] box-border p-[12px] flex justify-between absolute top-0 h-[71px] w-full">
                             <div className="flex justify-between w-[146px]">
                                 <div className="basis-[63px]">
-                                    <Link href={'/'} className='gap-[5px] flex flex-col items-center h-full'>
+                                    <Link href={'/'} className='flex flex-col justify-between items-center h-full'>
                                         <Image
                                             priority
                                             height={24}
@@ -44,7 +44,7 @@ const TabBar = () => {
                                     </Link>
                                 </div>
                                 <div className="basis-[63px]">
-                                    <Link href={'/'} className='gap-[5px] flex flex-col items-center h-full'>
+                                    <Link href={'/favorites'} className='flex flex-col justify-between items-center h-full'>
                                         <Image
                                             priority
                                             height={24}
@@ -58,7 +58,7 @@ const TabBar = () => {
                             </div>
                             <div className="flex justify-between w-[127px]">
                                 <div className="basis-[31px]">
-                                    <Link href={'/'} className='gap-[5px] flex flex-col items-center h-full'>
+                                    <Link href={'/contact'} className='flex flex-col justify-between items-center h-full'>
                                         <Image
                                             priority
                                             height={24}
@@ -70,7 +70,7 @@ const TabBar = () => {
                                     </Link>
                                 </div>
                                 <div className="basis-[63px]">
-                                    <Link href={'/'} className='gap-[5px] flex flex-col items-center h-full'>
+                                    <Link href={'/login'} className='flex flex-col justify-between items-center h-full'>
                                         <Image
                                             priority
                                             height={24}
