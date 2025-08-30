@@ -47,7 +47,7 @@ const LoginPage = () => {
                 </div>
                 <div className="flex flex-col gap-[24px]">
                   <h1 className="text-[32px] font-medium text-center">Daxil ol</h1>
-                  <p className="text-lg text-center">
+                  <p className="text-[18px] text-center">
                     "Invest <span className="text-[var(--color-primary)]">Home</span> – Gələcəyin evini bu gün seç, rahatlığını sabahdan
                     yaşa!"
                   </p>
