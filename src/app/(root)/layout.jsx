@@ -14,7 +14,6 @@ export default function Layout({ children }) {
                 <Header />
                 {children}
                 <TabBar />
-                
                 <Footer />
                 <SubFooter />
                
