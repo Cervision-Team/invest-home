@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { verifyOTP, resendOTP } from "@/lib/authService";
 import { toast } from "react-toastify";
-import { LoginSignupButtonWithHover } from "@/components/ui/LoginSignupButton";
+// import { LoginSignupButtonWithHover } from "@/components/ui/LoginSignupButton";
 import Image from "next/image";
 import InvestHomeLogo from "../../../../public/images/logo.png"
 
@@ -97,7 +97,7 @@ const OTPPage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-primary pt-[30px] pb-[280px] flex flex-col items-center justify-center relative">
+    <div className="w-full min-h-screen bg-primary pt-[30px] flex flex-col items-center justify-center relative">
       <div className="flex flex-col items-center gap-[30px] px-[405px]">
         <div className="flex flex-col items-center">
           <Image
@@ -155,7 +155,7 @@ const OTPPage = () => {
 
       <div className="mt-[50px]">
         <button onClick={handleVerify} disabled={!isButtonActive}>
-          <LoginSignupButtonWithHover actionName="Daxil ol" />
+          {/* <LoginSignupButtonWithHover actionName="Daxil ol" /> */}
         </button>
       </div>
 
