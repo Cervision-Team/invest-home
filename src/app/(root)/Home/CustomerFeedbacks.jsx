@@ -152,7 +152,6 @@ const CustomerFeedbacks = () => {
           <div className="relative min-[1050px]:max-w-[500px] min-w-0">
             <Swiper
               modules={[Pagination, Autoplay]}
-              pagination={{ clickable: true }}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
               loop={true}
               speed={300}
@@ -166,34 +165,6 @@ const CustomerFeedbacks = () => {
                 </SwiperSlide>
               ))}
             </Swiper>
-
-            {/* Indicators */}
-            {/* <div className="absolute top-89 right-65 z-30 flex flex-col gap-[10px] rotate-270">
-              {feedbacks.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => goToSlide(idx)}
-                  aria-label={`Slide ${idx + 1}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="4"
-                    height="40"
-                    viewBox="0 0 4 40"
-                    fill="none"
-                  >
-                    <path
-                      d="M2 142L2 2"
-                      stroke={idx === activeIndex ? "#808080" : "#AAAAAA"}
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      opacity={idx === activeIndex ? "1" : "0.5"}
-                    />
-                  </svg>
-                </button>
-              ))}
-            </div> */}
           </div>
           <div className="max-[1050px]:flex w-full hidden flex-row items-center gap-[31.62px]">
               <button
