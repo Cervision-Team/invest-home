@@ -32,6 +32,7 @@
   --color-neutral-text: #E0F5F1;
   --color-neutral-disabled: #6C707A;
   --color-azure: #212529;
+  --color-dark: #191A23;
 }
 
 .remove-arrow input::-webkit-inner-spin-button,
@@ -94,4 +95,57 @@ body {
   -moz-appearance: none;
   background: url("/icons/arrow-down-black.svg") no-repeat right 10px center;
   padding-right: 30px; 
+}
+
+
+
+@keyframes reverseSlideRight {
+  /* Arrow goes out to the right */
+  0%   {opacity: 1; transform: translateX(0) scale(1);}
+  49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
+  /* New arrow comes from the left */
+  50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
+  100% {opacity: 1; transform: translateX(0) scale(1);}
+}
+
+@keyframes slideRight {
+  /* Arrow goes out to the right */
+  0%   {opacity: 1; transform: translateX(0) scale(1);}
+  49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
+  /* New arrow comes from the left */
+  50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
+  100% {opacity: 1; transform: translateX(0) scale(1);}
+}
+
+.arrow-anim-right {
+  animation: reverseSlideRight 0.7s 1;
+}
+
+.group:hover .arrow-anim-right {
+  animation: slideRight 0.8s 1;
+}
+
+
+@keyframes reverseSlideLeft {
+  0%   {opacity: 1; transform: translateX(0) scale(1);}
+  49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
+  /* New arrow comes from the left */
+  50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
+  100% {opacity: 1; transform: translateX(0) scale(1);}
+}
+
+@keyframes slideLeft {
+  0%   {opacity: 1; transform: translateX(0) scale(1);}
+  49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
+  /* New arrow comes from the left */
+  50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
+  100% {opacity: 1; transform: translateX(0) scale(1);}
+}
+
+.arrow-anim-left {
+  animation: reverseSlideLeft 0.7s 1;
+}
+
+.group:hover .arrow-anim-left {
+  animation: slideLeft 0.8s 1;
 }

@@ -25,7 +25,7 @@ const Header = () => {
     { href: "/about-us", label: "Haqqımızda" },
     { href: "/services", label: "Xidmətlər" },
     { href: "/blogs", label: "Bloq" },
-    { href: "/become-agent", label: "Agent Ol" },
+    { href: "/become-agent/agent-information", label: "Agent Ol" },
   ];
 
   return (
@@ -38,7 +38,7 @@ const Header = () => {
               <Link className="" href="/">
                 <div className="w-auto h-full flex justify-center items-center gap-[15px] max-[431px]:gap-[7px]">
                   {isMobile ?
-                    <Image
+                    <Image 
                       src={"/images/logo.png"}
                       alt="Invest Home Logo"
                       width={32}

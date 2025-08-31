@@ -84,9 +84,10 @@ const Blogs = () => {
             Ən son Bloqlar və Yazılar
           </h2>
 
-          <div>
+          <div className="flex flex-row">
             <Swiper
               loop={true}
+              loopFillGroupWithBlank={true}
               slidesPerView={2}
               speed={500}
               spaceBetween={20}

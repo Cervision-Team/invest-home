@@ -1,5 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { ButtonWithArrowRight } from './ButtonWithArrow';
+import arrowRightBlack from "../../../public/icons/arrow-right-black.svg"
+import arrowRightWhite from "../../../public/icons/arrow-right-white.svg"
 
 export const BlogCard = ({ id, image, title, description, day, month, titleColor }) => {
   return (
@@ -28,30 +31,14 @@ export const BlogCard = ({ id, image, title, description, day, month, titleColor
           {title}
         </h3>
         <Link href={`/blogs/${id}`}>
-          <div className="group w-[40px] h-[40px] flex items-center justify-center">
-            <svg
-              className="opacity-100 transition-all duration-200"
-              width="100%"
-              height="100%"
-              viewBox="0 0 50 50"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="25"
-                cy="25"
-                r="24.5"
-                fill="white"
-                stroke="black"
-                className="group-hover:fill-[#FFC700] group-hover:stroke-white transition-all duration-200"
-              />
-              <path
-                d="M15 24C14.4477 24 14 24.4477 14 25C14 25.5523 14.4477 26 15 26V24ZM35.7071 25.7071C36.0976 25.3166 36.0976 24.6834 35.7071 24.2929L29.3431 17.9289C28.9526 17.5384 28.3195 17.5384 27.9289 17.9289C27.5384 18.3195 27.5384 18.9526 27.9289 19.3431L33.5858 25L27.9289 30.6569C27.5384 31.0474 27.5384 31.6805 27.9289 32.0711C28.3195 32.4616 28.9526 32.4616 29.3431 32.0711L35.7071 25.7071ZM15 25V26H35V25V24H15V25Z"
-                fill="black"
-                className="group-hover:fill-white transition-all duration-200"
-              />
-            </svg>
-          </div>
+        <ButtonWithArrowRight 
+        bgColor="white"
+        bgColorOnHover="#FFC700"
+        borderColor="#000"
+        borderColorOnHover="#FAFAFA"
+        icon={arrowRightBlack}
+        iconOnHover={arrowRightWhite}
+        />
         </Link>
       </div>
 
