@@ -11,10 +11,10 @@ import ReturnBack from '@/components/ui/ReturnBack';
 
 
 
-const Page = ({ params }) => {
+const Page = async ({ params }) => {
 
 // const md = new markdownit();
-  const { id } = params;
+  const { id } = await params;
 
   const blog = blogData.find((item) => item.id.toString() === id);
 
@@ -70,7 +70,7 @@ const Page = ({ params }) => {
         <p className='w-[500px] text-black text-[24px]/[38px] font-medium '>Ev almaq yalnız bir daş divar deyil — bu, həm də həyat tərzi seçimi, uzunmüddətli sərmayə və emosional bir qərardır. </p>
       </div>
 
-      <div className='w-full h-auto flex flex-col gap-[34px] mt-[18px]'>
+      <div className='w-full h-auto flex flex-col gap-[34px] mt-[18px] max-lg:gap-[20px]'>
         <p className='text-black text-[20px]/[32px] '>Bir çox insan bu prosesi ya tələsik qərarlarla, ya da kifayət qədər məlumat olmadan etdiyindən, sonradan peşmançılıq yaşayir.
 Bu yazıda ev alarkən ən çox diqqətdən yayınan məqamları sənə peşəkar dildə və aydın şəkildə izah edəcəyik.</p>
 
