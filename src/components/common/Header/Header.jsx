@@ -25,7 +25,7 @@ const Header = () => {
     { href: "/about-us", label: "Haqqımızda" },
     { href: "/services", label: "Xidmətlər" },
     { href: "/blogs", label: "Bloq" },
-    { href: "/become-agent/agent-information", label: "Agent Ol" },
+    { href: "/become-agent/information", label: "Agent Ol" },
   ];
 
   return (

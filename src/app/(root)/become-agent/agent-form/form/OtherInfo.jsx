@@ -6,27 +6,27 @@ import { LuX } from "react-icons/lu";
 import { GiSandsOfTime } from "react-icons/gi";
 
 const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, setShowAllErrors }) => {
-  const [errors, setErrors] = useState({}); 
+  const [errors, setErrors] = useState({});
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
-  
+
   const validateField = async (fieldName, value, customError = null) => {
     if (customError) {
       setErrors(prev => ({ ...prev, [fieldName]: customError }));
       onValidationChange(false);
       return;
     }
-    
+
     try {
       await agentFormSchema.validateAt(fieldName, { ...formData, [fieldName]: value });
       setErrors(prev => ({ ...prev, [fieldName]: undefined }));
     } catch (err) {
       setErrors(prev => ({ ...prev, [fieldName]: err.message }));
     }
-    
+
     // Check overall current step validity
     checkFormValidity();
   };
@@ -40,7 +40,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
         address: formData.address,
         cv: formData.cv,
       };
-      
+
       // Create a schema that only validates current step fields
       await agentFormSchema.pick(['education', 'age', 'address', 'cv']).validate(currentStepData, { abortEarly: false });
       console.log('✅ Other Info step is valid, setting currentStepValid to true');
@@ -60,7 +60,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
         address: formData.address,
         cv: formData.cv,
       };
-      
+
       await agentFormSchema.pick(['education', 'age', 'address', 'cv']).validate(currentStepData, { abortEarly: false });
       console.log('✅ All current step fields valid, clearing errors');
       setErrors({});
@@ -189,7 +189,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       handleFileChange(files[0]);
@@ -217,19 +217,18 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
 
   return (
     <>
-      <div className='flex gap-[95px] pb-[16px] border-b-[1px] border-[rgba(0,0,0,0.2)]'>
-        <div className='basis-[50%]'>
+      <div className='flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]'>
+        <div className='min-[1200px]:basis-[50%] w-full'>
           <form action="">
             <div className='flex flex-col gap-[16px]'>
               {/* Education Field */}
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Təhsil<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='Bakı Dövlət Universiteti' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.education ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="text" 
+                <label className="max-[430px]:hidden" htmlFor="">Təhsil<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='Bakı Dövlət Universiteti'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.education ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="text"
                   value={formData.education || ''}
                   onChange={(e) => {
                     updateForm("education", e.target.value);
@@ -242,13 +241,12 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
 
               {/* Age Field */}
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Yaşınız<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='28' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.age ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="number" 
+                <label className="max-[430px]:hidden" htmlFor="">Yaşınız<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='28'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.age ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="number"
                   min="18"
                   max="65"
                   value={formData.age || ''}
@@ -263,12 +261,11 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
 
               {/* Address Field */}
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Yaşadığınız Ünvan<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='Xəzər ray., Mərdəkan qəs., Əli İsazade küç.' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.address ? 'border-red-500' : 'border-[black]'
-                  }`}
+                <label className="max-[430px]:hidden" htmlFor="">Yaşadığınız Ünvan<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='Xəzər ray., Mərdəkan qəs., Əli İsazade küç.'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.address ? 'border-red-500' : 'border-[black]'
+                    }`}
                   type="text"
                   value={formData.address || ''}
                   onChange={(e) => {
@@ -282,8 +279,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
 
               {/* Advanced CV Upload */}
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">CV-nizi yükləyin<span className="text-red-500">*</span></label>
-                
+                <label className="max-[430px]:hidden" htmlFor="">CV-nizi yükləyin<span className="text-red-500">*</span></label>
+
                 {/* Hidden file input */}
                 <input
                   ref={fileInputRef}
@@ -303,8 +300,9 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
-                  <div 
+                  <div
                     className={`
+                      max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
                       px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
                       ${isDragging ? 'border-blue-500 bg-blue-50' : ''}
                       ${formData.cv ? 'border-[var(--primary-color)] bg-green-50' : 'border-[black]'}
@@ -312,12 +310,12 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                     `}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <p className='text-[14px]/[21px] text-[#7F7F87]'>
+                    <p className='max-[430px]:text-primary line-clamp-1 truncate text-[14px]/[21px] text-[#7F7F87]'>
                       {formData.cv ? formData.cv.name : 'CV faylınızı seçin'}
                     </p>
-                    <p className='text-[24px]'>
-                      {isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]"/> : formData.cv ? '✓' : '+'}
-                    </p>
+                    <div>
+                      {isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]" /> : formData.cv ? '✓' : '+'}
+                    </div>
                   </div>
 
                   {/* Upload Progress - positioned below the input */}
@@ -350,7 +348,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                             }}
                             className="text-blue-600 hover:text-blue-800"
                           >
-                            <FaRegEye className="text-[var(--primary-color)] text-[16px]"/>
+                            <FaRegEye className="text-[var(--primary-color)] text-[16px]" />
                           </button>
                         )}
                         <button
@@ -361,7 +359,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                           }}
                           className="text-red-600 hover:text-red-800"
                         >
-                          <LuX className="text-[16px]"/>
+                          <LuX className="text-[16px]" />
                         </button>
                       </div>
                     </div>
@@ -374,7 +372,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
             </div>
           </form>
         </div>
-        <div className='flex items-center basis-[50%]'>
+        <div className='max-[1200px]:hidden flex items-center basis-[50%]'>
           <Image
             src="/gifs/market.gif"
             alt=""

@@ -15,7 +15,7 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
         setErrors(prev => ({ ...prev, [fieldName]: err.message }));
       }
     }
-    
+
     // Check overall form validity
     checkFormValidity();
   };
@@ -30,13 +30,11 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
         about1: formData.about1,
         about2: formData.about2, // This is optional
       };
-      
+
       // Create a schema that only validates current step fields
       await agentFormSchema.pick(['fullName', 'email', 'phone', 'about1', 'about2']).validate(currentStepData, { abortEarly: false });
-      console.log('✅ Current step is valid, setting currentStepValid to true');
       onValidationChange(true);
     } catch (err) {
-      console.log('❌ Current step is invalid:', err.message);
       onValidationChange(false);
     }
   };
@@ -51,7 +49,7 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
         about1: formData.about1,
         about2: formData.about2,
       };
-      
+
       await agentFormSchema.pick(['fullName', 'email', 'phone', 'about1', 'about2']).validate(currentStepData, { abortEarly: false });
       console.log('✅ All current step fields valid, clearing errors');
       setErrors({});
@@ -84,18 +82,17 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
 
   return (
     <>
-      <div className='flex gap-[95px] pb-[16px] border-b-[1px] border-[rgba(0,0,0,0.2)]'>
-        <div className='basis-[50%]'>
+      <div className='flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]'>
+        <div className='min-[1200px]:basis-[50%] w-full'>
           <form action="">
             <div className='flex flex-col gap-[16px]'>
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Ad/Soyad<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='Ad Soyad' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.fullName ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="text" 
+                <label className="max-[430px]:hidden" htmlFor="">Ad Soyad<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='Ad Soyad'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.fullName ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="text"
                   value={formData.fullName || ''}
                   onChange={(e) => {
                     updateForm("fullName", e.target.value);
@@ -107,13 +104,12 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
               </div>
 
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Email<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='investhomeaz@gmail.com' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.email ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="email" 
+                <label className="max-[430px]:hidden" htmlFor="">Email<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='investhomeaz@gmail.com'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.email ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="email"
                   value={formData.email || ''}
                   onChange={(e) => {
                     updateForm("email", e.target.value);
@@ -125,12 +121,11 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
               </div>
 
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Telefon<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.phone ? 'border-red-500' : 'border-[black]'
-                  }`}
+                <label className="max-[430px]:hidden" htmlFor="">Telefon<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='phone'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.phone ? 'border-red-500' : 'border-[black]'
+                    }`}
                   type="phone"
                   value={formData.phone || ''}
                   onChange={(e) => {
@@ -143,13 +138,12 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
               </div>
 
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Haqqınızda 1<span className="text-red-500">*</span></label>
-                <input 
-                  placeholder='İş Təcrübəniz' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.about1 ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="text" 
+                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 1<span className="text-red-500">*</span></label>
+                <input
+                  placeholder='İş Təcrübəniz'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about1 ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="text"
                   value={formData.about1 || ''}
                   onChange={(e) => {
                     updateForm("about1", e.target.value);
@@ -161,13 +155,12 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
               </div>
 
               <div className='flex flex-col gap-[8px]'>
-                <label htmlFor="">Haqqınızda 2</label>
-                <input 
-                  placeholder='İş Təcrübəniz' 
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.about2 ? 'border-red-500' : 'border-[black]'
-                  }`}
-                  type="text" 
+                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 2</label>
+                <input
+                  placeholder='İş Təcrübəniz'
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about2 ? 'border-red-500' : 'border-[black]'
+                    }`}
+                  type="text"
                   value={formData.about2 || ''}
                   onChange={(e) => {
                     updateForm("about2", e.target.value);
@@ -180,13 +173,13 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
             </div>
           </form>
         </div>
-        <div className='flex items-center basis-[50%]'>
-          <Image
-            src="/gifs/building.gif"
-            alt=""
-            width={519}
-            height={389}
-          />
+        <div className='max-[1200px]:hidden flex items-center basis-[50%]'>
+            <Image
+              src="/gifs/building.gif"
+              alt="building"
+              width={519}
+              height={389}
+            />
         </div>
       </div>
     </>

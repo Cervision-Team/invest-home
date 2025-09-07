@@ -28,16 +28,6 @@ const AgentForm = () => {
   const [currentStepValid, setCurrentStepValid] = useState(false);
   const [showAllErrors, setShowAllErrors] = useState(false);
 
-  // Debug: Log when currentStepValid changes
-  useEffect(() => {
-    console.log('🔄 currentStepValid changed to:', currentStepValid);
-  }, [currentStepValid]);
-
-  // Debug: Log formData changes
-  useEffect(() => {
-    console.log('📝 formData updated:', formData);
-  }, [formData]);
-
   useEffect(() => {
     openAccordion(0);
   }, []);
@@ -101,9 +91,9 @@ const AgentForm = () => {
 
   return (
     <>
-      <section className='bg-white px-[32px] pt-[40px] pb-[68px] rounded-[12px] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+      <section className='min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
         <div className='flex gap-[36px]'>
-          <div className='basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] pb-[46px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+          <div className='max-[768px]:hidden basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] pb-[46px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
             <div className="logo-container my-[15.5px]">
               <div className='image-container flex items-center justify-center'>
                 <Image
@@ -229,7 +219,7 @@ const AgentForm = () => {
             </ul>
           </div>
 
-          <div className='basis-[calc(100%-376px)] flex flex-col justify-between'>
+          <div className='basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-[100%] flex flex-col justify-between'>
             {formIndex === 0 ? (
               <PrivateInfo
                 formData={formData}
@@ -256,32 +246,34 @@ const AgentForm = () => {
               />
             )}
 
-            <div className={`buttons-container ${formIndex == 0 ? 'justify-end' : 'justify-between'} flex mt-[16px]`}>
+            <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-[20px] mt-[16px]`}>
               {formIndex == 0 ? (
-                <button
-                  onClick={handleNextClick}
-                  className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
+                <>
+                  <button
+                    onClick={handleNextClick}
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
                       ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
                       : 'bg-gray-400 text-white cursor-not-allowed'
-                    }`}
-                >
-                  <span className='font-[500] text-[16px]'>Növbəti</span>
-                  <Image src={arrowRightWhite} alt="Arrow Right White" />
-                </button>
+                      }`}
+                  >
+                    <span className='font-[500] text-[16px]'>Növbəti</span>
+                    <Image src={arrowRightWhite} alt="Arrow Right White" />
+                  </button>
+                </>
               ) : formIndex == 2 ? (
                 <>
                   <button
                     onClick={() => changeForm("decrement")}
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button
                     onClick={handleConfirmClick}
                     className={`cursor-pointer rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
-                        ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
-                        : 'bg-gray-400 text-white cursor-not-allowed'
+                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                      : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
                     <span className='font-[500] text-[16px]'>Təsdiqlə</span>
@@ -291,16 +283,16 @@ const AgentForm = () => {
                 <>
                   <button
                     onClick={() => changeForm("decrement")}
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button
                     onClick={handleNextClick}
-                    className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
-                        ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
-                        : 'bg-gray-400 text-white cursor-not-allowed'
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
+                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                      : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
                     <span className='font-[500] text-[16px]'>Növbəti</span>
@@ -313,8 +305,11 @@ const AgentForm = () => {
         </div>
       </section>
       {isModalOpen && (
-        <ConfirmationModal isOpen={isModalOpen} />
-      )}
+        <>
+          <ConfirmationModal isOpen={isModalOpen} />
+        </>
+      )
+      }
     </>
   );
 };
