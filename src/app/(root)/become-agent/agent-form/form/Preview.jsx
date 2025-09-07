@@ -241,19 +241,18 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
   // ----------------- JSX (your form UI, unchanged except validation wiring uses the new funcs) -----------------
   return (
     <>
-      <div className="flex gap-[95px] pb-[16px] border-b-[1px] border-[rgba(0,0,0,0.2)]">
-        <div className="basis-[50%]">
+      <div className="min-w-0 max-[430px]:gap-[16px] max-[430px]:flex-col flex max-[1200px]:gap-[40px] gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]">
+        <div className="min-w-0 basis-[50%]">
           <form action="">
             <div className="flex flex-col gap-[16px]">
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Ad/Soyad<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="Ad Soyad"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.fullName ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.fullName ? "border-red-500" : "border-[black]"
+                    }`}
                   type="text"
                   value={formData.fullName || ""}
                   onChange={(e) => {
@@ -267,14 +266,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* Email */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Email<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="investhomeaz@gmail.com"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.email ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.email ? "border-red-500" : "border-[black]"
+                    }`}
                   type="email"
                   value={formData.email || ""}
                   onChange={(e) => {
@@ -288,14 +286,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* Phone */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Telefon<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder=""
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.phone ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.phone ? "border-red-500" : "border-[black]"
+                    }`}
                   type="phone"
                   value={formData.phone || ""}
                   onChange={(e) => {
@@ -309,14 +306,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* About1 */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Haqqınızda 1<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="İş Təcrübəniz"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.about1 ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about1 ? "border-red-500" : "border-[black]"
+                    }`}
                   type="text"
                   value={formData.about1 || ""}
                   onChange={(e) => {
@@ -330,12 +326,11 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* About2 */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">Haqqınızda 2</label>
+                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 2</label>
                 <input
                   placeholder="İş Təcrübəniz"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.about2 ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about2 ? "border-red-500" : "border-[black]"
+                    }`}
                   type="text"
                   value={formData.about2 || ""}
                   onChange={(e) => {
@@ -350,19 +345,18 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
           </form>
         </div>
 
-        <div className="basis-[50%]">
+        <div className="min-w-0 basis-[50%]">
           <form action="">
             <div className="flex flex-col gap-[16px]">
               {/* Education */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Təhsil<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="Bakı Dövlət Universiteti"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.education ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.education ? "border-red-500" : "border-[black]"
+                    }`}
                   type="text"
                   value={formData.education || ""}
                   onChange={(e) => {
@@ -376,14 +370,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* Age */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Yaşınız<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="28"
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.age ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.age ? "border-red-500" : "border-[black]"
+                    }`}
                   type="number"
                   min="18"
                   max="65"
@@ -399,14 +392,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* Address */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   Yaşadığınız Ünvan<span className="text-red-500">*</span>
                 </label>
                 <input
                   placeholder="Xəzər ray., Mərdəkan qəs., Əli İsazade küç."
-                  className={`outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${
-                    errors.address ? "border-red-500" : "border-[black]"
-                  }`}
+                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.address ? "border-red-500" : "border-[black]"
+                    }`}
                   type="text"
                   value={formData.address || ""}
                   onChange={(e) => {
@@ -420,7 +412,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
               {/* CV Upload */}
               <div className="flex flex-col gap-[8px]">
-                <label htmlFor="">
+                <label className="max-[430px]:hidden" htmlFor="">
                   CV-nizi yükləyin<span className="text-red-500">*</span>
                 </label>
 
@@ -439,14 +431,16 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                   onDrop={handleDrop}
                 >
                   <div
-                    className={`px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
+                    className={`
+                      max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
+                      px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
                       ${isDragging ? "border-blue-500 bg-blue-50" : ""}
                       ${formData.cv ? "border-[var(--primary-color)] bg-green-50" : "border-[black]"}
                       ${errors.cv ? "border-red-500 bg-red-50" : ""}`}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <p className="text-[14px]/[21px] text-[#7F7F87]">{formData.cv ? formData.cv.name : "CV faylınızı seçin"}</p>
-                    <p className="text-[24px]">{isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]" /> : formData.cv ? "✓" : "+"}</p>
+                    <p className="max-[430px]:text-primary line-clamp-1 truncate text-[14px]/[21px] text-[#7F7F87]">{formData.cv ? formData.cv.name : "CV faylınızı seçin"}</p>
+                    <div >{isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]" /> : formData.cv ? "✓" : "+"}</div>
                   </div>
 
                   {isUploading && (
