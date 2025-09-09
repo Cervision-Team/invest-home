@@ -68,7 +68,7 @@ const Footer = () => {
               <span className="text-[var(--text-color-1)] text-lg">Quick Links</span>
               <ul className="flex flex-col gap-2 text-[var(--text-color-2)]">
                 {[
-                  { name: "Ev Alqı-satqısı", href: "/" },
+                  { name: "Ev Alqı-satqı", href: "/" },
                   { name: "Kirayə", href: "/" },
                   { name: "Haqqımızda", href: "/about-us" },
                   { name: "Xidmətlər", href: "/" },
