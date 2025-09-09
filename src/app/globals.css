@@ -104,19 +104,15 @@ body {
 
 
 @keyframes reverseSlideRight {
-  /* Arrow goes out to the right */
   0%   {opacity: 1; transform: translateX(0) scale(1);}
   49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  /* New arrow comes from the left */
   50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
   100% {opacity: 1; transform: translateX(0) scale(1);}
 }
 
 @keyframes slideRight {
-  /* Arrow goes out to the right */
   0%   {opacity: 1; transform: translateX(0) scale(1);}
   49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  /* New arrow comes from the left */
   50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
   100% {opacity: 1; transform: translateX(0) scale(1);}
 }
@@ -133,7 +129,6 @@ body {
 @keyframes reverseSlideLeft {
   0%   {opacity: 1; transform: translateX(0) scale(1);}
   49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  /* New arrow comes from the left */
   50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
   100% {opacity: 1; transform: translateX(0) scale(1);}
 }
@@ -141,7 +136,6 @@ body {
 @keyframes slideLeft {
   0%   {opacity: 1; transform: translateX(0) scale(1);}
   49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  /* New arrow comes from the left */
   50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
   100% {opacity: 1; transform: translateX(0) scale(1);}
 }
@@ -152,4 +146,13 @@ body {
 
 .group:hover .arrow-anim-left {
   animation: slideLeft 0.8s 1;
+}
+
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
 }

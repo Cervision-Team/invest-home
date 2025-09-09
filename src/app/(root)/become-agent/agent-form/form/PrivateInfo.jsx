@@ -22,13 +22,12 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
 
   const checkFormValidity = async () => {
     try {
-      // Only validate fields for the current step (PrivateInfo)
       const currentStepData = {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
         about1: formData.about1,
-        about2: formData.about2, // This is optional
+        about2: formData.about2, 
       };
 
       // Create a schema that only validates current step fields
@@ -41,7 +40,6 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
 
   const validateAllFields = async () => {
     try {
-      // Only validate current step fields
       const currentStepData = {
         fullName: formData.fullName,
         email: formData.email,
@@ -51,7 +49,6 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
       };
 
       await agentFormSchema.pick(['fullName', 'email', 'phone', 'about1', 'about2']).validate(currentStepData, { abortEarly: false });
-      console.log('✅ All current step fields valid, clearing errors');
       setErrors({});
       onValidationChange(true);
     } catch (err) {
@@ -60,22 +57,19 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
         err.inner.forEach((error) => {
           newErrors[error.path] = error.message;
         });
-        console.log('❌ Validation errors found:', newErrors);
         setErrors(newErrors);
         onValidationChange(false);
       }
     }
   };
 
-  // Validate all fields when showAllErrors becomes true
   useEffect(() => {
     if (showAllErrors) {
       validateAllFields();
-      setShowAllErrors(false); // Reset the trigger
+      setShowAllErrors(false);
     }
   }, [showAllErrors]);
 
-  // Check initial validation
   useEffect(() => {
     checkFormValidity();
   }, [formData]);

@@ -40,7 +40,6 @@ const AgentForm = () => {
     if (currentStepValid) {
       changeForm("increment");
     } else {
-      // Show all validation errors
       setShowAllErrors(true);
     }
   };
@@ -49,7 +48,6 @@ const AgentForm = () => {
     if (currentStepValid) {
       setIsModalOpen(true);
     } else {
-      // Show all validation errors
       setShowAllErrors(true);
     }
   };

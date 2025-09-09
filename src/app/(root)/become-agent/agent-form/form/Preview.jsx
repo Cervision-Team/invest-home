@@ -17,7 +17,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
     privateInfo: ["fullName", "email", "phone", "about1", "about2"],
   };
 
-  // Validate both groups together
   const allFields = [...stepFields.privateInfo, ...stepFields.otherInfo];
 
   // Validate a single field (and then re-check all fields using an override so latest value is included)
@@ -86,8 +85,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
         onValidationChange(false);
         return false;
       } else {
-        // Unexpected error
-        console.error("Validation error:", err);
         onValidationChange(false);
         return false;
       }
