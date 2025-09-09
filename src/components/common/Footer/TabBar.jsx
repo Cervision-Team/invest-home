@@ -13,10 +13,12 @@ const TabBar = () => {
             {isMobile ?
                 <section className="relative z-99 h-[125px]">
                     <div className="fixed bottom-0 w-full">
-                        <button
-                            className="absolute rounded-full w-[61px] h-[61px] bg-[#02836F] border-none left-1/2 translate-x-[-50%] top-[-30.5px]">
-                            <i className="text-white text-[40px] fa-solid fa-plus"></i>
-                        </button>
+                        <Link href={"./make-announcement"}>
+                            <button
+                                className="absolute rounded-full w-[61px] h-[61px] bg-[#02836F] border-none left-1/2 translate-x-[-50%] top-[-30.5px]">
+                                <i className="text-white text-[40px] fa-solid fa-plus"></i>
+                            </button>
+                        </Link>
                         <div className="flex justify-center">
                             <div className="bg-[#02836F] w-full h-[71px]"></div>
                             <Image
