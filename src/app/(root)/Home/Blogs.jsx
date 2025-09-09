@@ -6,26 +6,6 @@ import "swiper/css";
 import { blogData } from "../../../components/core/BlogsData";
 import BlogCard from "@/components/ui/BlogCard";
 
-
-// const BlogCard = ({ image, title, description, day, weekday }) => {
-//   return (
-//     <div className="flex-shrink-0 w-1/3 h-[500px] flex flex-col relative">
-//       <div className="w-full h-[240px] rounded-[30px] relative overflow-hidden">
-//         <Image src={image} alt={title} layout="fill" objectFit="cover" className="rounded-[30px]" />
-//         <div className="absolute inset-0 bg-black opacity-30 rounded-[30px]" />
-//       </div>
-//       <div className="w-[45px] h-[50px] rounded-b-[10px] flex flex-col justify-center items-center bg-white shadow-[4px_4px_15px_0px_rgba(0,0,0,0.25)] absolute left-[50px]">
-//         <h4 className="text-[19.4px] font-medium">{day}</h4>
-//         <p className="text-[16px] leading-tight font-normal">{weekday}</p>
-//       </div>
-//       <h3 className="text-white text-[27.6px] font-medium mt-[30px]">{title}</h3>
-//       <p className="text-white text-[16px]/[26px] font-normal mt-[20px]">{description}</p>
-//     </div>
-//   );
-// };
-
-
-
 const Blogs = () => {
   const scrollRef = useRef(null);
   const [scrollStep, setScrollStep] = useState(0);
@@ -87,10 +67,10 @@ const Blogs = () => {
           <div className="flex flex-row">
             <Swiper
               loop={true}
-              loopFillGroupWithBlank={true}
               slidesPerView={2}
               speed={500}
               spaceBetween={20}
+              className="w-full"
               breakpoints={{
                 425: {
                   slidesPerView: 1
@@ -104,22 +84,20 @@ const Blogs = () => {
               }}
             >
               {blogData.map((data, index) => (
-                <>
-                  <SwiperSlide key={index}>
-                    <BlogCard
-                      image={data.image}
-                      title={data.title}
-                      description={data.description}
-                      day={data.day}
-                      month={data.month}
-                    />
-                  </SwiperSlide>
-                </>
+                <SwiperSlide key={index}>
+                  <BlogCard
+                    image={data.image}
+                    title={data.title}
+                    description={data.description}
+                    day={data.day}
+                    month={data.month}
+                  />
+                </SwiperSlide>
               ))}
             </Swiper>
           </div>
         </div>
-      </section >
+      </section>
     </>
   );
 };

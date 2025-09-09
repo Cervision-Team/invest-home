@@ -147,6 +147,7 @@ const Header = () => {
                   <span className="max-[1440px]:hidden text-[16px] flex-shrink-0 font-[500]">Daxil ol</span>
                 </button>
               </Link>
+              <Link href="/make-announcement">
               <button className="flex-shrink-0 py-[12px] max-[1440px]:px-[12px] px-[26px] rounded-[50px] bg-[#FF9D14] text-white flex justify-center items-center gap-[20px] max-[769px]:gap-[12px] cursor-pointer">
                 <div className="plus-icon relative h-[20px] w-[20px]">
                   <i className="fa-regular fa-circle text-[20px]" aria-hidden={true}></i>
@@ -154,6 +155,7 @@ const Header = () => {
                 </div>
                 <span className="text-[16px] font-[500]">Elan ver</span>
               </button>
+              </Link>
               <div onClick={() => { setOpen(true) }} className="w-[24px] h-[24px] hidden max-[431px]:hidden max-[1130px]:flex items-center justify-center">
                 <i className="text-[24px] fa-solid fa-bars"></i>
               </div>

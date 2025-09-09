@@ -26,34 +26,28 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
     } catch (err) {
       setErrors(prev => ({ ...prev, [fieldName]: err.message }));
     }
-
-    // Check overall current step validity
+    
     checkFormValidity();
   };
 
   const checkFormValidity = async () => {
     try {
-      // Only validate fields for the current step (OtherInfo)
       const currentStepData = {
         education: formData.education,
         age: formData.age,
         address: formData.address,
         cv: formData.cv,
       };
-
-      // Create a schema that only validates current step fields
+      
       await agentFormSchema.pick(['education', 'age', 'address', 'cv']).validate(currentStepData, { abortEarly: false });
-      console.log('✅ Other Info step is valid, setting currentStepValid to true');
       onValidationChange(true);
     } catch (err) {
-      console.log('❌ Other Info step is invalid:', err.message);
       onValidationChange(false);
     }
   };
 
   const validateAllFields = async () => {
     try {
-      // Only validate current step fields
       const currentStepData = {
         education: formData.education,
         age: formData.age,
@@ -62,7 +56,6 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
       };
 
       await agentFormSchema.pick(['education', 'age', 'address', 'cv']).validate(currentStepData, { abortEarly: false });
-      console.log('✅ All current step fields valid, clearing errors');
       setErrors({});
       onValidationChange(true);
     } catch (err) {
@@ -71,22 +64,19 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
         err.inner.forEach((error) => {
           newErrors[error.path] = error.message;
         });
-        console.log('❌ Validation errors found:', newErrors);
         setErrors(newErrors);
         onValidationChange(false);
       }
     }
   };
 
-  // Validate all fields when showAllErrors becomes true
   useEffect(() => {
     if (showAllErrors) {
       validateAllFields();
-      setShowAllErrors(false); // Reset the trigger
+      setShowAllErrors(false); 
     }
   }, [showAllErrors]);
 
-  // Check initial validation
   useEffect(() => {
     checkFormValidity();
   }, [formData]);
