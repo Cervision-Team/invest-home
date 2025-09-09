@@ -90,15 +90,16 @@ const Slider = () => {
             <h5 className="">
               {/* <Trans i18nKey="slider.title" /> */}
             </h5>
-            <h1 className="text-[32px] font-[600] leading-[1.2]">
+            <h1 className="text-[44px] font-[600] leading-[1.2]">
               {/* <Trans i18nKey="slider.subtitle"> */}
-              Sevdiyiniz mükəmməl bir ev <br /> tapın..!
+              İnvestisiyanın etibarlı ünvanı...
               {/* </Trans> */}
             </h1>
-            <p className="text-[16px] font-[400] leading-[1.7]">
+            <p className="text-[20px] font-[400] leading-[1.7]">
               {/* <Trans i18nKey="slider.description"> */}
-              Bizimlə birlikdə, rahat və təhlükəsiz əməliyyatlar <br /> üçün
-              etibarlı tərəfdaş əldə edirsiniz.
+              Dəyərləriniz qədər incə, arzularınız qədər geniş məkanlar. 
+              <br />
+              Mekanları dəyişirik, arzuları gerçəkləşdiririk.
               {/* </Trans> */}
             </p>
           </div>
