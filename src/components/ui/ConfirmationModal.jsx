@@ -35,7 +35,7 @@ const modalStyles = `
   }
 `;
 
-const ConfirmationModal = ({ isOpen }) => {
+const ConfirmationModal = ({ isOpen, text }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("no-scroll");
@@ -68,7 +68,7 @@ const ConfirmationModal = ({ isOpen }) => {
             />
             <h1 className="text-[#1B1F27] text-[32px]/[36px] max-[430px]:text-[20px] font-medium mt-5">Tamamlandı.</h1>
             <p className="max-w-[324px] text-[#1B1F27] text-center text-[16px]/[22px] font-medium mt-5">
-              Təşəkkürlər! CV-niz uğurla yükləndi. Seçim nəticələri e-poçt vasitəsilə göndəriləcək.
+              {text}
             </p>
             <Link href="/">
               <button className="cursor-pointer flex items-center gap-[12px] text-white bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] mt-6">

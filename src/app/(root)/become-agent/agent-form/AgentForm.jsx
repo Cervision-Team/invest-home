@@ -304,7 +304,9 @@ const AgentForm = () => {
       </section>
       {isModalOpen && (
         <>
-          <ConfirmationModal isOpen={isModalOpen} />
+          <ConfirmationModal 
+          isOpen={isModalOpen}
+          text={"Təşəkkürlər! CV-niz uğurla yükləndi. Seçim nəticələri e-poçt vasitəsilə göndəriləcək."} />
         </>
       )
       }

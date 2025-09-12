@@ -544,7 +544,9 @@ case 2:
       </section>
       {isModalOpen && (
         <>
-          <ConfirmationModal isOpen={isModalOpen} />
+          <ConfirmationModal 
+          isOpen={isModalOpen} 
+          text={"Təbriklər! Elanınız yoxlanış üçün göndərildi. Təsdiqləndikdən sonra  paylaşılacaq. Təşəkkür edirik."}/>
         </>
       )
       }
