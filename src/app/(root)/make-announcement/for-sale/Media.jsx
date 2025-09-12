@@ -1,38 +1,110 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { getValidationSchema } from '@/lib/schemas/announcementSchema';
 
-const Media = () => {
-  const [selectedMedia, setSelectedMedia] = useState([])
-  const [uploadedFiles, setUploadedFiles] = useState([])
+const Media = ({ 
+  formik,
+  stepErrors = {},
+  setStepErrors,
+  isValidating 
+}) => {
+  // Local state for UI
   const [isDragOver, setIsDragOver] = useState(false)
   const [loadingFiles, setLoadingFiles] = useState([])
   const fileInputRef = useRef(null)
 
-  const handleMediaChange = (event) => {
-    const { value, checked } = event.target
-    if (checked) {
-      setSelectedMedia(prev => [...prev, value])
-    } else {
-      setSelectedMedia(prev => prev.filter(media => media !== value))
-    }
-  }
+  // Local errors fallback when parent doesn't provide setStepErrors
+  const [localErrors, setLocalErrors] = useState({});
 
-  const handleFileSelect = async (files) => {
+  // Helper to clear a single field error
+  const clearErrorForField = useCallback((fieldName) => {
+    if (typeof setStepErrors === 'function') {
+      setStepErrors(prev => {
+        if (!prev || !prev[fieldName]) return prev || {};
+        const { [fieldName]: removed, ...rest } = prev;
+        return rest;
+      });
+    } else {
+      setLocalErrors(prev => {
+        if (!prev || !prev[fieldName]) return prev || {};
+        const { [fieldName]: removed, ...rest } = prev;
+        return rest;
+      });
+    }
+  }, [setStepErrors]);
+
+  // Generic input change handler
+  const handleInputChange = useCallback((fieldName, value) => {
+    formik.setFieldValue(fieldName, value);
+    clearErrorForField(fieldName);
+  }, [formik, clearErrorForField]);
+
+  // Blur handler with validation
+  const handleBlur = useCallback(async (fieldName) => {
+    const currentValues = formik.values;
+    const schema = getValidationSchema(5, 'default', currentValues); // Assuming step 3 for media
+
+    try {
+      await schema.validateAt(fieldName, currentValues);
+      clearErrorForField(fieldName);
+    } catch (err) {
+      const message = err.message;
+      setStepErrors
+        ? setStepErrors((p) => ({ ...p, [fieldName]: message }))
+        : setLocalErrors((p) => ({ ...p, [fieldName]: message }));
+    }
+  }, [formik, clearErrorForField, setStepErrors]);
+
+  // Media type change handler
+  const handleMediaChange = useCallback((event) => {
+    const { value, checked } = event.target;
+    const currentMedia = formik.values.selectedMedia || [];
+    
+    let newSelectedMedia;
+    if (checked) {
+      newSelectedMedia = [...currentMedia, value];
+    } else {
+      newSelectedMedia = currentMedia.filter(media => media !== value);
+    }
+    
+    handleInputChange('selectedMedia', newSelectedMedia);
+    
+    // Clear uploaded files if media type changes
+    if (!checked) {
+      if (value === 'picture') {
+        handleInputChange('images', []);
+      } else if (value === 'video') {
+        handleInputChange('videos', []);
+      }
+      // Update uploadedFiles array
+      const currentUploadedFiles = formik.values.uploadedFiles || [];
+      const filteredFiles = currentUploadedFiles.filter(file => {
+        if (value === 'picture') return !file.type.startsWith('image/');
+        if (value === 'video') return !file.type.startsWith('video/');
+        return true;
+      });
+      handleInputChange('uploadedFiles', filteredFiles);
+    }
+  }, [formik.values.selectedMedia, formik.values.uploadedFiles, handleInputChange]);
+
+  const handleFileSelect = useCallback(async (files) => {
+    const selectedMedia = formik.values.selectedMedia || [];
+    
     const validFiles = Array.from(files).filter(file => {
-      const isValidImage = file.type === 'image/jpeg' || file.type === 'image/png'
-      const isValidVideo = file.type === 'video/mp4' || file.type === 'video/avi' || file.type.startsWith('video/')
+      const isValidImage = file.type === 'image/jpeg' || file.type === 'image/png';
+      const isValidVideo = file.type === 'video/mp4' || file.type === 'video/avi' || file.type.startsWith('video/');
       
-      let isValid = false
+      let isValid = false;
       
       if (selectedMedia.includes('picture') && selectedMedia.includes('video')) {
-        isValid = isValidImage || isValidVideo
+        isValid = isValidImage || isValidVideo;
       } else if (selectedMedia.includes('picture')) {
-        isValid = isValidImage
+        isValid = isValidImage;
       } else if (selectedMedia.includes('video')) {
-        isValid = isValidVideo
+        isValid = isValidVideo;
       }
       
-      return isValid
-    })
+      return isValid;
+    });
 
     if (validFiles.length > 0) {
       const loadingEntries = validFiles.map(file => ({
@@ -42,15 +114,15 @@ const Media = () => {
         size: file.size,
         type: file.type,
         isLoading: true
-      }))
+      }));
       
-      setLoadingFiles(prev => [...prev, ...loadingEntries])
+      setLoadingFiles(prev => [...prev, ...loadingEntries]);
       
       for (const loadingEntry of loadingEntries) {
-        const file = loadingEntry.file
+        const file = loadingEntry.file;
         
         if (file.type.startsWith('video/')) {
-          await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000))
+          await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
         }
         
         const newFile = {
@@ -61,61 +133,95 @@ const Media = () => {
           type: file.type,
           preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
           isLoading: false
-        }
+        };
         
-        setLoadingFiles(prev => prev.filter(f => f.id !== loadingEntry.id))
-        setUploadedFiles(prev => [...prev, newFile])
+        setLoadingFiles(prev => prev.filter(f => f.id !== loadingEntry.id));
+        
+        // Update formik values
+        const currentUploadedFiles = formik.values.uploadedFiles || [];
+        const currentImages = formik.values.images || [];
+        const currentVideos = formik.values.videos || [];
+        
+        const newUploadedFiles = [...currentUploadedFiles, newFile];
+        handleInputChange('uploadedFiles', newUploadedFiles);
+        
+        if (file.type.startsWith('image/')) {
+          handleInputChange('images', [...currentImages, newFile]);
+        } else if (file.type.startsWith('video/')) {
+          handleInputChange('videos', [...currentVideos, newFile]);
+        }
       }
     }
-  }
+  }, [formik.values.selectedMedia, formik.values.uploadedFiles, formik.values.images, formik.values.videos, handleInputChange]);
 
   const handleDragOver = (event) => {
-    event.preventDefault()
-    setIsDragOver(true)
-  }
+    event.preventDefault();
+    setIsDragOver(true);
+  };
 
   const handleDragLeave = (event) => {
-    event.preventDefault()
-    setIsDragOver(false)
-  }
+    event.preventDefault();
+    setIsDragOver(false);
+  };
 
   const handleDrop = (event) => {
-    event.preventDefault()
-    setIsDragOver(false)
-    const files = event.dataTransfer.files
-    handleFileSelect(files)
-  }
+    event.preventDefault();
+    setIsDragOver(false);
+    const files = event.dataTransfer.files;
+    handleFileSelect(files);
+  };
 
   const handleButtonClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleFileInput = (event) => {
-    handleFileSelect(event.target.files)
-    event.target.value = ''
-  }
+    handleFileSelect(event.target.files);
+    event.target.value = '';
+  };
 
-  const removeFile = (fileId) => {
-    setUploadedFiles(prev => {
-      const fileToRemove = prev.find(f => f.id === fileId)
-      if (fileToRemove?.preview) {
-        URL.revokeObjectURL(fileToRemove.preview)
-      }
-      return prev.filter(f => f.id !== fileId)
-    })
-  }
+  const removeFile = useCallback((fileId) => {
+    const currentUploadedFiles = formik.values.uploadedFiles || [];
+    const currentImages = formik.values.images || [];
+    const currentVideos = formik.values.videos || [];
+    
+    const fileToRemove = currentUploadedFiles.find(f => f.id === fileId);
+    
+    if (fileToRemove?.preview) {
+      URL.revokeObjectURL(fileToRemove.preview);
+    }
+    
+    const newUploadedFiles = currentUploadedFiles.filter(f => f.id !== fileId);
+    const newImages = currentImages.filter(f => f.id !== fileId);
+    const newVideos = currentVideos.filter(f => f.id !== fileId);
+    
+    handleInputChange('uploadedFiles', newUploadedFiles);
+    handleInputChange('images', newImages);
+    handleInputChange('videos', newVideos);
+  }, [formik.values.uploadedFiles, formik.values.images, formik.values.videos, handleInputChange]);
 
   const cancelLoading = (fileId) => {
-    setLoadingFiles(prev => prev.filter(f => f.id !== fileId))
-  }
+    setLoadingFiles(prev => prev.filter(f => f.id !== fileId));
+  };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  // Combine parent stepErrors and localErrors for display
+  const displayedErrors = { ...(localErrors || {}), ...(stepErrors || {}) };
+
+  // Helper functions
+  const getErrorMessage = (fieldName) => displayedErrors[fieldName];
+  const hasError = (fieldName) => !!displayedErrors[fieldName];
+
+  // Get current values with fallbacks
+  const selectedMedia = formik.values.selectedMedia || [];
+  const uploadedFiles = formik.values.uploadedFiles || [];
 
   return (
     <>
@@ -210,14 +316,25 @@ const Media = () => {
             50% { width: 70%; }
             100% { width: 100%; }
           }
+
+          .error-field {
+            border-color: #ef4444 !important;
+          }
+          
+          .error-text {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 4px;
+          }
         `}
       </style>
       
       <div className="w-full h-full pb-[16px] border-b border-[rgba(0,0,0,0.2)] max-h-[444px] overflow-y-auto hide-scrollbar pl-[2px]">
         <div className="flex items-start justify-start">
-          <div>
+          <form className="w-full">
             <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
               <h5 className='text-[#000] text-[24px]/[28px] font-medium'>Media</h5>
+              {hasError('selectedMedia') && <p className="error-text">{getErrorMessage('selectedMedia')}</p>}
               <div className='flex flex-row items-center justify-center gap-12 mt-[9px]'>
                 <div className='flex items-center'>
                   <input 
@@ -226,7 +343,9 @@ const Media = () => {
                     name="media" 
                     value="picture" 
                     className='svg-checkbox'
+                    checked={selectedMedia.includes('picture')}
                     onChange={handleMediaChange}
+                    onBlur={() => handleBlur('selectedMedia')}
                   />
                   <label htmlFor="picture" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Şəkil</label>
                 </div>
@@ -237,7 +356,9 @@ const Media = () => {
                     name="media" 
                     value="video" 
                     className='svg-checkbox'
+                    checked={selectedMedia.includes('video')}
                     onChange={handleMediaChange}
+                    onBlur={() => handleBlur('selectedMedia')}
                   />
                   <label htmlFor="video" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Video</label>
                 </div>
@@ -245,7 +366,12 @@ const Media = () => {
             </div>
             
             <div 
-              className={`w-[736px] h-auto px-5 py-5 rounded-[13px] border-2 border-dashed border-[rgba(0,0,0,0.20)] flex flex-col items-start justify-center mt-[28px] transition-all duration-200 ${isDragOver ? 'drag-over' : ''}`}
+              className={`w-[736px] h-auto px-5 py-5 rounded-[13px] border-2 border-dashed transition-all duration-200 ${
+                isDragOver ? 'drag-over' 
+                : hasError('uploadedFiles') || hasError('images') || hasError('videos') 
+                  ? 'border-[#ef4444]' 
+                  : 'border-[rgba(0,0,0,0.20)]'
+              } flex flex-col items-start justify-center mt-[28px]`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -298,6 +424,11 @@ const Media = () => {
                 </span>
               </button>
             </div>
+
+            {/* Error messages for file validation */}
+            {hasError('uploadedFiles') && <p className="error-text mt-2">{getErrorMessage('uploadedFiles')}</p>}
+            {hasError('images') && <p className="error-text mt-2">{getErrorMessage('images')}</p>}
+            {hasError('videos') && <p className="error-text mt-2">{getErrorMessage('videos')}</p>}
 
             {(uploadedFiles.length > 0 || loadingFiles.length > 0) && (
               <div className='mt-6'>
@@ -358,7 +489,7 @@ const Media = () => {
                 </div>
               </div>
             )}
-          </div>
+          </form>
         </div>
       </div>
     </>
