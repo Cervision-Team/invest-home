@@ -1,6 +1,10 @@
+// Updated AnnouncementForm.jsx with better schema handling
+
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import Image from "next/image";
+import { useFormik } from 'formik';
+import { validationSchemas, getValidationSchema, validateStep } from '../../../lib/schemas/announcementSchema';
 import arrowRightWhite from "../../../../public/icons/arrow-right-white-small.svg"
 import arrowLeftWhite from "../../../../public/icons/arrow-left-white.svg"
 import NewAnnc from './NewAnnc';
@@ -13,48 +17,190 @@ import AnncDetails from './for-sale/AnncDetails';
 import Location from './for-sale/Location';
 import Media from './for-sale/Media';
 import RoommateAnncDetails from './roommate/RoommateAnncDetails';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 const AnnouncementForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
   const [height, setHeights] = useState(["0px", "0px", "0px"])
   const [formIndex, setFormIndex] = useState(0);
   const [visitedSections, setVisitedSections] = useState([true, false, false]);
-  const [currentStepValid, setCurrentStepValid] = useState(true);
+  const [stepErrors, setStepErrors] = useState({});
+  const [isValidatingStep, setIsValidatingStep] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Add state for announcement type
-  const [announcementType, setAnnouncementType] = useState(null);
   
-  // Add state for property type (for ForSale component)
-  const [activePropertyType, setActivePropertyType] = useState(null);
+  const formik = useFormik({
+    initialValues: {
+      // Step 0 - NewAnnc
+      newAnnouncement: '',
+      
+      // Step 1 - TypeOfAnnc
+      announcementType: '',
+      
+      // Step 2 - Property details (conditional based on announcement type)
+      propertyType: '',
+      officeType: '',
+      buildingType: '', // Add this field
+      repairStatus: '', // Add this field
+      isMortgaged: false,
+      
+      // For Sale/Rent
+      price: '',
+      area: '', 
+      landArea: '',
+      pricePerSqm: '',
+      floor: '',
+      totalFloors: '',
+      rooms: '',
+      bathrooms: '',
+      
+      
+      // For Daily
+      dailyRate: '',
+      guestCount: '',
+      nightCount: '',
+      checkInTime: '',
+      checkOutTime: '',
+            
+      // Mortgage fields
+      initialPayment: '',
+      monthlyPayment: '',
+      remainingYears: '',
+      remainingMonths: '',
+      
+      // Step 3 - Detailed Property Information
+      yearBuilt: '',
+      condition: '',
+      
+      // Features
+      exit: '',
+      mortgage: '',
+      features: [],
+      
+      // Roommate specific fields
+      utilities: '',
+      bedType: '',
+      ownerLives: '',
+      residentsCount: '',
+      houseComposition: '',
+      gender: '',
+      workStatus: '',
+      smoking: '',
+      pets: '',
+      visitors: '',
+      activeBuilding: '',
+      activeRepaired: '',
+      description: '',
+      
+      // Step 4 - Location
+ selectedCity: '',
+    selectedDistrict: '',
+    selectedSettlement: '',
+    selectedAddress: '',
+    searchQuery: '',
+    selectedLocation: '',
+    latitude: null,
+    longitude: null,      
+      // Step 5 - Media
+      selectedMedia: [],
+      images: [],
+      videos: [],
+      uploadedFiles: [],
+      virtualTour: '',
+      imageDescriptions: [],
+    },
+    validationSchema: validationSchemas[0],
+    onSubmit: async (values) => {
+      console.log('Form submitted:', values);
+      
+    },
+    validateOnChange: false, 
+    validateOnBlur: false,  
+  });
+
+  
+  const getFormType = useCallback((formValues) => {
+    if (formValues.announcementType === 'roommate') return 'roommate';
+    return 'default';
+  }, []);
 
   useEffect(() => {
     openAccordion(0);
   }, []);
 
-  // Function to handle announcement type selection from TypeOfAnnc
-  const handleAnnouncementTypeChange = (type) => {
-    setAnnouncementType(type);
-    setCurrentStepValid(true); // Enable next button when type is selected
+  useEffect(() => {
+  }, [
+    formIndex, 
+    formik.values.announcementType, 
+    formik.values.propertyType, 
+    formik.values.officeType, 
+    formik.values.isMortgaged
+  ]);
+
+  const handleAnnouncementTypeChange = useCallback((type) => {
+    formik.setFieldValue('announcementType', type);
     
-    // Reset property type when announcement type changes
-    setActivePropertyType(null);
+    // Reset related fields when announcement type changes
+    const fieldsToReset = [
+      'propertyType', 'officeType', 'buildingType', 'repairStatus',
+      'price', 'monthlyRent', 'dailyRate', 'roomType', 'area', 'landArea',
+      'floor', 'totalFloors', 'rooms', 'bathrooms'
+    ];
+    
+    fieldsToReset.forEach(field => {
+      formik.setFieldValue(field, '');
+    });
+    
+    setStepErrors({});
+  }, [formik]);
+
+  // Validate current step with better error handling
+  const validateCurrentStep = async () => {
+    setIsValidatingStep(true);
+    
+    try {
+      const result = await validateStep(formIndex, formik.values);
+      setStepErrors(result.errors || {});
+      return result.isValid;
+    } catch (error) {
+      console.error('Validation error:', error);
+      setStepErrors({ general: 'Validation xətası baş verdi' });
+      return false;
+    } finally {
+      setIsValidatingStep(false);
+    }
   };
 
-  const handleNextClick = () => {
-    // For TypeOfAnnc step, check if announcement type is selected
-    if (formIndex === 1 && !announcementType) {
-      setCurrentStepValid(false);
-      return;
-    }
+  const handleNextClick = async () => {
+    const isValid = await validateCurrentStep();
     
-    if (currentStepValid) {
+    if (isValid) {
       changeForm("increment");
+    } else {
+      // Scroll to first error field
+      setTimeout(() => {
+        const firstErrorField = document.querySelector('.error-field');
+        if (firstErrorField) {
+          firstErrorField.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      }, 100);
     }
   };
 
-  const handleConfirmClick = () => {
-    if (currentStepValid) {
-      // setIsModalOpen(true);
+  const handleConfirmClick = async () => {
+    const isValid = await validateCurrentStep();
+    
+    if (isValid) {
+      try {
+        await formik.submitForm();
+        setIsModalOpen(true);
+      } catch (error) {
+        console.error('Form submission error:', error);
+        setStepErrors({ general: 'Form göndərilməsində xəta' });
+      }
     }
   };
 
@@ -71,12 +217,16 @@ const AnnouncementForm = () => {
 
     setVisitedSections(prev => {
       const updated = [...prev];
-      updated[index] = true;
+      if (index < updated.length) {
+        updated[index] = true;
+      }
       return updated;
     });
 
     setFormIndex(index);
     openAccordion(index);
+    
+    setStepErrors({});
   };
 
   const openAccordion = (currentFormIndex) => {
@@ -93,69 +243,123 @@ const AnnouncementForm = () => {
     });
   };
 
-  // Function to render the appropriate form component
   const renderFormContent = () => {
+    const commonProps = {
+      formik,
+      stepErrors,
+      setStepErrors,
+      isValidating: isValidatingStep
+    };
+
     switch(formIndex) {
       case 0:
-        return <NewAnnc />;
+        return <NewAnnc {...commonProps} setIsValidating={setIsValidatingStep} />;
       case 1:
         return (
           <TypeOfAnnc 
-            activeButton={announcementType}
+            {...commonProps}
+            activeButton={formik.values.announcementType}
             onAnnouncementTypeChange={handleAnnouncementTypeChange}
           />
         );
       case 2:
-        switch(announcementType) {
+        switch(formik.values.announcementType) {
           case 'sell':
             return (
               <ForSale 
-                activePropertyType={activePropertyType}
-                setActivePropertyType={setActivePropertyType}
+                {...commonProps}
+                activePropertyType={formik.values.propertyType}
+                setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
               />
             );
           case 'rent':
-            return <ForRent 
-                activePropertyType={activePropertyType}
-                setActivePropertyType={setActivePropertyType}/>;
+            return (
+              <ForRent 
+                {...commonProps}
+                activePropertyType={formik.values.propertyType}
+                setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
+              />
+            );
           case 'daily':
-            return <Daily
-                activePropertyType={activePropertyType}
-                setActivePropertyType={setActivePropertyType} />;
+            return (
+              <Daily
+                {...commonProps}
+                activePropertyType={formik.values.propertyType}
+                setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
+              />
+            );
           case 'roommate':
-            return <Roommate 
-                            activePropertyType={activePropertyType}
-                setActivePropertyType={setActivePropertyType} />;
+            return (
+              <Roommate 
+                {...commonProps}
+                activePropertyType={formik.values.propertyType}
+                setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
+              />
+            );
           default:
-            return <div>Please select an announcement type first</div>;
+            return (
+              <div className="flex items-center justify-center h-64 text-gray-500">
+                Zəhmət olmasa əvvəlcə elan növü seçin
+              </div>
+            );
         }
       case 3:
-        switch(announcementType) {
-          case 'sell':
-            return <AnncDetails 
-              activePropertyType={activePropertyType}
-            />;
-          case 'rent':
-            return <AnncDetails 
-              activePropertyType={activePropertyType}
-            />;
-          case 'daily':
-            return <AnncDetails 
-              activePropertyType={activePropertyType}
-            />;
-          case 'roommate':
-            return <RoommateAnncDetails 
-              activePropertyType={activePropertyType}
-            />;
+        const formType = getFormType(formik.values);
+        if (formType === 'roommate') {
+          return <RoommateAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
+        } else {
+          return <AnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
         }
       case 4:
-        return <Location />
+        return <Location {...commonProps} />
       case 5:
-        return <Media />
+        return <Media {...commonProps} />
       default:
         return <div></div>;
     }
   };
+
+const isCurrentStepValid = () => {
+  if (isValidatingStep) return false;
+  
+
+  switch (formIndex) {
+    case 0:
+      return !!formik.values.newAnnouncement && Object.keys(stepErrors).length === 0;
+
+    case 1:
+      return !!formik.values.announcementType && Object.keys(stepErrors).length === 0;
+
+case 2:
+  
+  const hasPropertyType = !!formik.values.propertyType;
+  const hasNoStepErrors = Object.keys(stepErrors).length === 0;
+    
+  return hasPropertyType && hasNoStepErrors;
+
+    case 3:
+      return Object.keys(stepErrors).length === 0;
+
+    case 4:
+ return (
+        !!formik.values.selectedCity &&
+        !!formik.values.selectedDistrict &&
+        !!formik.values.selectedSettlement &&
+        !!formik.values.selectedAddress?.trim() &&
+        formik.values.selectedAddress.length >= 10 &&
+        Object.keys(stepErrors).length === 0
+      );
+      case 5:
+      return (
+        formik.values.selectedMedia?.length > 0 &&
+        formik.values.uploadedFiles?.length > 0 &&
+        Object.keys(stepErrors).length === 0
+      );
+
+    default:
+      return Object.keys(stepErrors).length === 0;
+  }
+};
 
   return (
     <>
@@ -272,54 +476,65 @@ const AnnouncementForm = () => {
               {formIndex === 0 ? (
                 <button 
                   onClick={handleNextClick}
+                  disabled={!isCurrentStepValid() || isValidatingStep}
                   className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                    currentStepValid 
+                    isCurrentStepValid() && !isValidatingStep
                       ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90' 
                       : 'bg-gray-400 text-white cursor-not-allowed'
                   }`}
                 >
-                  <span className='font-[500] text-[16px]'>Növbəti</span>
-                  <Image src={arrowRightWhite} alt="Arrow Right White" />
+                  <span className='font-[500] text-[16px]'>
+                    {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
+                  </span>
+                  {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
                 </button>
               ) : formIndex === 5 ? (
                 <>
                   <button 
                     onClick={() => changeForm("decrement")} 
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200'
+                    disabled={isValidatingStep}
+                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
                     <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button 
                     onClick={handleConfirmClick}
+                    disabled={!isCurrentStepValid() || isValidatingStep}
                     className={`cursor-pointer rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                      currentStepValid 
+                      isCurrentStepValid() && !isValidatingStep
                         ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90' 
                         : 'bg-gray-400 text-white cursor-not-allowed'
                     }`}
                   >
-                    <span className='font-[500] text-[16px]'>Təsdiqlə</span>
+                    <span className='font-[500] text-[16px]'>
+                      {isValidatingStep ? 'Yoxlanılır...' : 'Təsdiqlə'}
+                    </span>
                   </button>
                 </>
               ) : (
                 <>
                   <button 
                     onClick={() => changeForm("decrement")} 
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200'
+                    disabled={isValidatingStep}
+                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
                     <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button 
                     onClick={handleNextClick}
+                    disabled={!isCurrentStepValid() || isValidatingStep}
                     className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                      (formIndex === 1 && !announcementType) || !currentStepValid
-                        ? 'bg-gray-400 text-white cursor-not-allowed' 
-                        : 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                      isCurrentStepValid() && !isValidatingStep
+                        ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                        : 'bg-gray-400 text-white cursor-not-allowed'
                     }`}
                   >
-                    <span className='font-[500] text-[16px]'>Növbəti</span>
-                    <Image src={arrowRightWhite} alt="Arrow Right White" />
+                    <span className='font-[500] text-[16px]'>
+                      {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
+                    </span>
+                    {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
                   </button>
                 </>
               )}
@@ -327,6 +542,12 @@ const AnnouncementForm = () => {
           </div>
         </div>
       </section>
+      {isModalOpen && (
+        <>
+          <ConfirmationModal isOpen={isModalOpen} />
+        </>
+      )
+      }
     </>
   );
 };

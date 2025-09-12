@@ -9,10 +9,27 @@ import HouseCard from '@/components/ui/HouseCard';
 import { FaWhatsapp } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 
-const Page = () => {
+const Page = ({ params }) => {
 
-  console.log(houseData)
+const { id } = params;
 
+//  async function fetchAgentData() {
+//     const resAgent = await fetch(`https://your-backend.com/api/agents/${id}`, {
+//       cache: 'no-store',
+//     });
+//     if (!resAgent.ok) throw new Error('Failed to fetch agent details');
+//     const agent = await resAgent.json();
+
+//     const resHouses = await fetch(`https://your-backend.com/api/agents/${id}/houses`, {
+//       cache: 'no-store',
+//     });
+//     if (!resHouses.ok) throw new Error('Failed to fetch agent houses');
+//     const houses = await resHouses.json();
+
+//     return { agent, houses };
+//   }
+
+//   const { agent, houses } = use(fetchAgentData());
   return (
     <>
       <section className='mt- max-w-[1600px] mx-auto'>
@@ -22,6 +39,8 @@ const Page = () => {
           <Image
             src={LawyerImage}
             alt='LawyerImage'
+          //   src={agent.image}
+          // alt={agent.name}
             width={386}
             height={360}
             className='flex-shrink-0 max-[1100px]:w-[250px] max-[1100px]:h-[250px]'
@@ -30,14 +49,17 @@ const Page = () => {
           <div className='flex flex-col'>
             <p className='text-[#000] text-2xl/[32px] font-medium'>
               Commercial Real Estate Specialist
+              {/* {agent.role} */}
             </p>
             <p className='text-azure text-base/[24px] italic font-medium tracking-[1.024px] mt-5'>
               ali.bagirov@investhome.az
+              {/* {agent.email} */}
             </p>
             <p className='text-black text-[22px]/[28px] font-normal mt-8'>
               "İnvestHome" şirkəti olaraq 2025-ci ildən bəri ölkəmizin daşınmaz əmlak bazarında həm fiziki
               həm də hüquqi şəxslər üçün yüksəkkeyfiyyətli xidmətlər təqdim edirik. Sözsüz ki, bu keyfiyyətin arxasında peşəkar
               mütəxəssislərimiz, böyük müştəri bazamız və çoxillik təcrübəmiz dayanır. Məqsədimiz alqı-satqıdan qiymətləndirməyə
+              {/* {agent.description} */}
             </p>
 
             <div className='w-full h-auto flex flex-row items-center justify-between mt-[85px]'>
@@ -79,6 +101,9 @@ const Page = () => {
                 house={house}
               />
             ))}
+             {/* {houses.map((house) => (
+            <HouseCard key={house.id} house={house} />
+          ))} */}
           </div>
         </div>
       </section>

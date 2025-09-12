@@ -6,6 +6,13 @@ import "swiper/css";
 import { blogData } from "../../../components/core/BlogsData";
 import BlogCard from "@/components/ui/BlogCard";
 
+// async function fetchBlogs() {
+//   const res = await fetch('https://your-backend.com/api/blogs', { cache: 'no-store' });
+//   if (!res.ok) throw new Error('Failed to fetch blogs');
+//   return res.json(); 
+// }
+
+
 const Blogs = () => {
   const scrollRef = useRef(null);
   const [scrollStep, setScrollStep] = useState(0);

@@ -14,6 +14,13 @@ import {
 } from "../../../components/ui/FromShadcn/Pagination";
 import Link from 'next/link';
 
+
+// async function fetchBlogs() {
+//   const res = await fetch('https://your-backend.com/api/blogs', { cache: 'no-store' });
+//   if (!res.ok) throw new Error('Failed to fetch blogs');
+//   return res.json(); 
+// }
+
 const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;

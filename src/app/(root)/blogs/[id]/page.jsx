@@ -9,6 +9,15 @@ import { FaWhatsapp } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 import ReturnBack from '@/components/ui/ReturnBack';
 
+// async function fetchBlog(id) {
+//   const res = await fetch(`https://your-backend.com/api/blogs/${id}`, {
+//     cache: 'no-store', 
+//   });
+
+//   if (!res.ok) throw new Error('Failed to fetch blog');
+
+//   return res.json();
+// }
 
 
 const Page = async ({ params }) => {
@@ -25,6 +34,17 @@ const Page = async ({ params }) => {
       </div>
     );
   }
+
+  //   let blog;
+  // try {
+  //   blog = await fetchBlog(id);
+  // } catch (err) {
+  //   return (
+  //     <div className="text-center mt-10 text-red-600">
+  //       Blog not found or failed to load.
+  //     </div>
+  //   );
+  // }
 
 //   const parsedContent = md.render(blog.description);
 
@@ -67,9 +87,19 @@ const Page = async ({ params }) => {
        )} */}
       <div className=' flex flex-row items-start mt-[40px] gap-[14px]'>
         <div className='w-[5px] h-[120px] bg-primary'></div>
-        <p className='w-[500px] text-black text-[24px]/[38px] font-medium '>Ev almaq yalnız bir daş divar deyil — bu, həm də həyat tərzi seçimi, uzunmüddətli sərmayə və emosional bir qərardır. </p>
+        <p className='w-[500px] text-black text-[24px]/[38px] font-medium '>
+           {blog.highlight || 'Ev almaq yalnız bir daş divar deyil — bu, həm də həyat tərzi seçimi, uzunmüddətli sərmayə və emosional bir qərardır.'}        </p>
       </div>
 
+
+         {/* {blog.sections?.map((section, idx) => (
+          <div key={idx} className="flex flex-col">
+            <p className="text-black text-[24px]/[39px] font-medium">{section.title}</p>
+            <p className="text-[#100F0F] text-[20px]/[32px]">{section.content}</p>
+          </div>
+        ))}
+      </div>
+       */}
       <div className='w-full h-auto flex flex-col gap-[34px] mt-[18px] max-lg:gap-[20px]'>
         <p className='text-black text-[20px]/[32px] '>Bir çox insan bu prosesi ya tələsik qərarlarla, ya da kifayət qədər məlumat olmadan etdiyindən, sonradan peşmançılıq yaşayir.
 Bu yazıda ev alarkən ən çox diqqətdən yayınan məqamları sənə peşəkar dildə və aydın şəkildə izah edəcəyik.</p>
