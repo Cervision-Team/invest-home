@@ -9,10 +9,10 @@ import Filter from "../../../components/ui/Filter";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css";
-import slider1 from "../../../../public/images/slider1.png";
-import slider2 from "../../../../public/images/slider2.png";
-import slider3 from "../../../../public/images/slider3.png";
-import slider4 from "../../../../public/images/slider4.png";
+import slider1 from "../../../../public/images/slider-2-1.png";
+import slider2 from "../../../../public/images/slider-2-2.png";
+import slider3 from "../../../../public/images/slider-2-3.png";
+import slider4 from "../../../../public/images/slider-2-4.png";
 
 
 const Slider = () => {
