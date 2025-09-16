@@ -14,8 +14,8 @@ const NewAnnc = ({ formik, stepErrors, isValidating, setIsValidating }) => {
 
   const buttons = [
     { type: 'sell', text: 'Satıram', icon: 'selling' },
-    { type: 'buy', text: 'Alıram', icon: 'buying' },
     { type: 'rentOut', text: 'Kirayə verirəm', icon: 'renting' },
+    { type: 'buy', text: 'Alıram', icon: 'buying' },
     { type: 'rentIn', text: 'Kirayə axtarıram', icon: 'searching-for-rent' },
   ];
 
