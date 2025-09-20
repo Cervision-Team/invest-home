@@ -231,7 +231,7 @@ const getRoommateValidationSchema = () =>
     propertyType: Yup.string()
       .required("Əmlak növü seçilməlidir")
       .oneOf(
-        ["apartmentRoommate", "apartmentRoommate"],
+        ["apartmentRoommate", "houseRoommate"],
         "Düzgün əmlak növü seçin"
       ),
     price: Yup.number()
@@ -335,9 +335,7 @@ export const locationValidationSchema = Yup.object({
 
   selectedAddress: Yup.string()
     .required('Ünvan daxil edilməlidir')
-    .min(10, 'Ünvan ən azı 10 simvol olmalıdır')
-    .max(200, 'Ünvan 200 simvoldan çox ola bilməz')
-    .matches(/^[a-zA-ZəĞğIıÖöŞşÇçÜü0-9\s,.-]+$/, 'Ünvanda etibarsız simvollar var'),
+    .max(200, 'Ünvan 200 simvoldan çox ola bilməz'),
 
   searchQuery: Yup.string()
     .max(100, 'Axtarış sorğusu 100 simvoldan çox ola bilməz'),

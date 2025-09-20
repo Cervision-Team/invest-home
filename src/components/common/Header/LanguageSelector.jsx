@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import ArrowDown from "../../../../public/icons/ArrowDown.svg";
 import { useLang } from "@/context/LangContext";
@@ -8,9 +8,23 @@ import { useLang } from "@/context/LangContext";
 const LanguageSelector = () => {
   const { selectedLang, handleSelect, currentFlag, flags } = useLang();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="flex">
+    <div className="flex" ref={dropdownRef}>
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -40,7 +54,10 @@ const LanguageSelector = () => {
             {flags.map((flag) => (
               <li
                 key={flag.name}
-                onClick={() => handleSelect(flag.name)}
+                onClick={() => {
+                  handleSelect(flag.name);
+                  setIsOpen(false); // Close dropdown after selection
+                }}
                 className={`${
                   selectedLang === flag.name
                     ? "text-[var(--primary-color)]"

@@ -1,6 +1,8 @@
 'use client';
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // For Next.js routing
+// import { useNavigate } from "react-router-dom"; // For React Router (alternative)
 import {
   All,
   Building,
@@ -64,28 +66,168 @@ export const SamplePrevArrow = ({ swiperRef }) => {
 }
 
 const categories = [
-  { id: 1, label: "Bütün", icon: All },
-  { id: 2, label: "Satılıq", icon: Sale },
-  { id: 3, label: "Kirayə", icon: Rent },
-  { id: 4, label: "Populyar elanlar", icon: Popular },
-  { id: 5, label: "Qonşuluq əmlakları", icon: Neighbour },
-  { id: 6, label: "Mənzil", icon: Building },
-  { id: 7, label: "Bağ Evi", icon: Datcha },
-  { id: 8, label: "Obyekt", icon: Store },
-  { id: 9, label: "Torpaq", icon: Land },
-  { id: 10, label: "Ofis", icon: Office },
+  { 
+    id: 1, 
+    label: "Bütün", 
+    icon: All,
+    filter: "all",
+    route: "/listings", 
+    announcementTypes: ["sell", "rent", "daily", "roommate"],
+    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+  },
+  { 
+    id: 2, 
+    label: "Satılıq", 
+    icon: Sale,
+    filter: "sell",
+    route: "/listings",
+    announcementTypes: ["sell"],
+    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+  },
+  { 
+    id: 3, 
+    label: "Kirayə", 
+    icon: Rent,
+    filter: "rent",
+    route: "/listings",
+    announcementTypes: ["rent", "daily", "roommate"],
+    propertyTypes: ["apartment", "house", "office", "object"]
+  },
+  { 
+    id: 4, 
+    label: "Populyar elanlar", 
+    icon: Popular,
+    filter: "popular",
+    route: "/listings",
+    announcementTypes: ["sell", "rent", "daily"],
+    propertyTypes: ["apartment", "house", "office", "object"]
+  },
+  { 
+    id: 5, 
+    label: "Qonşuluq əmlakları", 
+    icon: Neighbour,
+    filter: "roommate",
+    route: "/listings",
+    announcementTypes: ["roommate"],
+    propertyTypes: ["apartment"]
+  },
+  { 
+    id: 6, 
+    label: "Mənzil", 
+    icon: Building,
+    filter: "apartment",
+    route: "/listings",
+    announcementTypes: ["sell", "rent", "daily", "roommate"],
+    propertyTypes: ["apartment"]
+  },
+  { 
+    id: 7, 
+    label: "Bağ Evi", 
+    icon: Datcha,
+    filter: "house",
+    route: "/listings",
+    announcementTypes: ["sell", "rent", "daily"],
+    propertyTypes: ["house"]
+  },
+  { 
+    id: 8, 
+    label: "Obyekt", 
+    icon: Store,
+    filter: "object",
+    route: "/listings",
+    announcementTypes: ["sell", "rent"],
+    propertyTypes: ["object"]
+  },
+  { 
+    id: 9, 
+    label: "Torpaq", 
+    icon: Land,
+    filter: "land",
+    route: "/listings",
+    announcementTypes: ["sell"],
+    propertyTypes: ["land"]
+  },
+  { 
+    id: 10, 
+    label: "Ofis", 
+    icon: Office,
+    filter: "office",
+    route: "/listings",
+    announcementTypes: ["sell", "rent"],
+    propertyTypes: ["office"]
+  },
 ];
 
-function Category() {
-  const [activeId, setActiveId] = useState(1);
+function Category({ 
+  listings = [],
+  loading = false,
+  showNavigation = true, 
+  onCategoryChange,
+  activeId: externalActiveId, 
+}) {
+  const [activeId, setActiveId] = useState(externalActiveId || null);
   const [hover, setHover] = useState(-1);
+  const [categoriesWithCount, setCategoriesWithCount] = useState(categories);
   const swiperRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 430px)');
+  const router = useRouter(); 
+  // const navigate = useNavigate();
 
-  return (
+  useEffect(() => {
+    if (externalActiveId !== undefined && externalActiveId !== activeId) {
+      setActiveId(externalActiveId);
+    }
+  }, [externalActiveId]);
+
+  useEffect(() => {
+    if (listings && listings.length > 0) {
+      const updatedCategories = categories.map(category => {
+        let count = 0;
+        
+        if (category.filter === "all") {
+          count = listings.length;
+        } else if (category.filter === "popular") {
+          count = listings.filter(listing => 
+            listing.isPopular || 
+            listing.viewCount > 100 || 
+            listing.favoriteCount > 10
+          ).length;
+        } else {
+          count = listings.filter(listing => {
+            const matchesAnnouncementType = category.announcementTypes.includes(listing.announcementType);
+            const matchesPropertyType = category.propertyTypes.includes(listing.propertyType);
+            return matchesAnnouncementType && matchesPropertyType;
+          }).length;
+        }
+
+        return {
+          ...category,
+          count: count
+        };
+      });
+
+      setCategoriesWithCount(updatedCategories);
+    }
+  }, [listings]);
+
+const handleCategoryClick = (categoryId) => {
+  setActiveId(categoryId);
+  const selectedCategory = categories.find(cat => cat.id === categoryId);
+
+  if (showNavigation && selectedCategory) {
+    const searchParams = new URLSearchParams({
+      category: selectedCategory.filter,
+      announcementTypes: selectedCategory.announcementTypes.join(','),
+      propertyTypes: selectedCategory.propertyTypes.join(','),
+      categoryId: categoryId.toString()
+    });
+    router.push(`/all-houses/category-lists?${searchParams.toString()}`);
+  }
+};
+return (
     <>
-      {isMobile ?
-        ''
+      {isMobile ? 
+        '' 
         :
         <section className="mt-[65px] max-w-[1600px] mx-auto px-[80px] max-[1025]:px-[20px] max-[426]:px-[16px]">
           <div className="w-full flex justify-start">
@@ -98,7 +240,7 @@ function Category() {
                 spaceBetween={8}
                 onSwiper={(swiper) => (swiperRef.current = swiper)}
               >
-                {categories.map((cat) => {
+                {categoriesWithCount.map((cat) => {
                   const isActive = activeId === cat.id;
                   const isHover = hover === cat.id;
                   const Icon = cat.icon;
@@ -108,18 +250,22 @@ function Category() {
                       <div
                         onMouseEnter={() => setHover(cat.id)}
                         onMouseLeave={() => setHover(-1)}
-                        onClick={() => setActiveId(cat.id)}
-                        className={`rounded-[8px] h-[46px] px-[20px] flex items-center gap-[8px] cursor-pointer select-none
+                        onClick={() => handleCategoryClick(cat.id)}
+                        className={`rounded-[8px] h-[46px] px-[20px] flex items-center gap-[8px] cursor-pointer select-none transition-colors duration-200
                           ${isActive
                             ? "bg-primary text-white"
                             : "bg-white text-black hover:bg-primary hover:text-white"
                           }
+                          ${loading ? 'pointer-events-none opacity-50' : ''}
                         `}
                       >
                         <Icon isHover={isHover} isActive={isActive} />
                         <span className="font-[500] text-[12px] md:text-[14px] whitespace-nowrap">
                           {cat.label}
                         </span>
+                        {loading && isActive && (
+                          <div className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin ml-1" />
+                        )}
                       </div>
                     </SwiperSlide>
                   );
@@ -128,9 +274,11 @@ function Category() {
               <SampleNextArrow swiperRef={swiperRef} />
             </div>
           </div>
-        </section>}
+        </section>
+      }
     </>
   );
 }
 
 export default Category;
+

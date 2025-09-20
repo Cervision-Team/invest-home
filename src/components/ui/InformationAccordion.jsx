@@ -10,7 +10,7 @@ const InformationAccordion = () => {
   return (
     <>
       <div
-        className='min-w-0 h-auto  max-[465px]:p-5 p-10 max-[465px]:rounded-[25px] rounded-[45px] border border-solid border-[#B3E5DD] shadow-[0_3px_0_0_#B3E5DD] transition-all duration-500 ease-in-out transform hover:scale-[1.02] hover:shadow-[0_6px_0_0_#B3E5DD]'
+        className='min-w-0 h-auto  max-[465px]:p-5 p-10 max-[465px]:rounded-[25px] rounded-[45px] border border-solid border-[#B3E5DD] shadow-[0_3px_0_0_#B3E5DD] transition-all duration-500 ease-in-out transform hover:scale-[1.02] hover:shadow-[0_6px_0_0_#B3E5DD] sm:hidden'
         style={{ backgroundColor: isAccordionOpen ? '#02836F' : '#26B5A0' }}
       >
         <div className='flex flex-row items-center justify-between'>
