@@ -1,3 +1,5 @@
+"use client"
+
 import FilterResults from "./FilterResults"
 
 const page = () => {
