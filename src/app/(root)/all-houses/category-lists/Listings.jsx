@@ -4,6 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { houseData } from "@/components/core/house";
 import HouseCard from "@/components/ui/HouseCard";
 
+export const dynamic = 'force-dynamic';
+
 function Listings() {
   const searchParams = useSearchParams();
   const [filteredListings, setFilteredListings] = useState([]);
