@@ -83,6 +83,51 @@ const RoommateAnncDetails = ({
     <>
       <style>
         {`
+                                .input-field {
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+          appearance: none;
+          color: #1f2937;
+        }
+
+
+        .input-field:hover {
+          border-color: #26B5A0;
+        }
+
+        .input-field:focus {
+          outline: none;
+          border-color: #1B8F7D;
+          background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .input-field.error {
+          border-color: #ef4444;
+          background-color: rgba(254, 242, 242, 0.95);
+          animation: shake 0.5s ease-in-out;
+        }
+
+        .input-field.error:hover {
+          border-color: #dc2626;
+        }
+
+        .input-field.error:focus {
+          border-color: #dc2626;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+
           .svg-checkbox {
             appearance: none;
             -webkit-appearance: none;
@@ -134,9 +179,6 @@ const RoommateAnncDetails = ({
             -moz-appearance: textfield;
           }
           
-          .error-field {
-            border-color: #ef4444 !important;
-          }
           .error-text {
             color: #ef4444;
             font-size: 14px;
@@ -311,8 +353,8 @@ const RoommateAnncDetails = ({
                     value={formik.values.residentsCount || ''}
                     onChange={(e) => handleInputChange('residentsCount', e.target.value)}
                     onBlur={() => handleBlur('residentsCount')}
-                    className={`w-[350px] h-[46px] px-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${
-                      hasError('residentsCount') ? 'error-field' : 'border-black hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#1B8F7D] focus:border-[#1B8F7D]'
+                    className={`w-[350px] h-[46px] px-[10px] py-2 input-field remove-arrow ${
+                      hasError('residentsCount') ? 'error' : 'border-black'
                     }`}
                     placeholder="Evdə yaşayanların sayı"
                   />

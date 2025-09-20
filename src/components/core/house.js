@@ -35,6 +35,8 @@ export const houseData = [
     field: "85 m2",
     metro: "Gənclik",
     time: "15 dəq",
+    announcementType: "rent",
+    propertyType: "apartment",
     images: [
       ev1.src,
       ev1.src,

@@ -89,7 +89,7 @@ const Footer = () => {
               <div className="relative w-full max-w-sm">
                 <input
                   type="text"
-                  placeholder="Email Adress"
+                  placeholder="Buraya yazın..."
                   className="w-full h-12 pl-5 pr-16 rounded-full bg-white shadow-md outline-none placeholder-gray-400"
                 />
                 <button className="absolute top-1.5 right-2 w-10 h-10 rounded-full bg-[var(--primary-color)] flex items-center justify-center">

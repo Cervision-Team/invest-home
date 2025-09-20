@@ -238,6 +238,63 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
   // ----------------- JSX (your form UI, unchanged except validation wiring uses the new funcs) -----------------
   return (
     <>
+              <style>{`
+        .input-field {
+          padding: 12px 16px;
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+          appearance: none;
+          color: #1f2937;
+        }
+
+
+        .input-field:hover {
+          border-color: #26B5A0;
+        }
+
+        .input-field:focus {
+          outline: none;
+          border-color: #1B8F7D;
+          background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .input-field.error {
+          border-color: #ef4444;
+          background-color: rgba(254, 242, 242, 0.95);
+          animation: shake 0.5s ease-in-out;
+        }
+
+        .input-field.error:hover {
+          border-color: #dc2626;
+        }
+
+        .input-field.error:focus {
+          border-color: #dc2626;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+          .remove-arrow::-webkit-outer-spin-button,
+          .remove-arrow::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          .remove-arrow {
+            -moz-appearance: textfield;
+          }
+
+      `}</style>
+
       <div className="min-w-0 max-[430px]:gap-[16px] max-[430px]:flex-col flex max-[1200px]:gap-[40px] gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]">
         <div className="min-w-0 basis-[50%]">
           <form action="">
@@ -248,8 +305,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="Ad Soyad"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.fullName ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.fullName ? "error" : ""}`}
                   type="text"
                   value={formData.fullName || ""}
                   onChange={(e) => {
@@ -268,8 +324,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="investhomeaz@gmail.com"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.email ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.email ? "error" : ""}`}
                   type="email"
                   value={formData.email || ""}
                   onChange={(e) => {
@@ -288,8 +343,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder=""
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.phone ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.phone ? "error" : ""}`}
                   type="phone"
                   value={formData.phone || ""}
                   onChange={(e) => {
@@ -308,8 +362,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="İş Təcrübəniz"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about1 ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.about1 ? "error" : ""}`}
                   type="text"
                   value={formData.about1 || ""}
                   onChange={(e) => {
@@ -326,8 +379,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 2</label>
                 <input
                   placeholder="İş Təcrübəniz"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about2 ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.about2 ? "error" : ""}`}
                   type="text"
                   value={formData.about2 || ""}
                   onChange={(e) => {
@@ -352,8 +404,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="Bakı Dövlət Universiteti"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.education ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.education ? "error" : ""}`}
                   type="text"
                   value={formData.education || ""}
                   onChange={(e) => {
@@ -372,8 +423,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="28"
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.age ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field remove-arrow ${errors.age ? "error" : ""}`}
                   type="number"
                   min="18"
                   max="65"
@@ -394,8 +444,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="Xəzər ray., Mərdəkan qəs., Əli İsazade küç."
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.address ? "border-red-500" : "border-[black]"
-                    }`}
+                  className={`input-field ${errors.address ? "error" : ""}`}
                   type="text"
                   value={formData.address || ""}
                   onChange={(e) => {
@@ -428,12 +477,10 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                   onDrop={handleDrop}
                 >
                   <div
-                    className={`
+                    className={`input-field
                       max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
                       px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
-                      ${isDragging ? "border-blue-500 bg-blue-50" : ""}
-                      ${formData.cv ? "border-[var(--primary-color)] bg-green-50" : "border-[black]"}
-                      ${errors.cv ? "border-red-500 bg-red-50" : ""}`}
+                      ${errors.cv ? 'error' : ''}`}
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <p className="max-[430px]:text-primary line-clamp-1 truncate text-[14px]/[21px] text-[#7F7F87]">{formData.cv ? formData.cv.name : "CV faylınızı seçin"}</p>

@@ -118,11 +118,59 @@ const clearFieldsForPropertyType = useCallback(
       setActiveBuilding(formik?.values?.buildingType || null);
       setActiveRepaired(formik?.values?.repairStatus || null);
     }, [formik?.values?.buildingType, formik?.values?.repairStatus]);
+
+    console.log({displayedErrors});
+    
   
   return (
     <>
       <style>
         {`
+                        .input-field {
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+          appearance: none;
+          color: #1f2937;
+        }
+
+
+        .input-field:hover {
+          border-color: #26B5A0;
+        }
+
+        .input-field:focus {
+          outline: none;
+          border-color: #1B8F7D;
+          background-color: rgba(255, 255, 255, 0.98);
+        }
+
+        .input-field.error {
+          border-color: #ef4444;
+          background-color: rgba(254, 242, 242, 0.95);
+          animation: shake 0.5s ease-in-out;
+        }
+
+        .input-field.error:hover {
+          border-color: #dc2626;
+        }
+
+        .input-field.error:focus {
+          border-color: #dc2626;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+
           .remove-arrow::-webkit-outer-spin-button,
           .remove-arrow::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -130,9 +178,6 @@ const clearFieldsForPropertyType = useCallback(
           }
           .remove-arrow {
             -moz-appearance: textfield;
-          }
-          .error-field {
-            border-color: #ef4444 !important;
           }
           .error-text {
             color: #ef4444;
@@ -231,7 +276,7 @@ const clearFieldsForPropertyType = useCallback(
                       value={formik.values.price || ''}
                       onChange={(e) => handleInputChange('price', e.target.value)}
                       onBlur={() => handleBlur("price")}
-                      className={`w-full h-10 pr-16 pl-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${hasError('price') ? 'error-field' : 'border-black'}`}
+                      className={`w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
                       placeholder="Qiymət"
                     />
                   </div>
@@ -247,7 +292,7 @@ const clearFieldsForPropertyType = useCallback(
                         value={formik.values.area || ''}
                         onChange={(e) => handleInputChange('area', e.target.value)}
                         onBlur={() => handleBlur("area")}
-                        className={`w-full h-10 pr-12 pl-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${hasError('area') ? 'error-field' : 'border-black'}`}
+                        className={`w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('area') ? 'error' : 'border-black'}`}
                         placeholder="Sahə"
                       />
                       <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
@@ -263,8 +308,8 @@ const clearFieldsForPropertyType = useCallback(
                       value={formik.values.floor || ''}
                       onChange={(e) => handleInputChange('floor', e.target.value)}
                       onBlur={() => handleBlur("floor")}
-                      className={`w-[350px] h-10 px-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${
-                        hasError('floor') ? 'error-field' : 'border-black'}`}
+                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${
+                        hasError('floor') ? 'error' : 'border-black'}`}
                       placeholder="Mərtəbə"
                     />
                     {hasError('floor') && <p className="error-text">{getErrorMessage('floor')}</p>}
@@ -278,7 +323,7 @@ const clearFieldsForPropertyType = useCallback(
                       value={formik.values.totalFloors || ''}
                       onChange={(e) => handleInputChange('totalFloors', e.target.value)}
                       onBlur={() => handleBlur("totalFloors")}
-                      className={`w-[350px] h-10 px-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${hasError('totalFloors') ? 'error-field' : 'border-black'}`}
+                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('totalFloors') ? 'error' : 'border-black'}`}
                       placeholder="Sayı"
                     />
                     {hasError('totalFloors') && <p className="error-text">{getErrorMessage('totalFloors')}</p>}
@@ -292,7 +337,7 @@ const clearFieldsForPropertyType = useCallback(
                       value={formik.values.rooms || ''}
                       onChange={(e) => handleInputChange('rooms', e.target.value)}
                       onBlur={() => handleBlur("rooms")}
-                      className={`w-[350px] h-10 px-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${hasError('rooms') ? 'error-field' : 'border-black'}`}
+                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('rooms') ? 'error' : 'border-black'}`}
                       placeholder="Sayı"
                     />
                     {hasError('rooms') && <p className="error-text">{getErrorMessage('rooms')}</p>}
@@ -306,8 +351,8 @@ const clearFieldsForPropertyType = useCallback(
                       value={formik.values.bathrooms || ''}
                       onChange={(e) => handleInputChange('bathrooms', e.target.value)}
                       onBlur={() => handleBlur("bathrooms")}
-                      className={`w-[350px] h-10 px-[10px] py-2 bg-white border rounded-[10px] shadow-sm transition-all duration-200 remove-arrow ${
-                     hasError('bathrooms') ? 'error-field' : 'border-black'}`}
+                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${
+                     hasError('bathrooms') ? 'error' : 'border-black'}`}
                       placeholder="Sayı"
                     />
                    {hasError('bathrooms') && <p className="error-text">{getErrorMessage('bathrooms')}</p>}

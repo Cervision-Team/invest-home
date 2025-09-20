@@ -1,61 +1,69 @@
-// Updated PrivateInfo.js
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { agentFormSchema } from "@/lib/schemas/agentSchema";
 
-const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, setShowAllErrors }) => {
+const PrivateInfo = ({
+  formData,
+  updateForm,
+  onValidationChange,
+  showAllErrors,
+  setShowAllErrors,
+}) => {
   const [errors, setErrors] = useState({});
 
   const validateField = async (fieldName, value) => {
     try {
       await agentFormSchema.validateAt(fieldName, { ...formData, [fieldName]: value });
-      setErrors(prev => ({ ...prev, [fieldName]: undefined }));
+      setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     } catch (err) {
       if (err.name === "ValidationError") {
-        setErrors(prev => ({ ...prev, [fieldName]: err.message }));
+        setErrors((prev) => ({ ...prev, [fieldName]: err.message }));
       }
     }
-
-    // Check overall form validity
     checkFormValidity();
   };
 
   const checkFormValidity = async () => {
     try {
-      const currentStepData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        about1: formData.about1,
-        about2: formData.about2, 
-      };
+      const stepData = (({ fullName, email, phone, about1, about2 }) => ({
+        fullName,
+        email,
+        phone,
+        about1,
+        about2,
+      }))(formData);
 
-      // Create a schema that only validates current step fields
-      await agentFormSchema.pick(['fullName', 'email', 'phone', 'about1', 'about2']).validate(currentStepData, { abortEarly: false });
+      await agentFormSchema
+        .pick(["fullName", "email", "phone", "about1", "about2"])
+        .validate(stepData, { abortEarly: false });
+
       onValidationChange(true);
-    } catch (err) {
+    } catch {
       onValidationChange(false);
     }
   };
 
   const validateAllFields = async () => {
     try {
-      const currentStepData = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        about1: formData.about1,
-        about2: formData.about2,
-      };
+      const stepData = (({ fullName, email, phone, about1, about2 }) => ({
+        fullName,
+        email,
+        phone,
+        about1,
+        about2,
+      }))(formData);
 
-      await agentFormSchema.pick(['fullName', 'email', 'phone', 'about1', 'about2']).validate(currentStepData, { abortEarly: false });
+      await agentFormSchema
+        .pick(["fullName", "email", "phone", "about1", "about2"])
+        .validate(stepData, { abortEarly: false });
+
       setErrors({});
       onValidationChange(true);
     } catch (err) {
       if (err.name === "ValidationError") {
         const newErrors = {};
-        err.inner.forEach((error) => {
-          newErrors[error.path] = error.message;
+        err.inner.forEach((e) => {
+          newErrors[e.path] = e.message;
         });
         setErrors(newErrors);
         onValidationChange(false);
@@ -74,106 +82,98 @@ const PrivateInfo = ({ formData, updateForm, onValidationChange, showAllErrors, 
     checkFormValidity();
   }, [formData]);
 
+  const inputClass = (field) =>
+    `max-[430px]:placeholder-primary max-[430px]:text-[16px]
+     max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
+     outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
+     input-field ${errors[field] ? "error" : ""}`;
+
   return (
     <>
-      <div className='flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]'>
-        <div className='min-[1200px]:basis-[50%] w-full'>
-          <form action="">
-            <div className='flex flex-col gap-[16px]'>
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Ad Soyad<span className="text-red-500">*</span></label>
-                <input
-                  placeholder='Ad Soyad'
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.fullName ? 'border-red-500' : 'border-[black]'
-                    }`}
-                  type="text"
-                  value={formData.fullName || ''}
-                  onChange={(e) => {
-                    updateForm("fullName", e.target.value);
-                    validateField("fullName", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("fullName", e.target.value)}
-                />
-                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
-              </div>
+      <style>{`
+        .input-field {
+          padding: 12px 16px;
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          box-shadow:
+            0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+          appearance: none;
+          color: #1f2937;
+        }
 
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Email<span className="text-red-500">*</span></label>
-                <input
-                  placeholder='investhomeaz@gmail.com'
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.email ? 'border-red-500' : 'border-[black]'
-                    }`}
-                  type="email"
-                  value={formData.email || ''}
-                  onChange={(e) => {
-                    updateForm("email", e.target.value);
-                    validateField("email", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("email", e.target.value)}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-              </div>
 
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Telefon<span className="text-red-500">*</span></label>
-                <input
-                  placeholder='phone'
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.phone ? 'border-red-500' : 'border-[black]'
-                    }`}
-                  type="phone"
-                  value={formData.phone || ''}
-                  onChange={(e) => {
-                    updateForm("phone", e.target.value);
-                    validateField("phone", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("phone", e.target.value)}
-                />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-              </div>
+        .input-field:hover {
+          border-color: #26B5A0;
+        }
 
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 1<span className="text-red-500">*</span></label>
-                <input
-                  placeholder='İş Təcrübəniz'
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about1 ? 'border-red-500' : 'border-[black]'
-                    }`}
-                  type="text"
-                  value={formData.about1 || ''}
-                  onChange={(e) => {
-                    updateForm("about1", e.target.value);
-                    validateField("about1", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("about1", e.target.value)}
-                />
-                {errors.about1 && <p className="text-red-500 text-sm">{errors.about1}</p>}
-              </div>
+        .input-field:focus {
+          outline: none;
+          border-color: #1B8F7D;
+          background-color: rgba(255, 255, 255, 0.98);
+        }
 
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 2</label>
-                <input
-                  placeholder='İş Təcrübəniz'
-                  className={`max-[430px]:placeholder-primary max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px] ${errors.about2 ? 'border-red-500' : 'border-[black]'
-                    }`}
-                  type="text"
-                  value={formData.about2 || ''}
-                  onChange={(e) => {
-                    updateForm("about2", e.target.value);
-                    validateField("about2", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("about2", e.target.value)}
-                />
-                {errors.about2 && <p className="text-red-500 text-sm">{errors.about2}</p>}
-              </div>
+        .input-field.error {
+          border-color: #ef4444;
+          background-color: rgba(254, 242, 242, 0.95);
+          animation: shake 0.5s ease-in-out;
+        }
+
+        .input-field.error:hover {
+          border-color: #dc2626;
+        }
+
+        .input-field.error:focus {
+          border-color: #dc2626;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+      `}</style>
+
+      <div className="flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]">
+        <div className="min-[1200px]:basis-[50%] w-full">
+          <form>
+            <div className="flex flex-col gap-[16px]">
+              {[
+                { name: "fullName", label: "Ad Soyad", required: true, placeholder: "Ad Soyad" },
+                { name: "email", label: "Email", required: true, placeholder: "investhomeaz@gmail.com", type: "email" },
+                { name: "phone", label: "Telefon", required: true, placeholder: "phone" },
+                { name: "about1", label: "Haqqınızda 1", required: true, placeholder: "İş Təcrübəniz" },
+                { name: "about2", label: "Haqqınızda 2", required: false, placeholder: "İş Təcrübəniz" },
+              ].map(({ name, label, required, placeholder, type = "text" }) => (
+                <div key={name} className="flex flex-col gap-[8px]">
+                  <label className="max-[430px]:hidden">
+                    {label}
+                    {required && <span className="text-red-500">*</span>}
+                  </label>
+                  <input
+                    type={type}
+                    placeholder={placeholder}
+                    className={inputClass(name)}
+                    value={formData[name] || ""}
+                    onChange={(e) => {
+                      updateForm(name, e.target.value);
+                      validateField(name, e.target.value);
+                    }}
+                    onBlur={(e) => validateField(name, e.target.value)}
+                  />
+                  {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+                </div>
+              ))}
             </div>
           </form>
         </div>
-        <div className='max-[1200px]:hidden flex items-center basis-[50%]'>
-            <Image
-              src="/gifs/building.gif"
-              alt="building"
-              width={519}
-              height={389}
-            />
+
+        <div className="max-[1200px]:hidden flex items-center basis-[50%]">
+          <Image src="/gifs/building.gif" alt="building" width={519} height={389} />
         </div>
       </div>
     </>

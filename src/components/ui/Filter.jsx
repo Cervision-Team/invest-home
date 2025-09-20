@@ -1,74 +1,994 @@
 'use client';
 
-import { useState } from "react";
-import { Button } from "./HouseTypesButtons";
-import { FilterBtn } from "../core/Svg"; // Make sure this is a valid React component
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
+import { useRouter } from 'next/navigation'; 
 
-export default function Filter() {
-  const [selectedType, setSelectedType] = useState("Bütün");
-  const [showPrice, setShowPrice] = useState(false); // Added state
+
+// Mock data based on validation schema - will be replaced with API calls
+const PROPERTY_TYPES = {
+  sell: [
+    { id: 'apartment', name: 'Mənzil' },
+    { id: 'object', name: 'Obyekt' },
+    { id: 'land', name: 'Torpaq sahəsi' },
+    { id: 'house', name: 'Ev' },
+    { id: 'office', name: 'Ofis' },
+    { id: 'garage', name: 'Qaraj' }
+  ],
+  rent: [
+    { id: 'apartment', name: 'Mənzil' },
+    { id: 'object', name: 'Obyekt' },
+    { id: 'land', name: 'Torpaq sahəsi' },
+    { id: 'house', name: 'Ev' },
+    { id: 'office', name: 'Ofis' },
+    { id: 'garage', name: 'Qaraj' }
+  ],
+  daily: [
+    { id: 'apartmentDaily', name: 'Mənzil' },
+    { id: 'gardenHouse', name: 'Bağ evi' },
+    { id: 'aframe', name: 'A-frame' },
+    { id: 'kotej', name: 'Kotej' },
+    { id: 'room', name: 'Otaq' }
+  ],
+  roommate: [
+    { id: 'apartmentRoommate', name: 'Mənzil' }
+  ]
+};
+
+const OFFICE_TYPES = [
+  { id: 'businessCenter', name: 'Biznes mərkəz' },
+  { id: 'apartmentOffice', name: 'Mənzil ofisi' },
+  { id: 'gardenHouse', name: 'Bağ evi' }
+];
+
+const BUILDING_TYPES = [
+  { id: 'newBuilding', name: 'Yeni tikili' },
+  { id: 'oldBuilding', name: 'Köhnə tikili' }
+];
+
+const REPAIR_STATUS = [
+  { id: 'renewed', name: 'Təmirli' },
+  { id: 'notRenewed', name: 'Təmirsiz' }
+];
+
+const LOCATIONS = [
+  { id: 'baku-center', name: 'Bakı Mərkəzi',  },
+  { id: 'baku-sabail', name: 'Sabail rayonu', },
+  { id: 'baku-nasimi', name: 'Nəsimi rayonu', },
+  { id: 'baku-yasamal', name: 'Yasamal rayonu', },
+  { id: 'baku-nizami', name: 'Nizami rayonu', },
+  { id: 'ganja', name: 'Gəncə',  },
+  { id: 'sumgayit', name: 'Sumqayıt',},
+  { id: 'mingachevir', name: 'Mingəçevir',  }
+];
+
+const ROOM_OPTIONS = [
+  { id: 1, label: '1 otaq', value: 1 },
+  { id: 2, label: '2 otaq', value: 2 },
+  { id: 3, label: '3 otaq', value: 3 },
+  { id: 4, label: '4 otaq', value: 4 },
+  { id: 5, label: '5 otaq', value: 5 },
+  { id: 6, label: '6+ otaq', value: '6+' }
+];
+
+const ADDITIONAL_FILTERS = [
+  {
+    id: 'area',
+    label: 'Sahə (m²)',
+    type: 'range',
+    applicable: ['apartment', 'object', 'house', 'office', 'apartmentDaily', 'gardenHouse', 'aframe', 'kotej', 'room', 'apartmentRoommate']
+  },
+  {
+    id: 'landArea',
+    label: 'Torpaq sahəsi (m²)',
+    type: 'range',
+    applicable: ['house', 'land', 'gardenHouse', 'aframe', 'kotej']
+  },
+  {
+    id: 'floor',
+    label: 'Mərtəbə',
+    type: 'range',
+    applicable: ['apartment', 'object', 'office', 'apartmentDaily', 'apartmentRoommate']
+  },
+  {
+    id: 'totalFloors',
+    label: 'Ümumi mərtəbələr',
+    type: 'range',
+    applicable: ['apartment', 'house', 'office', 'object', 'apartmentDaily', 'aframe', 'apartmentRoommate']
+  },
+  {
+    id: 'bathrooms',
+    label: 'Sanitar qovşaq sayı',
+    type: 'range',
+    applicable: ['apartment', 'house', 'object', 'office', 'apartmentDaily', 'gardenHouse', 'aframe', 'kotej', 'room', 'apartmentRoommate']
+  },
+  {
+    id: 'buildingType',
+    label: 'Bina növü',
+    type: 'select',
+    options: BUILDING_TYPES,
+    applicable: ['apartment', 'object', 'office', 'apartmentDaily', 'apartmentRoommate']
+  },
+  {
+    id: 'repairStatus',
+    label: 'Təmir vəziyyəti',
+    type: 'select',
+    options: REPAIR_STATUS,
+    applicable: ['apartment', 'object', 'house', 'office', 'apartmentDaily', 'gardenHouse', 'aframe', 'kotej', 'room', 'apartmentRoommate']
+  },
+  {
+    id: 'officeType',
+    label: 'Ofis tipi',
+    type: 'select',
+    options: OFFICE_TYPES,
+    applicable: ['office']
+  },
+  {
+    id: 'isMortgaged',
+    label: 'İpotekada',
+    type: 'boolean',
+    applicable: ['apartment', 'object', 'house', 'office', 'garage', 'land']
+  }
+];
+
+// FilterBtn Component
+const FilterBtn = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path
+      d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+export const Button = ({ onSelect, selectedValue = "all" }) => {
+  const arr = [
+    { id: 1, name: "Bütün", value: "all" },
+    { id: 2, name: "Satılıq", value: "sell" },
+    { id: 3, name: "Kirayə", value: "rent" },
+    { id: 4, name: "Günlük", value: "daily" }
+  ];
+
+  const getActiveId = (value) => {
+    const item = arr.find(elem => elem.value === value);
+    return item ? item.id : 1; 
+  };
+
+  const activeId = getActiveId(selectedValue);
+
+  return (
+    <div className="bg-white w-fit flex gap-2" style={{ borderRadius: "12px 12px 0px 0px" }}>
+      {arr.map((elem) => {
+        const isActive = activeId === elem.id;
+        
+        return (
+          <button
+            key={elem.id}
+            onClick={() => {
+              onSelect(elem.value);
+            }}
+            style={{ borderRadius: "12px 12px 0px 0px" }}
+            className={`py-[10px] w-[102px] h-[44px] px-[28px] leading-[24px] tracking-wide text-sm font-medium transition-all duration-300 cursor-pointer
+              ${isActive
+                ? "bg-[#02836F] text-white border-transparent"
+                : "bg-white text-[#02836F]"
+              }`}
+          >
+            {elem.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+const Dropdown = ({ children, isOpen, onClose, className = "" }) => {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      ref={dropdownRef}
+      className={`absolute bottom-full left-0 w-[calc(100%+100px)] -ml-[16px] bg-white border border-[#E9E9E9] rounded-t-[12px] shadow-lg z-50 mb-1 ${className}`}
+    >
+      {children}
+    </div>
+  );
+};
+
+const PropertyTypeSelector = ({ announcementType, selectedTypes, onTypeChange }) => {
+  const availableTypes = PROPERTY_TYPES[announcementType] || [];
 
   return (
     <>
-      <div className="max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] flex flex-col items-center">
-        <div>
-          <Button onSelect={(val) => setSelectedType(val)} />
+          <style>
+        {`
+          .svg-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+          }
+
+          .svg-checkbox:checked {
+            background-color: #1B8F7D;
+            border-color: #1B8F7D;
+          }
+
+          .svg-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+            background-size: contain;
+            background-repeat: no-repeat;
+          }
+
+          .svg-checkbox:hover {
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+          }
+
+          .svg-checkbox:focus {
+            outline: none;
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+          }
+        `}
+      </style>
+
+    <div className="p-4 space-y-2">
+      <div className="text-sm font-medium text-gray-700 mb-3">Əmlak növü</div>
+      {availableTypes.map((type) => (
+        <label key={type.id} className="flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="mr-3 w-4 h-4 text-[#02836F] border-gray-300 rounded focus:ring-[#02836F] svg-checkbox"
+            checked={selectedTypes.includes(type.id)}
+            onChange={() => onTypeChange(type.id)}
+          />
+          <span className="text-sm">{type.name}</span>
+        </label>
+      ))}
+    </div>
+    </>
+  );
+}; 
+
+const FilterModal = ({ isOpen, onClose, filters, onApply, selectedPropertyTypes, announcementType }) => {
+  const [localFilters, setLocalFilters] = useState(filters);
+
+  useEffect(() => {
+    setLocalFilters(filters); 
+  }, [filters]);
+
+  const handleChange = (key, value) => setLocalFilters(prev => ({ ...prev, [key]: value }));
+  const handleApply = () => {
+    onApply(localFilters);
+    onClose();
+  };
+  const handleReset = () => setLocalFilters(Object.fromEntries(Object.keys(localFilters).map(k => [k, ''])));
+
+  const applicableFilters = selectedPropertyTypes.length === 0
+    ? ADDITIONAL_FILTERS
+    : ADDITIONAL_FILTERS.filter(f => selectedPropertyTypes.some(t => f.applicable.includes(t)));
+
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <>
+      <style>
+        {`
+          .svg-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+          }
+
+          .svg-checkbox:checked {
+            background-color: #1B8F7D;
+            border-color: #1B8F7D;
+          }
+
+          .svg-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+            background-size: contain;
+            background-repeat: no-repeat;
+          }
+
+          .svg-checkbox:hover {
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+          }
+
+          .svg-checkbox:focus {
+            outline: none;
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+          }
+
+           .remove-arrow::-webkit-outer-spin-button,
+          .remove-arrow::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          .remove-arrow {
+            -moz-appearance: textfield;
+          }
+        `}
+      </style>
+
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-md transition-all duration-300 ease-out p-4"
+    >
+      <div 
+        onClick={e => e.stopPropagation()} 
+        className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 ease-out scale-100"
+      >
+        <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-8 bg-gradient-to-b from-[#02836F] to-[#026b5a] rounded-full"></div>
+              <h2 className="text-2xl font-bold text-gray-900">Ətraflı Filter</h2>
+              <span className="px-2 py-1 bg-[#02836F]/10 text-[#02836F] text-xs font-medium rounded-full">
+                {applicableFilters.length} filter
+              </span>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
-        <div className="max-w-[1000px] flex bg-[white] rounded-t-[12px] w-full py-[8.5px] px-[24px] gap-[32px]">
 
+        <div className="overflow-y-auto max-h-[calc(90vh-180px)] px-6 py-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {applicableFilters.map((f, index) => (
+              <div 
+                key={f.id} 
+                className="group p-4 bg-gray-50/50 hover:bg-gray-50 rounded-xl border border-gray-100 hover:border-[#02836F]/20 transition-all duration-200 hover:shadow-sm"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <label className="block text-sm font-semibold text-gray-800 mb-3 group-hover:text-[#02836F] transition-colors duration-200">
+                  {f.label}
+                </label>
+                
+                {f.type === 'range' && (
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          placeholder="Min"
+                          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#02836F]/20 focus:border-[#02836F] transition-all duration-200 text-sm font-medium placeholder-gray-400 remove-arrow"
+                          value={localFilters[`${f.id}_min`] || ''}
+                          onChange={e => handleChange(`${f.id}_min`, e.target.value)}
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-3 h-0.5 bg-gray-300 rounded-full"></div>
+                      </div>
+                      <div className="relative flex-1">
+                        <input
+                          type="number"
+                          placeholder="Max"
+                          className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#02836F]/20 focus:border-[#02836F] transition-all duration-200 text-sm font-medium placeholder-gray-400 remove-arrow"
+                          value={localFilters[`${f.id}_max`] || ''}
+                          onChange={e => handleChange(`${f.id}_max`, e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {f.type === 'select' && (
+                  <div className="relative">
+                    <select
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#02836F]/20 focus:border-[#02836F] transition-all duration-200 text-sm font-medium appearance-none cursor-pointer"
+                      value={localFilters[f.id] || ''}
+                      onChange={e => handleChange(f.id, e.target.value)}
+                    >
+                      <option value="" className="text-gray-400">Seçin</option>
+                      {f.options.map(o => (
+                        <option key={o.id} value={o.id} className="text-gray-900">{o.name}</option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+                
+                {f.type === 'boolean' && (
+                  <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-white/50 transition-all duration-200">
+                    <div className="relative">
+                      <input
+                        type="checkbox"
+                        className="sr-only svg-checkbox transition-all duration-200"
+                        checked={localFilters[f.id] || false}
+                        onChange={e => handleChange(f.id, e.target.checked)}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">Bəli</span>
+                  </label>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-100 px-6 py-4">
+          <div className="flex justify-between items-center gap-4">
+            <div className="text-sm text-gray-500">
+              {Object.keys(localFilters).filter(k => localFilters[k] !== '' && localFilters[k] !== false).length} aktiv filter
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={handleReset} 
+                className="px-6 py-2.5 border-2 border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-medium text-sm flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Sıfırla
+              </button>
+              <button 
+                onClick={handleApply} 
+                className="px-8 py-2.5 bg-gradient-to-r from-[#02836F] to-[#026b5a] text-white rounded-xl hover:shadow-lg hover:shadow-[#02836F]/25 transition-all duration-200 font-semibold text-sm flex items-center gap-2 transform hover:scale-105"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Tətbiq et
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+        </>,
+    document.body
+  );
+};
+
+export default function AdvancedFilter({ onSearch, initialFilters = {} }) {
+  
+  const [announcementType, setAnnouncementType] = useState("all");
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  
+  const [locationSearch, setLocationSearch] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+  const [selectedRooms, setSelectedRooms] = useState([]);
+  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState([]);
+  const [additionalFilters, setAdditionalFilters] = useState({});
+  
+  const [filteredLocations, setFilteredLocations] = useState(LOCATIONS);
+  const [previousAnnouncementType, setPreviousAnnouncementType] = useState("all");
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    const savedFilters = sessionStorage.getItem('searchFilters');
+    if (savedFilters) {
+      try {
+        const parsed = JSON.parse(savedFilters);
+        
+        setAnnouncementType(parsed.announcementType || 'all');
+        setSelectedLocation(parsed.selectedLocation || '');
+        setLocationSearch(parsed.locationSearch || '');
+        setPriceRange(parsed.priceRange || { min: '', max: '' });
+        setSelectedRooms(parsed.selectedRooms || []);
+        setSelectedPropertyTypes(parsed.selectedPropertyTypes || []);
+        setAdditionalFilters(parsed.additionalFilters || {});
+        setPreviousAnnouncementType(parsed.announcementType || 'all');
+        
+        sessionStorage.removeItem('searchFilters');
+      } catch (error) {
+        console.error('Error loading saved filters:', error);
+      }
+    } else if (initialFilters && Object.keys(initialFilters).length > 0) {
+      setAnnouncementType(initialFilters.announcementType ?? "all");
+      setSelectedPropertyTypes(initialFilters.propertyTypes ?? []);
+      setSelectedLocation(initialFilters.location ?? "");
+      setPriceRange(initialFilters.priceRange ?? { min: "", max: "" });
+      setSelectedRooms(initialFilters.rooms ?? []);
+      setAdditionalFilters(initialFilters.additionalFilters ?? {});
+    }
+    
+    setIsInitialLoad(false);
+  }, [initialFilters]);
+
+  useEffect(() => {
+    const filtered = LOCATIONS.filter(location =>
+      location.name.toLowerCase().includes(locationSearch.toLowerCase())
+    );
+    setFilteredLocations(filtered);
+  }, [locationSearch]);
+
+useEffect(() => {
+  if (!isInitialLoad && announcementType !== previousAnnouncementType) {
+    // Only reset property types
+    setSelectedPropertyTypes([]);
+    // Don't reset: selectedRooms, priceRange, selectedLocation, locationSearch, additional filters
+    setPreviousAnnouncementType(announcementType);
+  }
+}, [announcementType, previousAnnouncementType, isInitialLoad]);
+
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location.id);
+    setLocationSearch(location.name);
+    setActiveDropdown(null);
+  };
+
+  const handleRoomToggle = (room) => {
+    setSelectedRooms(prev => 
+      prev.includes(room.value)
+        ? prev.filter(r => r !== room.value)
+        : [...prev, room.value]
+    );
+  };
+
+  const handlePropertyTypeChange = (typeId) => {
+    setSelectedPropertyTypes(prev => 
+      prev.includes(typeId)
+        ? prev.filter(t => t !== typeId)
+        : [...prev, typeId]
+    );
+  };
+
+  const router = useRouter();
+
+  const handleSearch = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const searchFilters = {
+        announcementType,
+        propertyTypes: selectedPropertyTypes,
+        location: selectedLocation,
+        priceMin: priceRange.min || null,
+        priceMax: priceRange.max || null,
+        rooms: selectedRooms.length > 0 ? selectedRooms : null,
+        ...Object.fromEntries(
+          Object.entries(additionalFilters).filter(
+            ([, value]) => value !== '' && value !== null && value !== undefined
+          )
+        )
+      };
+
+      const filtersToSave = {
+        announcementType,
+        selectedLocation,
+        locationSearch,
+        priceRange,
+        selectedRooms,
+        selectedPropertyTypes,
+        additionalFilters
+      };
+      
+      sessionStorage.setItem('searchFilters', JSON.stringify(filtersToSave));
+
+      const query = new URLSearchParams();
+
+      Object.entries(searchFilters).forEach(([key, value]) => {
+        if (!value || value === 'all') return;
+        if (Array.isArray(value)) {
+          value.forEach(v => v && query.append(key, v.toString()));
+        } else {
+          query.append(key, value.toString());
+        }
+      });
+
+      const queryString = query.toString();
+
+      router.push(`/all-houses/filter-lists${queryString ? `?${queryString}` : ''}`);
+
+      onSearch?.(searchFilters);
+    },
+    [announcementType, selectedPropertyTypes, selectedLocation, locationSearch, priceRange, selectedRooms, additionalFilters, router, onSearch]
+  );
+
+  const getDisplayText = (field) => {
+    switch (field) {
+      case 'location':
+        if (selectedLocation) {
+          const location = LOCATIONS.find(l => l.id === selectedLocation);
+          return location ? location.name : 'Şəhər, Metro, Qəsəbə, Ünvan';
+        }
+        return 'Şəhər, Metro, Qəsəbə, Ünvan';
+      case 'price':
+        if (priceRange.min || priceRange.max) {
+          const min = priceRange.min || '0';
+          const max = priceRange.max || '∞';
+          return `${min} - ${max} AZN`;
+        }
+        return 'Əlavə et';
+      case 'rooms':
+        if (selectedRooms.length === 0) return 'Əlavə et';
+        if (selectedRooms.length === 1) return `${selectedRooms[0]} otaq`;
+        return `${selectedRooms.length} seçim`;
+      case 'propertyType':
+        if (selectedPropertyTypes.length === 0) return 'Əmlak növü';
+        if (selectedPropertyTypes.length === 1) {
+          const types = PROPERTY_TYPES[announcementType] || [];
+          const type = types.find(t => t.id === selectedPropertyTypes[0]);
+          return type ? type.name : 'Əmlak növü';
+        }
+        return `${selectedPropertyTypes.length} seçim`;
+      default:
+        return 'Əlavə et';
+      
+    }
+  };
+
+  return (
+        <>
+
+          <style>
+        {`
+          .svg-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+          }
+
+          .svg-checkbox:checked {
+            background-color: #1B8F7D;
+            border-color: #1B8F7D;
+          }
+
+          .svg-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='m13.854 3.646-7.5 7.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6 10.293l7.146-7.147a.5.5 0 0 1 .708.708z'/%3e%3c/svg%3e");
+            background-size: contain;
+            background-repeat: no-repeat;
+          }
+
+          .svg-checkbox:hover {
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+          }
+
+          .svg-checkbox:focus {
+            outline: none;
+            border-color: #1B8F7D;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+          }
+
+           .remove-arrow::-webkit-outer-spin-button,
+          .remove-arrow::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          .remove-arrow {
+            -moz-appearance: textfield;
+          }
+        `}
+      </style>
+
+      <div className="w-full mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] flex flex-col items-center relative">
+        <div>
+         <Button 
+           onSelect={(val) => setAnnouncementType(val)} 
+           selectedValue={announcementType} 
+         />  
+        </div>
+        
+        <div className="max-w-[1000px] flex bg-white rounded-t-[12px] w-full py-[8.5px] px-[24px] gap-[32px] relative">
           <div className="flex items-center gap-[16px] justify-between min-w-0 basis-[70%]">
-            <div className="cursor-pointer w-[100%] flex flex-col min-w-0">
-              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">Açar söz</span>
-              <div className="flex items-center justify-between">
-                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">Şəhər, Metro, Qəsəbə, Ünvan</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
+            
+            {/* Location Search */}
+            <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
+              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
+                Ünvan
+              </span>
+              <div 
+                className="flex items-center justify-between"
+                onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
+              >
+                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">
+                  {getDisplayText('location')}
+                </span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="25" 
+                  fill="none" 
+                  viewBox="0 0 24 25"
+                  className={`transition-transform ${activeDropdown === 'location' ? 'rotate-0' : 'rotate-180'}`}
+                >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
                     fill="#111111"
                   />
                 </svg>
               </div>
+              
+              <Dropdown 
+                isOpen={activeDropdown === 'location'} 
+                onClose={() => setActiveDropdown(null)}
+              >
+                <div className="p-4">
+                  <input
+                    type="text"
+                    placeholder="Axtarış..."
+                    className="w-full px-3 py-2 border border-[#E9E9E9] rounded-[8px] focus:outline-none focus:border-[#02836F] mb-3"
+                    value={locationSearch}
+                    onChange={(e) => setLocationSearch(e.target.value)}
+                  />
+                  <div className="max-h-60 overflow-y-auto">
+                    {filteredLocations.map((location) => (
+                      <div
+                        key={location.id}
+                        className="px-3 py-2 hover:bg-gray-50 cursor-pointer rounded-[4px] flex items-center justify-between"
+                        onClick={() => handleLocationSelect(location)}
+                      >
+                        <span>{location.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Dropdown>
             </div>
 
             <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
 
-            <div className="cursor-pointer w-[100%] flex flex-col min-w-0">
-              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">Qiymət</span>
-              <div className="flex items-center justify-between">
-                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">Əlavə et</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
+            {announcementType !== 'all' && (
+              <>
+                <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
+                  <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
+                    Əmlak növü
+                  </span>
+                  <div 
+                    className="flex items-center justify-between"
+                    onClick={() => setActiveDropdown(activeDropdown === 'propertyType' ? null : 'propertyType')}
+                  >
+                    <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">
+                      {getDisplayText('propertyType')}
+                    </span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="24" 
+                      height="25" 
+                      fill="none" 
+                      viewBox="0 0 24 25"
+                      className={`transition-transform ${activeDropdown === 'propertyType' ? 'rotate-0' : 'rotate-180'}`}
+                    >
+                      <path
+                        d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
+                        fill="#111111"
+                      />
+                    </svg>
+                  </div>
+                  
+                  <Dropdown 
+                    isOpen={activeDropdown === 'propertyType'} 
+                    onClose={() => setActiveDropdown(null)}
+                  >
+                    <PropertyTypeSelector
+                      announcementType={announcementType}
+                      selectedTypes={selectedPropertyTypes}
+                      onTypeChange={handlePropertyTypeChange}
+                    />
+                  </Dropdown>
+                </div>
+
+                <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
+              </>
+            )}
+
+            <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
+              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
+                Qiymət
+              </span>
+              <div 
+                className="flex items-center justify-between"
+                onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
+              >
+                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">
+                  {getDisplayText('price')}
+                </span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="25" 
+                  fill="none" 
+                  viewBox="0 0 24 25"
+                  className={`transition-transform ${activeDropdown === 'price' ? 'rotate-0' : 'rotate-180'}`}
+                >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
                     fill="#111111"
                   />
                 </svg>
               </div>
+              
+              <Dropdown 
+                isOpen={activeDropdown === 'price'} 
+                onClose={() => setActiveDropdown(null)}
+              >
+                <div className="p-4 space-y-3">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Minimum qiymət</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-[#E9E9E9] rounded-[8px] focus:outline-none focus:border-[#02836F] remove-arrow"
+                      value={priceRange.min}
+                      onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Maksimum qiymət</label>
+                    <input
+                      type="number"
+                      placeholder="∞"
+                      className="w-full px-3 py-2 border border-[#E9E9E9] rounded-[8px] focus:outline-none focus:border-[#02836F] remove-arrow"
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      className="flex-1 px-3 py-2 border border-[#E9E9E9] text-gray-600 rounded-[8px] hover:bg-gray-50"
+                      onClick={() => setPriceRange({ min: '', max: '' })}
+                    >
+                      Təmizlə
+                    </button>
+                    <button
+                      className="flex-1 px-3 py-2 bg-[#02836F] text-white rounded-[8px] hover:bg-[#026b5a]"
+                      onClick={() => setActiveDropdown(null)}
+                    >
+                      Tətbiq et
+                    </button>
+                  </div>
+                </div>
+              </Dropdown>
             </div>
 
             <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
 
-            <div className="cursor-pointer w-[100%] flex flex-col min-w-0">
-              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">Otaq</span>
-              <div className="flex items-center justify-between">
-                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">Əlavə et</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
+            <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
+              <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
+                Otaq
+              </span>
+              <div 
+                className="flex items-center justify-between"
+                onClick={() => setActiveDropdown(activeDropdown === 'rooms' ? null : 'rooms')}
+              >
+                <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">
+                  {getDisplayText('rooms')}
+                </span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="25" 
+                  fill="none" 
+                  viewBox="0 0 24 25"
+                  className={`transition-transform ${activeDropdown === 'rooms' ? 'rotate-0' : 'rotate-180'}`}
+                >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
                     fill="#111111"
                   />
                 </svg>
               </div>
+              
+              <Dropdown 
+                isOpen={activeDropdown === 'rooms'} 
+                onClose={() => setActiveDropdown(null)}
+              >
+                <div className="p-4 space-y-2">
+                  {ROOM_OPTIONS.map((room) => (
+                    <label key={room.id} className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="mr-3 w-4 h-4 text-[#02836F] border-gray-300 rounded focus:ring-[#02836F] svg-checkbox"
+                        checked={selectedRooms.includes(room.value)}
+                        onChange={() => handleRoomToggle(room)}
+                      />
+                      <span className="text-sm">{room.label}</span>
+                    </label>
+                  ))}
+                  <div className="flex gap-2 pt-3 mt-3 border-t border-[#E9E9E9]">
+                    <button
+                      className="flex-1 px-3 py-2 border border-[#E9E9E9] text-gray-600 rounded-[8px] hover:bg-gray-50"
+                      onClick={() => setSelectedRooms([])}
+                    >
+                      Təmizlə
+                    </button>
+                    <button
+                      className="flex-1 px-3 py-2 bg-[#02836F] text-white rounded-[8px] hover:bg-[#026b5a]"
+                      onClick={() => setActiveDropdown(null)}
+                    >
+                      Tətbiq et
+                    </button>
+                  </div>
+                </div>
+              </Dropdown>
             </div>
           </div>
 
           <div className="flex min-w-0 items-center justify-end gap-[14px] basis-[30%]">
-            <div className="cursor-pointer min-w-0 flex text-primary px-[16px] py-[12px] gap-[8px] rounded-[8px] border border-[#E9E9E9]">
+            <div 
+              className="cursor-pointer min-w-0 flex text-[#02836F] px-[16px] py-[12px] gap-[8px] rounded-[8px] border border-[#E9E9E9] hover:bg-gray-50 transition-colors"
+              onClick={() => setShowFilterModal(true)}
+            >
               <div>
                 <FilterBtn />
               </div>
-              <span className="inline-block max-[769px]:hidden whitespace-nowrap text-ellipsis min-w-0 overflow-hidden">Filter</span>
+              <span className="inline-block max-[769px]:hidden whitespace-nowrap text-ellipsis min-w-0 overflow-hidden">
+                Filter
+              </span>
             </div>
-            <div className="cursor-pointer min-w-0 flex bg-primary text-white px-[16px] py-[12px] gap-[8px] rounded-[8px]">
+            
+            <div 
+              className="cursor-pointer min-w-0 flex bg-[#02836F] text-white px-[16px] py-[12px] gap-[8px] rounded-[8px] hover:bg-[#026b5a] transition-colors"
+              onClick={handleSearch}
+            >
               <div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path
@@ -77,89 +997,22 @@ export default function Filter() {
                   />
                 </svg>
               </div>
-              <span className="inline-block max-[769px]:hidden whitespace-nowrap text-ellipsis min-w-0 overflow-hidden">Search</span>
+              <span className="inline-block max-[769px]:hidden whitespace-nowrap text-ellipsis min-w-0 overflow-hidden">
+                Axtar
+              </span>
             </div>
           </div>
-
         </div>
       </div>
+
+      <FilterModal
+        isOpen={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        filters={additionalFilters}
+        onApply={(filters) => setAdditionalFilters(filters)}
+        selectedPropertyTypes={selectedPropertyTypes}
+        announcementType={announcementType}
+      />
     </>
-    // <div className="flex flex-col items-center">
-    //   <Button onSelect={(val) => setSelectedType(val)} />
-
-    //   <div className="filter-bar w-[902px] h-[86px] flex bg-white cursor-pointer py-[8.5px] px-[24px] gap-[32px] rounded-t-[12px]">
-    //     <div className="flex items-center py-[4px]">
-    //       {/* Açar söz */}
-    //       <div className="filter-item flex flex-col text-primary px-[10px] h-[69px] py-[6px] w-[242px]">
-    //         <span className="text-[13px] text-[#969696]">Açar söz</span>
-    //         <div className="flex py-[4px] h-[69px] justify-between">
-    //           <span className="add-text text-[16px]">Şəhər, Metro, Ünvan...</span>
-    //           <span>
-    //             {/* Down Arrow Icon */}
-    //             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
-    //               <path
-    //                 d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
-    //                 fill="#111111"
-    //               />
-    //             </svg>
-    //           </span>
-    //         </div>
-    //       </div>
-
-    //       {/* Divider */}
-    //       <div className="w-[1px] h-[32px] bg-[#D9D9D9] mx-[16px]" />
-
-    //       {/* Qiymət */}
-    //       <div
-    //         className="filter-item dropdown-toggle flex flex-col text-primary px-[10px] h-[69px] py-[6px] w-[140px]"
-    //         onClick={() => setShowPrice(!showPrice)}
-    //       >
-    //         <span className="text-[13px] text-[#969696]">Qiymət</span>
-    //         <div className="flex py-[4px] h-[69px] justify-between">
-    //           <span className="add-text text-[16px]">Əlavə et</span>
-    //           <span>
-    //             {/* Arrow SVG */}
-    //             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
-    //               <path d="M12 15L8 11h8l-4 4Z" fill="#111111" />
-    //             </svg>
-    //           </span>
-    //         </div>
-    //       </div>
-
-    //       {/* Divider */}
-    //       <div className="w-[1px] h-[32px] bg-[#D9D9D9] mx-[16px]" />
-
-    //       {/* Otaq */}
-    //       <div className="filter-item dropdown-toggle flex flex-col text-primary px-[10px] py-[6px] h-[69px] w-[140px]">
-    //         <span className="text-[13px] text-[#969696]">Otaq</span>
-    //         <div className="flex py-[4px] justify-between">
-    //           <span className="add-text text-[16px]">Əlavə et</span>
-    //           <span>
-    //             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" viewBox="0 0 24 25">
-    //               <path d="M12 15L8 11h8l-4 4Z" fill="#111111" />
-    //             </svg>
-    //           </span>
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     {/* Buttons */}
-    //     <div className="flex gap-[14px] text-[16px] items-center">
-    //       <div className="flex w-[105px] h-[48px] items-center justify-center text-primary px-[16px] py-[12px] gap-[8px] rounded-[8px] border border-[#E9E9E9]">
-    //         <FilterBtn />
-    //         <span>Filter</span>
-    //       </div>
-    //       <div className="flex w-[105px] h-[48px] bg-primary items-center justify-center text-white px-[16px] py-[12px] gap-[8px] rounded-[8px]">
-    //         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-    //           <path
-    //             d="M9.5 16C7.7 16 6.2 15.4 5 14.2C3.8 13 3.2 11.5 3.2 9.5C3.2 7.5 3.8 6 5 4.8C6.2 3.6 7.7 3 9.5 3C11.3 3 12.8 3.6 14 4.8C15.2 6 15.8 7.5 15.8 9.5C15.8 10.2 15.7 10.9 15.5 11.5C15.3 12.1 15 12.7 14.6 13.2L20.3 18.9C20.5 19.1 20.6 19.4 20.6 19.7C20.6 20 20.5 20.3 20.3 20.5C20.1 20.7 19.8 20.8 19.5 20.8C19.2 20.8 18.9 20.7 18.7 20.5L13 14.8C12.5 15.2 11.9 15.5 11.3 15.7C10.7 15.9 10.1 16 9.5 16ZM9.5 14C10.6 14 11.6 13.6 12.4 12.8C13.2 12 13.6 11 13.6 9.9C13.6 8.8 13.2 7.8 12.4 7C11.6 6.2 10.6 5.8 9.5 5.8C8.4 5.8 7.4 6.2 6.6 7C5.8 7.8 5.4 8.8 5.4 9.9C5.4 11 5.8 12 6.6 12.8C7.4 13.6 8.4 14 9.5 14Z"
-    //             fill="#fff"
-    //           />
-    //         </svg>
-    //         <span className="mr-[3px]">Axtar</span>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
   );
 }

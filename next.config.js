@@ -12,6 +12,7 @@ if (!isTurbopack) {
     register: true,
     skipWaiting: true,
     disable: isDev,
+    maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB
   });
 
   module.exports = withPWA(baseConfig);
