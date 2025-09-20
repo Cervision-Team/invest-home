@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { houseData } from "@/components/core/house";
 import HouseCard from "@/components/ui/HouseCard";
 
-export default function HouseListsPage() {
+function Listings() {
   const searchParams = useSearchParams();
   const [filteredListings, setFilteredListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,5 +67,21 @@ export default function HouseListsPage() {
         ))}
       </div>
     </section>
+  );
+}
+
+function ListsLoading() {
+  return (
+    <div className="flex justify-center items-center py-20">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
+export default function HouseListsPage() {
+  return (
+    <Suspense fallback={<ListsLoading />}>
+      <Listings />
+    </Suspense>
   );
 }
