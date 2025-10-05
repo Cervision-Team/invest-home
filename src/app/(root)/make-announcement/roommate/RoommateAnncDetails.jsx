@@ -75,9 +75,10 @@ const RoommateAnncDetails = ({
   const getErrorMessage = (fieldName) => displayedErrors[fieldName];
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
-  useEffect(() => {
-    setHouseComposition(formik?.values?.houseComposition || null);
-  }, [formik?.values?.houseComposition]);
+useEffect(() => {
+  const current = formik.values.houseComposition || null;
+  setHouseComposition(prev => (prev === current ? prev : current));
+}, [formik.values.houseComposition]);
 
   return (
     <>

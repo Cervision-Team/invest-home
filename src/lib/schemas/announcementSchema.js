@@ -283,6 +283,16 @@ export const anncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
+// Step 3 - DailyAnncDetails
+
+export const dailyAnncDetailsSchema = Yup.object().shape({
+  features: Yup.array().of(Yup.string()),
+  description: Yup.string()
+    .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
+    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .required("Təsvir vacibdir"),
+});
+
 // Step 3 - RoommateAnncDetails
 export const roommateAnncDetailsSchema = Yup.object().shape({
   utilities: Yup.string().required("Kommunal seçilməlidir"),
@@ -393,8 +403,11 @@ export const validationSchemas = [
   getMediaValidationSchema(),
 ];
 
-const getFormType = (formValues) =>
-  formValues.announcementType === "roommate" ? "roommate" : "default";
+const getFormType = (formValues) => {
+  if (formValues.announcementType === "roommate") return "roommate";
+  if (formValues.announcementType === "daily") return "daily";
+  return "default";
+};
 
 export const getValidationSchema = (step, formType, formValues = {}) => {
   switch (step) {
@@ -423,7 +436,7 @@ export const getValidationSchema = (step, formType, formValues = {}) => {
       return Yup.object().shape({});
     case 3:
       return formType === "roommate"
-        ? roommateAnncDetailsSchema
+        ? roommateAnncDetailsSchema : formType === "daily" ? dailyAnncDetailsSchema
         : anncDetailsSchema;
     case 4:
       return locationValidationSchema;

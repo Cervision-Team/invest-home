@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { houseData } from "@/components/core/house";
 import HouseCard from "@/components/ui/HouseCard";
 
+
+
 const FilterResults = () => {
   const searchParams = useSearchParams();
   const [listings, setListings] = useState(houseData);

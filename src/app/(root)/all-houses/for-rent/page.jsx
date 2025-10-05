@@ -1,17 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HouseTypeSelector from "../../Home/HomeTypes/HouseTypeSelector";
-import { houseData } from "@/components/core/house";
 import HouseCard from "@/components/ui/HouseCard";
+import { houseData } from "@/components/core/house";
+
 
 const Page = () => {
   const [activeType, setActiveType] = useState("enSon");
+  const [houses, setHouses] = useState([]);        
+  const [loading, setLoading] = useState(true);  
+  const [error, setError] = useState(null);      
+
+  useEffect(() => {
+    // fetch("/api/houses")
+    //   .then((res) => res.json())
+    //   .then((data) => { setHouses(data); setLoading(false); })
+    //   .catch((err) => { setError(err); setLoading(false); });
+
+    setTimeout(() => {
+      setHouses(houseData);
+      setLoading(false);
+    }, 300);
+  }, []);
 
   const filteredHouses =
     activeType === "enSon"
-      ? houseData
-      : houseData.filter((house) => house.type === activeType);
+      ? houses
+      : houses.filter((house) => house.type === activeType);
+
+  if (loading) return <p className="text-center mt-10">Yüklənir...</p>;
+  if (error) return <p className="text-center mt-10 text-red-500">Xəta baş verdi</p>;
+
 
   return (
     <>

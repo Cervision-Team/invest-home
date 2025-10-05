@@ -79,21 +79,25 @@ const OTPPage = () => {
     setIsButtonActive(newValues.every((v) => v !== ""));
   };
 
-  const handleKeyUp = (e, index) => {
+  const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
       const newValues = [...values];
-      if (index > 0 && newValues[index] === "") {
+      
+      if (newValues[index] !== "") {
+        newValues[index] = "";
+        setValues(newValues);
+        setIsButtonActive(false);
+      } else if (index > 0) {
+        newValues[index - 1] = "";
+        setValues(newValues);
+        
         for (let i = index; i < values.length; i++) {
-          newValues[i] = "";
           inputRefs.current[i].setAttribute("disabled", true);
         }
+        
         inputRefs.current[index - 1].focus();
-      } else {
-        newValues[index] = "";
+        setIsButtonActive(false);
       }
-      if (index > 0) inputRefs.current[index - 1].focus();
-      setValues(newValues);
-      setIsButtonActive(false);
     }
   };
 
@@ -136,7 +140,7 @@ const OTPPage = () => {
             <span className=" text-[20px] font-[500]">Invest Home</span>
           </div>
           <h1 className="max-[431px]:hidden text-[36px] font-[600]">
-            “Yeni evinizi tapmağa bir addım yaxınsınız”
+            "Yeni evinizi tapmağa bir addım yaxınsınız"
           </h1>
           <div className="flex flex-col gap-[28px]">
             <h2 className="text-[24px] font-[600]">Giriş kodu</h2>
@@ -155,7 +159,7 @@ const OTPPage = () => {
                   ref={(el) => (inputRefs.current[index] = el)}
                   disabled={index !== 0 && values[index - 1] === ""}
                   onChange={(e) => handleChange(e, index)}
-                  onKeyUp={(e) => handleKeyUp(e, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
                 />
               ))}
             </div>
@@ -169,7 +173,7 @@ const OTPPage = () => {
                   : ""}
               </span>
             </button>
-            <button className="cursor-pointer max-w-[361px] py-[11px] w-full rounded-[8px] border-[1px] border-white text-[16px] max-[431px]:text-white max-[431px]:bg-primary">Daxil ol</button>
+            <button className="cursor-pointer max-w-[361px] py-[11px] w-full rounded-[8px] border-[1px] border-white text-[16px] max-[431px]:text-white max-[431px]:bg-primary" onClick={handleVerify} disabled={!isButtonActive}>Daxil ol</button>
           </div>
         </div>
       </div>

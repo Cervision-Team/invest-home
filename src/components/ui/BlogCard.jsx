@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export const BlogCard = ({ id, image, title, description, day, weekday, titleColor }) => {
+export const BlogCard = ({ id, image, title, description, day, month, titleColor }) => {
   return (
     <div className="max-w-[414px] w-full flex flex-col relative">
       <div className=" h-[240px] rounded-[30px] relative overflow-hidden">
@@ -17,7 +17,7 @@ export const BlogCard = ({ id, image, title, description, day, weekday, titleCol
       <div className=" h-[50px] w-[50px] rounded-[0px_0px_10px_10px] flex flex-col justify-center items-center bg-white shadow-[4px_4px_15px_0px_rgba(0,0,0,0.25)] absolute left-[50px]">
         <h4 className="h-5 text-2 text-[19.4px] font-medium">{day}</h4>
         <p className="text-3 text-[16px] leading-tight font-normal">
-          {weekday}
+          {month}
         </p>
       </div>
       <div className="flex items-center mt-[24px]">

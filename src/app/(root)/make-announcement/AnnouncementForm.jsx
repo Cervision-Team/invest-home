@@ -18,6 +18,7 @@ import Location from './for-sale/Location';
 import Media from './for-sale/Media';
 import RoommateAnncDetails from './roommate/RoommateAnncDetails';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
+import DailyAnncDetails from './daily/DailyAnncDetails';
 
 const AnnouncementForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
@@ -121,7 +122,8 @@ const AnnouncementForm = () => {
   
   const getFormType = useCallback((formValues) => {
     if (formValues.announcementType === 'roommate') return 'roommate';
-    return 'default';
+    else if (formValues.announcementType === 'daily') return 'daily';
+    else return 'default';
   }, []);
 
   useEffect(() => {
@@ -154,7 +156,6 @@ const AnnouncementForm = () => {
     setStepErrors({});
   }, [formik]);
 
-  // Validate current step with better error handling
   const validateCurrentStep = async () => {
     setIsValidatingStep(true);
     
@@ -307,7 +308,9 @@ const AnnouncementForm = () => {
         const formType = getFormType(formik.values);
         if (formType === 'roommate') {
           return <RoommateAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
-        } else {
+        } else if (formType === 'daily') {
+          return <DailyAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />
+         } else {
           return <AnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
         }
       case 4:

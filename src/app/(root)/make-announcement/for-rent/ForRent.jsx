@@ -130,12 +130,22 @@ const handleBlur = useCallback(async (fieldName) => {
   const getErrorMessage = (fieldName) => displayedErrors[fieldName];
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
-  useEffect(() => {
-    setActiveBuilding(formik?.values?.buildingType || null);
-    setActiveRepaired(formik?.values?.repairStatus || null);
-    setActiveOfficeType(formik?.values?.officeType || null);
-    setIsMortgaged(!!formik?.values?.isMortgaged);
-  }, [formik?.values?.buildingType, formik?.values?.repairStatus, formik?.values?.officeType, formik?.values?.isMortgaged]);
+useEffect(() => {
+  const { buildingType, repairStatus, officeType, isMortgaged } = formik.values;
+
+  setActiveBuilding(prev =>
+    prev === buildingType ? prev : buildingType || null
+  );
+  setActiveRepaired(prev =>
+    prev === repairStatus ? prev : repairStatus || null
+  );
+  setActiveOfficeType(prev =>
+    prev === officeType ? prev : officeType || null
+  );
+  setIsMortgaged(prev =>
+    prev === !!isMortgaged ? prev : !!isMortgaged
+  );
+}, [formik.values]);   // depend on the single object, not every field
 
   const shouldShowField = useCallback((fieldName) => {
     switch (fieldName) {

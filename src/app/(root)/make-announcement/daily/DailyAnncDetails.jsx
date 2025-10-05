@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { getValidationSchema } from '@/lib/schemas/announcementSchema';
 
-const AnncDetails = ({ 
+const DailyAnncDetails = ({ 
   formik,
   stepErrors = {},
   setStepErrors,
@@ -35,7 +35,7 @@ const AnncDetails = ({
   
     const handleBlur = useCallback(async (fieldName) => {
       const currentValues = formik.values;
-      const schema = getValidationSchema(3, 'default', currentValues); 
+      const schema = getValidationSchema(3, 'daily', currentValues); 
   
       try {
         await schema.validateAt(fieldName, currentValues);
@@ -48,9 +48,6 @@ const AnncDetails = ({
       }
     }, [formik, clearErrorForField, setStepErrors]);
   
-    const handleRadioChange = useCallback((fieldName, value) => {
-      handleInputChange(fieldName, value);
-    }, [handleInputChange]);
   
 const handleFeatureChange = useCallback((feature) => {
     const currentFeatures = formik.values.features || [];
@@ -69,6 +66,7 @@ const handleFeatureChange = useCallback((feature) => {
   
     const getErrorMessage = (fieldName) => displayedErrors[fieldName];
     const hasError = (fieldName) => !!displayedErrors[fieldName];
+    console.log(stepErrors);
     
   return (
     <>
@@ -145,72 +143,10 @@ const handleFeatureChange = useCallback((feature) => {
             </h5>
 
               <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-                <p className='text-[#000] text-[16px]/[20px] font-medium'>Çıxarış?</p>
-                {hasError('exit') && <p className="error-text">{getErrorMessage('exit')}</p>}
-                <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="exitTheres" 
-                    name="exit" 
-                    value="theres" 
-                    className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.exit === 'theres'}
-                    onChange={(e) => handleRadioChange('exit', e.target.value)}
-                    onBlur={() => handleBlur('exit')}
-                  />
-                  <label htmlFor="exitTheres" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Var</label>
-                  <input 
-                    type="radio" 
-                    id="exitTheresNot" 
-                    name="exit" 
-                    value="theresNot" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.exit === 'theresNot'}
-                    onChange={(e) => handleRadioChange('exit', e.target.value)}
-                    onBlur={() => handleBlur('exit')}
-                  />
-                  <label htmlFor="exitTheresNot" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Yoxdur</label>
-                </div>
-              </div>
-
-
-            <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-              <p className='text-[#000] text-[20px]/[24px]'>İpotekaya yararlıdır?</p>
-                {hasError('mortgage') && <p className="error-text">{getErrorMessage('mortgage')}</p>}
-                <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="mortgageYes" 
-                    name="mortgage" 
-                    value="yes" 
-                    className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.mortgage === 'yes'}
-                    onChange={(e) => handleRadioChange('mortgage', e.target.value)}
-                    onBlur={() => handleBlur('mortgage')}
-                  />
-                  <label htmlFor="mortgageYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
-                  <input 
-                    type="radio" 
-                    id="mortgageNo" 
-                    name="mortgage" 
-                    value="no" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.mortgage === 'no'}
-                    onChange={(e) => handleRadioChange('mortgage', e.target.value)}
-                    onBlur={() => handleBlur('mortgage')}
-                  />
-                  <label htmlFor="mortgageNo" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
-                </div>
-            </div>
-
- <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Əlavə xüsusiyyətlər</p>
                 {hasError('features') && <p className="error-text">{getErrorMessage('features')}</p>}
-                <div className={`grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full ${
-                  activePropertyType === 'garage' ? 'grid-cols-2' : 'grid-cols-3'
-                }`}>
+                <div className='grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full grid-cols-3'>
 
-                  {activePropertyType !== 'land' && activePropertyType !== 'garage' && (
                     <>
                       <div className='flex items-center'>
                         <input 
@@ -273,10 +209,7 @@ const handleFeatureChange = useCallback((feature) => {
                         <label htmlFor="lift" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Lift</label>
                       </div>
                     </>
-                  )}
                   
-                  {(activePropertyType !== 'land') && (
-                    <>
                       <div className='flex items-center'>
                         <input 
                           type="checkbox" 
@@ -325,9 +258,6 @@ const handleFeatureChange = useCallback((feature) => {
                         />
                         <label htmlFor="security" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Təhlükəsizlik sistemi</label>
                       </div>
-                    </>
-                  )}
-
                 </div>
               </div>
 
@@ -360,4 +290,4 @@ const handleFeatureChange = useCallback((feature) => {
   )
 }
 
-export default AnncDetails
+export default DailyAnncDetails

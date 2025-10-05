@@ -41,7 +41,7 @@ const { id } = params;
             alt='LawyerImage'
           //   src={agent.image}
           // alt={agent.name}
-            width={386}
+            width={400}
             height={360}
             className='flex-shrink-0 max-[1100px]:w-[250px] max-[1100px]:h-[250px]'
           />

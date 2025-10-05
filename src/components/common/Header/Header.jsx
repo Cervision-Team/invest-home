@@ -98,6 +98,7 @@ const Header = () => {
             </div>
 
             <div className="max-[431px]:hidden flex gap-[24px] items-center">
+              <Link href="/favorites">
               <div className="heart-icon cursor-pointer">
                 <svg
                   className=""
@@ -114,6 +115,7 @@ const Header = () => {
                   />
                 </svg>
               </div>
+              </Link>
               <Link href="/login">
                 <button className="text-black flex justify-center items-center gap-[10px] text-[18px] cursor-pointer">
                   <div className="profile-icon">
