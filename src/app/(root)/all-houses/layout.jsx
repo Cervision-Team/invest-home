@@ -4,6 +4,8 @@ import ScrollToTop from "@/components/core/ScrollToTop";
 import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
 import ClientSliderWrapper from "@/components/core/ClientSliderWrapper";
 
+export const dynamic = 'force-dynamic'; 
+
 export default function Layout({ children }) {
     return (
         <LangProvider>

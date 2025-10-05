@@ -6,7 +6,7 @@ import AgentCardSkeleton from '@/components/ui/skeleton/AgentsCardSkeleton';
 import agentsData from '@/components/core/AgentsData';
 
 // async function fetchAgents() {
-//   const res = await fetch('https://your-backend.com/api/agents', {
+//   const res = await fetch('https://backend.com/api/agents', {
 //     cache: 'no-store',
 //   });
 //   if (!res.ok) throw new Error('Failed to fetch agents from backend');

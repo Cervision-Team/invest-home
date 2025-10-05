@@ -132,9 +132,10 @@ const clearFieldsForPropertyType = useCallback(
     const getErrorMessage = (fieldName) => displayedErrors[fieldName];
     const hasError = (fieldName) => !!displayedErrors[fieldName];
   
-    useEffect(() => {
-      setActiveBuilding(formik?.values?.buildingType || null);
-    }, [formik?.values?.buildingType]);
+useEffect(() => {
+  const current = formik.values.buildingType || null;
+  setActiveBuilding(prev => (prev === current ? prev : current));
+}, [formik.values.buildingType]); // keep .values.buildingType not the optional chain
   
     const shouldShowField = useCallback((fieldName) => {
       switch (fieldName) {

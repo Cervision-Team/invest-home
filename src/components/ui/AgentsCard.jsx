@@ -4,8 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AgentCard({ id, name, role, image, description }) {
-  // For debugging: let's see what `id` is being received.
-  console.log(`AgentCard for "${name}" received id:`, id);
 
   return (
     <Link href={`/about-us/${id}`} className="group block">

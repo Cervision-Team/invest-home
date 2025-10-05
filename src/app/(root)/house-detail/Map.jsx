@@ -1,17 +1,28 @@
 import Image from "next/image";
 import BusStopPrimary from "../../../../public/icons/bus-stop-primary.svg";
 import BusStopWhite from "../../../../public/icons/bus-stop-white.svg";
-import HomeAndGarden from "../../../../public/icons/home-and-garden-primary.svg";
 import EstablishmentsButton from '@/components/ui/EstablishmentsButton';
+import hospital from "../../../../public/icons/hospital-svg.svg";
+import school from "../../../../public/icons/school-svg.svg";
+import park from "../../../../public/icons/park-svg.svg";
+import metro from "../../../../public/icons/metro-svg.svg";
+import restaurant from "../../../../public/icons/restaurant-svg.svg";
+import marketplace from "../../../../public/icons/marketplace-svg.svg";
+import hospitalWhite from "../../../../public/icons/hospital-white.svg";
+import schoolWhite from "../../../../public/icons/school-white.svg";
+import parkWhite from "../../../../public/icons/park-white.svg";
+import metroWhite from "../../../../public/icons/metro-white.svg";
+import restaurantWhite from "../../../../public/icons/restaurant-white.svg";
+import marketplaceWhite from "../../../../public/icons/marketplace-white.svg";
 
 const items = [
   { icon: BusStopPrimary, iconHover: BusStopWhite, width: 24, height: 24, name: "Dayanacaq" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Klinika" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Məktəb" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Park" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Metro" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Restoran" },
-  { icon: HomeAndGarden, width: 20, height: 20, name: "Market" },
+  { icon: hospital, iconHover: hospitalWhite, width: 24, height: 24, name: "Klinika" },
+  { icon: school, iconHover: schoolWhite, width: 24, height: 24, name: "Məktəb" },
+  { icon: park, iconHover: parkWhite, width: 24, height: 24, name: "Park" },
+  { icon: metro, iconHover: metroWhite, width: 24, height: 24, name: "Metro" },
+  { icon: restaurant, iconHover: restaurantWhite, width: 24, height: 24, name: "Restoran" },
+  { icon: marketplace, iconHover: marketplaceWhite, width: 24, height: 24, name: "Market" },
 ];
 
 const Map = () => {

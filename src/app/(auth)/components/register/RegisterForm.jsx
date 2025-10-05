@@ -10,6 +10,7 @@ import Image from "next/image";
 import Phone from "../../../../../public/icons/phone-auth.svg"
 import Google from "../../../../../public/icons/google.svg"
 import EntryGate from "../EntryGate";
+import Link from "next/link";
 
 const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 
@@ -117,9 +118,12 @@ const RegisterForm = () => {
                             htmlFor="terms"
                             className="text-base text-black cursor-pointer"
                         >
+                            <Link href={"/terms-and-conditions"}>
+                            
                             <span className="text-primary hover:text-green-800">
                                 Şərtlər və qaydaları
                             </span>{" "}
+                            </Link>
                             oxudum, razıyam.
                         </label>
                     </div>

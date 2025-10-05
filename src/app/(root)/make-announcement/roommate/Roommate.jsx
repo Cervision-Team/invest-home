@@ -114,13 +114,21 @@ const clearFieldsForPropertyType = useCallback(
     const getErrorMessage = (fieldName) => displayedErrors[fieldName];
     const hasError = (fieldName) => !!displayedErrors[fieldName];
   
-    useEffect(() => {
-      setActiveBuilding(formik?.values?.buildingType || null);
-      setActiveRepaired(formik?.values?.repairStatus || null);
-    }, [formik?.values?.buildingType, formik?.values?.repairStatus]);
+    // useEffect(() => {
+    //   setActiveBuilding(formik?.values?.buildingType || null);
+    //   setActiveRepaired(formik?.values?.repairStatus || null);
+    // }, [formik?.values?.buildingType, formik?.values?.repairStatus]);
 
-    console.log({displayedErrors});
-    
+useEffect(() => {
+  const { buildingType, repairStatus } = formik.values;
+
+  setActiveBuilding(prev =>
+    prev === buildingType ? prev : buildingType || null
+  );
+  setActiveRepaired(prev =>
+    prev === repairStatus ? prev : repairStatus || null
+  );
+}, [formik.values])    
   
   return (
     <>

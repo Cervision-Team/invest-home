@@ -10,18 +10,33 @@ import Neighborhoods from "./Home/Neighborhoods";
 import Services from "./Home/Services";
 import WhoAreWe from "./Home/WhoAreWe";
 import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
+import { Suspense } from "react";
 
 
 export default function Home() {
   return (
     <>
-      <ClientSliderWrapper />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ClientSliderWrapper />
+      </Suspense> 
+      <Suspense fallback={<div>Loading...</div>}>
       <ClientCategoryWrapper />
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
       <MobileSearch />
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
       <MobileCategory />
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
       <RecentHouses houseType="Ən son siyahıya alınmış əmlaklar" />
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
       <RecentHouses houseType="Satılıq əmlaklar" />
+      </Suspense>
+      <Suspense fallback={<div>Loading...</div>}>
       <RecentHouses houseType="Kirayə evlər" />
+      </Suspense>
       <Neighborhoods />
       <Services />
       <BeAgent />
