@@ -40,25 +40,25 @@ const ForRent = ({
   }, [formik, clearErrorForField]);
 
 
-const handleBlur = useCallback(async (fieldName) => {
-  const currentValues = formik.values;
-  const schema = getValidationSchema(2, 'default', currentValues);
+  const handleBlur = useCallback(async (fieldName) => {
+    const currentValues = formik.values;
+    const schema = getValidationSchema(2, 'default', currentValues);
 
-  try {
-    await schema.validateAt(fieldName, currentValues);
-    clearErrorForField(fieldName);
-  } catch (err) {
-    const message = err.message;
-    setStepErrors
-      ? setStepErrors((p) => ({ ...p, [fieldName]: message }))
-      : setLocalErrors((p) => ({ ...p, [fieldName]: message }));
-  }
-}, [formik, clearErrorForField, setStepErrors]);
+    try {
+      await schema.validateAt(fieldName, currentValues);
+      clearErrorForField(fieldName);
+    } catch (err) {
+      const message = err.message;
+      setStepErrors
+        ? setStepErrors((p) => ({ ...p, [fieldName]: message }))
+        : setLocalErrors((p) => ({ ...p, [fieldName]: message }));
+    }
+  }, [formik, clearErrorForField, setStepErrors]);
   const clearFieldsForPropertyType = useCallback((propertyType) => {
     const fieldsToAlwaysClear = ['officeType', 'buildingType'];
-    
+
     let fieldsToClear = [...fieldsToAlwaysClear];
-    
+
     if (propertyType === 'land') {
       fieldsToClear.push('area', 'repairStatus', 'floor', 'totalFloors', 'rooms', 'bathrooms');
     } else if (propertyType === 'house') {
@@ -79,9 +79,9 @@ const handleBlur = useCallback(async (fieldName) => {
     setActivePropertyType(type);
     formik.setFieldValue('propertyType', type);
     clearErrorForField('propertyType');
-    
+
     clearFieldsForPropertyType(type);
-    
+
     if (activePropertyType === 'office' && type !== 'office') {
       setActiveOfficeType(null);
     }
@@ -91,7 +91,7 @@ const handleBlur = useCallback(async (fieldName) => {
     setActiveOfficeType(type);
     formik.setFieldValue('officeType', type);
     clearErrorForField('officeType');
-    
+
     if (type === 'gardenHouse') {
       formik.setFieldValue('buildingType', '');
       setActiveBuilding(null);
@@ -115,7 +115,7 @@ const handleBlur = useCallback(async (fieldName) => {
     setIsMortgaged(status);
     formik.setFieldValue('isMortgaged', status);
     clearErrorForField('isMortgaged');
-    
+
     if (!status) {
       const mortgageFields = ['initialPayment', 'monthlyPayment', 'remainingYears', 'remainingMonths'];
       mortgageFields.forEach(field => {
@@ -152,34 +152,34 @@ useEffect(() => {
       case 'area':
         return activePropertyType && activePropertyType !== 'land';
       case 'landArea':
-        return activePropertyType === 'house' || 
-               activePropertyType === 'land' || 
-               (activePropertyType === 'office' && activeOfficeType === 'gardenHouse');
+        return activePropertyType === 'house' ||
+          activePropertyType === 'land' ||
+          (activePropertyType === 'office' && activeOfficeType === 'gardenHouse');
       case 'floor':
-        return activePropertyType === 'apartment' || 
-               activePropertyType === 'object' || 
-               (activePropertyType === 'office' && activeOfficeType !== 'gardenHouse');
+        return activePropertyType === 'apartment' ||
+          activePropertyType === 'object' ||
+          (activePropertyType === 'office' && activeOfficeType !== 'gardenHouse');
       case 'totalFloors':
-        return activePropertyType === 'apartment' || 
-               activePropertyType === 'house' || 
-               activePropertyType === 'office' || 
-               activePropertyType === 'object';
+        return activePropertyType === 'apartment' ||
+          activePropertyType === 'house' ||
+          activePropertyType === 'office' ||
+          activePropertyType === 'object';
       case 'rooms':
       case 'bathrooms':
-        return activePropertyType === 'apartment' || 
-               activePropertyType === 'house' || 
-               activePropertyType === 'object' || 
-               (activePropertyType === 'office' && activeOfficeType !== 'businessCenter');
+        return activePropertyType === 'apartment' ||
+          activePropertyType === 'house' ||
+          activePropertyType === 'object' ||
+          (activePropertyType === 'office' && activeOfficeType !== 'businessCenter');
       case 'price':
-        return  activePropertyType === "house" || 
-      activePropertyType === "object" || 
-      (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
-      activePropertyType === "garage" ||
-      activePropertyType === "land";
+        return activePropertyType === "house" ||
+          activePropertyType === "object" ||
+          (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
+          activePropertyType === "garage" ||
+          activePropertyType === "land";
       case 'buildingType':
-        return (activePropertyType === 'apartment' || 
-                activePropertyType === 'object' || 
-                (activePropertyType === 'office' && activeOfficeType !== 'gardenHouse'));
+        return (activePropertyType === 'apartment' ||
+          activePropertyType === 'object' ||
+          (activePropertyType === 'office' && activeOfficeType !== 'gardenHouse'));
       case 'repairStatus':
         return activePropertyType && activePropertyType !== 'land';
       default:
@@ -253,70 +253,65 @@ useEffect(() => {
         `}
       </style>
 
-      <div className='h-full flex items-start justify-start gap-[95px] pb-[16px] border-b-[1px] border-[rgba(0,0,0,0.2)] max-h-[444px] overflow-y-auto hide-scrollbar pl-[2px]'>
-        <form action="">
-          <div className='flex flex-col items-start justify-center gap-[30px]'>
-            <h5 className='text-[#000] text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
-
-            <div>
-              <h6 className='text-[#000] text-[20px]/[24px]'>Əmlak növü</h6>
-              {hasError('propertyType') && <p className="error-text">{getErrorMessage('propertyType')}</p>}
-            </div>
-
-            <div className='w-[647px] flex flex-row flex-wrap gap-x-[23px] gap-y-[32px]'>
-              <PropertyTypeButton
-                src={"/icons/apartment-black.svg"}
-                srcOnHover={"/icons/apartment-white.svg"}
-                text={"Mənzil"}
-                isActive={activePropertyType === 'apartment'}
-                onClick={() => updatePropertyType('apartment')}
-              />
-              <PropertyTypeButton
-                src={"/icons/home-sale-black.svg"}
-                srcOnHover={"/icons/home-sale-white.svg"}
-                text={"Obyekt"}
-                isActive={activePropertyType === 'object'}
-                onClick={() => updatePropertyType('object')}
-              />
-              <PropertyTypeButton
-                src={"/icons/land-black.svg"}
-                srcOnHover={"/icons/land-white.svg"}
-                text={"Torpaq"}
-                isActive={activePropertyType === 'land'}
-                onClick={() => updatePropertyType('land')}
-              />
-              <PropertyTypeButton
-                src={"/icons/house-black.svg"}
-                srcOnHover={"/icons/house-white.svg"}
-                text={"Həyət/Bağ/Villa"}
-                isActive={activePropertyType === 'house'}
-                onClick={() => updatePropertyType('house')}
-              />
-              <PropertyTypeButton
-                src={"/icons/office-black.svg"}
-                srcOnHover={"/icons/office-white.svg"}
-                text={"Ofis"}
-                isActive={activePropertyType === 'office'}
-                onClick={() => updatePropertyType('office')}
-              />
-              <PropertyTypeButton
-                src={"/icons/garage-black.svg"}
-                srcOnHover={"/icons/garage-white.svg"}
-                text={"Qaraj"}
-                isActive={activePropertyType === 'garage'}
-                onClick={() => updatePropertyType('garage')}
-              />
-            </div>
+      <div className='flex flex-col justify-center gap-[30px] h-full border-b-[1px] border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
+        <div className='flex flex-col gap-[30px]'>
+          <h5 className='text-[#000] text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
+          <h6 className='text-[#000] text-[20px]/[24px]'>Əmlak növü</h6>
+          {hasError('propertyType') && <p className="error-text">{getErrorMessage('propertyType')}</p>}
+        </div>
+        <form className='mb-[23px]'>
+          <div className='grid max-[890px]:grid-cols-1 max-[1230px]:grid-cols-[193px_193px] grid-cols-[193px_193px_193px] gap-x-[23px] gap-y-[32px]'>
+            <PropertyTypeButton
+              src={"/icons/apartment-black.svg"}
+              srcOnHover={"/icons/apartment-white.svg"}
+              text={"Mənzil"}
+              isActive={activePropertyType === 'apartment'}
+              onClick={() => updatePropertyType('apartment')}
+            />
+            <PropertyTypeButton
+              src={"/icons/home-sale-black.svg"}
+              srcOnHover={"/icons/home-sale-white.svg"}
+              text={"Obyekt"}
+              isActive={activePropertyType === 'object'}
+              onClick={() => updatePropertyType('object')}
+            />
+            <PropertyTypeButton
+              src={"/icons/land-black.svg"}
+              srcOnHover={"/icons/land-white.svg"}
+              text={"Torpaq"}
+              isActive={activePropertyType === 'land'}
+              onClick={() => updatePropertyType('land')}
+            />
+            <PropertyTypeButton
+              src={"/icons/house-black.svg"}
+              srcOnHover={"/icons/house-white.svg"}
+              text={"Həyət/Bağ/Villa"}
+              isActive={activePropertyType === 'house'}
+              onClick={() => updatePropertyType('house')}
+            />
+            <PropertyTypeButton
+              src={"/icons/office-black.svg"}
+              srcOnHover={"/icons/office-white.svg"}
+              text={"Ofis"}
+              isActive={activePropertyType === 'office'}
+              onClick={() => updatePropertyType('office')}
+            />
+            <PropertyTypeButton
+              src={"/icons/garage-black.svg"}
+              srcOnHover={"/icons/garage-white.svg"}
+              text={"Qaraj"}
+              isActive={activePropertyType === 'garage'}
+              onClick={() => updatePropertyType('garage')}
+            />
           </div>
-
           {activePropertyType === 'office' && (
-            <div className='flex flex-col items-start justify-center gap-[12px] mt-[36px]'>
+            <div className='w-full grid gap-[12px] mt-[36px]'>
               <h6 className='text-[#000] text-[20px]/[24px]'>Ofisin tipi</h6>
 
-              <div className='flex flex-row items-center justify-center'>
+              <div className='grid grid-cols-[181px_181px_181px] max-[1145px]:grid-cols-3 max-[890px]:grid-cols-1 max-[890px]:gap-[23px]'>
                 <button
                   type="button"
-                  className={`w-[181px] h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
+                  className={`h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
                     ${activeOfficeType === 'businessCenter' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                   onClick={() => updateOfficeType('businessCenter')}
                 >
@@ -324,7 +319,7 @@ useEffect(() => {
                 </button>
                 <button
                   type="button"
-                  className={`w-[181px] h-[46px] flex justify-center items-center border border-solid text-[14px] transition-colors duration-200
+                  className={`h-[46px] flex justify-center items-center border border-solid text-[14px] transition-colors duration-200
                     ${activeOfficeType === 'apartmentOffice' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                   onClick={() => updateOfficeType('apartmentOffice')}
                 >
@@ -332,294 +327,293 @@ useEffect(() => {
                 </button>
                 <button
                   type="button"
-                  className={`w-[181px] h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
+                  className={`h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
                     ${activeOfficeType === 'gardenHouse' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                   onClick={() => updateOfficeType('gardenHouse')}
                 >
                   Bağ evi
                 </button>
               </div>
-            {hasError('officeType') && <p className="error-text">{getErrorMessage('officeType')}</p>}
+              {hasError('officeType') && <p className="error-text">{getErrorMessage('officeType')}</p>}
             </div>
           )}
 
-                {(
-                  (activePropertyType && activePropertyType !== 'office') ||
-                  (activePropertyType === 'office' && activeOfficeType)
-                ) && (   
-                <>
-              {shouldShowField('repairStatus') && (
-                <div className='w-full flex flex-row items-center justify-start gap-[35px] mt-[28px]'>
-                  {shouldShowField('buildingType') && (
-                    <div className='flex flex-col items-start justify-center gap-[12px]'>
-                      <h6 className='text-[#000] text-[20px]/[24px]'>Bina</h6>
+          {(
+            (activePropertyType && activePropertyType !== 'office') ||
+            (activePropertyType === 'office' && activeOfficeType)
+          ) && (
+              <>
+                {shouldShowField('repairStatus') && (
+                  <div className='grid grid-cols-2 max-[1365px]:grid-cols-1 gap-[35px] mt-[28px]'>
+                    {shouldShowField('buildingType') && (
+                      <div className='grid gap-[12px]'>
+                        <h6 className='text-[#000] text-[20px]/[24px]'>Bina</h6>
 
-                      <div className='flex flex-row items-center justify-center'>
+                        <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
+                          <button
+                            type="button"
+                            className={`h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
+                            ${activeBuilding === 'newBuilding' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
+                            onClick={() => updateBuildingType('newBuilding')}
+                          >
+                            Yeni tikili
+                          </button>
+                          <button
+                            type="button"
+                            className={`h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
+                            ${activeBuilding === 'oldBuilding' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
+                            onClick={() => updateBuildingType('oldBuilding')}
+                          >
+                            Köhnə tikili
+                          </button>
+                        </div>
+                        {hasError('buildingType') && <p className="error-text">{getErrorMessage('buildingType')}</p>}
+                      </div>
+                    )}
+
+                    <div className='grid gap-[12px]'>
+                      <h6 className='text-[#000] text-[20px]/[24px]'>Təmiri</h6>
+
+                      <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
                         <button
                           type="button"
-                          className={`w-[181px] h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
-                            ${activeBuilding === 'newBuilding' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
-                          onClick={() => updateBuildingType('newBuilding')}
+                          className={`h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
+                        ${activeRepaired === 'renewed' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
+                          onClick={() => updateRepairStatus('renewed')}
                         >
-                          Yeni tikili
+                          Təmirli
                         </button>
                         <button
                           type="button"
-                          className={`w-[181px] h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
-                            ${activeBuilding === 'oldBuilding' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
-                          onClick={() => updateBuildingType('oldBuilding')}
+                          className={`h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
+                        ${activeRepaired === 'notRenewed' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
+                          onClick={() => updateRepairStatus('notRenewed')}
                         >
-                          Köhnə tikili
+                          Təmirsiz
                         </button>
                       </div>
-                    {hasError('buildingType') && <p className="error-text">{getErrorMessage('buildingType')}</p>}
-                    </div>
-                  )}
-
-                  <div className='flex flex-col items-start justify-center gap-[12px]'>
-                    <h6 className='text-[#000] text-[20px]/[24px]'>Təmiri</h6>
-
-                    <div className='flex flex-row items-center justify-center'>
-                      <button
-                        type="button"
-                        className={`w-[181px] h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
-                        ${activeRepaired === 'renewed' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
-                        onClick={() => updateRepairStatus('renewed')}
-                      >
-                        Təmirli
-                      </button>
-                      <button
-                        type="button"
-                        className={`w-[181px] h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
-                        ${activeRepaired === 'notRenewed' ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
-                        onClick={() => updateRepairStatus('notRenewed')}
-                      >
-                        Təmirsiz
-                      </button>
                     </div>
                     {hasError('repairStatus') && <p className="error-text">{getErrorMessage('repairStatus')}</p>}
+
+                  </div>
+                )}
+
+                <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+                  <p className='text-[#000] text-[16px]/[20px] font-medium'>Hazırda ipotekadadır?</p>
+                  {hasError('isMortgaged') && <p className="error-text">{getErrorMessage('isMortgaged')}</p>}
+
+                  <div className='flex flex-row items-center justify-center mt-[9px]'>
+                    <input
+                      type="radio"
+                      id="yes"
+                      name="mortgaged"
+                      className='w-[20px] h-[20px] accent-primary'
+                      onChange={() => updateMortgageStatus(true)}
+                      checked={isMortgaged === true}
+                    />
+                    <label htmlFor="yes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
+
+                    <input
+                      type="radio"
+                      id="no"
+                      name="mortgaged"
+                      className='ml-[60px] w-[20px] h-[20px] accent-primary'
+                      onChange={() => updateMortgageStatus(false)}
+                      checked={isMortgaged === false}
+                    />
+                    <label htmlFor="no" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
                   </div>
                 </div>
-              )}
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-                <p className='text-[#000] text-[16px]/[20px] font-medium'>Hazırda ipotekadadır?</p>
+                {isMortgaged && (
+                  <div className='w-full grid gap-[18px] mt-[40px]'>
+                    <p className='text-[#000] text-[16px]/[20px] font-medium'>İpoteka detalları</p>
 
-                <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input
-                    type="radio"
-                    id="yes"
-                    name="mortgaged"
-                    className='w-[20px] h-[20px] accent-primary'
-                    onChange={() => updateMortgageStatus(true)}
-                    checked={isMortgaged === true}
-                  />
-                  <label htmlFor="yes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
+                    <div className='grid grid-cols-[148px_148px_148px_148px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
+                      <div className='grid gap-2'>
+                        <label htmlFor="initialPayment" className='text-[#000] text-[16px]/[20px]'>İlkin ödəniş</label>
+                        <input
+                          type="number"
+                          id="initialPayment"
+                          value={formik.values.initialPayment || ''}
+                          onChange={(e) => handleInputChange('initialPayment', e.target.value)}
+                          onBlur={() => handleBlur("initialPayment")}
+                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('initialPayment') ? 'error' : 'border-black'}`}
+                          placeholder="Məs: 10000"
+                        />
+                        {hasError('initialPayment') && <p className="error-text">{getErrorMessage('initialPayment')}</p>}
+                      </div>
 
-                  <input
-                    type="radio"
-                    id="no"
-                    name="mortgaged"
-                    className='ml-[60px] w-[20px] h-[20px] accent-primary'
-                    onChange={() => updateMortgageStatus(false)}
-                    checked={isMortgaged === false}
-                  />
-                  <label htmlFor="no" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
-                </div>
-                {hasError('isMortgaged') && <p className="error-text">{getErrorMessage('isMortgaged')}</p>}
-              </div>
+                      <div className='grid gap-2'>
+                        <label htmlFor="monthlyPayment" className='text-[#000] text-[16px]/[20px]'>Aylıq ödəniş</label>
+                        <input
+                          type="number"
+                          id="monthlyPayment"
+                          value={formik.values.monthlyPayment || ''}
+                          onChange={(e) => handleInputChange('monthlyPayment', e.target.value)}
+                          onBlur={() => handleBlur("monthlyPayment")}
+                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('monthlyPayment') ? 'error' : 'border-black'}`}
+                          placeholder="Məs: 500"
+                        />
+                        {hasError('monthlyPayment') && <p className="error-text">{getErrorMessage('monthlyPayment')}</p>}
+                      </div>
 
-              {isMortgaged && (
-                <div className='flex flex-col items-start justify-center gap-[18px] mt-[40px]'>
-                  <p className='text-[#000] text-[16px]/[20px] font-medium'>İpoteka detalları</p>
+                      <div className='grid gap-2'>
+                        <label htmlFor="remainingYears" className='text-[#000] text-[16px]/[20px]'>Qalıq il</label>
+                        <input
+                          type="number"
+                          id="remainingYears"
+                          value={formik.values.remainingYears || ''}
+                          onChange={(e) => handleInputChange('remainingYears', e.target.value)}
+                          onBlur={() => handleBlur("remainingYears")}
+                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingYears') ? 'error' : 'border-black'}`}
+                          placeholder="Məs: 10"
+                        />
+                        {hasError('remainingYears') && <p className="error-text">{getErrorMessage('remainingYears')}</p>}
+                      </div>
 
-                  <div className='w-full flex flex-row items-center justify-start gap-[24px]'>
-                    <div className='flex flex-col items-start justify-center gap-2'>
-                      <label htmlFor="initialPayment" className='text-[#000] text-[16px]/[20px]'>İlkin ödəniş</label>
-                      <input
-                        type="number"
-                        id="initialPayment"
-                        value={formik.values.initialPayment || ''}
-                        onChange={(e) => handleInputChange('initialPayment', e.target.value)}
-                        onBlur={() => handleBlur("initialPayment")}
-                        className={`w-[200px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('initialPayment') ? 'error' : 'border-black'}`}
-                        placeholder="Məs: 10000"
-                      />
-                      {hasError('initialPayment') && <p className="error-text">{getErrorMessage('initialPayment')}</p>}
+                      <div className='grid gap-2'>
+                        <label htmlFor="remainingMonths" className='text-[#000] text-[16px]/[20px]'>Qalıq ay</label>
+                        <input
+                          type="number"
+                          id="remainingMonths"
+                          value={formik.values.remainingMonths || ''}
+                          onChange={(e) => handleInputChange('remainingMonths', e.target.value)}
+                          onBlur={() => handleBlur("remainingMonths")}
+                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingMonths') ? 'error' : 'border-black'}`}
+                          placeholder="Məs: 6"
+                        />
+                        {hasError('remainingMonths') && <p className="error-text">{getErrorMessage('remainingMonths')}</p>}
+                      </div>
                     </div>
-
-                    <div className='flex flex-col items-start justify-center gap-2'>
-                      <label htmlFor="monthlyPayment" className='text-[#000] text-[16px]/[20px]'>Aylıq ödəniş</label>
-                      <input
-                        type="number"
-                        id="monthlyPayment"
-                        value={formik.values.monthlyPayment || ''}
-                        onChange={(e) => handleInputChange('monthlyPayment', e.target.value)}
-                        onBlur={() => handleBlur("monthlyPayment")}
-                        className={`w-[200px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('monthlyPayment') ? 'error' : 'border-black'}`}
-                        placeholder="Məs: 500"
-                      />
-                      {hasError('monthlyPayment') && <p className="error-text">{getErrorMessage('monthlyPayment')}</p>}
-                    </div>
-
-                    <div className='flex flex-col items-start justify-center gap-2'>
-                      <label htmlFor="remainingYears" className='text-[#000] text-[16px]/[20px]'>Qalıq il</label>
-                      <input
-                        type="number"
-                        id="remainingYears"
-                        value={formik.values.remainingYears || ''}
-                        onChange={(e) => handleInputChange('remainingYears', e.target.value)}
-                        onBlur={() => handleBlur("remainingYears")}
-                        className={`w-[200px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingYears') ? 'error' : 'border-black'}`}
-                        placeholder="Məs: 10"
-                      />
-                      {hasError('remainingYears') && <p className="error-text">{getErrorMessage('remainingYears')}</p>}
-                    </div>
-
-                    <div className='flex flex-col items-start justify-center gap-2'>
-                      <label htmlFor="remainingMonths" className='text-[#000] text-[16px]/[20px]'>Qalıq ay</label>
-                      <input
-                        type="number"
-                        id="remainingMonths"
-                        value={formik.values.remainingMonths || ''}
-                        onChange={(e) => handleInputChange('remainingMonths', e.target.value)}
-                        onBlur={() => handleBlur("remainingMonths")}
-                        className={`w-[200px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingMonths') ? 'error' : 'border-black'}`}
-                        placeholder="Məs: 6"
-                      />
-                      {hasError('remainingMonths') && <p className="error-text">{getErrorMessage('remainingMonths')}</p>}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className='w-full flex flex-row flex-wrap items-center justify-start gap-x-[38px] gap-y-[38px] mt-[40px]'>
-                {shouldShowField('area') && (
-                  <div className="flex flex-col items-start justify-center gap-2">
-                    <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">Sahə</label>
-                    <div className="relative w-[350px]">
-                      <input
-                        type="number"
-                        id="area"
-                        value={formik.values.area || ''}
-                        onChange={(e) => handleInputChange('area', e.target.value)}
-                        onBlur={() => handleBlur("area")}
-                        className={`w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('area') ? 'error' : 'border-black'}`}
-                        placeholder="Sahə"
-                      />
-                      <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
-                    </div>
-                    {hasError('area') && <p className="error-text">{getErrorMessage('area')}</p>}
                   </div>
                 )}
 
-                {shouldShowField('landArea') && (
-                  <div className="flex flex-col items-start justify-center gap-2">
-                    <label htmlFor="landArea" className="text-[#000] text-[20px]/[24px]">Torpağın sahəsi</label>
-                    <div className="relative w-[350px]">
-                      <input
-                        type="number"
-                        id="landArea"
-                        value={formik.values.landArea || ''}
-                        onChange={(e) => handleInputChange('landArea', e.target.value)}
-                        onBlur={() => handleBlur("landArea")}
-                        className={`w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('landArea') ? 'error' : 'border-black'}`}
-                        placeholder="Sahə"
-                      />
-                      <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
+                <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
+                  {shouldShowField('area') && (
+                    <div className="grid gap-2">
+                      <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">Sahə</label>
+                      <div className="relative ">
+                        <input
+                          type="number"
+                          id="area"
+                          value={formik.values.area || ''}
+                          onChange={(e) => handleInputChange('area', e.target.value)}
+                          onBlur={() => handleBlur("area")}
+                          className={`min-w-0 w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('area') ? 'error' : 'border-black'}`}
+                          placeholder="Sahə"
+                        />
+                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
+                      </div>
+                      {hasError('area') && <p className="error-text">{getErrorMessage('area')}</p>}
                     </div>
-                    {hasError('landArea') && <p className="error-text">{getErrorMessage('landArea')}</p>}
-                  </div>
-                )}
-
-                {shouldShowField('floor') && (
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label htmlFor="floor" className='text-[#000] text-[20px]/[24px]'>Mərtəbə</label>
-                    <input
-                      type="number"
-                      id="floor"
-                      value={formik.values.floor || ''}
-                      onChange={(e) => handleInputChange('floor', e.target.value)}
-                      onBlur={() => handleBlur("floor")}
-                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${
-                        hasError('floor') ? 'error' : 'border-black'}`}
-                      placeholder="Mərtəbə"
-                    />
-                    {hasError('floor') && <p className="error-text">{getErrorMessage('floor')}</p>}
-                  </div>
-                )}
-
-                {shouldShowField('totalFloors') && (
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label htmlFor="totalFloors" className='text-[#000] text-[20px]/[24px]'>Ümumi mərtəbələr</label>
-                    <input
-                      type="number"
-                      id="totalFloors"
-                      value={formik.values.totalFloors || ''}
-                      onChange={(e) => handleInputChange('totalFloors', e.target.value)}
-                      onBlur={() => handleBlur("totalFloors")}
-                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('totalFloors') ? 'error' : 'border-black'}`}
-                      placeholder="Sayı"
-                    />
-                    {hasError('totalFloors') && <p className="error-text">{getErrorMessage('totalFloors')}</p>}
-                  </div>
-                )}
-
-                {shouldShowField('rooms') && (
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label htmlFor="rooms" className='text-[#000] text-[20px]/[24px]'>Otaq</label>
-                    <input
-                      type="number"
-                      id="rooms"
-                      value={formik.values.rooms || ''}
-                      onChange={(e) => handleInputChange('rooms', e.target.value)}
-                      onBlur={() => handleBlur("rooms")}
-                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${hasError('rooms') ? 'error' : 'border-black'}`}
-                      placeholder="Sayı"
-                    />
-                    {hasError('rooms') && <p className="error-text">{getErrorMessage('rooms')}</p>}
-                  </div>
-                )}
-
-                {shouldShowField('bathrooms') && (
-                  <div className='flex flex-col items-start justify-center gap-2'>
-                    <label htmlFor="bathrooms" className='text-[#000] text-[20px]/[24px]'>Sanitar qovşağı</label>
-                    <input
-                      type="number"
-                      id="bathrooms"
-                      value={formik.values.bathrooms || ''}
-                      onChange={(e) => handleInputChange('bathrooms', e.target.value)}
-                      onBlur={() => handleBlur("bathrooms")}
-                      className={`w-[350px] h-10 px-[10px] py-2 input-field remove-arrow ${
-                     hasError('bathrooms') ? 'error' : 'border-black'}`}
-                      placeholder="Sayı"
-                    />
-                   {hasError('bathrooms') && <p className="error-text">{getErrorMessage('bathrooms')}</p>}
-                  </div>
                   )}
 
-                {shouldShowField('price') && (
-                <div className='flex flex-col items-start justify-center gap-2'>
-                  <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
-                  <div className="relative w-[350px]">
-                    <input
-                      type="number"
-                      id="price"
-                      value={formik.values.price || ''}
-                      onChange={(e) => handleInputChange('price', e.target.value)}
-                      onBlur={() => handleBlur("price")}
-                      className={`w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
-                      placeholder="Qiymət"
-                    />
-                  </div>
-                  {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
+                  {shouldShowField('landArea') && (
+                    <div className="grid gap-2">
+                      <label htmlFor="landArea" className="text-[#000] text-[20px]/[24px]">Torpağın sahəsi</label>
+                      <div className="relative ">
+                        <input
+                          type="number"
+                          id="landArea"
+                          value={formik.values.landArea || ''}
+                          onChange={(e) => handleInputChange('landArea', e.target.value)}
+                          onBlur={() => handleBlur("landArea")}
+                          className={`min-w-0 w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('landArea') ? 'error' : 'border-black'}`}
+                          placeholder="Sahə"
+                        />
+                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
+                      </div>
+                      {hasError('landArea') && <p className="error-text">{getErrorMessage('landArea')}</p>}
+                    </div>
+                  )}
+
+                  {shouldShowField('floor') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="floor" className='text-[#000] text-[20px]/[24px]'>Mərtəbə</label>
+                      <input
+                        type="number"
+                        id="floor"
+                        value={formik.values.floor || ''}
+                        onChange={(e) => handleInputChange('floor', e.target.value)}
+                        onBlur={() => handleBlur("floor")}
+                        className={`min-w-0 h-10 px-[10px] py-2 input-field remove-arrow ${hasError('floor') ? 'error' : 'border-black'}`}
+                        placeholder="Mərtəbə"
+                      />
+                      {hasError('floor') && <p className="error-text">{getErrorMessage('floor')}</p>}
+                    </div>
+                  )}
+
+                  {shouldShowField('totalFloors') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="totalFloors" className='text-[#000] text-[20px]/[24px]'>Ümumi mərtəbələr</label>
+                      <input
+                        type="number"
+                        id="totalFloors"
+                        value={formik.values.totalFloors || ''}
+                        onChange={(e) => handleInputChange('totalFloors', e.target.value)}
+                        onBlur={() => handleBlur("totalFloors")}
+                        className={`min-w-0 h-10 px-[10px] py-2 input-field remove-arrow ${hasError('totalFloors') ? 'error' : 'border-black'}`}
+                        placeholder="Sayı"
+                      />
+                      {hasError('totalFloors') && <p className="error-text">{getErrorMessage('totalFloors')}</p>}
+                    </div>
+                  )}
+
+                  {shouldShowField('rooms') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="rooms" className='text-[#000] text-[20px]/[24px]'>Otaq</label>
+                      <input
+                        type="number"
+                        id="rooms"
+                        value={formik.values.rooms || ''}
+                        onChange={(e) => handleInputChange('rooms', e.target.value)}
+                        onBlur={() => handleBlur("rooms")}
+                        className={`min-w-0 h-10 px-[10px] py-2 input-field remove-arrow ${hasError('rooms') ? 'error' : 'border-black'}`}
+                        placeholder="Sayı"
+                      />
+                      {hasError('rooms') && <p className="error-text">{getErrorMessage('rooms')}</p>}
+                    </div>
+                  )}
+
+                  {shouldShowField('bathrooms') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="bathrooms" className='text-[#000] text-[20px]/[24px]'>Sanitar qovşağı</label>
+                      <input
+                        type="number"
+                        id="bathrooms"
+                        value={formik.values.bathrooms || ''}
+                        onChange={(e) => handleInputChange('bathrooms', e.target.value)}
+                        onBlur={() => handleBlur("bathrooms")}
+                        className={`min-w-0 h-10 px-[10px] py-2 input-field remove-arrow ${hasError('bathrooms') ? 'error' : 'border-black'}`}
+                        placeholder="Sayı"
+                      />
+                      {hasError('bathrooms') && <p className="error-text">{getErrorMessage('bathrooms')}</p>}
+                    </div>
+                  )}
+
+                  {shouldShowField('price') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
+                      <div className="relative ">
+                        <input
+                          type="number"
+                          id="price"
+                          value={formik.values.price || ''}
+                          onChange={(e) => handleInputChange('price', e.target.value)}
+                          onBlur={() => handleBlur("price")}
+                          className={`min-w-0 w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
+                          placeholder="Qiymət"
+                        />
+                      </div>
+                      {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
+                    </div>
+                  )}
                 </div>
-                )}
-              </div>
-            </>
-          )}
-        </form>
-      </div>
+              </>
+            )}
+        </form >
+      </div >
     </>
   );
 };

@@ -27,57 +27,57 @@ const AnnouncementForm = () => {
   const [visitedSections, setVisitedSections] = useState([true, false, false]);
   const [stepErrors, setStepErrors] = useState({});
   const [isValidatingStep, setIsValidatingStep] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
   const formik = useFormik({
     initialValues: {
       // Step 0 - NewAnnc
       newAnnouncement: '',
-      
+
       // Step 1 - TypeOfAnnc
       announcementType: '',
-      
+
       // Step 2 - Property details (conditional based on announcement type)
       propertyType: '',
       officeType: '',
       buildingType: '', // Add this field
       repairStatus: '', // Add this field
       isMortgaged: false,
-      
+
       // For Sale/Rent
       price: '',
-      area: '', 
+      area: '',
       landArea: '',
       pricePerSqm: '',
       floor: '',
       totalFloors: '',
       rooms: '',
       bathrooms: '',
-      
-      
+
+
       // For Daily
       dailyRate: '',
       guestCount: '',
       nightCount: '',
       checkInTime: '',
       checkOutTime: '',
-            
+
       // Mortgage fields
       initialPayment: '',
       monthlyPayment: '',
       remainingYears: '',
       remainingMonths: '',
-      
+
       // Step 3 - Detailed Property Information
       yearBuilt: '',
       condition: '',
-      
+
       // Features
       exit: '',
       mortgage: '',
       features: [],
-      
+
       // Roommate specific fields
       utilities: '',
       bedType: '',
@@ -92,16 +92,16 @@ const AnnouncementForm = () => {
       activeBuilding: '',
       activeRepaired: '',
       description: '',
-      
+
       // Step 4 - Location
- selectedCity: '',
-    selectedDistrict: '',
-    selectedSettlement: '',
-    selectedAddress: '',
-    searchQuery: '',
-    selectedLocation: '',
-    latitude: null,
-    longitude: null,      
+      selectedCity: '',
+      selectedDistrict: '',
+      selectedSettlement: '',
+      selectedAddress: '',
+      searchQuery: '',
+      selectedLocation: '',
+      latitude: null,
+      longitude: null,
       // Step 5 - Media
       selectedMedia: [],
       images: [],
@@ -113,13 +113,13 @@ const AnnouncementForm = () => {
     validationSchema: validationSchemas[0],
     onSubmit: async (values) => {
       console.log('Form submitted:', values);
-      
+
     },
-    validateOnChange: false, 
-    validateOnBlur: false,  
+    validateOnChange: false,
+    validateOnBlur: false,
   });
 
-  
+
   const getFormType = useCallback((formValues) => {
     if (formValues.announcementType === 'roommate') return 'roommate';
     else if (formValues.announcementType === 'daily') return 'daily';
@@ -132,33 +132,33 @@ const AnnouncementForm = () => {
 
   useEffect(() => {
   }, [
-    formIndex, 
-    formik.values.announcementType, 
-    formik.values.propertyType, 
-    formik.values.officeType, 
+    formIndex,
+    formik.values.announcementType,
+    formik.values.propertyType,
+    formik.values.officeType,
     formik.values.isMortgaged
   ]);
 
   const handleAnnouncementTypeChange = useCallback((type) => {
     formik.setFieldValue('announcementType', type);
-    
+
     // Reset related fields when announcement type changes
     const fieldsToReset = [
       'propertyType', 'officeType', 'buildingType', 'repairStatus',
       'price', 'monthlyRent', 'dailyRate', 'roomType', 'area', 'landArea',
       'floor', 'totalFloors', 'rooms', 'bathrooms'
     ];
-    
+
     fieldsToReset.forEach(field => {
       formik.setFieldValue(field, '');
     });
-    
+
     setStepErrors({});
   }, [formik]);
 
   const validateCurrentStep = async () => {
     setIsValidatingStep(true);
-    
+
     try {
       const result = await validateStep(formIndex, formik.values);
       setStepErrors(result.errors || {});
@@ -174,7 +174,7 @@ const AnnouncementForm = () => {
 
   const handleNextClick = async () => {
     const isValid = await validateCurrentStep();
-    
+
     if (isValid) {
       changeForm("increment");
     } else {
@@ -182,9 +182,9 @@ const AnnouncementForm = () => {
       setTimeout(() => {
         const firstErrorField = document.querySelector('.error-field');
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
+          firstErrorField.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
           });
         }
       }, 100);
@@ -193,7 +193,7 @@ const AnnouncementForm = () => {
 
   const handleConfirmClick = async () => {
     const isValid = await validateCurrentStep();
-    
+
     if (isValid) {
       try {
         await formik.submitForm();
@@ -226,7 +226,7 @@ const AnnouncementForm = () => {
 
     setFormIndex(index);
     openAccordion(index);
-    
+
     setStepErrors({});
   };
 
@@ -252,22 +252,22 @@ const AnnouncementForm = () => {
       isValidating: isValidatingStep
     };
 
-    switch(formIndex) {
+    switch (formIndex) {
       case 0:
         return <NewAnnc {...commonProps} setIsValidating={setIsValidatingStep} />;
       case 1:
         return (
-          <TypeOfAnnc 
+          <TypeOfAnnc
             {...commonProps}
             activeButton={formik.values.announcementType}
             onAnnouncementTypeChange={handleAnnouncementTypeChange}
           />
         );
       case 2:
-        switch(formik.values.announcementType) {
+        switch (formik.values.announcementType) {
           case 'sell':
             return (
-              <ForSale 
+              <ForSale
                 {...commonProps}
                 activePropertyType={formik.values.propertyType}
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
@@ -275,7 +275,7 @@ const AnnouncementForm = () => {
             );
           case 'rent':
             return (
-              <ForRent 
+              <ForRent
                 {...commonProps}
                 activePropertyType={formik.values.propertyType}
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
@@ -291,7 +291,7 @@ const AnnouncementForm = () => {
             );
           case 'roommate':
             return (
-              <Roommate 
+              <Roommate
                 {...commonProps}
                 activePropertyType={formik.values.propertyType}
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
@@ -322,53 +322,53 @@ const AnnouncementForm = () => {
     }
   };
 
-const isCurrentStepValid = () => {
-  if (isValidatingStep) return false;
-  
+  const isCurrentStepValid = () => {
+    if (isValidatingStep) return false;
 
-  switch (formIndex) {
-    case 0:
-      return !!formik.values.newAnnouncement && Object.keys(stepErrors).length === 0;
 
-    case 1:
-      return !!formik.values.announcementType && Object.keys(stepErrors).length === 0;
+    switch (formIndex) {
+      case 0:
+        return !!formik.values.newAnnouncement && Object.keys(stepErrors).length === 0;
 
-case 2:
-  
-  const hasPropertyType = !!formik.values.propertyType;
-  const hasNoStepErrors = Object.keys(stepErrors).length === 0;
-    
-  return hasPropertyType && hasNoStepErrors;
+      case 1:
+        return !!formik.values.announcementType && Object.keys(stepErrors).length === 0;
 
-    case 3:
-      return Object.keys(stepErrors).length === 0;
+      case 2:
 
-    case 4:
- return (
-        !!formik.values.selectedCity &&
-        !!formik.values.selectedDistrict &&
-        !!formik.values.selectedSettlement &&
-        !!formik.values.selectedAddress?.trim() &&
-        formik.values.selectedAddress.length >= 10 &&
-        Object.keys(stepErrors).length === 0
-      );
+        const hasPropertyType = !!formik.values.propertyType;
+        const hasNoStepErrors = Object.keys(stepErrors).length === 0;
+
+        return hasPropertyType && hasNoStepErrors;
+
+      case 3:
+        return Object.keys(stepErrors).length === 0;
+
+      case 4:
+        return (
+          !!formik.values.selectedCity &&
+          !!formik.values.selectedDistrict &&
+          !!formik.values.selectedSettlement &&
+          !!formik.values.selectedAddress?.trim() &&
+          formik.values.selectedAddress.length >= 10 &&
+          Object.keys(stepErrors).length === 0
+        );
       case 5:
-      return (
-        formik.values.selectedMedia?.length > 0 &&
-        formik.values.uploadedFiles?.length > 0 &&
-        Object.keys(stepErrors).length === 0
-      );
+        return (
+          formik.values.selectedMedia?.length > 0 &&
+          formik.values.uploadedFiles?.length > 0 &&
+          Object.keys(stepErrors).length === 0
+        );
 
-    default:
-      return Object.keys(stepErrors).length === 0;
-  }
-};
+      default:
+        return Object.keys(stepErrors).length === 0;
+    }
+  };
 
   return (
     <>
-      <section className='h-auto pb-[40px] bg-white px-[32px] pt-[40px] rounded-[12px] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+      <section className='min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
         <div className='flex gap-[36px]'>
-          <div className='basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+          <div className='max-[768px]:hidden basis-[340px] h-auto px-[19px] pt-[34.5px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
             <div className="logo-container my-[15.5px]">
               <div className='image-container flex items-center justify-center'>
                 <Image
@@ -390,13 +390,12 @@ case 2:
                     className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 0 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${
-                      formIndex === 0
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : formIndex > 0
+                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 0
+                      ? 'bg-[#02836F1A] text-[var(--primary-color)]'
+                      : formIndex > 0
                         ? 'bg-[#02836F1A] text-[var(--primary-color)]'
                         : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
-                    }`}
+                      }`}
                   >
                     Əsas məlumat
                   </li>
@@ -409,12 +408,10 @@ case 2:
                   <div className='mt-[16px] flex flex-col gap-[28px]'>
                     <div className='flex items-center gap-[10px] relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${
-                          formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
-                        }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${
-                            formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
-                          }`}></div>
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
+                          }`}>
+                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
+                            }`}></div>
                         </div>
                       </div>
                       <span className='text-[#737373] text-[16px]'>Xüsusiyyətlər</span>
@@ -422,12 +419,10 @@ case 2:
                     </div>
                     <div className='flex items-center gap-[10px] relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${
-                          formIndex >= 3 ? 'border-primary' : 'border-[#6C707A]'
-                        }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${
-                            formIndex >= 3 ? 'bg-primary' : 'bg-[#6C707A]'
-                          }`}></div>
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 3 ? 'border-primary' : 'border-[#6C707A]'
+                          }`}>
+                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 3 ? 'bg-primary' : 'bg-[#6C707A]'
+                            }`}></div>
                         </div>
                       </div>
                       <span className='text-[#737373] text-[16px]'>Detallar</span>
@@ -471,44 +466,44 @@ case 2:
               </div>
             </ul>
           </div>
-          
-          <div className='basis-[calc(100%-376px)] flex flex-col justify-between'>
+
+          <div className='basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-[100%] flex flex-col justify-between'>
             {renderFormContent()}
-          
-            <div className={`buttons-container ${formIndex === 0 ? 'justify-end' : 'justify-between'} flex mt-[16px]`}>
+
+            <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-[20px] mt-[16px]`}>
               {formIndex === 0 ? (
-                <button 
-                  onClick={handleNextClick}
-                  disabled={!isCurrentStepValid() || isValidatingStep}
-                  className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                    isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90' 
+                <>
+                  <button
+                    onClick={handleNextClick}
+                    disabled={!isCurrentStepValid() || isValidatingStep}
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
                       : 'bg-gray-400 text-white cursor-not-allowed'
-                  }`}
-                >
-                  <span className='font-[500] text-[16px]'>
-                    {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
-                  </span>
-                  {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
-                </button>
+                      }`}
+                  >
+                    <span className='font-[500] text-[16px]'>
+                      {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
+                    </span>
+                    {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
+                  </button>
+                </>
               ) : formIndex === 5 ? (
                 <>
-                  <button 
-                    onClick={() => changeForm("decrement")} 
+                  <button
+                    onClick={() => changeForm("decrement")}
                     disabled={isValidatingStep}
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
-                  <button 
+                  <button
                     onClick={handleConfirmClick}
                     disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`cursor-pointer rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                      isCurrentStepValid() && !isValidatingStep
-                        ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90' 
-                        : 'bg-gray-400 text-white cursor-not-allowed'
-                    }`}
+                    className={`max-[768px]:justify-center cursor-pointer rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                      : 'bg-gray-400 text-white cursor-not-allowed'
+                      }`}
                   >
                     <span className='font-[500] text-[16px]'>
                       {isValidatingStep ? 'Yoxlanılır...' : 'Təsdiqlə'}
@@ -517,22 +512,21 @@ case 2:
                 </>
               ) : (
                 <>
-                  <button 
-                    onClick={() => changeForm("decrement")} 
+                  <button
+                    onClick={() => changeForm("decrement")}
                     disabled={isValidatingStep}
-                    className='cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
                   </button>
-                  <button 
+                  <button
                     onClick={handleNextClick}
                     disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${
-                      isCurrentStepValid() && !isValidatingStep
-                        ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
-                        : 'bg-gray-400 text-white cursor-not-allowed'
-                    }`}
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                      : 'bg-gray-400 text-white cursor-not-allowed'
+                      }`}
                   >
                     <span className='font-[500] text-[16px]'>
                       {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
@@ -547,9 +541,9 @@ case 2:
       </section>
       {isModalOpen && (
         <>
-          <ConfirmationModal 
-          isOpen={isModalOpen} 
-          text={"Təbriklər! Elanınız yoxlanış üçün göndərildi. Təsdiqləndikdən sonra  paylaşılacaq. Təşəkkür edirik."}/>
+          <ConfirmationModal
+            isOpen={isModalOpen}
+            text={"Təbriklər! Elanınız yoxlanış üçün göndərildi. Təsdiqləndikdən sonra  paylaşılacaq. Təşəkkür edirik."} />
         </>
       )
       }

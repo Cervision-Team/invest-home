@@ -626,7 +626,7 @@ useEffect(() => {
           </h5>
 
           {/* City, District, Settlement Row */}
-          <div className='grid grid-cols-3 gap-6 w-full max-w-4xl'>
+          <div className='grid grid-cols-3 max-[1150px]:grid-cols-1 gap-6 w-full max-w-4xl'>
             {/* City Selection */}
             <div className='flex flex-col items-start justify-center gap-2 relative'>
               <h6 className='text-black text-xl font-medium'>

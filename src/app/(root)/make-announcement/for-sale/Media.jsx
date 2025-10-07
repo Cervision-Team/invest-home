@@ -366,7 +366,7 @@ const Media = ({
             </div>
             
             <div 
-              className={`w-[736px] h-auto px-5 py-5 rounded-[13px] border-2 border-dashed transition-all duration-200 ${
+              className={`h-auto px-5 py-5 rounded-[13px] border-2 border-dashed transition-all duration-200 ${
                 isDragOver ? 'drag-over' 
                 : hasError('uploadedFiles') || hasError('images') || hasError('videos') 
                   ? 'border-[#ef4444]' 
