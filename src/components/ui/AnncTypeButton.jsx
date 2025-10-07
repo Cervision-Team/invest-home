@@ -7,7 +7,7 @@ const AnncTypeButton = ({src, srcOnHover, text, isActive, onClick}) => {
   return (
     <>
       <div
-        className={`w-[303px] h-[64px] flex justify-center items-center gap-[8px] border border-solid rounded-[8px] transition-colors duration-200 cursor-pointer
+        className={`h-[64px] flex justify-center items-center gap-[8px] border border-solid rounded-[8px] transition-colors duration-200 cursor-pointer
         ${isActive ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-black hover:border-[#26B5A0] hover:bg-primary hover:text-white'}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

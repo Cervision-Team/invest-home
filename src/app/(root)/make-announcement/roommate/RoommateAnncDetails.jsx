@@ -1,15 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { getValidationSchema } from '@/lib/schemas/announcementSchema';
 
-const RoommateAnncDetails = ({ 
+const RoommateAnncDetails = ({
   formik,
   stepErrors = {},
   setStepErrors,
   isValidating,
-  activePropertyType 
+  activePropertyType
 }) => {
   const [houseComposition, setHouseComposition] = useState(formik?.values?.houseComposition || null);
-  
+
   const [localErrors, setLocalErrors] = useState({});
 
   const clearErrorForField = useCallback((fieldName) => {
@@ -55,13 +55,13 @@ const RoommateAnncDetails = ({
   const handleFeatureChange = useCallback((feature) => {
     const currentFeatures = formik.values.features || [];
     let newFeatures;
-    
+
     if (currentFeatures.includes(feature)) {
       newFeatures = currentFeatures.filter(f => f !== feature);
     } else {
       newFeatures = [...currentFeatures, feature];
     }
-    
+
     handleInputChange('features', newFeatures);
   }, [formik.values.features, handleInputChange]);
 
@@ -187,10 +187,10 @@ useEffect(() => {
           }
         `}
       </style>
-      
+
       <div className="h-full pb-[16px] border-b border-[rgba(0,0,0,0.2)]">
         <div className="flex items-start justify-start gap-[95px] max-h-[444px] overflow-y-auto hide-scrollbar pl-[2px]">
-          <form className="w-full"> 
+          <form className="w-full">
             <div className='flex flex-col items-start justify-center'>
               <h5 className='text-[#000] text-[24px]/[28px] font-medium'>
                 Detallar
@@ -200,22 +200,22 @@ useEffect(() => {
                 <p className='text-[#000] text-[16px]/[20px] font-medium'>Kommunal qiymətə daxildir?</p>
                 {hasError('utilities') && <p className="error-text">{getErrorMessage('utilities')}</p>}
                 <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="utilitiesYes" 
-                    name="utilities" 
-                    value="yes" 
+                  <input
+                    type="radio"
+                    id="utilitiesYes"
+                    name="utilities"
+                    value="yes"
                     className='w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.utilities === 'yes'}
                     onChange={(e) => handleRadioChange('utilities', e.target.value)}
                     onBlur={() => handleBlur('utilities')}
                   />
                   <label htmlFor="utilitiesYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
-                  <input 
-                    type="radio" 
-                    id="utilitiesNo" 
-                    name="utilities" 
-                    value="no" 
+                  <input
+                    type="radio"
+                    id="utilitiesNo"
+                    name="utilities"
+                    value="no"
                     className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.utilities === 'no'}
                     onChange={(e) => handleRadioChange('utilities', e.target.value)}
@@ -229,22 +229,22 @@ useEffect(() => {
                 <p className='text-[#000] text-[16px]/[20px] font-medium'>Otaq tipi</p>
                 {hasError('roomType') && <p className="error-text">{getErrorMessage('roomType')}</p>}
                 <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="separate" 
-                    name="roomType" 
-                    value="separate" 
+                  <input
+                    type="radio"
+                    id="separate"
+                    name="roomType"
+                    value="separate"
                     className='w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.roomType === 'separate'}
                     onChange={(e) => handleRadioChange('roomType', e.target.value)}
                     onBlur={() => handleBlur('roomType')}
                   />
                   <label htmlFor="separate" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Ayrı</label>
-                  <input 
-                    type="radio" 
-                    id="shared" 
-                    name="roomType" 
-                    value="shared" 
+                  <input
+                    type="radio"
+                    id="shared"
+                    name="roomType"
+                    value="shared"
                     className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.roomType === 'shared'}
                     onChange={(e) => handleRadioChange('roomType', e.target.value)}
@@ -254,65 +254,77 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='grid gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[16px]/[20px] font-medium'>Yataq otağının tipi</p>
                 {hasError('bedType') && <p className="error-text">{getErrorMessage('bedType')}</p>}
-                <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="bedTypeSofa" 
-                    name="bedType" 
-                    value="sofa" 
-                    className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.bedType === 'sofa'}
-                    onChange={(e) => handleRadioChange('bedType', e.target.value)}
-                    onBlur={() => handleBlur('bedType')}
-                  />
-                  <label htmlFor="bedTypeSofa" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Divan</label>
-                  <input 
-                    type="radio" 
-                    id="bedTypeBed" 
-                    name="bedType" 
-                    value="bed" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.bedType === 'bed'}
-                    onChange={(e) => handleRadioChange('bedType', e.target.value)}
-                    onBlur={() => handleBlur('bedType')}
-                  />
-                  <label htmlFor="bedTypeBed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Çarpayı</label>
-                  <input 
-                    type="radio" 
-                    id="bedTypeWoodenBed" 
-                    name="bedType" 
-                    value="woodenBed" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.bedType === 'woodenBed'}
-                    onChange={(e) => handleRadioChange('bedType', e.target.value)}
-                    onBlur={() => handleBlur('bedType')}
-                  />
-                  <label htmlFor="bedTypeWoodenBed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Taxt</label>
-                  <input 
-                    type="radio" 
-                    id="bedTypeOneSideWoodenBed" 
-                    name="bedType" 
-                    value="oneSideWoodenBed" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.bedType === 'oneSideWoodenBed'}
-                    onChange={(e) => handleRadioChange('bedType', e.target.value)}
-                    onBlur={() => handleBlur('bedType')}
-                  />
-                  <label htmlFor="bedTypeOneSideWoodenBed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Taxtın bir tərəfi</label>
-                  <input 
-                    type="radio" 
-                    id="bedTypeFoldingBed" 
-                    name="bedType" 
-                    value="foldingBed" 
-                    className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                    checked={formik.values.bedType === 'foldingBed'}
-                    onChange={(e) => handleRadioChange('bedType', e.target.value)}
-                    onBlur={() => handleBlur('bedType')}
-                  />
-                  <label htmlFor="bedTypeFoldingBed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Raskladuşka</label>
+                <div className='grid grid-cols-[auto_auto_auto_auto_auto] max-[1200px]:grid-cols-[auto_auto_auto] 
+                max-[880px]:grid-cols-[auto_auto] max-[768px]:grid-cols-[auto_auto_auto] max-[500px]:grid-cols-[auto_auto] 
+                max-[350px]:grid-cols-[auto] gap-[27px] mt-[9px]'>
+                  <div className='flex items-center gap-[6px]'>
+                    <input
+                      type="radio"
+                      id="bedTypeSofa"
+                      name="bedType"
+                      value="sofa"
+                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                      checked={formik.values.bedType === 'sofa'}
+                      onChange={(e) => handleRadioChange('bedType', e.target.value)}
+                      onBlur={() => handleBlur('bedType')}
+                    />
+                    <label htmlFor="bedTypeSofa" className='text-[#000] text-[16px]/[22px]'>Divan</label>
+                  </div>
+                  <div className='flex items-center gap-[6px]'>
+                    <input
+                      type="radio"
+                      id="bedTypeBed"
+                      name="bedType"
+                      value="bed"
+                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                      checked={formik.values.bedType === 'bed'}
+                      onChange={(e) => handleRadioChange('bedType', e.target.value)}
+                      onBlur={() => handleBlur('bedType')}
+                    />
+                    <label htmlFor="bedTypeBed" className=' text-[#000] text-[16px]/[22px]'>Çarpayı</label>
+                  </div>
+                  <div className='flex items-center gap-[6px]'>
+                    <input
+                      type="radio"
+                      id="bedTypeWoodenBed"
+                      name="bedType"
+                      value="woodenBed"
+                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                      checked={formik.values.bedType === 'woodenBed'}
+                      onChange={(e) => handleRadioChange('bedType', e.target.value)}
+                      onBlur={() => handleBlur('bedType')}
+                    />
+                    <label htmlFor="bedTypeWoodenBed" className=' text-[#000] text-[16px]/[22px]'>Taxt</label>
+                  </div>
+                  <div className='flex items-center gap-[6px]'>
+                    <input
+                      type="radio"
+                      id="bedTypeOneSideWoodenBed"
+                      name="bedType"
+                      value="oneSideWoodenBed"
+                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                      checked={formik.values.bedType === 'oneSideWoodenBed'}
+                      onChange={(e) => handleRadioChange('bedType', e.target.value)}
+                      onBlur={() => handleBlur('bedType')}
+                    />
+                    <label htmlFor="bedTypeOneSideWoodenBed" className=' text-[#000] text-[16px]/[22px]'>Taxtın bir tərəfi</label>
+                  </div>
+                  <div className='flex items-center gap-[6px]'>
+                    <input
+                      type="radio"
+                      id="bedTypeFoldingBed"
+                      name="bedType"
+                      value="foldingBed"
+                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                      checked={formik.values.bedType === 'foldingBed'}
+                      onChange={(e) => handleRadioChange('bedType', e.target.value)}
+                      onBlur={() => handleBlur('bedType')}
+                    />
+                    <label htmlFor="bedTypeFoldingBed" className=' text-[#000] text-[16px]/[22px]'>Raskladuşka</label>
+                  </div>
                 </div>
               </div>
 
@@ -320,22 +332,22 @@ useEffect(() => {
                 <p className='text-[#000] text-[16px]/[20px] font-medium'>Ev sahibi evdə yaşayacaq?</p>
                 {hasError('ownerLives') && <p className="error-text">{getErrorMessage('ownerLives')}</p>}
                 <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="ownerLivesYes" 
-                    name="ownerLives" 
-                    value="yes" 
+                  <input
+                    type="radio"
+                    id="ownerLivesYes"
+                    name="ownerLives"
+                    value="yes"
                     className='w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.ownerLives === 'yes'}
                     onChange={(e) => handleRadioChange('ownerLives', e.target.value)}
                     onBlur={() => handleBlur('ownerLives')}
                   />
                   <label htmlFor="ownerLivesYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
-                  <input 
-                    type="radio" 
-                    id="ownerLivesNo" 
-                    name="ownerLives" 
-                    value="no" 
+                  <input
+                    type="radio"
+                    id="ownerLivesNo"
+                    name="ownerLives"
+                    value="no"
                     className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.ownerLives === 'no'}
                     onChange={(e) => handleRadioChange('ownerLives', e.target.value)}
@@ -345,8 +357,14 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className='flex flex-row items-end justify-center gap-5 mt-[28px]'>
-                <div className='flex flex-col items-start justify-center gap-2'>
+              <div className='grid grid-cols-[350px_350px] 
+              max-[1325px]:grid-cols-2 
+              max-[1270px]:grid-cols-[350px] 
+              max-[820px]:grid-cols-1
+              max-[768px]:grid-cols-[350px]
+              max-[470px]:grid-cols-1
+               w-full gap-5 mt-[28px]'>
+                <div className='grid gap-2'>
                   <label htmlFor="residentsCount" className='text-[#000] text-[20px]/[24px]'>Evdə yaşayanların sayı</label>
                   <input
                     type="number"
@@ -354,23 +372,22 @@ useEffect(() => {
                     value={formik.values.residentsCount || ''}
                     onChange={(e) => handleInputChange('residentsCount', e.target.value)}
                     onBlur={() => handleBlur('residentsCount')}
-                    className={`w-[350px] h-[46px] px-[10px] py-2 input-field remove-arrow ${
-                      hasError('residentsCount') ? 'error' : 'border-black'
-                    }`}
+                    className={`h-[46px] px-[10px] py-2 input-field remove-arrow ${hasError('residentsCount') ? 'error' : 'border-black'
+                      }`}
                     placeholder="Evdə yaşayanların sayı"
                   />
                   {hasError('residentsCount') && <p className="error-text">{getErrorMessage('residentsCount')}</p>}
                 </div>
 
-                <div className='flex flex-col items-start justify-center gap-[12px]'>
+                <div className='grid gap-[12px]'>
                   <h6 className='text-[#000] text-[20px]/[24px]'>
                     Evin tərkibi
                   </h6>
 
-                  <div className='flex flex-row items-center justify-center'>
+                  <div className='grid grid-cols-3'>
                     <button
                       type="button"
-                      className={`w-[110px] h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
+                      className={`h-[46px] flex justify-center items-center rounded-l-[8px] border border-solid text-[14px] transition-colors duration-200
                         ${houseComposition === 'male' ? 'border-[#1B8F7D] bg-[#1B8F7D] text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                       onClick={() => updateHouseComposition('male')}
                     >
@@ -378,7 +395,7 @@ useEffect(() => {
                     </button>
                     <button
                       type="button"
-                      className={`w-[110px] h-[46px] flex justify-center items-center border border-solid text-[14px] transition-colors duration-200
+                      className={`h-[46px] flex justify-center items-center border border-solid text-[14px] transition-colors duration-200
                         ${houseComposition === 'female' ? 'border-[#1B8F7D] bg-[#1B8F7D] text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                       onClick={() => updateHouseComposition('female')}
                     >
@@ -386,7 +403,7 @@ useEffect(() => {
                     </button>
                     <button
                       type="button"
-                      className={`w-[110px] h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
+                      className={`h-[46px] flex justify-center items-center rounded-r-[8px] border border-solid text-[14px] transition-colors duration-200
                         ${houseComposition === 'mixed' ? 'border-[#1B8F7D] bg-[#1B8F7D] text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-[#000]'}`}
                       onClick={() => updateHouseComposition('mixed')}
                     >
@@ -397,10 +414,15 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='grid w-full gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Xüsusiyyətlər</p>
                 {hasError('features') && <p className="error-text">{getErrorMessage('features')}</p>}
-                <div className='grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full grid-cols-3'>
+                <div className='grid grid-cols-3 
+                max-[1260px]:grid-cols-2
+                max-[912px]:grid-cols-1
+                max-[768px]:grid-cols-2
+                max-[543px]:grid-cols-1
+                gap-[13px] mt-[9px] w-full'>
                   {[
                     { id: 'parking', label: 'Parking' },
                     { id: 'furniture', label: 'Mebel' },
@@ -413,12 +435,12 @@ useEffect(() => {
                     { id: 'security', label: 'Təhlükəsizlik sistemi' }
                   ].map((feature) => (
                     <div key={feature.id} className='flex items-center'>
-                      <input 
-                        type="checkbox" 
-                        id={feature.id} 
-                        name="features" 
-                        value={feature.id} 
-                        className='svg-checkbox'
+                      <input
+                        type="checkbox"
+                        id={feature.id}
+                        name="features"
+                        value={feature.id}
+                        className='shrink-0 svg-checkbox'
                         checked={(formik.values.features || []).includes(feature.id)}
                         onChange={() => handleFeatureChange(feature.id)}
                       />
@@ -430,217 +452,263 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='grid gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px] font-medium'>Otaq yoldaşında axtarılan xüsusiyyətlər</p>
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[12px]'> 
+                <div className='grid gap-2 mt-[12px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>Cinsi</p>
                   {hasError('gender') && <p className="error-text">{getErrorMessage('gender')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input 
-                      type="radio" 
-                      id="genderFemale" 
-                      name="gender" 
-                      value="female" 
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.gender === 'female'}
-                      onChange={(e) => handleRadioChange('gender', e.target.value)}
-                      onBlur={() => handleBlur('gender')}
-                    />
-                    <label htmlFor="genderFemale" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Qadın</label>
-                    <input 
-                      type="radio" 
-                      id="genderMale" 
-                      name="gender" 
-                      value="male" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.gender === 'male'}
-                      onChange={(e) => handleRadioChange('gender', e.target.value)}
-                      onBlur={() => handleBlur('gender')}
-                    />
-                    <label htmlFor="genderMale" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Kişi</label>
-                    <input 
-                      type="radio" 
-                      id="genderAny" 
-                      name="gender" 
-                      value="any" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.gender === 'any'}
-                      onChange={(e) => handleRadioChange('gender', e.target.value)}
-                      onBlur={() => handleBlur('gender')}
-                    />
-                    <label htmlFor="genderAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                  <div className='grid grid-cols-3'>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="genderFemale"
+                        name="gender"
+                        value="female"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.gender === 'female'}
+                        onChange={(e) => handleRadioChange('gender', e.target.value)}
+                        onBlur={() => handleBlur('gender')}
+                      />
+                      <label htmlFor="genderFemale" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Qadın</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="genderMale"
+                        name="gender"
+                        value="male"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.gender === 'male'}
+                        onChange={(e) => handleRadioChange('gender', e.target.value)}
+                        onBlur={() => handleBlur('gender')}
+                      />
+                      <label htmlFor="genderMale" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Kişi</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="genderAny"
+                        name="gender"
+                        value="any"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.gender === 'any'}
+                        onChange={(e) => handleRadioChange('gender', e.target.value)}
+                        onBlur={() => handleBlur('gender')}
+                      />
+                      <label htmlFor="genderAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                    </div>
                   </div>
                 </div>
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[30px]'> 
+                <div className='grid gap-2 mt-[30px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>İş statusu</p>
                   {hasError('workStatus') && <p className="error-text">{getErrorMessage('workStatus')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input 
-                      type="radio" 
-                      id="workStatusWorking" 
-                      name="workStatus" 
-                      value="working" 
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.workStatus === 'working'}
-                      onChange={(e) => handleRadioChange('workStatus', e.target.value)}
-                      onBlur={() => handleBlur('workStatus')}
-                    />
-                    <label htmlFor="workStatusWorking" className='ml-[6px] text-[#000] text-[16px]/[22px]'>İşləyir</label>
-                    <input 
-                      type="radio" 
-                      id="workStatusStudent" 
-                      name="workStatus" 
-                      value="student" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.workStatus === 'student'}
-                      onChange={(e) => handleRadioChange('workStatus', e.target.value)}
-                      onBlur={() => handleBlur('workStatus')}
-                    />
-                    <label htmlFor="workStatusStudent" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Tələbə</label>
-                    <input 
-                      type="radio" 
-                      id="workStatusAny" 
-                      name="workStatus" 
-                      value="any" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.workStatus === 'any'}
-                      onChange={(e) => handleRadioChange('workStatus', e.target.value)}
-                      onBlur={() => handleBlur('workStatus')}
-                    />
-                    <label htmlFor="workStatusAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                  <div className='grid grid-cols-3 
+                  max-[850px]:grid-cols-2
+                  max-[768px]:grid-cols-3
+                  max-[480px]:grid-cols-2
+                   mt-[9px] gap-y-3'>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="workStatusWorking"
+                        name="workStatus"
+                        value="working"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.workStatus === 'working'}
+                        onChange={(e) => handleRadioChange('workStatus', e.target.value)}
+                        onBlur={() => handleBlur('workStatus')}
+                      />
+                      <label htmlFor="workStatusWorking" className='ml-[6px] text-[#000] text-[16px]/[22px]'>İşləyir</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="workStatusStudent"
+                        name="workStatus"
+                        value="student"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.workStatus === 'student'}
+                        onChange={(e) => handleRadioChange('workStatus', e.target.value)}
+                        onBlur={() => handleBlur('workStatus')}
+                      />
+                      <label htmlFor="workStatusStudent" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Tələbə</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="workStatusAny"
+                        name="workStatus"
+                        value="any"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.workStatus === 'any'}
+                        onChange={(e) => handleRadioChange('workStatus', e.target.value)}
+                        onBlur={() => handleBlur('workStatus')}
+                      />
+                      <label htmlFor="workStatusAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                    </div>
                   </div>
                 </div>
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[30px]'> 
+                <div className='grid gap-2 mt-[30px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>Siqaret çəkməsi</p>
                   {hasError('smoking') && <p className="error-text">{getErrorMessage('smoking')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input 
-                      type="radio" 
-                      id="smokingAllowed" 
-                      name="smoking" 
-                      value="allowed" 
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.smoking === 'allowed'}
-                      onChange={(e) => handleRadioChange('smoking', e.target.value)}
-                      onBlur={() => handleBlur('smoking')}
-                    />
-                    <label htmlFor="smokingAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
-                    <input 
-                      type="radio" 
-                      id="smokingNotAllowed" 
-                      name="smoking" 
-                      value="notAllowed" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.smoking === 'notAllowed'}
-                      onChange={(e) => handleRadioChange('smoking', e.target.value)}
-                      onBlur={() => handleBlur('smoking')}
-                    />
-                    <label htmlFor="smokingNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
-                    <input 
-                      type="radio" 
-                      id="smokingAny" 
-                      name="smoking" 
-                      value="any" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.smoking === 'any'}
-                      onChange={(e) => handleRadioChange('smoking', e.target.value)}
-                      onBlur={() => handleBlur('smoking')}
-                    />
-                    <label htmlFor="smokingAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                  <div className='grid grid-cols-3 
+                  max-[850px]:grid-cols-2
+                  max-[768px]:grid-cols-3
+                  max-[480px]:grid-cols-2
+                   mt-[9px] gap-y-3'>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="smokingAllowed"
+                        name="smoking"
+                        value="allowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.smoking === 'allowed'}
+                        onChange={(e) => handleRadioChange('smoking', e.target.value)}
+                        onBlur={() => handleBlur('smoking')}
+                      />
+                      <label htmlFor="smokingAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="smokingNotAllowed"
+                        name="smoking"
+                        value="notAllowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.smoking === 'notAllowed'}
+                        onChange={(e) => handleRadioChange('smoking', e.target.value)}
+                        onBlur={() => handleBlur('smoking')}
+                      />
+                      <label htmlFor="smokingNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="smokingAny"
+                        name="smoking"
+                        value="any"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.smoking === 'any'}
+                        onChange={(e) => handleRadioChange('smoking', e.target.value)}
+                        onBlur={() => handleBlur('smoking')}
+                      />
+                      <label htmlFor="smokingAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                    </div>
                   </div>
                 </div>
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[30px]'> 
+                <div className='grid gap-2 mt-[30px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>Ev heyvanı</p>
                   {hasError('pets') && <p className="error-text">{getErrorMessage('pets')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input 
-                      type="radio" 
-                      id="petsAllowed" 
-                      name="pets" 
-                      value="allowed" 
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.pets === 'allowed'}
-                      onChange={(e) => handleRadioChange('pets', e.target.value)}
-                      onBlur={() => handleBlur('pets')}
-                    />
-                    <label htmlFor="petsAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
-                    <input 
-                      type="radio" 
-                      id="petsNotAllowed" 
-                      name="pets" 
-                      value="notAllowed" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.pets === 'notAllowed'}
-                      onChange={(e) => handleRadioChange('pets', e.target.value)}
-                      onBlur={() => handleBlur('pets')}
-                    />
-                    <label htmlFor="petsNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
-                    <input 
-                      type="radio" 
-                      id="petsAny" 
-                      name="pets" 
-                      value="any" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.pets === 'any'}
-                      onChange={(e) => handleRadioChange('pets', e.target.value)}
-                      onBlur={() => handleBlur('pets')}
-                    />
-                    <label htmlFor="petsAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                  <div className='grid grid-cols-3 
+                  max-[850px]:grid-cols-2
+                  max-[768px]:grid-cols-3
+                  max-[480px]:grid-cols-2
+                   mt-[9px] gap-y-3'>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="petsAllowed"
+                        name="pets"
+                        value="allowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.pets === 'allowed'}
+                        onChange={(e) => handleRadioChange('pets', e.target.value)}
+                        onBlur={() => handleBlur('pets')}
+                      />
+                      <label htmlFor="petsAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
+                    </div>
+
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="petsNotAllowed"
+                        name="pets"
+                        value="notAllowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.pets === 'notAllowed'}
+                        onChange={(e) => handleRadioChange('pets', e.target.value)}
+                        onBlur={() => handleBlur('pets')}
+                      />
+                      <label htmlFor="petsNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="petsAny"
+                        name="pets"
+                        value="any"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.pets === 'any'}
+                        onChange={(e) => handleRadioChange('pets', e.target.value)}
+                        onBlur={() => handleBlur('pets')}
+                      />
+                      <label htmlFor="petsAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                    </div>
                   </div>
                 </div>
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[30px]'> 
+                <div className='grid gap-2 mt-[30px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>Əks cinsin gəlməsi</p>
                   {hasError('visitors') && <p className="error-text">{getErrorMessage('visitors')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input 
-                      type="radio" 
-                      id="visitorsAllowed" 
-                      name="visitors" 
-                      value="allowed" 
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.visitors === 'allowed'}
-                      onChange={(e) => handleRadioChange('visitors', e.target.value)}
-                      onBlur={() => handleBlur('visitors')}
-                    />
-                    <label htmlFor="visitorsAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
-                    <input 
-                      type="radio" 
-                      id="visitorsNotAllowed" 
-                      name="visitors" 
-                      value="notAllowed" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.visitors === 'notAllowed'}
-                      onChange={(e) => handleRadioChange('visitors', e.target.value)}
-                      onBlur={() => handleBlur('visitors')}
-                    />
-                    <label htmlFor="visitorsNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
-                    <input 
-                      type="radio" 
-                      id="visitorsAny" 
-                      name="visitors" 
-                      value="any" 
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.visitors === 'any'}
-                      onChange={(e) => handleRadioChange('visitors', e.target.value)}
-                      onBlur={() => handleBlur('visitors')}
-                    />
-                    <label htmlFor="visitorsAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                  <div className='grid grid-cols-3 
+                  max-[850px]:grid-cols-2
+                  max-[768px]:grid-cols-3
+                  max-[480px]:grid-cols-2
+                   mt-[9px] gap-y-3'>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="visitorsAllowed"
+                        name="visitors"
+                        value="allowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.visitors === 'allowed'}
+                        onChange={(e) => handleRadioChange('visitors', e.target.value)}
+                        onBlur={() => handleBlur('visitors')}
+                      />
+                      <label htmlFor="visitorsAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olar</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="visitorsNotAllowed"
+                        name="visitors"
+                        value="notAllowed"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.visitors === 'notAllowed'}
+                        onChange={(e) => handleRadioChange('visitors', e.target.value)}
+                        onBlur={() => handleBlur('visitors')}
+                      />
+                      <label htmlFor="visitorsNotAllowed" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Olmaz</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="radio"
+                        id="visitorsAny"
+                        name="visitors"
+                        value="any"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.visitors === 'any'}
+                        onChange={(e) => handleRadioChange('visitors', e.target.value)}
+                        onBlur={() => handleBlur('visitors')}
+                      />
+                      <label htmlFor="visitorsAny" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Fərqi yoxdur</label>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='grid gap-2 w-full mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Təsviri</p>
-                <div className='mt-[9px] w-full'>
+                <div className='mt-[9px]'>
                   <textarea
-                    className={`w-[647px] min-h-[120px] border rounded-[8px] p-[12px] text-[16px] resize-y transition-all duration-200 ${
-                      hasError('description') ? 'error-field' : 'border-[#E9E9E9] focus:outline-none focus:border-[#1B8F7D]'
-                    }`}
+                    className={`min-w-0 w-full min-h-[120px] border rounded-[8px] p-[12px] text-[16px] resize-y transition-all duration-200 ${hasError('description') ? 'error-field' : 'border-[#E9E9E9] focus:outline-none focus:border-[#1B8F7D]'
+                      }`}
                     placeholder="Əlavə məlumat daxil edin"
                     value={formik.values.description || ''}
                     onChange={(e) => handleInputChange('description', e.target.value)}
@@ -650,7 +718,7 @@ useEffect(() => {
                   />
                   <p className='text-[#6C707A] text-[14px] mt-[8px] text-right'>
                     {(formik.values.description || '').length}/5000
-                  </p>              
+                  </p>
                 </div>
                 {hasError('description') && <p className="error-text">{getErrorMessage('description')}</p>}
               </div>

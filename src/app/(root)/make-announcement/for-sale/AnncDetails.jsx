@@ -1,75 +1,75 @@
 import React, { useState, useCallback } from 'react';
 import { getValidationSchema } from '@/lib/schemas/announcementSchema';
 
-const AnncDetails = ({ 
+const AnncDetails = ({
   formik,
   stepErrors = {},
   setStepErrors,
   isValidating,
-  activePropertyType 
+  activePropertyType
 }) => {
 
 
-    const [localErrors, setLocalErrors] = useState({});
-  
-    const clearErrorForField = useCallback((fieldName) => {
-      if (typeof setStepErrors === 'function') {
-        setStepErrors(prev => {
-          if (!prev || !prev[fieldName]) return prev || {};
-          const { [fieldName]: removed, ...rest } = prev;
-          return rest;
-        });
-      } else {
-        setLocalErrors(prev => {
-          if (!prev || !prev[fieldName]) return prev || {};
-          const { [fieldName]: removed, ...rest } = prev;
-          return rest;
-        });
-      }
-    }, [setStepErrors]);
-  
-    const handleInputChange = useCallback((fieldName, value) => {
-      formik.setFieldValue(fieldName, value);
+  const [localErrors, setLocalErrors] = useState({});
+
+  const clearErrorForField = useCallback((fieldName) => {
+    if (typeof setStepErrors === 'function') {
+      setStepErrors(prev => {
+        if (!prev || !prev[fieldName]) return prev || {};
+        const { [fieldName]: removed, ...rest } = prev;
+        return rest;
+      });
+    } else {
+      setLocalErrors(prev => {
+        if (!prev || !prev[fieldName]) return prev || {};
+        const { [fieldName]: removed, ...rest } = prev;
+        return rest;
+      });
+    }
+  }, [setStepErrors]);
+
+  const handleInputChange = useCallback((fieldName, value) => {
+    formik.setFieldValue(fieldName, value);
+    clearErrorForField(fieldName);
+  }, [formik, clearErrorForField]);
+
+  const handleBlur = useCallback(async (fieldName) => {
+    const currentValues = formik.values;
+    const schema = getValidationSchema(3, 'default', currentValues);
+
+    try {
+      await schema.validateAt(fieldName, currentValues);
       clearErrorForField(fieldName);
-    }, [formik, clearErrorForField]);
-  
-    const handleBlur = useCallback(async (fieldName) => {
-      const currentValues = formik.values;
-      const schema = getValidationSchema(3, 'default', currentValues); 
-  
-      try {
-        await schema.validateAt(fieldName, currentValues);
-        clearErrorForField(fieldName);
-      } catch (err) {
-        const message = err.message;
-        setStepErrors
-          ? setStepErrors((p) => ({ ...p, [fieldName]: message }))
-          : setLocalErrors((p) => ({ ...p, [fieldName]: message }));
-      }
-    }, [formik, clearErrorForField, setStepErrors]);
-  
-    const handleRadioChange = useCallback((fieldName, value) => {
-      handleInputChange(fieldName, value);
-    }, [handleInputChange]);
-  
-const handleFeatureChange = useCallback((feature) => {
+    } catch (err) {
+      const message = err.message;
+      setStepErrors
+        ? setStepErrors((p) => ({ ...p, [fieldName]: message }))
+        : setLocalErrors((p) => ({ ...p, [fieldName]: message }));
+    }
+  }, [formik, clearErrorForField, setStepErrors]);
+
+  const handleRadioChange = useCallback((fieldName, value) => {
+    handleInputChange(fieldName, value);
+  }, [handleInputChange]);
+
+  const handleFeatureChange = useCallback((feature) => {
     const currentFeatures = formik.values.features || [];
     let newFeatures;
-    
+
     if (currentFeatures.includes(feature)) {
       newFeatures = currentFeatures.filter(f => f !== feature);
     } else {
       newFeatures = [...currentFeatures, feature];
     }
-    
+
     handleInputChange('features', newFeatures);
   }, [formik.values.features, handleInputChange]);
-  
-    const displayedErrors = { ...(localErrors || {}), ...(stepErrors || {}) };
-  
-    const getErrorMessage = (fieldName) => displayedErrors[fieldName];
-    const hasError = (fieldName) => !!displayedErrors[fieldName];
-    
+
+  const displayedErrors = { ...(localErrors || {}), ...(stepErrors || {}) };
+
+  const getErrorMessage = (fieldName) => displayedErrors[fieldName];
+  const hasError = (fieldName) => !!displayedErrors[fieldName];
+
   return (
     <>
       <style>
@@ -135,35 +135,35 @@ const handleFeatureChange = useCallback((feature) => {
           }
         `}
       </style>
-      
+
       <div className="h-full pb-[16px] border-b border-[rgba(0,0,0,0.2)]">
         <div className="flex items-start justify-start gap-[95px] max-h-[444px] overflow-y-auto hide-scrollbar pl-[2px]">
-          <form action="" className="w-full"> 
+          <form action="" className="w-full">
             <div className='flex flex-col items-start justify-center'>
-            <h5 className='text-[#000] text-[24px]/[28px] font-medium'>
-              Detallar
-            </h5>
+              <h5 className='text-[#000] text-[24px]/[28px] font-medium'>
+                Detallar
+              </h5>
 
               <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[16px]/[20px] font-medium'>Çıxarış?</p>
                 {hasError('exit') && <p className="error-text">{getErrorMessage('exit')}</p>}
                 <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="exitTheres" 
-                    name="exit" 
-                    value="theres" 
+                  <input
+                    type="radio"
+                    id="exitTheres"
+                    name="exit"
+                    value="theres"
                     className='w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.exit === 'theres'}
                     onChange={(e) => handleRadioChange('exit', e.target.value)}
                     onBlur={() => handleBlur('exit')}
                   />
                   <label htmlFor="exitTheres" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Var</label>
-                  <input 
-                    type="radio" 
-                    id="exitTheresNot" 
-                    name="exit" 
-                    value="theresNot" 
+                  <input
+                    type="radio"
+                    id="exitTheresNot"
+                    name="exit"
+                    value="theresNot"
                     className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.exit === 'theresNot'}
                     onChange={(e) => handleRadioChange('exit', e.target.value)}
@@ -174,26 +174,26 @@ const handleFeatureChange = useCallback((feature) => {
               </div>
 
 
-            <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-              <p className='text-[#000] text-[20px]/[24px]'>İpotekaya yararlıdır?</p>
+              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+                <p className='text-[#000] text-[20px]/[24px]'>İpotekaya yararlıdır?</p>
                 {hasError('mortgage') && <p className="error-text">{getErrorMessage('mortgage')}</p>}
                 <div className='flex flex-row items-center justify-center mt-[9px]'>
-                  <input 
-                    type="radio" 
-                    id="mortgageYes" 
-                    name="mortgage" 
-                    value="yes" 
+                  <input
+                    type="radio"
+                    id="mortgageYes"
+                    name="mortgage"
+                    value="yes"
                     className='w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.mortgage === 'yes'}
                     onChange={(e) => handleRadioChange('mortgage', e.target.value)}
                     onBlur={() => handleBlur('mortgage')}
                   />
                   <label htmlFor="mortgageYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
-                  <input 
-                    type="radio" 
-                    id="mortgageNo" 
-                    name="mortgage" 
-                    value="no" 
+                  <input
+                    type="radio"
+                    id="mortgageNo"
+                    name="mortgage"
+                    value="no"
                     className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
                     checked={formik.values.mortgage === 'no'}
                     onChange={(e) => handleRadioChange('mortgage', e.target.value)}
@@ -201,72 +201,73 @@ const handleFeatureChange = useCallback((feature) => {
                   />
                   <label htmlFor="mortgageNo" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
                 </div>
-            </div>
+              </div>
 
- <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Əlavə xüsusiyyətlər</p>
                 {hasError('features') && <p className="error-text">{getErrorMessage('features')}</p>}
-                <div className={`grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full ${
-                  activePropertyType === 'garage' ? 'grid-cols-2' : 'grid-cols-3'
-                }`}>
+                <div className={`grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full ${activePropertyType === 'garage'
+                  ? 'grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[560px]:grid-cols-1'
+                  : 'grid-cols-3 max-[1360px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[590px]:grid-cols-1'
+                  }`}>
 
                   {activePropertyType !== 'land' && activePropertyType !== 'garage' && (
                     <>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="parking" 
-                          name="features" 
-                          value="parking" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="parking"
+                          name="features"
+                          value="parking"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('parking')}
                           onChange={() => handleFeatureChange('parking')}
                         />
                         <label htmlFor="parking" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Parking</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="furniture" 
-                          name="features" 
-                          value="furniture" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="furniture"
+                          name="features"
+                          value="furniture"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('furniture')}
                           onChange={() => handleFeatureChange('furniture')}
                         />
                         <label htmlFor="furniture" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mebel</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="bigAppliances" 
-                          name="features" 
-                          value="bigAppliances" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="bigAppliances"
+                          name="features"
+                          value="bigAppliances"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('bigAppliances')}
                           onChange={() => handleFeatureChange('bigAppliances')}
                         />
                         <label htmlFor="bigAppliances" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Böyük məişət texnikası</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="balcony" 
-                          name="features" 
-                          value="balcony" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="balcony"
+                          name="features"
+                          value="balcony"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('balcony')}
                           onChange={() => handleFeatureChange('balcony')}
                         />
                         <label htmlFor="balcony" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Çardaq</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="lift" 
-                          name="features" 
-                          value="lift" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="lift"
+                          name="features"
+                          value="lift"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('lift')}
                           onChange={() => handleFeatureChange('lift')}
                         />
@@ -274,52 +275,52 @@ const handleFeatureChange = useCallback((feature) => {
                       </div>
                     </>
                   )}
-                  
+
                   {(activePropertyType !== 'land') && (
                     <>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="smallAppliances" 
-                          name="features" 
-                          value="smallAppliances" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="smallAppliances"
+                          name="features"
+                          value="smallAppliances"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('smallAppliances')}
                           onChange={() => handleFeatureChange('smallAppliances')}
                         />
                         <label htmlFor="smallAppliances" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kiçik məişət texnikası</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="heatingSystem" 
-                          name="features" 
-                          value="heatingSystem" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="heatingSystem"
+                          name="features"
+                          value="heatingSystem"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('heatingSystem')}
                           onChange={() => handleFeatureChange('heatingSystem')}
                         />
                         <label htmlFor="heatingSystem" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>İstilik sistemi</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="coolingSystem" 
-                          name="features" 
-                          value="coolingSystem" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="coolingSystem"
+                          name="features"
+                          value="coolingSystem"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('coolingSystem')}
                           onChange={() => handleFeatureChange('coolingSystem')}
                         />
                         <label htmlFor="coolingSystem" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Soyutma sistemi</label>
                       </div>
                       <div className='flex items-center'>
-                        <input 
-                          type="checkbox" 
-                          id="security" 
-                          name="features" 
-                          value="security" 
-                          className='svg-checkbox'
+                        <input
+                          type="checkbox"
+                          id="security"
+                          name="features"
+                          value="security"
+                          className='shrink-0 svg-checkbox'
                           checked={(formik.values.features || []).includes('security')}
                           onChange={() => handleFeatureChange('security')}
                         />
@@ -331,13 +332,12 @@ const handleFeatureChange = useCallback((feature) => {
                 </div>
               </div>
 
-              <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='w-full flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Təsviri</p>
-                <div className='mt-[9px] w-full'>
+                <div className=' mt-[9px] w-full'>
                   <textarea
-                    className={`w-[647px] min-h-[120px] border rounded-[8px] p-[12px] text-[16px] resize-y transition-all duration-200 ${
-                      hasError('description') ? 'error-field' : 'border-[#E9E9E9] focus:outline-none focus:border-[#1B8F7D]'
-                    }`}
+                    className={`min-w-0 w-full min-h-[120px] border rounded-[8px] p-[12px] text-[16px] resize-y transition-all duration-200 ${hasError('description') ? 'error-field' : 'border-[#E9E9E9] focus:outline-none focus:border-[#1B8F7D]'
+                      }`}
                     placeholder="Əlavə məlumat daxil edin"
                     value={formik.values.description || ''}
                     onChange={(e) => handleInputChange('description', e.target.value)}
@@ -347,14 +347,14 @@ const handleFeatureChange = useCallback((feature) => {
                   />
                   <p className='text-[#6C707A] text-[14px] mt-[8px] text-right'>
                     {(formik.values.description || '').length}/5000
-                  </p>              
+                  </p>
                 </div>
                 {hasError('description') && <p className="error-text">{getErrorMessage('description')}</p>}
               </div>
 
-          </div>
-        </form>
-      </div>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   )
