@@ -1,0 +1,38 @@
+export const rolePermissionMap = {
+	admin: [
+		"/",
+		"/dashboard",
+		"/edit",
+		"/order",
+		"/blablabla",
+		"/blablabla",
+		"/blablabla",
+	],
+	moderator: [
+		"/",
+		"/dashboard",
+		"/edit",
+		"/order",
+		"/blablabla",
+		"/blablabla",
+		"/blablabla",
+	],
+	agent: [
+		"/",
+		"/dashboard",
+		"/edit",
+		"/order",
+		"/blablabla",
+		"/blablabla",
+		"/blablabla",
+	],
+	user: [
+		"/",
+		"/dashboard",
+		"/edit",
+		"/order",
+		"/blablabla",
+		"/blablabla",
+		"/blablabla",
+	],
+};

@@ -83,6 +83,8 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             }}
             className="w-full"
           >
+            <div className={`card custom-prev-${house.id} swiper-button-prev drop-shadow-md`}></div>
+            <div className={`card custom-next-${house.id} swiper-button-next drop-shadow-md `}></div>
             {house.images.map((img, index) => (
               <SwiperSlide key={`${house.id}-${index}`}>
                 <div className="relative aspect-[302/262]">
@@ -93,7 +95,9 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
                     className="object-cover"
                   />
                 </div>
+
               </SwiperSlide>
+
             ))}
           </Swiper>
 
@@ -102,9 +106,8 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             className="cursor-pointer max-[431px]:w-[24px] max-[431px]:h-[24px] w-[30px] h-[30px] flex items-center justify-center absolute bg-[rgba(246,246,246,0.62)] z-[10] rounded-full top-[13px] right-[11px]"
           >
             <LuHeart
-              className={`${
-                isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"
-              } text-[20px] max-[431px]:text-[16px]`}
+              className={`${isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"
+                } text-[20px] max-[431px]:text-[16px]`}
             />
           </div>
 

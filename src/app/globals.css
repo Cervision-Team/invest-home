@@ -156,3 +156,9 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none;             /* Chrome, Safari, Opera */
 }
+
+
+.card {
+	--swiper-theme-color: white;
+  --swiper-navigation-size:30px;
+}
