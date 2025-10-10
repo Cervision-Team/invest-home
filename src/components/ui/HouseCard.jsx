@@ -47,7 +47,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
   };
 
   return (
-    <Link href={`/house-detail/${house.id}`}>
+    <Link href={`/house-detail/${house.id}`} className="group">
       <div className="mb-3 card shadow-[0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden rounded-[8px] select-none cursor-pointer">
         <div className="img-container overflow-hidden rounded-[8px] relative">
           <Swiper
@@ -83,8 +83,8 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             }}
             className="w-full"
           >
-            <div className={`card custom-prev-${house.id} swiper-button-prev drop-shadow-md`}></div>
-            <div className={`card custom-next-${house.id} swiper-button-next drop-shadow-md `}></div>
+            <div className={`card custom-prev-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
+            <div className={`card custom-next-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
             {house.images.map((img, index) => (
               <SwiperSlide key={`${house.id}-${index}`}>
                 <div className="relative aspect-[302/262]">

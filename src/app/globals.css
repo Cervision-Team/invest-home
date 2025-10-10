@@ -1,164 +1,216 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'handel-gothic-regular';
-  src: url('../../public/fonts/handel-gothic-regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
+	font-family: "handel-gothic-regular";
+	src: url("../../public/fonts/handel-gothic-regular.otf") format("opentype");
+	font-weight: normal;
+	font-style: normal;
 }
 
 .no-scroll {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .main-logo-style {
-  font-family: 'handel-gothic-regular', sans-serif !important;
-  font-weight: 100;
+	font-family: "handel-gothic-regular", sans-serif !important;
+	font-weight: 100;
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: #ffffff;
+	--foreground: #171717;
 }
 
 @theme {
-  --color-primary: #02836F;
-  --primary-color: #02836F;
-  --white: #fff;
-  --text-color-1: #0B090A;
-  --text-color-2: #2B2B2B;
-  --text-color-3: #808080;
-  --text-color-4: #AAA;
-  --text-color-5: #D4D4D4;
-  --text-color-6: #23272F;
-  --yellow: #FFC700;
-  --color-neutral: #FAFAFA;
-  --color-neutral-text: #E0F5F1;
-  --color-neutral-disabled: #6C707A;
-  --color-azure: #212529;
-  --color-dark: #191A23;
+	--color-primary: #02836f;
+	--primary-color: #02836f;
+	--white: #fff;
+	--text-color-1: #0b090a;
+	--text-color-2: #2b2b2b;
+	--text-color-3: #808080;
+	--text-color-4: #aaa;
+	--text-color-5: #d4d4d4;
+	--text-color-6: #23272f;
+	--yellow: #ffc700;
+	--color-neutral: #fafafa;
+	--color-neutral-text: #e0f5f1;
+	--color-neutral-disabled: #6c707a;
+	--color-azure: #212529;
+	--color-dark: #191a23;
 }
 
 .remove-arrow input::-webkit-inner-spin-button,
 .remove-arrow input::-webkit-outer-spin-button {
-  display: none;
+	display: none;
 }
 
 @media (min-width: 1414px) and (max-width: 1450px) {
-  .mx-auto-1414-1450 {
-    margin-left: auto;
-    margin-right: auto;
-  }
+	.mx-auto-1414-1450 {
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: #0a0a0a;
+		--foreground: #ededed;
+	}
 }
 
 body {
-  font-family: 'Poppins';
-  background-color: #FAFAFA;
+	font-family: "Poppins";
+	background-color: #fafafa;
 }
 
 .bullet-dot {
-  background-color: #ccc;
+	background-color: #ccc;
 }
 
 .swiper-pagination-bullet-active {
-  background-color: white !important;
+	background-color: white !important;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -500px 0;
-  }
-  100% {
-    background-position: 500px 0;
-  }
+	0% {
+		background-position: -500px 0;
+	}
+	100% {
+		background-position: 500px 0;
+	}
 }
 
 .shimmer {
-  background: linear-gradient(
-    to right,
-    #eeeeee 0%,
-    #dddddd 20%,
-    #eeeeee 40%,
-    #eeeeee 100%
-  );
-  background-size: 1000px 100%;
-  animation: shimmer 1.5s infinite linear;
+	background: linear-gradient(
+		to right,
+		#eeeeee 0%,
+		#dddddd 20%,
+		#eeeeee 40%,
+		#eeeeee 100%
+	);
+	background-size: 1000px 100%;
+	animation: shimmer 1.5s infinite linear;
 }
-
 
 .custom-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: url("/icons/arrow-down-black.svg") no-repeat right 10px center;
-  padding-right: 30px; 
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	background: url("/icons/arrow-down-black.svg") no-repeat right 10px center;
+	padding-right: 30px;
 }
 
-
-
 @keyframes reverseSlideRight {
-  0%   {opacity: 1; transform: translateX(0) scale(1);}
-  49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  100% {opacity: 1; transform: translateX(0) scale(1);}
+	0% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+	49% {
+		opacity: 0;
+		transform: translateX(50px) scale(0.8);
+	}
+	50% {
+		opacity: 0;
+		transform: translateX(-50px) scale(0.8);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
 }
 
 @keyframes slideRight {
-  0%   {opacity: 1; transform: translateX(0) scale(1);}
-  49%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  50%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  100% {opacity: 1; transform: translateX(0) scale(1);}
+	0% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+	49% {
+		opacity: 0;
+		transform: translateX(50px) scale(0.8);
+	}
+	50% {
+		opacity: 0;
+		transform: translateX(-50px) scale(0.8);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
 }
 
 .arrow-anim-right {
-  animation: reverseSlideRight 0.7s 1;
+	animation: reverseSlideRight 0.7s 1;
 }
 
 .group:hover .arrow-anim-right {
-  animation: slideRight 0.8s 1;
+	animation: slideRight 0.8s 1;
 }
 
-
 @keyframes reverseSlideLeft {
-  0%   {opacity: 1; transform: translateX(0) scale(1);}
-  49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  100% {opacity: 1; transform: translateX(0) scale(1);}
+	0% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+	49% {
+		opacity: 0;
+		transform: translateX(-50px) scale(0.8);
+	}
+	50% {
+		opacity: 0;
+		transform: translateX(50px) scale(0.8);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
 }
 
 @keyframes slideLeft {
-  0%   {opacity: 1; transform: translateX(0) scale(1);}
-  49%  {opacity: 0; transform: translateX(-50px) scale(0.8);}
-  50%  {opacity: 0; transform: translateX(50px) scale(0.8);}
-  100% {opacity: 1; transform: translateX(0) scale(1);}
+	0% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
+	49% {
+		opacity: 0;
+		transform: translateX(-50px) scale(0.8);
+	}
+	50% {
+		opacity: 0;
+		transform: translateX(50px) scale(0.8);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0) scale(1);
+	}
 }
 
 .arrow-anim-left {
-  animation: reverseSlideLeft 0.7s 1;
+	animation: reverseSlideLeft 0.7s 1;
 }
 
 .group:hover .arrow-anim-left {
-  animation: slideLeft 0.8s 1;
+	animation: slideLeft 0.8s 1;
 }
-
 
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari, Opera */
+	display: none; /* Chrome, Safari, Opera */
 }
-
 
 .card {
 	--swiper-theme-color: white;
-  --swiper-navigation-size:30px;
+	--swiper-navigation-size: 28px;
+}
+
+.menu-icon.active :is(path, ellipse) {
+	stroke: #02836f;
+}
+
+.menu-link.active {
+	color: #02836f;
+	background-color: #fafafa;
+	border-right: 6px solid #02836f;
 }

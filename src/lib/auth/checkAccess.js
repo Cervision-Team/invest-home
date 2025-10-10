@@ -10,3 +10,17 @@ export const hasAccessUrl = (role, url) => {
 		return regex.test(url);
 	});
 };
+
+const rolePermissions = {
+	admin: ["view:post"],
+};
+
+export const hasAccess = (role, resource, action) => {
+	const accessiblePermissions = rolePermissions[role] || [];
+	const target = `${resource}:${action}`;
+	return accessiblePermissions.includes(target);
+};
+
+console.log(hasAccess("admin", "view", "post"));
+
+
