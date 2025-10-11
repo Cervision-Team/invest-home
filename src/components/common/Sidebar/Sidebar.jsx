@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 const menuItems = [
     { title: "Profilim", href: "/dashboard", icon: DashboardIcon },
-    { title: "Statistika", href: "/statistika", icon: DatabaseIcon },
+    { title: "Statistika", href: "/statistics", icon: DatabaseIcon },
     { title: "Əməkdaşlar", href: "/emekdaslar", icon: WalletIcon },
     { title: "Elan bazası", href: "/elan", icon: ClockIcon },
     { title: "Sifarişlər", href: "/sifaris", icon: SearchIcon },
@@ -18,7 +18,7 @@ const Sidebar = () => {
     const pathName = usePathname();
     return (
         <div>
-            <nav className='w-[302px] h-full bg-[#02836F1A] rounded-t-[12px] py-[40px]'>
+            <nav className='w-[302px] h-full bg-[#02836F1A] rounded-[12px] py-[40px]'>
                 <ul className='flex flex-col gap-[32px]'>
                     {
                         menuItems.map((item) => {
