@@ -2,7 +2,7 @@ export const rolePermissionMap = {
 	admin: [
 		"/",
 		"/dashboard",
-		"/edit",
+		"/statistics",
 		"/order",
 		"/blablabla",
 		"/blablabla",

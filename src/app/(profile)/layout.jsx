@@ -16,7 +16,7 @@ export default function Layout({ children }) {
                 <main>
                     <ContactHeader />
                     <Header />
-                    <div className="flex mt-[40px] mx-[80px] gap-[24px] -mb-[120px]">
+                    <div className="flex mt-[40px] mx-[80px] gap-[24px]">
                         <Sidebar />
                         {children}
                     </div>
