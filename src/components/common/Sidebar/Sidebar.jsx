@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link'
 import React from 'react'
-import { ClockIcon, DashboardIcon, DatabaseIcon, PhoneIcon, SearchIcon, WalletIcon } from './MenuIcons';
+import { ClockIcon, DashboardIcon, DatabaseIcon, PhoneIcon, SearchIcon, WalletIcon,LogoutIcon } from './MenuIcons';
 import { usePathname } from "next/navigation";
 
 const menuItems = [
@@ -34,7 +34,7 @@ const Sidebar = () => {
                     }
                 </ul>
                 <div className='px-[32px] mt-[32px]'>
-                    <button className='flex justify-center py-[10px] bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-[8px]'>Çıxış</button>
+                    <button className='flex justify-center py-[10px] bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-[8px] gap-[15px] items-center'><LogoutIcon/> Çıxış</button>
                 </div>
             </nav>
         </div>
