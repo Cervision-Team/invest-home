@@ -9,7 +9,7 @@ import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
 
 const Dashboard = () => {
   return (
-    <main className='w-full flex flex-col gap-[36px]'>
+    <main className='w-full flex flex-col gap-[24px]'>
       <section>
         <Summary />
       </section>

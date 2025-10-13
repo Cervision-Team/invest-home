@@ -10,7 +10,7 @@ import userIcon from "../../../../public/icons/profile/user-icon.svg"
 
 const Statistics = () => {
   return (
-    <main className='w-full flex flex-col gap-[36px]'>
+    <main className='w-full flex flex-col gap-[24px]'>
    
       <section>
         <TotalStatisticWithProgressbar text="Ümumi aylıq satış sayı" count={4562} percentage={40} />
