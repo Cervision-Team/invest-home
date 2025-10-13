@@ -5,13 +5,13 @@ import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisti
 import React from 'react'
 import licenseIcon from "../../../../public/icons/profile/license-icon.svg"
 import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
+import documentIcon from "../../../../public/icons/profile/document-icon.svg"
+import userIcon from "../../../../public/icons/profile/user-icon.svg"
 
 const Statistics = () => {
   return (
     <main className='w-full flex flex-col gap-[36px]'>
-      <section>
-        <Summary />
-      </section>
+   
       <section>
         <TotalStatisticWithProgressbar text="Ümumi aylıq satış sayı" count={4562} percentage={40} />
       </section>
@@ -20,6 +20,8 @@ const Statistics = () => {
         <StatisticWithCircleProgressBar color={"#FF9D14"} count={2356} text={"Kirayə evlər"} target={"3k/aylıq"} percentage={65} />
         <TotalStatistic icon={licenseIcon} text="Ümumi elan sayı" count={4562} />
         <TotalStatistic icon={archiveIcon} text="Arxivlənmiş elanlar" count={3028} />
+        <TotalStatistic icon={documentIcon} text="Ümumi sifariş sayı" count={4562} />
+        <TotalStatistic icon={userIcon} text="Ümumi istifadəçi sayı" count={3028} />
       </section>
     </main>
   )
