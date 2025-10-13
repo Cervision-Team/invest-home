@@ -3,7 +3,7 @@ export const rolePermissionMap = {
 		"/",
 		"/dashboard",
 		"/statistics",
-		"/order",
+		"/employees",
 		"/blablabla",
 		"/blablabla",
 		"/blablabla",
