@@ -91,7 +91,7 @@ const users = [
 const Employees = () => {
     return (
         <main className='w-full'>
-            <section className='grid grid-cols-4 gap-y-[20px]'>
+            <section className='grid grid-cols-4 gap-x-[20px] gap-y-[40px]'>
                 {
                     users.map((user) => {
                         return (

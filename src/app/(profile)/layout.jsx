@@ -13,7 +13,7 @@ export default function Layout({ children }) {
         <ProtectedRoute>
 
             <LangProvider>
-                <main>
+                <main className="bg-[#fff]">
                     <ContactHeader />
                     <Header />
                     <div className="flex mt-[40px] mx-[80px] gap-[24px]">

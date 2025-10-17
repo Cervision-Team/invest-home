@@ -206,11 +206,14 @@ body {
 }
 
 .menu-icon.active :is(path, ellipse) {
-	stroke: #02836f;
+	stroke: #fafafa;
+}
+.menu-icon-fill.active :is(path, ellipse) {
+	fill: #fafafa;
 }
 
 .menu-link.active {
-	color: #02836f;
-	background-color: #fafafa;
+	color: #fafafa;
+	background-color: #02836f;
 	border-right: 6px solid #02836f;
 }
