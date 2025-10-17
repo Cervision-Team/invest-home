@@ -5,7 +5,7 @@ const CircleProgressBar = ({ percentage, color }) => {
 
     return (
         <div className='w-[90px] h-[90px]'>
-            <CircularProgressbarWithChildren value={percentage} styles={{
+            <CircularProgressbarWithChildren circleRatio={1}  value={percentage} styles={{
                 path: {
                     stroke: color
                 },
