@@ -7,7 +7,7 @@ import notificationIcon from "../../../../../public/icons/profile/notification-i
 
 const Summary = () => {
     return (
-        <div className='bg-white py-[12px] px-[20px] flex justify-between w-full shadow-[0px_4px_10px_0px_#0000001A] rounded-xl'>
+        <div className='flex justify-between w-full'>
             <div className='flex gap-[24px] items-center'>
                 <div className='w-[100px] h-[100px]'>
                     <Image src={profilePhoto} alt='profile photo' className='w-full h-full object-cover object-top rounded-full' />

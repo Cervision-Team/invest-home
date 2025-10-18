@@ -41,8 +41,11 @@ const Sidebar = () => {
                         })
                     }
                 </ul>
-                <div className='px-[32px] mt-[32px]'>
-                    <button className='flex justify-center py-[10px] bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-[8px] gap-[15px] items-center'><LogoutIcon /> Çıxış</button>
+                {/* <div className='px-[32px] mt-[32px]'>
+                    <button className='flex justify-start py-[10px] bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-[8px] gap-[15px] items-center'><LogoutIcon /> Çıxış</button>
+                </div> */}
+                <div className='pl-[88px] mt-[32px]'>
+                    <button className='flex justify-start text-[18px] py-[12.5px] bg-white w-full text-[#E9222C] font-medium rounded-[8px] gap-[8px] items-center'><LogoutIcon /> Çıxış</button>
                 </div>
             </nav>
         </div>
