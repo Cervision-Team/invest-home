@@ -4,10 +4,10 @@ import Summary from '@/components/ui/profile/Summary'
 import TotalStatistic from '@/components/ui/profile/TotalStatistic'
 import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisticWithProgressbar'
 import React from 'react'
-import licenseIcon from "../../../../public/icons/profile/license-icon.svg"
-import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
+import licenseIcon from "../../../../../public/icons/profile/license-icon.svg"
+import archiveIcon from "../../../../../public/icons/profile/archive-icon.svg"
 
-const Dashboard = () => {
+const Profile = () => {
   return (
     <main className='w-full flex flex-col gap-[24px]'>
       <section>
@@ -26,4 +26,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Profile

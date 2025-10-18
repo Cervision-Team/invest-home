@@ -4,13 +4,13 @@ import TabBar from "@/components/common/Footer/TabBar";
 import ContactHeader from "@/components/common/Header/ContactHeader";
 import Header from "@/components/common/Header/Header";
 import Sidebar from "@/components/common/Sidebar/Sidebar";
-import ProtectedRoute from "@/components/router/ProtectedRoute";
+// import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
 
 export default function Layout({ children }) {
 
     return (
-        <ProtectedRoute>
+        // <ProtectedRoute>
 
             <LangProvider>
                 <main className="bg-[#fff]">
@@ -26,7 +26,7 @@ export default function Layout({ children }) {
 
                 </main>
             </LangProvider >
-        </ProtectedRoute>
+        // </ProtectedRoute> 
 
     )
 }

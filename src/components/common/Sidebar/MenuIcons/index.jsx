@@ -1,6 +1,6 @@
 import React from "react";
 
-export const DashboardIcon = ({ active }) => {
+export const ProfileIcon = ({ active }) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

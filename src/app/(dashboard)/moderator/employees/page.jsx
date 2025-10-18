@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import whatsappIcon from "../../../../public/icons/profile/whatsapp-icon.svg"
-import instagramIcon from "../../../../public/icons/profile/instagram-icon.svg"
-import linkedinIcon from "../../../../public/icons/profile/linkedin-icon.svg"
+import whatsappIcon from "../../../../../public/icons/profile/whatsapp-icon.svg"
+import instagramIcon from "../../../../../public/icons/profile/instagram-icon.svg"
+import linkedinIcon from "../../../../../public/icons/profile/linkedin-icon.svg"
 import agentsData from '@/components/core/AgentsData'
 
 const Employees = () => {
