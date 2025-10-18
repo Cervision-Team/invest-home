@@ -11,6 +11,7 @@ import Services from "./Home/Services";
 import WhoAreWe from "./Home/WhoAreWe";
 import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
 import { Suspense } from "react";
+import RecentHousesSkeleton from "@/components/ui/skeleton/RecentHousesSkeleton";
 
 
 export default function Home() {
@@ -28,13 +29,13 @@ export default function Home() {
       <Suspense fallback={<div>Loading...</div>}>
       <MobileCategory />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<RecentHousesSkeleton />}>
       <RecentHouses houseType="Ən son siyahıya alınmış əmlaklar" />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<RecentHousesSkeleton />}>
       <RecentHouses houseType="Satılıq əmlaklar" />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<RecentHousesSkeleton />}>
       <RecentHouses houseType="Kirayə evlər" />
       </Suspense>
       <Neighborhoods />

@@ -3,6 +3,7 @@ import EntryGate from "../components/EntryGate";
 import LoginForm from "../components/login/LoginForm";
 import Image from "next/image";
 import X_Icon from "../../../../public/icons/x.svg"
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const LoginPage = () => {
 
@@ -52,7 +53,9 @@ const LoginPage = () => {
                     yaşa!"
                   </p>
                 </div>
-                <LoginForm />
+<GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+  <LoginForm />
+</GoogleOAuthProvider>
                 <div className="min-[1025px]:hidden w-full flex flex-col items-center gap-[24px]">
                   <span>Hesabınız yoxdur? <Link className="text-primary" href={"/register"}>Qeydiyyatdan keçin</Link>.</span>
                 </div>
