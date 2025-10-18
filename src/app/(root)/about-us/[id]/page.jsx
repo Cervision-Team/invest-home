@@ -8,28 +8,43 @@ import { houseData } from '@/components/core/house';
 import HouseCard from '@/components/ui/HouseCard';
 import { FaWhatsapp } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
+import agentsData from '@/components/core/AgentsData';
 
 const Page = ({ params }) => {
 
 const { id } = params;
 
-//  async function fetchAgentData() {
-//     const resAgent = await fetch(`https://your-backend.com/api/agents/${id}`, {
-//       cache: 'no-store',
-//     });
-//     if (!resAgent.ok) throw new Error('Failed to fetch agent details');
-//     const agent = await resAgent.json();
+ // TODO: Replace with API fetching in the future
+  // async function fetchAgentData() {
+  //   const resAgent = await fetch(`https://your-backend.com/api/agents/${id}`, {
+  //     cache: 'no-store',
+  //   });
+  //   if (!resAgent.ok) throw new Error('Failed to fetch agent details');
+  //   const agent = await resAgent.json();
 
-//     const resHouses = await fetch(`https://your-backend.com/api/agents/${id}/houses`, {
-//       cache: 'no-store',
-//     });
-//     if (!resHouses.ok) throw new Error('Failed to fetch agent houses');
-//     const houses = await resHouses.json();
+  //   const resHouses = await fetch(`https://your-backend.com/api/agents/${id}/houses`, {
+  //     cache: 'no-store',
+  //   });
+  //   if (!resHouses.ok) throw new Error('Failed to fetch agent houses');
+  //   const houses = await resHouses.json();
 
-//     return { agent, houses };
-//   }
+  //   return { agent, houses };
+  // }
+  // const { agent, houses } = use(fetchAgentData());
 
-//   const { agent, houses } = use(fetchAgentData());
+  // Current implementation using local data
+  const agent = agentsData.find((agent) => agent.id === parseInt(id));
+
+  // If agent not found, show 404
+  if (!agent) {
+    notFound();
+  }
+
+  // Filter houses by agent (if you have agentId in houseData)
+  // const agentHouses = houseData.filter(house => house.agentId === agent.id);
+  // For now, showing all houses - update this logic based on your data structure
+  const agentHouses = houseData;
+
   return (
     <>
       <section className='mt- max-w-[1600px] mx-auto'>
@@ -37,7 +52,7 @@ const { id } = params;
           shadow-[4px_16px_50px_0px_rgba(2,131,111,0.05)] flex flex-row items-center justify-center gap-[34px] mx-[80px] max-[1100px]:flex-col max-[1100px]:mx-[20px]'>
 
           <Image
-            src={LawyerImage}
+            src={agent.image}
             alt='LawyerImage'
           //   src={agent.image}
           // alt={agent.name}
@@ -47,19 +62,20 @@ const { id } = params;
           />
 
           <div className='flex flex-col'>
-            <p className='text-[#000] text-2xl/[32px] font-medium'>
-              Commercial Real Estate Specialist
-              {/* {agent.role} */}
+            <p className='text-[#000] text-[32px]/[32px] font-medium'>
+              {agent.fullName}
+            </p>
+            <p className='text-[#000] text-xl/[28px] font-normal mt-2'>
+              {agent.role}
             </p>
             <p className='text-azure text-base/[24px] italic font-medium tracking-[1.024px] mt-5'>
-              ali.bagirov@investhome.az
-              {/* {agent.email} */}
+              {agent.email}
             </p>
             <p className='text-black text-[22px]/[28px] font-normal mt-8'>
-              "İnvestHome" şirkəti olaraq 2025-ci ildən bəri ölkəmizin daşınmaz əmlak bazarında həm fiziki
+              {/* "İnvestHome" şirkəti olaraq 2025-ci ildən bəri ölkəmizin daşınmaz əmlak bazarında həm fiziki
               həm də hüquqi şəxslər üçün yüksəkkeyfiyyətli xidmətlər təqdim edirik. Sözsüz ki, bu keyfiyyətin arxasında peşəkar
-              mütəxəssislərimiz, böyük müştəri bazamız və çoxillik təcrübəmiz dayanır. Məqsədimiz alqı-satqıdan qiymətləndirməyə
-              {/* {agent.description} */}
+              mütəxəssislərimiz, böyük müştəri bazamız və çoxillik təcrübəmiz dayanır. Məqsədimiz alqı-satqıdan qiymətləndirməyə */}
+               {agent.about1} {agent.about2}
             </p>
 
             <div className='w-full h-auto flex flex-row items-center justify-between mt-[85px]'>

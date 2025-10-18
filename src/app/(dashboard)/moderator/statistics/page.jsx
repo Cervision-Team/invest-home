@@ -3,10 +3,10 @@ import Summary from '@/components/ui/profile/Summary'
 import TotalStatistic from '@/components/ui/profile/TotalStatistic'
 import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisticWithProgressbar'
 import React from 'react'
-import licenseIcon from "../../../../public/icons/profile/license-icon.svg"
-import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
-import documentIcon from "../../../../public/icons/profile/document-icon.svg"
-import userIcon from "../../../../public/icons/profile/user-icon.svg"
+import licenseIcon from "../../../../../public/icons/profile/license-icon.svg"
+import archiveIcon from "../../../../../public/icons/profile/archive-icon.svg"
+import documentIcon from "../../../../../public/icons/profile/document-icon.svg"
+import userIcon from "../../../../../public/icons/profile/user-icon.svg"
 
 const Statistics = () => {
   return (

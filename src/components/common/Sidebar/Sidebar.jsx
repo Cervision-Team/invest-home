@@ -1,17 +1,17 @@
 "use client"
 import Link from 'next/link'
 import React from 'react'
-import { ClockIcon, DashboardIcon, DatabaseIcon, PhoneIcon, SearchIcon, WalletIcon, LogoutIcon, StatisticIcon, EmployeesIcon, OrderIcon, CustomerIcon } from './MenuIcons';
+import { ClockIcon, ProfileIcon, DatabaseIcon, PhoneIcon, SearchIcon, WalletIcon, LogoutIcon, StatisticIcon, EmployeesIcon, OrderIcon, CustomerIcon } from './MenuIcons';
 import { usePathname } from "next/navigation";
 import userAdmin from "../../../../public/images/profile/user-admin.jpg"
 import Image from 'next/image';
 const menuItems = [
-    { title: "Profilim", href: "/dashboard", icon: DashboardIcon },
-    { title: "Statistika", href: "/statistics", icon: StatisticIcon },
-    { title: "Əməkdaşlar", href: "/employees", icon: EmployeesIcon },
-    { title: "Elan bazası", href: "/elan", icon: DatabaseIcon },
-    { title: "Sifarişlər", href: "/orders", icon: OrderIcon },
-    { title: "Müştərilər", href: "/customers", icon: CustomerIcon },
+    { title: "Profilim", href: "/moderator/profile", icon: ProfileIcon },
+    { title: "Statistika", href: "/moderator/statistics", icon: StatisticIcon },
+    { title: "Əməkdaşlar", href: "/moderator/employees", icon: EmployeesIcon },
+    { title: "Elan bazası", href: "/moderator/elan", icon: DatabaseIcon },
+    { title: "Sifarişlər", href: "/moderator/orders", icon: OrderIcon },
+    { title: "Müştərilər", href: "/moderator/customers", icon: CustomerIcon },
 ];
 
 
