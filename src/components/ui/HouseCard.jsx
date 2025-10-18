@@ -32,6 +32,8 @@ const VideoSvg = "/icons/lets-icons_video-fill.svg";
  * @param {function} props.onToggleFavorite 
  */
 const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
+  const [activeSlide, setActiveSlide] = React.useState(0);
+
   const handleFavClick = (e) => {
     e.preventDefault();
     onToggleFavorite?.(house.id);
@@ -48,6 +50,26 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
 
   return (
     <Link href={`/house-detail/${house.id}`} className="group">
+      <style jsx>{`
+        .dynamic-dots {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+        }
+
+        .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background-color: rgba(217, 217, 217, 0.5);
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+          background-color: #d9d9d9cc;
+        }
+      `}</style>
       <div className="mb-3 card shadow-[0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden rounded-[8px] select-none cursor-pointer">
         <div className="img-container overflow-hidden rounded-[8px] relative">
           <Swiper
@@ -56,6 +78,9 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             loop
             speed={500}
             spaceBetween={5}
+            onSlideChange={(swiper) => {
+              setActiveSlide(swiper.realIndex);
+            }}
             navigation={{
               nextEl: `.custom-next-${house.id}`,
               prevEl: `.custom-prev-${house.id}`,
@@ -122,8 +147,15 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
           <div className="flex items-center gap-[7px] z-1 max-[769px]:bottom-[7px] bottom-[12px] max-[769px]:right-[50%] max-[769px]:translate-x-[50%] right-[8px] absolute arrow-dot-container">
             <div
               onClick={(e) => e.preventDefault()}
-              className={`flex items-center custom-pagination-${house.id}`}
-            ></div>
+              className="dynamic-dots"
+            >
+              {house.images && house.images.map((_, index) => (
+                <div
+                  key={index}
+                  className={`dot ${index === activeSlide ? "active" : ""}`}
+                ></div>
+              ))}
+            </div>
             <div
               onClick={(e) => {
                 e.preventDefault();

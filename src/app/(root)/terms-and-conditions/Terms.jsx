@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import arrowRightWhite from "../../../../public/icons/arrow-right-white-small.svg";
 import arrowLeftWhite from "../../../../public/icons/arrow-left-white.svg";
 
@@ -10,10 +11,15 @@ const Terms = () => {
   const [formIndex, setFormIndex] = useState(0);
   const [visitedSections, setVisitedSections] = useState([true, false]);
   const [isValidatingStep, setIsValidatingStep] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     openAccordion(0);
   }, []);
+
+  const handleRouterBack = () => {
+    router.back();
+  };
 
   const handleNextClick = () => {
     changeForm("increment");
@@ -22,7 +28,10 @@ const Terms = () => {
   const changeForm = (action) => {
     let index = formIndex;
 
-    if (action === "increment" && index < 4) {
+    if (action === "increment") {
+      if (index === 3) {
+ handleRouterBack();
+      }
       index++;
     } else if (action === "decrement" && index > 0) {
       index--;
