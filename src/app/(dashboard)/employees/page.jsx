@@ -45,7 +45,7 @@ const Employees = () => {
                 />
               </div>
               <div className="flex flex-col gap-[10px] items-center mt-[20px] text-center">
-                <p className="text-[20px]">{agent.name}</p>
+                <p className="text-[20px]">{agent.fullName}</p>
                 <strong className="text-[20px] text-[#02836F] font-medium">
                   {agent.role}
                 </strong>
