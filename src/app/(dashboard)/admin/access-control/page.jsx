@@ -10,7 +10,7 @@ const AccessControl = () => {
 
     useEffect(() => {
         (async () => {
-            const res = await axios.get("http://192.168.0.192:8081/v1/role-claim/matrix")
+            const res = await axios.get("http://192.168.0.234:8081/v1/role-claim/matrix")
             setMatrix(res.data)
             setAccess(res.data.rolesClaims.map(item => ({ ...item, original: true })));
         })()
@@ -41,7 +41,7 @@ const AccessControl = () => {
         .filter(a => (a.original) || (!a.original && a.hasPermission))
         .map(a => ({ roleId: a.roleId, claimId: a.claimId, hasPermission: a.hasPermission }));
         
-        const res = await axios.put("http://192.168.0.192:8081/v1/role-claim",payload)
+        const res = await axios.put("http://172.25.96.5:8081/v1/role-claim",payload)
             
             
         console.log("Payload to send:", payload);
@@ -51,7 +51,7 @@ const AccessControl = () => {
     return (
         <section className='w-full'>
             <table className="w-full border-collapse border border-gray-300">
-                <thead >
+                <thead>
                     <tr>
                         <th className="w-[200px] text-left p-2 border">Role & Permission</th>
                         {matrix?.roles?.map(role => <th key={role?.id} className="text-left p-2 border">{role.name}</th>)}
@@ -61,7 +61,7 @@ const AccessControl = () => {
                     {
                         matrix?.claims?.map(claim => (
                             <tr key={claim.id}>
-                                <td className="p-2 border font-medium">{claim.name}</td>
+                                <td className="p-2 border font-medium">{claim.displayName}</td>
                                 {
                                     matrix?.roles?.map(role => {
                                         const currentAccess = access?.find(
