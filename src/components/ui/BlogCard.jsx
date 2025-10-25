@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const BlogCard = ({ id, image, title, description, day, month, titleColor }) => {
   return (
-    <div className="max-w-[414px] w-full flex flex-col relative">
+    <div className="w-full flex flex-col relative">
       <div className=" h-[240px] rounded-[30px] relative overflow-hidden">
         <Image
           src={image}
