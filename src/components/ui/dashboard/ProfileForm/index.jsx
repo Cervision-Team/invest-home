@@ -1,13 +1,14 @@
 import React from 'react'
-const fields = [
-    { label: "Ad/Soyad", name: "fullName" },
-    { label: "Doğum tarixi", name: "birthDate" },
-    { label: "Telefon", name: "phoneNumber" },
-    { label: "Yaşayış ünvanı", name: "address" },
-    { label: "Email", name: "email" },
-    { label: "Vəzifəsi", name: "role" },
-];
+
 const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) => {
+    const fields = [
+        { label: "Ad/Soyad", name: "fullName", },
+        { label: "Doğum tarixi", name: "birthDate" },
+        { label: "Telefon", name: "phone" },
+        { label: "Yaşayış ünvanı", name: "location" },
+        { label: "Email", name: "email" },
+        { label: "Vəzifəsi", name: "roleName" },
+    ];
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} className='bg-white pt-[12px] pb-[70px] px-[20px]  shadow-[0px_4px_10px_0px_#0000001A] rounded-xl'>
@@ -26,7 +27,7 @@ const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) 
                                 />
                             </div>
                         ))}
-                        
+
                     </div>
                 </section>
             </form>
