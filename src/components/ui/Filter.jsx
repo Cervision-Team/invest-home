@@ -23,6 +23,14 @@ const PROPERTY_TYPES = {
     { id: 'office', name: 'Ofis' },
     { id: 'garage', name: 'Qaraj' }
   ],
+  all: [
+    { id: 'apartment', name: 'Mənzil' },
+    { id: 'object', name: 'Obyekt' },
+    { id: 'land', name: 'Torpaq sahəsi' },
+    { id: 'house', name: 'Ev' },
+    { id: 'office', name: 'Ofis' },
+    { id: 'garage', name: 'Qaraj' }
+  ],
   daily: [
     { id: 'apartmentDaily', name: 'Mənzil' },
     { id: 'gardenHouse', name: 'Bağ evi' },
@@ -796,8 +804,8 @@ useEffect(() => {
 
             <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
 
-            {announcementType !== 'all' && (
-              <>
+            
+              
                 <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
                   <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
                     Əmlak növü
@@ -834,11 +842,12 @@ useEffect(() => {
                       onTypeChange={handlePropertyTypeChange}
                     />
                   </Dropdown>
+                  
                 </div>
 
                 <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
-              </>
-            )}
+              
+            
 
             <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
               <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
