@@ -5,17 +5,17 @@ import chatIcon from "../../../../../public/icons/profile/chat-icon.svg"
 import notificationIcon from "../../../../../public/icons/profile/notification-icon.svg"
 
 
-const Summary = ({ isEditing, handleToggle }) => {
+const Summary = ({ isEditing, handleToggle, user }) => {
     return (
-        <> 
+        <>
             <div className='flex justify-between w-full'>
                 <div className='flex gap-[24px] items-center'>
                     <div className='w-[100px] h-[100px]'>
                         <Image src={profilePhoto} alt='profile photo' className='w-full h-full object-cover object-top rounded-full' />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <p className='text-xl font-medium'>Novruz Huseynov</p>
-                        <span className='text-lg text-[#02836F] capitalize'>founder</span>
+                        <p className='text-xl font-medium'>{user?.fullName}</p>
+                        <span className='text-lg text-[#02836F] capitalize'>{user?.role}</span>
                     </div>
                 </div>
 
