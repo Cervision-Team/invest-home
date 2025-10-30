@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
@@ -63,6 +63,20 @@ export default function DataTable() {
     status: "",
   });
   const [openMenu, setOpenMenu] = useState(null);
+  const menuRefs = useRef({});
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenu) {
+        const ref = menuRefs.current[openMenu];
+        if (ref && !ref.contains(event.target)) {
+          setOpenMenu(null);
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openMenu]);
 
   const filteredData = useMemo(() => {
     if (!search) return data;
@@ -136,35 +150,67 @@ export default function DataTable() {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <div className="relative">
+          <div
+            className="relative"
+            ref={(el) => (menuRefs.current[row.id] = el)}
+          >
             <button
               onClick={() =>
                 setOpenMenu((prev) => (prev === row.id ? null : row.id))
               }
-              className="p-1 hover:bg-gray-100 rounded text-xl"
+              className="p-1 hover:bg-gray-100 rounded text-xl cursor-pointer"
             >
               ⋮
             </button>
 
             {openMenu === row.id && (
-              <div className="absolute right-[-10px] top-[-5px] w-20 bg-white border rounded shadow-md z-[1000]">
+              <div className="absolute right-0 top-[-10px] mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-[1000] overflow-hidden">
                 <button
                   onClick={() => {
                     setEditRow(row.original);
                     setOpenMenu(null);
                   }}
-                  className="block w-full px-2 text-left hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center cursor-pointer gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
                 >
-                  Redaktə
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z"
+                    />
+                  </svg>
+                  Redaktə et
                 </button>
+
                 <button
                   onClick={() => {
                     setDeleteModal(true);
                     setSelected({ [row.original.id]: true });
                     setOpenMenu(null);
                   }}
-                  className="block w-full px-2 text-left hover:bg-gray-100 text-red-600 cursor-pointer"
+                  className="flex items-center gap-2 cursor-pointer w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                   Sil
                 </button>
               </div>
@@ -250,10 +296,14 @@ export default function DataTable() {
           <thead className="bg-gray-100">
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
-                {hg.headers.map((header) => (
+                {hg.headers.map((header, idx) => (
                   <th
                     key={header.id}
-                    className="px-3 py-2 text-left border-b whitespace-nowrap"
+                    className={`
+                px-3 py-2 text-left whitespace-nowrap sticky top-0 bg-gray-100 z-10
+                ${idx === 0 ? "left-0 z-20" : ""}
+                ${idx === hg.headers.length - 1 ? "right-0 z-20" : ""}
+              `}
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -266,11 +316,19 @@ export default function DataTable() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 cursor-pointer">
-                {row.getVisibleCells().map((cell) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell, idx) => (
                   <td
                     key={cell.id}
-                    className="px-3 py-2 border-b whitespace-nowrap"
+                    className={`
+                px-3 py-2 border-b whitespace-nowrap
+                ${idx === 0 ? "sticky left-0 bg-white z-20" : ""}
+                ${
+                  idx === row.getVisibleCells().length - 1
+                    ? "sticky right-0 bg-white z-10"
+                    : ""
+                }
+              `}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -305,134 +363,148 @@ export default function DataTable() {
 
       {/* Redaktə Modal */}
       {editRow && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-          onClick={() => setEditRow(null)}
-        >
-          <div
-            className="bg-white p-6 rounded-lg w-full max-w-[600px] max-h-[80vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-lg font-semibold mb-4">
-              Redaktə et: {editRow.id}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Object.keys(editRow)
-                .filter((key) => !["id", "image", "date"].includes(key))
-                .map((key) => (
-                  <label key={key} className="block text-sm">
+        <ModalLayout onClose={() => setEditRow(null)}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {Object.keys(editRow)
+              .filter((key) => !["id", "image", "date"].includes(key))
+              .map((key) => (
+                <div key={key} className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">
                     {key[0].toUpperCase() + key.slice(1)}:
-                    <input
-                      value={editRow[key]}
-                      onChange={(e) =>
-                        setEditRow({
-                          ...editRow,
-                          [key]: ["price", "area", "rooms", "floor"].includes(
-                            key
-                          )
-                            ? +e.target.value
-                            : e.target.value,
-                        })
-                      }
-                      className="border w-full px-2 py-1 rounded mt-1"
-                    />
                   </label>
-                ))}
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setEditRow(null)}
-                className="px-3 py-1 border rounded cursor-pointer"
-              >
-                Ləğv et
-              </button>
-              <button
-                onClick={handleEditSave}
-                className="px-3 py-1 bg-primary text-white rounded cursor-pointer"
-              >
-                Saxla
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Silmə Modal */}
-      {deleteModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
-          <div className="bg-white p-4 rounded-lg w-[400px]">
-            <p>Silmək istədiyinizə əminsiniz?</p>
-            <div className="flex justify-end gap-2 mt-3">
-              <button
-                onClick={() => setDeleteModal(false)}
-                className="px-3 py-1 border rounded cursor-pointer"
-              >
-                Ləğv et
-              </button>
-              <button
-                onClick={handleDeleteSelected}
-                className="px-3 py-1 bg-primary text-white rounded cursor-pointer"
-              >
-                Sil
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Yeni əlavə et Modal */}
-      {addModal && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-[1000]">
-          <div className="bg-white p-6 rounded-lg w-full max-w-[600px] max-h-[80vh] overflow-y-auto relative ">
-            <h3 className="text-lg font-semibold mb-4">Yeni ev əlavə et</h3>
-            <button
-              onClick={() => setAddModal(false)}
-              className="px-3 py-1 absolute top-4 right-4 cursor-pointer"
-            >
-              x
-            </button>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Object.keys(newRow).map((key) => (
-                <label key={key} className="block text-sm">
-                  {key[0].toUpperCase() + key.slice(1)}:
                   <input
-                    value={newRow[key]}
+                    value={editRow[key]}
                     onChange={(e) =>
-                      setNewRow({
-                        ...newRow,
+                      setEditRow({
+                        ...editRow,
                         [key]: ["price", "area", "rooms", "floor"].includes(key)
                           ? +e.target.value
                           : e.target.value,
                       })
                     }
-                    required
-                    className="border w-full px-2 py-1 rounded mt-1"
+                    className="border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
                   />
-                </label>
+                </div>
               ))}
-            </div>
-            <div className="flex justify-end gap-2 mt-4 cursor-pointer">
-              <button
-                onClick={handleAddRow}
-                disabled={
-                  !Object.values(newRow).every(
-                    (v) => v !== "" && v !== null && v !== undefined
-                  )
-                }
-                className={`px-3 py-1 text-white rounded ${
-                  Object.values(newRow).every(
-                    (v) => v !== "" && v !== null && v !== undefined
-                  )
-                    ? "bg-primary"
-                    : "bg-gray-400 cursor-not-allowed"
-                }`}
-              >
-                Əlavə et
-              </button>
-            </div>
           </div>
-        </div>
+
+          <div className="flex justify-end gap-3 mt-8">
+            <button
+              onClick={() => setEditRow(null)}
+              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+            >
+              Ləğv et
+            </button>
+            <button
+              onClick={handleEditSave}
+              className="px-4 py-2 text-sm bg-primary text-white rounded-lg cursor-pointer hover:bg-primary/90 transition"
+            >
+              Saxla
+            </button>
+          </div>
+        </ModalLayout>
       )}
+
+      {/* Silmə Modal */}
+      {deleteModal && (
+        <ModalLayout title="Təsdiqlə" onClose={() => setDeleteModal(false)}>
+          <p className="text-gray-700 mb-6">Seçilmiş məlumat(lar) silinsin?</p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setDeleteModal(false)}
+              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+            >
+              Ləğv et
+            </button>
+            <button
+              onClick={handleDeleteSelected}
+              className="px-4 py-2 text-sm bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 transition"
+            >
+              Sil
+            </button>
+          </div>
+        </ModalLayout>
+      )}
+
+      {/* Yeni əlavə et Modal */}
+      {addModal && (
+        <ModalLayout onClose={() => setAddModal(false)}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {Object.keys(newRow).map((key) => (
+              <label
+                key={key}
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                {key[0].toUpperCase() + key.slice(1)}:
+                <input
+                  value={newRow[key]}
+                  onChange={(e) =>
+                    setNewRow({
+                      ...newRow,
+                      [key]: ["price", "area", "rooms", "floor"].includes(key)
+                        ? +e.target.value
+                        : e.target.value,
+                    })
+                  }
+                  required
+                  className="border w-full mt-1 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
+                />
+              </label>
+            ))}
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              onClick={() => setAddModal(false)}
+              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+            >
+              Ləğv et
+            </button>
+            <button
+              onClick={handleAddRow}
+              disabled={
+                !Object.values(newRow).every(
+                  (v) => v !== "" && v !== null && v !== undefined
+                )
+              }
+              className={`px-4 py-2 text-sm text-white rounded-lg ${
+                Object.values(newRow).every(
+                  (v) => v !== "" && v !== null && v !== undefined
+                )
+                  ? "bg-primary hover:bg-primary/90 cursor-pointer"
+                  : "bg-gray-400 cursor-not-allowed"
+              } transition`}
+            >
+              Əlavə et
+            </button>
+          </div>
+        </ModalLayout>
+      )}
+    </div>
+  );
+}
+
+/* 🧩 Reusable Modal Layout Component */
+function ModalLayout({ title, children, onClose }) {
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000]"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white shadow-xl rounded-2xl w-full max-w-[600px] max-h-[85vh] overflow-y-auto px-6 py-4 sm:px-8 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-end items-center mb-4">
+          <button
+            onClick={onClose}
+            className="text-gray-600 text-xl hover:text-gray-700 transition cursor-pointer"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }
