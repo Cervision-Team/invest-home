@@ -7,6 +7,17 @@
 	font-style: normal;
 }
 
+::-webkit-scrollbar {
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
 .no-scroll {
 	overflow: hidden;
 }

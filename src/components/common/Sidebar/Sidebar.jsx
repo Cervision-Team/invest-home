@@ -9,7 +9,7 @@ const menuItems = [
     { title: "Profilim", href: "/profile", icon: ProfileIcon },
     { title: "Statistika", href: "/statistics", icon: StatisticIcon },
     { title: "Əməkdaşlar", href: "/employees", icon: EmployeesIcon },
-    { title: "Elan bazası", href: "/elan", icon: DatabaseIcon },
+    { title: "Elan bazası", href: "/database-table", icon: DatabaseIcon },
     { title: "Sifarişlər", href: "/orders", icon: OrderIcon },
     { title: "Müştərilər", href: "/customers", icon: CustomerIcon },
 ];
