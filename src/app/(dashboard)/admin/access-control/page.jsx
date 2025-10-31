@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "@/services/api/axiosInstance";
 import { getAccessControl, upadteAccessControl } from "@/services/api/endpoints/accessControlService";
-import ConfirmationModal from "@/components/ui/ConfirmationModal";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
@@ -45,7 +43,6 @@ const AccessControl = () => {
         await upadteAccessControl(payload)
     };
 
-    // 🔹 İlk sözə görə qruplaşdırma funksiyası
     const groupByFirstWord = (claims) => {
         return claims.reduce((groups, claim) => {
             const firstWord = claim.displayName.split(" ")[0];
@@ -56,7 +53,6 @@ const AccessControl = () => {
         }, {});
     };
 
-    // 🔹 Sıralanmış və ilk sözə görə qruplaşdırılmış claims
     const groupedClaims = groupByFirstWord(
         matrix?.claims?.slice()?.sort((a, b) => a.displayName.localeCompare(b.displayName)) || []
     );

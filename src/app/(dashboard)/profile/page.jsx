@@ -16,12 +16,12 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      fullName: "",
-      birthDate: "",
-      phone: "",
-      location: "",
-      email: "",
-      roleName: ""
+      fullName: "Nihat Aliyev",
+      birthDate: "17.06.2004",
+      phone: "+9940513888181",
+      location: "baku,xetai",
+      email: "nihataliyev@gmail.com",
+      roleName: "rehber"
     }
   });
 
@@ -46,11 +46,10 @@ const Profile = () => {
     })()
   }, [])
 
-  console.log(userData);
 
 
   return (
-    <main className='w-full flex flex-col gap-[24px]'>
+    <main className='w-full flex flex-col gap-6'>
       <section className=''>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
           <Summary isEditing={isEditing} handleToggle={handleToggle} user={userData} />

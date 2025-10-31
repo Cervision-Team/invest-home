@@ -13,10 +13,10 @@ export default function Layout({ children }) {
         // <ProtectedRoute>
 
             <LangProvider>
-                <main className="bg-[#fff]">
+                <main className="bg-white">
                     <ContactHeader />
                     <Header />
-                    <div className="flex mt-[40px] mx-[80px] gap-[24px]">
+                    <div className="flex mt-10 mx-20 gap-6">
                         <Sidebar />
                         {children}
                     </div>
