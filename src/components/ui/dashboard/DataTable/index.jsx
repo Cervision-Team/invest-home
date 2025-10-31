@@ -9,59 +9,16 @@ import {
   getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { columnHeaders, RealEstateData } from "@/components/core/RealEstateData";
 
 export default function DataTable() {
-  const initialData = [
-    {
-      id: "H-001",
-      image: "https://placehold.co/100x70?text=House+1",
-      location: "Bakı, Yasamal",
-      price: 120000,
-      area: 75,
-      rooms: 3,
-      floor: 5,
-      buildingType: "Yeni tikili",
-      owner: "Elvin Q.",
-      phone: "+994 50 555 11 22",
-      date: "2025-10-01",
-      status: "Satışda",
-    },
-    {
-      id: "H-002",
-      image: "https://placehold.co/100x70?text=House+2",
-      location: "Sumqayıt, 9-cu mikrorayon",
-      price: 95000,
-      area: 68,
-      rooms: 2,
-      floor: 2,
-      buildingType: "Köhnə tikili",
-      owner: "Aysel A.",
-      phone: "+994 70 777 33 44",
-      date: "2025-09-25",
-      status: "Satılıb",
-    },
-  ];
-
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState(RealEstateData);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState({});
   const [editRow, setEditRow] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
-  const [newRow, setNewRow] = useState({
-    id: "",
-    image: "",
-    location: "",
-    price: 0,
-    area: 0,
-    rooms: 0,
-    floor: 0,
-    buildingType: "",
-    owner: "",
-    phone: "",
-    date: "",
-    status: "",
-  });
+  const [newRow, setNewRow] = useState(Object.fromEntries(columnHeaders.map(col => [col.key, ""])));
   const [openMenu, setOpenMenu] = useState(null);
   const menuRefs = useRef({});
 
@@ -69,9 +26,7 @@ export default function DataTable() {
     const handleClickOutside = (event) => {
       if (openMenu) {
         const ref = menuRefs.current[openMenu];
-        if (ref && !ref.contains(event.target)) {
-          setOpenMenu(null);
-        }
+        if (ref && !ref.contains(event.target)) setOpenMenu(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -80,91 +35,74 @@ export default function DataTable() {
 
   const filteredData = useMemo(() => {
     if (!search) return data;
-    return data.filter((d) =>
+    return data.filter(d =>
       Object.values(d).join(" ").toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    const baseCols = columnHeaders.map(col => ({
+      accessorKey: col.key,
+      header: col.label,
+      cell: ({ getValue }) =>
+        col.key === "photo" ? (
+          <img src={getValue()} alt="photo" className="w-12 h-12 object-cover rounded" />
+        ) : col.key === "price" ? (
+          `${getValue()} AZN`
+        ) : (
+          getValue()
+        ),
+    }));
+
+    return [
       {
         id: "select",
         header: () => (
           <input
             type="checkbox"
-            className="cursor-pointer"
             checked={
               filteredData.length > 0 &&
-              filteredData.every((d) => selected[d.id])
+              filteredData.every(d => selected[d.elan_id])
             }
             onChange={(e) => {
               if (e.target.checked) {
                 const all = {};
-                filteredData.forEach((d) => (all[d.id] = true));
+                filteredData.forEach(d => (all[d.elan_id] = true));
                 setSelected(all);
               } else setSelected({});
             }}
+            className="cursor-pointer"
           />
         ),
         cell: ({ row }) => (
           <input
             type="checkbox"
-            className="cursor-pointer"
-            checked={!!selected[row.original.id]}
+            checked={!!selected[row.original.elan_id]}
             onChange={(e) =>
-              setSelected((prev) => ({
-                ...prev,
-                [row.original.id]: e.target.checked,
-              }))
+              setSelected(prev => {
+                const updated = { ...prev, [row.original.elan_id]: e.target.checked };
+                if (!e.target.checked) delete updated[row.original.elan_id];
+                return updated;
+              })
             }
+            className="cursor-pointer"
           />
         ),
       },
-      {
-        accessorKey: "image",
-        header: "Şəkil",
-        cell: ({ getValue }) => (
-          <img
-            src={getValue()}
-            alt="thumb"
-            className="w-20 h-14 object-cover rounded"
-          />
-        ),
-      },
-      { accessorKey: "id", header: "ID" },
-      { accessorKey: "location", header: "Ünvan" },
-      {
-        accessorKey: "price",
-        header: "Qiymət",
-        cell: ({ getValue }) => `${getValue().toLocaleString()} AZN`,
-      },
-      { accessorKey: "area", header: "Sahə (m²)" },
-      { accessorKey: "rooms", header: "Otaq sayı" },
-      { accessorKey: "floor", header: "Mərtəbə" },
-      { accessorKey: "buildingType", header: "Tikili növü" },
-      { accessorKey: "owner", header: "Ev sahibi" },
-      { accessorKey: "phone", header: "Telefon" },
-      { accessorKey: "status", header: "Status" },
-      { accessorKey: "date", header: "Tarix" },
+      ...baseCols,
       {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <div
-            className="relative"
-            ref={(el) => (menuRefs.current[row.id] = el)}
-          >
+          <div className="relative" ref={(el) => (menuRefs.current[row.id] = el)}>
             <button
-              onClick={() =>
-                setOpenMenu((prev) => (prev === row.id ? null : row.id))
-              }
+              onClick={() => setOpenMenu(prev => (prev === row.id ? null : row.id))}
               className="p-1 hover:bg-gray-100 rounded text-xl cursor-pointer"
             >
               ⋮
             </button>
-
             {openMenu === row.id && (
-              <div className="absolute right-0 top-[-10px] mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-[1000] overflow-hidden">
+              <div className="absolute right-0 top-[-10px] mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
                 <button
                   onClick={() => {
                     setEditRow(row.original);
@@ -172,44 +110,21 @@ export default function DataTable() {
                   }}
                   className="flex items-center cursor-pointer gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z" />
                   </svg>
                   Redaktə et
                 </button>
-
                 <button
                   onClick={() => {
                     setDeleteModal(true);
-                    setSelected({ [row.original.id]: true });
+                    setSelected({ [row.original.elan_id]: true });
                     setOpenMenu(null);
                   }}
                   className="flex items-center gap-2 cursor-pointer w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   Sil
                 </button>
@@ -218,117 +133,101 @@ export default function DataTable() {
           </div>
         ),
       },
-    ],
-    [selected, filteredData, openMenu]
-  );
+    ];
+  }, [filteredData, selected, openMenu]);
 
   const table = useReactTable({
     data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 6,
+      },
+    },
   });
 
   const handleEditSave = () => {
-    setData((prev) => prev.map((d) => (d.id === editRow.id ? editRow : d)));
+    setData(prev => prev.map(d => (d.elan_id === editRow.elan_id ? editRow : d)));
     setEditRow(null);
   };
 
   const handleDeleteSelected = () => {
-    setData((prev) => prev.filter((d) => !selected[d.id]));
+    setData(prev => prev.filter(d => !selected[d.elan_id]));
     setSelected({});
     setDeleteModal(false);
   };
 
   const handleAddRow = () => {
-    const allFilled = Object.values(newRow).every(
-      (v) => v !== "" && v !== null && v !== undefined
-    );
-    if (!allFilled) return;
-    setData((prev) => [...prev, newRow]);
-    setNewRow({
-      id: "",
-      image: "",
-      location: "",
-      price: 0,
-      area: 0,
-      rooms: 0,
-      floor: 0,
-      buildingType: "",
-      owner: "",
-      phone: "",
-      date: "",
-      status: "",
-    });
+    setData(prev => [...prev, newRow]);
+    setNewRow(Object.fromEntries(columnHeaders.map(col => [col.key, ""])));
     setAddModal(false);
   };
 
   return (
     <div className="p-6">
-      {/* Axtarış + Buttonlar */}
-      <div className="flex mb-4 flex-wrap justify-between">
+      {/* Search + Buttons */}
+      <div className="flex mb-6 flex-wrap justify-between">
         <input
           placeholder="🔍 Axtarış..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border px-3 py-2 rounded flex-1 max-w-[500px]"
+          className="border border-gray-300 shadow-md px-3 py-2 rounded-[8px] flex-1 max-w-[500px]"
         />
         <div className="flex gap-4">
           <button
             onClick={() => setDeleteModal(true)}
             disabled={Object.keys(selected).length === 0}
-            className="px-[14px] py-[12px] bg-primary text-white rounded disabled:opacity-50 cursor-pointer"
+            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${
+              Object.keys(selected).length === 0
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
-            <Image className="object-cover" src={deleteHome} alt="delete" />
+            <Image src={deleteHome} alt="delete" />
           </button>
           <button
             onClick={() => setAddModal(true)}
-            className="px-[14px] py-[12px] bg-primary text-white rounded cursor-pointer"
+            className="px-[14px] py-[12px] bg-primary text-white rounded-[8px] cursor-pointer"
           >
-            <Image className="object-cover" src={addHome} alt="add" />
+            <Image src={addHome} alt="add" />
           </button>
         </div>
       </div>
 
-      {/* Cədvəl */}
-      <div className="overflow-x-auto border rounded">
-        <table className="min-w-[1200px] w-full">
+      {/* Table */}
+      <div className="overflow-x-auto border border-gray-300 shadow-lg rounded-[8px]">
+        <table className="min-w-[1400px] w-full">
           <thead className="bg-gray-100">
-            {table.getHeaderGroups().map((hg) => (
+            {table.getHeaderGroups().map(hg => (
               <tr key={hg.id}>
-                {hg.headers.map((header, idx) => (
+                {hg.headers.map(header => (
                   <th
                     key={header.id}
                     className={`
-                px-3 py-2 text-left whitespace-nowrap sticky top-0 bg-gray-100 z-10
-                ${idx === 0 ? "left-0 z-20" : ""}
-                ${idx === hg.headers.length - 1 ? "right-0 z-20" : ""}
-              `}
+                      px-3 py-2 text-left whitespace-nowrap sticky overflow-visible top-0 bg-gray-100 z-10
+                      ${header.id === "select" ? "left-0 z-20 bg-gray-100" : ""}
+                    `}
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.map(row => (
               <tr key={row.id}>
-                {row.getVisibleCells().map((cell, idx) => (
+                {row.getVisibleCells().map(cell => (
                   <td
                     key={cell.id}
                     className={`
-                px-3 py-2 border-b whitespace-nowrap
-                ${idx === 0 ? "sticky left-0 bg-white z-20" : ""}
-                ${
-                  idx === row.getVisibleCells().length - 1
-                    ? "sticky right-0 bg-white z-10"
-                    : ""
-                }
-              `}
+                      px-3 py-2 border-b border-gray-400 whitespace-nowrap sticky
+                      ${cell.column.id === "select" ? "left-0 bg-white z-10" : ""}
+                      ${cell.column.id === "actions" ? "right-0 bg-white z-10" : ""}
+                    `}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
@@ -340,85 +239,82 @@ export default function DataTable() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-6">
         <button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className="px-6 py-1 border text-white bg-primary rounded cursor-pointer disabled:opacity-50"
+          className="px-6 py-2 border text-white bg-primary rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Əvvəlki
         </button>
         <span>
-          Səhifə {table.getState().pagination.pageIndex + 1} /{" "}
-          {table.getPageCount()}
+          Səhifə {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
         </span>
         <button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          className="px-6 py-1 border bg-primary text-white cursor-pointer rounded disabled:opacity-50"
+          className="px-6 py-2 border bg-primary text-white cursor-pointer rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Növbəti
         </button>
       </div>
 
-      {/* Redaktə Modal */}
+      {/* Edit Modal */}
       {editRow && (
         <ModalLayout onClose={() => setEditRow(null)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {Object.keys(editRow)
-              .filter((key) => !["id", "image", "date"].includes(key))
-              .map((key) => (
-                <div key={key} className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">
-                    {key[0].toUpperCase() + key.slice(1)}:
-                  </label>
-                  <input
-                    value={editRow[key]}
-                    onChange={(e) =>
-                      setEditRow({
-                        ...editRow,
-                        [key]: ["price", "area", "rooms", "floor"].includes(key)
-                          ? +e.target.value
-                          : e.target.value,
-                      })
-                    }
-                    className="border border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
-                  />
-                </div>
-              ))}
+            {columnHeaders.map(col => (
+              <div key={col.key} className="flex flex-col">
+                <label className="text-sm font-medium text-gray-700 mb-1">{col.label}:</label>
+                <input
+                  value={editRow[col.key]}
+                  disabled={["photo", "elan_id", "application_date"].includes(col.key)}
+                  onChange={(e) =>
+                    setEditRow({
+                      ...editRow,
+                      [col.key]: ["price", "area", "room", "floor"].includes(col.key)
+                        ? +e.target.value
+                        : e.target.value,
+                    })
+                  }
+                  className="border border-gray-300 focus:border-primary rounded-[8px] focus:ring-1 focus:ring-primary px-3 py-2 outline-none text-sm transition"
+                />
+              </div>
+            ))}
           </div>
-
           <div className="flex justify-end gap-3 mt-8">
             <button
               onClick={() => setEditRow(null)}
-              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
             <button
               onClick={handleEditSave}
-              className="px-4 py-2 text-sm bg-primary text-white rounded-lg cursor-pointer hover:bg-primary/90 transition"
+              className="px-6 py-3 text-sm bg-primary text-white rounded-[8px] cursor-pointer hover:bg-primary/90 transition"
             >
-              Saxla
+              Yadda saxla
             </button>
           </div>
         </ModalLayout>
       )}
 
-      {/* Silmə Modal */}
+      {/* Delete Modal */}
       {deleteModal && (
         <ModalLayout title="Təsdiqlə" onClose={() => setDeleteModal(false)}>
-          <p className="text-gray-700 mb-6">Seçilmiş məlumat(lar) silinsin?</p>
+          <p className="text-gray-700 text-center mb-6">
+            Seçilmiş məlumat(lar)ı silmək istədiyinizə əminsiniz?
+          </p>
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setDeleteModal(false)}
-              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
             <button
               onClick={handleDeleteSelected}
-              className="px-4 py-2 text-sm bg-red-600 cursor-pointer text-white rounded-lg hover:bg-red-700 transition"
+              className="px-6 py-3 text-sm bg-red-600 cursor-pointer text-white rounded-[8px] hover:bg-red-700 transition"
             >
               Sil
             </button>
@@ -426,28 +322,25 @@ export default function DataTable() {
         </ModalLayout>
       )}
 
-      {/* Yeni əlavə et Modal */}
+      {/* Add Modal */}
       {addModal && (
         <ModalLayout onClose={() => setAddModal(false)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {Object.keys(newRow).map((key) => (
-              <label
-                key={key}
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                {key[0].toUpperCase() + key.slice(1)}:
+            {columnHeaders.map(col => (
+              <label key={col.key} className="block text-sm font-medium text-gray-700 mb-1">
+                {col.label}:
                 <input
-                  value={newRow[key]}
+                  value={newRow[col.key]}
                   onChange={(e) =>
                     setNewRow({
                       ...newRow,
-                      [key]: ["price", "area", "rooms", "floor"].includes(key)
+                      [col.key]: ["price", "area", "room", "floor"].includes(col.key)
                         ? +e.target.value
                         : e.target.value,
                     })
                   }
                   required
-                  className="border w-full mt-1 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
+                  className="border rounded-[8px] w-full mt-1 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
                 />
               </label>
             ))}
@@ -455,21 +348,15 @@ export default function DataTable() {
           <div className="flex justify-end gap-3 mt-6">
             <button
               onClick={() => setAddModal(false)}
-              className="px-4 py-2 text-sm border border-gray-300 cursor-pointer rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
             <button
               onClick={handleAddRow}
-              disabled={
-                !Object.values(newRow).every(
-                  (v) => v !== "" && v !== null && v !== undefined
-                )
-              }
-              className={`px-4 py-2 text-sm text-white rounded-lg ${
-                Object.values(newRow).every(
-                  (v) => v !== "" && v !== null && v !== undefined
-                )
+              disabled={!Object.values(newRow).every(v => v !== "" && v !== null)}
+              className={`px-6 py-3 text-sm text-white rounded-[8px] ${
+                Object.values(newRow).every(v => v !== "" && v !== null)
                   ? "bg-primary hover:bg-primary/90 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               } transition`}
@@ -483,24 +370,26 @@ export default function DataTable() {
   );
 }
 
-/* 🧩 Reusable Modal Layout Component */
-function ModalLayout({ title, children, onClose }) {
+// Modal Layout
+function ModalLayout({ children, onClose }) {
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-[1000]"
       onClick={onClose}
     >
       <div
-        className="bg-white shadow-xl rounded-2xl w-full max-w-[600px] max-h-[85vh] overflow-y-auto px-6 py-4 sm:px-8 relative"
+        className="bg-white shadow-xl rounded-2xl w-full max-w-[600px] max-h-[85vh] overflow-y-auto px-6 py-5 sm:px-8 relative"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-end items-center mb-4">
           <button
             onClick={onClose}
-            className="text-gray-600 text-xl hover:text-gray-700 transition cursor-pointer"
+            className="text-gray-600 hover:text-gray-700 transition cursor-pointer"
             aria-label="Close"
           >
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 hover:text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
         {children}
