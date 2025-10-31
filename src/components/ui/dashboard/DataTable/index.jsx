@@ -3,6 +3,7 @@ import React, { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
+import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
 import {
   useReactTable,
   getCoreRowModel,
@@ -22,6 +23,8 @@ export default function DataTable() {
   const [editRow, setEditRow] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false); // ✅ yeni state
+  const [successMessage, setSuccessMessage] = useState("");
   const [newRow, setNewRow] = useState(
     Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
   );
@@ -53,7 +56,7 @@ export default function DataTable() {
       cell: ({ getValue }) =>
         col.key === "photo" ? (
           <Image
-            src={getValue()} 
+            src={getValue()}
             alt="photo"
             width={80}
             height={80}
@@ -196,20 +199,27 @@ export default function DataTable() {
       prev.map((d) => (d.elan_id === editRow.elan_id ? editRow : d))
     );
     setEditRow(null);
+    setSuccessMessage("Dəyişikliklər uğurla yadda saxlanıldı.");
+    setShowSuccess(true);
   };
 
   const handleDeleteSelected = () => {
     setData((prev) => prev.filter((d) => !selected[d.elan_id]));
     setSelected({});
     setDeleteModal(false);
+    setSuccessMessage("Məlumat uğurla silindi.");
+    setShowSuccess(true);
   };
 
   const handleAddRow = () => {
     setData((prev) => [...prev, newRow]);
     setNewRow(Object.fromEntries(columnHeaders.map((col) => [col.key, ""])));
     setAddModal(false);
+    setSuccessMessage("Yeni məlumat uğurla əlavə olundu.");
+    setShowSuccess(true);
   };
 
+  const handleCloseOverlay = () => setShowSuccess(false);
   return (
     <div>
       {/* Search + Buttons */}
@@ -269,7 +279,7 @@ export default function DataTable() {
               className="w-[18px] h-[20px] py-[2px] px-[3px]"
             />
           </button>
-          <Button/>
+          <Button />
         </div>
       </div>
       <p className="text-[20px] font-[600] pb-[25px]">Bütün elanlar</p>
@@ -532,6 +542,24 @@ export default function DataTable() {
           </div>
         </ModalLayout>
       )}
+      {showSuccess && (
+        <div
+          id="overlay"
+          onClick={handleCloseOverlay}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 "
+        >
+          <div className="bg-white rounded-2xl shadow-xl px-[51px] pt-10 pb-8 h-[332px] w-[414px] flex flex-col items-center gap-5">
+            <Image src={editIcon} alt="edit" />
+            <p className="text-center font-medium text-2xl">{successMessage}</p>
+            <button
+              className="py-[18px] px-[59px] text-white bg-[#02836F] rounded-lg cursor-pointer"
+              onClick={handleCloseOverlay}
+            >
+              Geri qayıt
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -540,7 +568,7 @@ export default function DataTable() {
 function ModalLayout({ children, onClose }) {
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[1000]"
       onClick={onClose}
     >
       <div

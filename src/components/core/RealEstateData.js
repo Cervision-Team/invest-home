@@ -1,8 +1,4 @@
 import image1 from "../../../public/images/ev1.jpg";
-import image2 from "../../../public/images/ev2.jpg";
-import image3 from "../../../public/images/ev3.jpg";
-import image4 from "../../../public/images/ev4.jpg";
-
 
 export const RealEstateData = [
   {
@@ -33,7 +29,7 @@ export const RealEstateData = [
   },
   {
     id: 2,
-    photo: image2,
+    photo: image1,
     elan_id: "#124789",
     owner: "Əli Məmmədov",
     property_type: "Mənzil",
@@ -59,7 +55,7 @@ export const RealEstateData = [
   },
   {
     id: 3,
-    photo: image3,
+    photo: image1,
     elan_id: "#125332",
     owner: "Leyla Həsənova",
     property_type: "Mənzil",
@@ -85,7 +81,7 @@ export const RealEstateData = [
   },
   {
     id: 4,
-    photo: image4,
+    photo: image1,
     elan_id: "#126445",
     owner: "Rəşad Əliyev",
     property_type: "Mənzil",
@@ -137,7 +133,7 @@ export const RealEstateData = [
   },
   {
     id: 6,
-    photo: image2,
+    photo: image1,
     elan_id: "#128667",
     owner: "Elşən Babayev",
     property_type: "Mənzil",
@@ -163,7 +159,7 @@ export const RealEstateData = [
   },
   {
     id: 7,
-    photo: image3,
+    photo: image1,
     elan_id: "#129778",
     owner: "Səbinə Məhərrəmova",
     property_type: "Mənzil",
@@ -189,7 +185,7 @@ export const RealEstateData = [
   },
   {
     id: 8,
-    photo: image4,
+    photo: image1,
     elan_id: "#130889",
     owner: "Kamran Hüseynov",
     property_type: "Mənzil",
@@ -241,7 +237,7 @@ export const RealEstateData = [
   },
   {
     id: 10,
-    photo: image2,
+    photo: image1,
     elan_id: "#132101",
     owner: "Orxan Rzayev",
     property_type: "Mənzil",
@@ -267,7 +263,7 @@ export const RealEstateData = [
   },
   {
     id: 11,
-    photo: image3,
+    photo: image1,
     elan_id: "#133212",
     owner: "Günel Məmmədova",
     property_type: "Mənzil",
@@ -293,7 +289,7 @@ export const RealEstateData = [
   },
   {
     id: 12,
-    photo: image4,
+    photo: image1,
     elan_id: "#134323",
     owner: "Fuad Qasımov",
     property_type: "Mənzil",
@@ -345,7 +341,7 @@ export const RealEstateData = [
   },
   {
     id: 14,
-    photo: image2,
+    photo: image1,
     elan_id: "#136545",
     owner: "Rəsul Mustafayev",
     property_type: "Mənzil",
@@ -371,7 +367,7 @@ export const RealEstateData = [
   },
   {
     id: 15,
-    photo: image3,
+    photo: image1,
     elan_id: "#137656",
     owner: "Zülfiyyə Əliyeva",
     property_type: "Mənzil",
@@ -397,7 +393,7 @@ export const RealEstateData = [
   },
   {
     id: 16,
-    photo: image4,
+    photo: image1,
     elan_id: "#138767",
     owner: "Elnur Həsənov",
     property_type: "Mənzil",
