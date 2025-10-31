@@ -46,7 +46,7 @@ export default function DataTable() {
       header: col.label,
       cell: ({ getValue }) =>
         col.key === "photo" ? (
-          <img src={getValue()} alt="photo" className="w-12 h-12 object-cover rounded" />
+          <img src={getValue().src} alt="photo" className="w-12 h-12 object-cover rounded" />
         ) : col.key === "price" ? (
           `${getValue()} AZN`
         ) : (
