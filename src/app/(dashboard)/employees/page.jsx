@@ -50,21 +50,21 @@ const Employees = () => {
                   {agent.role}
                 </strong>
               </div>
-              <div className="flex gap-2 mt-[20px]">
+              <div className="flex gap-2 mt-5">
                 <Link
-                  className="w-[24px] h-[24px] bg-black rounded-full flex items-center justify-center"
+                  className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
                   href={"/employees"}
                 >
                   <Image src={whatsappIcon} alt="whatsapp" />
                 </Link>
                 <Link
-                  className="w-[24px] h-[24px] bg-black rounded-full flex items-center justify-center"
+                  className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
                   href={"/employees"}
                 >
                   <Image src={instagramIcon} alt="instagram" />
                 </Link>
                 <Link
-                  className="w-[24px] h-[24px] bg-black rounded-full flex items-center justify-center"
+                  className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
                   href={"/employees"}
                 >
                   <Image src={linkedinIcon} alt="linkedin" />
