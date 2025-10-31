@@ -16,12 +16,12 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      fullName: "",
-      birthDate: "",
-      phone: "",
-      location: "",
-      email: "",
-      roleName: ""
+      fullName: "Nihat Aliyev",
+      birthDate: "17.06.2004",
+      phone: "+9940513888181",
+      location: "baku,xetai",
+      email: "nihataliyev@gmail.com",
+      roleName: "rehber"
     }
   });
 
@@ -46,7 +46,6 @@ const Profile = () => {
     })()
   }, [])
 
-  console.log(userData);
 
 
   return (
