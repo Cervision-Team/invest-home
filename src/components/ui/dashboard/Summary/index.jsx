@@ -1,9 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import profilePhoto from "../../../../../public/images/profile/novruz.jpg"
-import chatIcon from "../../../../../public/icons/profile/chat-icon.svg"
-import notificationIcon from "../../../../../public/icons/profile/notification-icon.svg"
-
+import { Button } from '../Buttons/ProfileButtons'
 
 const Summary = ({ isEditing, handleToggle, user }) => {
     return (
@@ -21,15 +19,7 @@ const Summary = ({ isEditing, handleToggle, user }) => {
 
                 <div className='flex items-center gap-[24px]'>
                     <button type='submit' onClick={handleToggle} className='bg-[#02836F] text-white font-medium py-[12px] px-[24px] rounded-lg cursor-pointer'>{isEditing ? "Yadda saxla" : "Redaktə et"}</button>
-                    <button className='relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-[44px] h-[44px] cursor-pointer'>
-                        <span className='absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]'></span>
-                        <Image src={chatIcon} alt='chat icon' />
-                    </button>
-                    <button className='relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-[44px] h-[44px] cursor-pointer'>
-                        <span className='absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]'></span>
-                        <Image src={notificationIcon} alt='notification icon' />
-                    </button>
-
+                    <Button/>
                 </div>
             </div>
 
