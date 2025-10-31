@@ -1,6 +1,8 @@
 "use client";
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import arrowRightWhite from "../../../../../public/icons/arrow-right-white-small.svg";
+import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
 import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
@@ -401,13 +403,14 @@ export default function DataTable() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-6 px-2">
+      <div className="flex justify-between items-center mt-6">
         <button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className="px-6 py-2 border text-white bg-primary rounded-[8px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] bg-[var(--primary-color)] text-white hover:opacity-90 transition-all duration-200"
         >
-          Əvvəlki
+          <Image src={arrowLeftWhite} alt="Arrow Left White" />
+          <span className="font-[500] text-[16px]">Geriyə Qayıt</span>
         </button>
         <span>
           Səhifə {table.getState().pagination.pageIndex + 1} /{" "}
@@ -416,9 +419,11 @@ export default function DataTable() {
         <button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          className="px-6 py-2 border bg-primary text-white cursor-pointer rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] bg-[var(--primary-color)] text-white hover:opacity-90 transition-all duration-200"
+
         >
-          Növbəti
+          <span className="font-[500] text-[16px]">Növbəti</span>
+          <Image src={arrowRightWhite} alt="Arrow Right White" />
         </button>
       </div>
 
@@ -546,7 +551,7 @@ export default function DataTable() {
         <div
           id="overlay"
           onClick={handleCloseOverlay}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 "
+          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-999 "
         >
           <div className="bg-white rounded-2xl shadow-xl px-[51px] pt-10 pb-8 h-[332px] w-[414px] flex flex-col items-center gap-5">
             <Image src={editIcon} alt="edit" />
@@ -568,7 +573,7 @@ export default function DataTable() {
 function ModalLayout({ children, onClose }) {
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-[1000]"
       onClick={onClose}
     >
       <div
