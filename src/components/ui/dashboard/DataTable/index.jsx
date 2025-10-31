@@ -9,7 +9,11 @@ import {
   getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { columnHeaders, RealEstateData } from "@/components/core/RealEstateData";
+import {
+  columnHeaders,
+  RealEstateData,
+} from "@/components/core/RealEstateData";
+import { Button } from "../Buttons/ProfileButtons";
 
 export default function DataTable() {
   const [data, setData] = useState(RealEstateData);
@@ -18,7 +22,9 @@ export default function DataTable() {
   const [editRow, setEditRow] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
-  const [newRow, setNewRow] = useState(Object.fromEntries(columnHeaders.map(col => [col.key, ""])));
+  const [newRow, setNewRow] = useState(
+    Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
+  );
   const [openMenu, setOpenMenu] = useState(null);
   const menuRefs = useRef({});
 
@@ -35,20 +41,26 @@ export default function DataTable() {
 
   const filteredData = useMemo(() => {
     if (!search) return data;
-    return data.filter(d =>
+    return data.filter((d) =>
       Object.values(d).join(" ").toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
 
   const columns = useMemo(() => {
-    const baseCols = columnHeaders.map(col => ({
+    const baseCols = columnHeaders.map((col) => ({
       accessorKey: col.key,
       header: col.label,
       cell: ({ getValue }) =>
         col.key === "photo" ? (
-          <img src={getValue()} alt="photo" className="w-12 h-12 object-cover rounded" />
+          <Image
+            src={getValue()} 
+            alt="photo"
+            width={80}
+            height={80}
+            className="object-cover rounded-[8px]"
+          />
         ) : col.key === "price" ? (
-          `${getValue()} AZN`
+          `${getValue()} azn`
         ) : (
           getValue()
         ),
@@ -62,16 +74,16 @@ export default function DataTable() {
             type="checkbox"
             checked={
               filteredData.length > 0 &&
-              filteredData.every(d => selected[d.elan_id])
+              filteredData.every((d) => selected[d.elan_id])
             }
             onChange={(e) => {
               if (e.target.checked) {
                 const all = {};
-                filteredData.forEach(d => (all[d.elan_id] = true));
+                filteredData.forEach((d) => (all[d.elan_id] = true));
                 setSelected(all);
               } else setSelected({});
             }}
-            className="cursor-pointer"
+            className="cursor-pointer w-[20px] h-[20px] accent-primary"
           />
         ),
         cell: ({ row }) => (
@@ -79,13 +91,16 @@ export default function DataTable() {
             type="checkbox"
             checked={!!selected[row.original.elan_id]}
             onChange={(e) =>
-              setSelected(prev => {
-                const updated = { ...prev, [row.original.elan_id]: e.target.checked };
+              setSelected((prev) => {
+                const updated = {
+                  ...prev,
+                  [row.original.elan_id]: e.target.checked,
+                };
                 if (!e.target.checked) delete updated[row.original.elan_id];
                 return updated;
               })
             }
-            className="cursor-pointer"
+            className="cursor-pointer w-[20px] h-[20px] accent-primary"
           />
         ),
       },
@@ -94,9 +109,14 @@ export default function DataTable() {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <div className="relative" ref={(el) => (menuRefs.current[row.id] = el)}>
+          <div
+            className="relative"
+            ref={(el) => (menuRefs.current[row.id] = el)}
+          >
             <button
-              onClick={() => setOpenMenu(prev => (prev === row.id ? null : row.id))}
+              onClick={() =>
+                setOpenMenu((prev) => (prev === row.id ? null : row.id))
+              }
               className="p-1 hover:bg-gray-100 rounded text-xl cursor-pointer"
             >
               ⋮
@@ -110,8 +130,19 @@ export default function DataTable() {
                   }}
                   className="flex items-center cursor-pointer gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z"
+                    />
                   </svg>
                   Redaktə et
                 </button>
@@ -123,8 +154,19 @@ export default function DataTable() {
                   }}
                   className="flex items-center gap-2 cursor-pointer w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                   Sil
                 </button>
@@ -144,38 +186,63 @@ export default function DataTable() {
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 6,
+        pageSize: 5,
       },
     },
   });
 
   const handleEditSave = () => {
-    setData(prev => prev.map(d => (d.elan_id === editRow.elan_id ? editRow : d)));
+    setData((prev) =>
+      prev.map((d) => (d.elan_id === editRow.elan_id ? editRow : d))
+    );
     setEditRow(null);
   };
 
   const handleDeleteSelected = () => {
-    setData(prev => prev.filter(d => !selected[d.elan_id]));
+    setData((prev) => prev.filter((d) => !selected[d.elan_id]));
     setSelected({});
     setDeleteModal(false);
   };
 
   const handleAddRow = () => {
-    setData(prev => [...prev, newRow]);
-    setNewRow(Object.fromEntries(columnHeaders.map(col => [col.key, ""])));
+    setData((prev) => [...prev, newRow]);
+    setNewRow(Object.fromEntries(columnHeaders.map((col) => [col.key, ""])));
     setAddModal(false);
   };
 
   return (
-    <div className="p-6">
+    <div>
       {/* Search + Buttons */}
       <div className="flex mb-6 flex-wrap justify-between">
-        <input
-          placeholder="🔍 Axtarış..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 shadow-md px-3 py-2 rounded-[8px] flex-1 max-w-[500px]"
-        />
+        <div className="relative">
+          <input
+            placeholder="Axtarış"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="shadow-md px-5 rounded-[20px] flex-1 min-w-[410px] h-[44px] placeholder:text-black"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            className="absolute top-[30%] right-5"
+            viewBox="0 0 18 18"
+            fill="none"
+          >
+            <path
+              d="M13.666 13.667L17.416 17.417"
+              stroke="#141B34"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M15.75 8.25C15.75 4.10786 12.3921 0.75 8.25 0.75C4.10786 0.75 0.75 4.10786 0.75 8.25C0.75 12.3921 4.10786 15.75 8.25 15.75C12.3921 15.75 15.75 12.3921 15.75 8.25Z"
+              stroke="#141B34"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
         <div className="flex gap-4">
           <button
             onClick={() => setDeleteModal(true)}
@@ -186,47 +253,132 @@ export default function DataTable() {
                 : "cursor-pointer"
             }`}
           >
-            <Image src={deleteHome} alt="delete" />
+            <Image
+              src={deleteHome}
+              className="w-[20px] h-[20px] p-[2px]"
+              alt="delete"
+            />
           </button>
           <button
             onClick={() => setAddModal(true)}
             className="px-[14px] py-[12px] bg-primary text-white rounded-[8px] cursor-pointer"
           >
-            <Image src={addHome} alt="add" />
+            <Image
+              src={addHome}
+              alt="add"
+              className="w-[18px] h-[20px] py-[2px] px-[3px]"
+            />
           </button>
+          <Button/>
         </div>
       </div>
-
+      <p className="text-[20px] font-[600] pb-[25px]">Bütün elanlar</p>
       {/* Table */}
-      <div className="overflow-x-auto border border-gray-300 shadow-lg rounded-[8px]">
-        <table className="min-w-[1400px] w-full">
-          <thead className="bg-gray-100">
-            {table.getHeaderGroups().map(hg => (
+      <div className="overflow-x-auto">
+        <table className="min-w-[1400px] w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
+          <thead>
+            {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
-                {hg.headers.map(header => (
+                {hg.headers.map((header) => (
                   <th
                     key={header.id}
                     className={`
-                      px-3 py-2 text-left whitespace-nowrap sticky overflow-visible top-0 bg-gray-100 z-10
-                      ${header.id === "select" ? "left-0 z-20 bg-gray-100" : ""}
+                      text-left whitespace-nowrap sticky overflow-visible top-0 z-10 text-[14px] font-[500] align-middle leading-none
+                      ${
+                        header.id === "select"
+                          ? "left-0 z-20 bg-white p-0"
+                          : "p-4"
+                      }
+                      ${
+                        header.id === "actions"
+                          ? "bg-white right-0 bg-white p-0"
+                          : "p-4"
+                      }
                     `}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    <div className="flex gap-[8px] items-center">
+                      <p>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        className={`
+                      ${header.id === "select" ? "hidden" : ""}
+                      ${header.id === "actions" ? "hidden" : ""}
+                    `}
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="#1B1F27"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
                   </th>
                 ))}
               </tr>
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
+                {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
                     className={`
-                      px-3 py-2 border-b border-gray-400 whitespace-nowrap sticky
-                      ${cell.column.id === "select" ? "left-0 bg-white z-10" : ""}
-                      ${cell.column.id === "actions" ? "right-0 bg-white z-10" : ""}
+                      whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
+                      ${
+                        cell.column.id === "select"
+                          ? "left-0 bg-white z-10"
+                          : ""
+                      }
+                      ${
+                        cell.column.id === "actions"
+                          ? "right-0 bg-white z-10"
+                          : ""
+                      }
+                      ${cell.column.id === "photo" ? "p-0" : "p-4"}
                     `}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -239,16 +391,17 @@ export default function DataTable() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-6">
+      <div className="flex justify-between items-center mt-6 px-2">
         <button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className="px-6 py-2 border text-white bg-primary rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2 border text-white bg-primary rounded-[8px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Əvvəlki
         </button>
         <span>
-          Səhifə {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+          Səhifə {table.getState().pagination.pageIndex + 1} /{" "}
+          {table.getPageCount()}
         </span>
         <button
           onClick={() => table.nextPage()}
@@ -263,16 +416,22 @@ export default function DataTable() {
       {editRow && (
         <ModalLayout onClose={() => setEditRow(null)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {columnHeaders.map(col => (
+            {columnHeaders.map((col) => (
               <div key={col.key} className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">{col.label}:</label>
+                <label className="text-sm font-medium text-gray-700 mb-1">
+                  {col.label}:
+                </label>
                 <input
                   value={editRow[col.key]}
-                  disabled={["photo", "elan_id", "application_date"].includes(col.key)}
+                  disabled={["photo", "elan_id", "application_date"].includes(
+                    col.key
+                  )}
                   onChange={(e) =>
                     setEditRow({
                       ...editRow,
-                      [col.key]: ["price", "area", "room", "floor"].includes(col.key)
+                      [col.key]: ["price", "area", "room", "floor"].includes(
+                        col.key
+                      )
                         ? +e.target.value
                         : e.target.value,
                     })
@@ -326,15 +485,20 @@ export default function DataTable() {
       {addModal && (
         <ModalLayout onClose={() => setAddModal(false)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {columnHeaders.map(col => (
-              <label key={col.key} className="block text-sm font-medium text-gray-700 mb-1">
+            {columnHeaders.map((col) => (
+              <label
+                key={col.key}
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 {col.label}:
                 <input
                   value={newRow[col.key]}
                   onChange={(e) =>
                     setNewRow({
                       ...newRow,
-                      [col.key]: ["price", "area", "room", "floor"].includes(col.key)
+                      [col.key]: ["price", "area", "room", "floor"].includes(
+                        col.key
+                      )
                         ? +e.target.value
                         : e.target.value,
                     })
@@ -354,9 +518,11 @@ export default function DataTable() {
             </button>
             <button
               onClick={handleAddRow}
-              disabled={!Object.values(newRow).every(v => v !== "" && v !== null)}
+              disabled={
+                !Object.values(newRow).every((v) => v !== "" && v !== null)
+              }
               className={`px-6 py-3 text-sm text-white rounded-[8px] ${
-                Object.values(newRow).every(v => v !== "" && v !== null)
+                Object.values(newRow).every((v) => v !== "" && v !== null)
                   ? "bg-primary hover:bg-primary/90 cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed"
               } transition`}
@@ -387,8 +553,19 @@ function ModalLayout({ children, onClose }) {
             className="text-gray-600 hover:text-gray-700 transition cursor-pointer"
             aria-label="Close"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 hover:text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 hover:text-red-700"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
