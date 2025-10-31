@@ -8,10 +8,12 @@ import { getUser } from '@/services/api/endpoints/userService';
 // import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisticWithProgressbar'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
-// import licenseIcon from "../../../../public/icons/profile/license-icon.svg"
+import editIcon from "../../../../public/icons/profile/edit-icon.svg"
+import Image from 'next/image';
 // import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
 
 const Profile = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(null);
   const { register, handleSubmit, reset } = useForm({
@@ -29,6 +31,7 @@ const Profile = () => {
   const onSubmit = (data) => {
     if (!isEditing) {
       console.log(data)
+      setIsOpen(true)
     } else {
       console.log("!!!")
     }
@@ -46,14 +49,38 @@ const Profile = () => {
     })()
   }, [])
 
-
+  const handleClose = (e) => {
+    setIsOpen(false);
+  };
 
   return (
     <main className='w-full flex flex-col gap-6'>
       <section className=''>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
-          <Summary isEditing={isEditing} handleToggle={handleToggle} user={userData} />
+          <Summary isEditing={isEditing} handleToggle={handleToggle} user={userData || {
+            fullName: "Nihat Aliyev",
+            birthDate: "17.06.2004",
+            phone: "+9940513888181",
+            location: "baku,xetai",
+            email: "nihataliyev@gmail.com",
+            roleName: "rehber"
+          }} />
         </ProfileForm>
+        {isOpen && (
+          <div
+            id="overlay"
+            onClick={handleClose}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 "
+          >
+            <div
+              className="bg-white rounded-2xl shadow-xl px-[51px] pt-10 pb-8 h-[332px] w-[414px] flex flex-col items-center gap-5"
+            >
+              <Image src={editIcon} alt='edit' />
+              <p className='text-center font-medium text-2xl'>Dəyişikliklər uğurla yadda saxlanıldı.</p>
+              <button className='py-[18px] px-[59px] text-white bg-[#02836F] rounded-lg cursor-pointer' onClick={handleClose}>Geri qayıt</button>
+            </div>
+          </div>
+        )}
       </section>
 
 
