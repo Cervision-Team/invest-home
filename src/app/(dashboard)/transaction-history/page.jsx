@@ -28,7 +28,7 @@ const TransactionHistory = () => {
                     </div>
                     <div className='flex justify-end pt-4'>
                         <button className='cursor-pointer'>
-                            <Image src={dromenuIcon} />
+                            <Image src={dromenuIcon} alt='dropmenu'/>
                         </button>
                     </div>
                 </div>
@@ -52,7 +52,7 @@ const TransactionHistory = () => {
                     </div>
                     <div className='flex justify-end pt-4'>
                         <button className='cursor-pointer'>
-                            <Image src={dromenuIcon} />
+                            <Image src={dromenuIcon} alt='dropmenu'/>
                         </button>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ const TransactionHistory = () => {
                     </div>
                     <div className='flex justify-end pt-4'>
                         <button className='cursor-pointer'>
-                            <Image src={dromenuIcon} />
+                            <Image src={dromenuIcon} alt='dropmenu'/>
                         </button>
                     </div>
                 </div>

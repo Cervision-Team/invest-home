@@ -21,7 +21,7 @@ const Sidebar = () => {
     const pathName = usePathname();
     return (
         <div>
-            <nav className='w-[302px] h-fit bg-white rounded-xl pt-6 pb-10 items-center border border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]'>
+            <nav className='w-[302px] h-fit bg-white rounded-xl pt-6 pb-10 items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]'>
                 <div className='flex justify-center items-center gap-3 mb-6'>
                     <div className='w-[50px] h-[50px]'>
                         <Image className='rounded-full w-[50px] h-[50px] object-cover' src={userAdmin} alt='profile image' />
