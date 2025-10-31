@@ -6,7 +6,6 @@ import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
 import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
-//importlar
 import {
   useReactTable,
   getCoreRowModel,
@@ -411,7 +410,7 @@ export default function DataTable() {
           className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] bg-[var(--primary-color)] text-white hover:opacity-90 transition-all duration-200"
         >
           <Image src={arrowLeftWhite} alt="Arrow Left White" />
-          <span className="font-[500] text-[16px]">Geriyə Qayıt</span>
+          <span className="font-[500] text-[16px]">Geri Qayıt</span>
         </button>
         <span>
           Səhifə {table.getState().pagination.pageIndex + 1} /{" "}
