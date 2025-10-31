@@ -6,6 +6,7 @@ import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
 import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
+//importlar
 import {
   useReactTable,
   getCoreRowModel,
