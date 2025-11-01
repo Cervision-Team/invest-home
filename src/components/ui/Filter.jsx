@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { useRouter } from 'next/navigation'; 
+import CustomSelect from './CustomSelect.jsx'
+import Image from 'next/image.js';
 
 
 // Mock data based on validation schema - will be replaced with API calls
@@ -139,6 +141,19 @@ const ADDITIONAL_FILTERS = [
   }
 ];
 
+const getAvailablePropertyTypes = (announcementType) => {
+  if (announcementType === 'all') {
+    const map = new Map();
+    Object.values(PROPERTY_TYPES).flat().forEach(t => {
+      if (!map.has(t.id)) map.set(t.id, t);
+    }); 
+    return Array.from(map.values());
+  }
+  return PROPERTY_TYPES[announcementType] || [];
+}
+
+
+
 const FilterBtn = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
     <path
@@ -221,11 +236,19 @@ const Dropdown = ({ children, isOpen, onClose, className = "" }) => {
 };
 
 const PropertyTypeSelector = ({ announcementType, selectedTypes, onTypeChange }) => {
-  const availableTypes = PROPERTY_TYPES[announcementType] || [];
+  const availableTypes = getAvailablePropertyTypes(announcementType);
+  const containerRef = React.useRef(null);
+  const [isScrollable, setIsScrollable] = React.useState(false);
+
+  React.useEffect(() => {
+    if (containerRef.current) {
+      setIsScrollable(containerRef.current.scrollHeight > 300);
+    }
+  }, [availableTypes]);
 
   return (
     <>
-          <style>
+      <style>
         {`
           .svg-checkbox {
             appearance: none;
@@ -268,26 +291,40 @@ const PropertyTypeSelector = ({ announcementType, selectedTypes, onTypeChange })
             border-color: #1B8F7D;
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
           }
+
+          .property-type-container {
+            padding: 1rem;
+          }
+
+          .property-type-container.scrollable {
+            max-height: 300px;
+            overflow-y: auto;
+          }
         `}
       </style>
 
-    <div className="p-4 space-y-2">
-      <div className="text-sm font-medium text-gray-700 mb-3">Əmlak növü</div>
-      {availableTypes.map((type) => (
-        <label key={type.id} className="flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="mr-3 w-4 h-4 text-[#02836F] border-gray-300 rounded focus:ring-[#02836F] svg-checkbox"
-            checked={selectedTypes.includes(type.id)}
-            onChange={() => onTypeChange(type.id)}
-          />
-          <span className="text-sm">{type.name}</span>
-        </label>
-      ))}
-    </div>
+      <div 
+        ref={containerRef}
+        className={`property-type-container ${isScrollable ? 'scrollable' : ''}`}
+      >
+        <div className="text-sm font-medium text-gray-700 mb-3">Əmlak növü</div>
+        <div className="space-y-2">
+          {availableTypes.map((type) => (
+            <label key={type.id} className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="mr-3 w-4 h-4 text-[#02836F] border-gray-300 rounded focus:ring-[#02836F] svg-checkbox"
+                checked={selectedTypes.includes(type.id)}
+                onChange={() => onTypeChange(type.id)}
+              />
+              <span className="text-sm">{type.name}</span>
+            </label>
+          ))}
+        </div>
+      </div>
     </>
   );
-}; 
+};
 
 const FilterModal = ({ isOpen, onClose, filters, onApply, selectedPropertyTypes, announcementType }) => {
   const [localFilters, setLocalFilters] = useState(filters);
@@ -434,32 +471,20 @@ const FilterModal = ({ isOpen, onClose, filters, onApply, selectedPropertyTypes,
                   </div>
                 )}
                 
-                {f.type === 'select' && (
-                  <div className="relative">
-                    <select
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#02836F]/20 focus:border-[#02836F] transition-all duration-200 text-sm font-medium appearance-none cursor-pointer"
-                      value={localFilters[f.id] || ''}
-                      onChange={e => handleChange(f.id, e.target.value)}
-                    >
-                      <option value="" className="text-gray-400">Seçin</option>
-                      {f.options.map(o => (
-                        <option key={o.id} value={o.id} className="text-gray-900">{o.name}</option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-                
+{f.type === 'select' && (
+  <CustomSelect
+    value={localFilters[f.id] || ''}
+    onChange={(value) => handleChange(f.id, value)}
+    options={f.options}
+    placeholder="Seçin"
+  />
+)}                
                 {f.type === 'boolean' && (
                   <label className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-white/50 transition-all duration-200">
                     <div className="relative">
                       <input
-                        type="checkbox"
-                        className="sr-only svg-checkbox transition-all duration-200"
+                        type="checkbox" 
+                        className="svg-checkbox transition-all duration-200"
                         checked={localFilters[f.id] || false}
                         onChange={e => handleChange(f.id, e.target.checked)}
                       />
@@ -664,15 +689,15 @@ useEffect(() => {
         if (selectedRooms.length === 0) return 'Əlavə et';
         if (selectedRooms.length === 1) return `${selectedRooms[0]} otaq`;
         return `${selectedRooms.length} seçim`;
-      case 'propertyType':
-        if (selectedPropertyTypes.length === 0) return 'Əmlak növü';
-        if (selectedPropertyTypes.length === 1) {
-          const types = PROPERTY_TYPES[announcementType] || [];
-          const type = types.find(t => t.id === selectedPropertyTypes[0]);
-          return type ? type.name : 'Əmlak növü';
-        }
-        return `${selectedPropertyTypes.length} seçim`;
-      default:
+        case 'propertyType':
+          if (selectedPropertyTypes.length === 0) return 'Əmlak növü';
+          if (selectedPropertyTypes.length === 1) {
+            const types = getAvailablePropertyTypes(announcementType);
+            const type = types.find(t => t.id === selectedPropertyTypes[0]);
+            return type ? type.name : 'Əmlak növü';
+          }
+          return `${selectedPropertyTypes.length} seçim`;      
+        default:
         return 'Əlavə et';
       
     }
@@ -747,7 +772,6 @@ useEffect(() => {
         <div className="max-w-[1000px] flex bg-white rounded-t-[12px] w-full py-[8.5px] px-[24px] gap-[32px] relative">
           <div className="flex items-center gap-[16px] justify-between min-w-0 basis-[70%]">
             
-            {/* Location Search */}
             <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
               <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
                 Ünvan
@@ -803,8 +827,7 @@ useEffect(() => {
 
             <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
 
-            
-              
+              <>
                 <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
                   <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
                     Əmlak növü
@@ -845,7 +868,7 @@ useEffect(() => {
                 </div>
 
                 <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
-              
+              </>
             
 
             <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
@@ -997,14 +1020,7 @@ useEffect(() => {
               className="cursor-pointer min-w-0 flex bg-[#02836F] text-white px-[16px] py-[12px] gap-[8px] rounded-[8px] hover:bg-[#026b5a] transition-colors"
               onClick={handleSearch}
             >
-              <div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path
-                    d="M9.5 16C7.7 16 6.2 15.4 5 14.2C3.8 13 3.2 11.5 3.2 9.5C3.2 7.5 3.8 6 5 4.8C6.2 3.6 7.7 3 9.5 3C11.3 3 12.8 3.6 14 4.8C15.2 6 15.8 7.5 15.8 9.5C15.8 10.2 15.7 10.9 15.5 11.5C15.3 12.1 15 12.7 14.6 13.2L20.3 18.9C20.5 19.1 20.6 19.4 20.6 19.7C20.6 20 20.5 20.3 20.3 20.5C20.1 20.7 19.8 20.8 19.5 20.8C19.2 20.8 18.9 20.7 18.7 20.5L13 14.8C12.5 15.2 11.9 15.5 11.3 15.7C10.7 15.9 10.1 16 9.5 16ZM9.5 14C10.6 14 11.6 13.6 12.4 12.8C13.2 12 13.6 11 13.6 9.9C13.6 8.8 13.2 7.8 12.4 7C11.6 6.2 10.6 5.8 9.5 5.8C8.4 5.8 7.4 6.2 6.6 7C5.8 7.8 5.4 8.8 5.4 9.9C5.4 11 5.8 12 6.6 12.8C7.4 13.6 8.4 14 9.5 14Z"
-                    fill="#fff"
-                  />
-                </svg>
-              </div>
+              <Image src="/icons/search.svg" alt="search" width={24} height={24} />
               <span className="inline-block max-[769px]:hidden whitespace-nowrap text-ellipsis min-w-0 overflow-hidden">
                 Axtar
               </span>

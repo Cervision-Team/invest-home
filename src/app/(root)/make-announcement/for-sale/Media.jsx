@@ -86,73 +86,76 @@ const Media = ({
     }
   }, [formik.values.selectedMedia, formik.values.uploadedFiles, handleInputChange]);
 
-  const handleFileSelect = useCallback(async (files) => {
-    const selectedMedia = formik.values.selectedMedia || [];
+const handleFileSelect = useCallback(async (files) => {
+  const selectedMedia = formik.values.selectedMedia || [];
+  
+  const validFiles = Array.from(files).filter(file => {
+    const isValidImage = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isValidVideo = file.type.startsWith('video/');
     
-    const validFiles = Array.from(files).filter(file => {
-      const isValidImage = file.type === 'image/jpeg' || file.type === 'image/png';
-      const isValidVideo = file.type === 'video/mp4' || file.type === 'video/avi' || file.type.startsWith('video/');
+    let isValid = false;
+    
+    if (selectedMedia.includes('picture') && selectedMedia.includes('video')) {
+      isValid = isValidImage || isValidVideo;
+    } else if (selectedMedia.includes('picture')) {
+      isValid = isValidImage;
+    } else if (selectedMedia.includes('video')) {
+      isValid = isValidVideo;
+    }
+    
+    return isValid;
+  });
+
+  if (validFiles.length > 0) {
+    const loadingEntries = validFiles.map(file => ({
+      id: Date.now() + Math.random(),
+      file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      isLoading: true
+    }));
+    
+    setLoadingFiles(prev => [...prev, ...loadingEntries]);
+    
+    // Collect all processed files here
+    const processedFiles = [];
+    
+    for (const loadingEntry of loadingEntries) {
+      const file = loadingEntry.file;
       
-      let isValid = false;
-      
-      if (selectedMedia.includes('picture') && selectedMedia.includes('video')) {
-        isValid = isValidImage || isValidVideo;
-      } else if (selectedMedia.includes('picture')) {
-        isValid = isValidImage;
-      } else if (selectedMedia.includes('video')) {
-        isValid = isValidVideo;
+      if (file.type.startsWith('video/')) {
+        await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
       }
       
-      return isValid;
-    });
-
-    if (validFiles.length > 0) {
-      const loadingEntries = validFiles.map(file => ({
-        id: Date.now() + Math.random(),
+      const newFile = {
+        id: loadingEntry.id,
         file,
         name: file.name,
         size: file.size,
         type: file.type,
-        isLoading: true
-      }));
+        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+        isLoading: false
+      };
       
-      setLoadingFiles(prev => [...prev, ...loadingEntries]);
-      
-      for (const loadingEntry of loadingEntries) {
-        const file = loadingEntry.file;
-        
-        if (file.type.startsWith('video/')) {
-          await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
-        }
-        
-        const newFile = {
-          id: loadingEntry.id,
-          file,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-          isLoading: false
-        };
-        
-        setLoadingFiles(prev => prev.filter(f => f.id !== loadingEntry.id));
-        
-        // Update formik values
-        const currentUploadedFiles = formik.values.uploadedFiles || [];
-        const currentImages = formik.values.images || [];
-        const currentVideos = formik.values.videos || [];
-        
-        const newUploadedFiles = [...currentUploadedFiles, newFile];
-        handleInputChange('uploadedFiles', newUploadedFiles);
-        
-        if (file.type.startsWith('image/')) {
-          handleInputChange('images', [...currentImages, newFile]);
-        } else if (file.type.startsWith('video/')) {
-          handleInputChange('videos', [...currentVideos, newFile]);
-        }
-      }
+      processedFiles.push(newFile);
+      setLoadingFiles(prev => prev.filter(f => f.id !== loadingEntry.id));
     }
-  }, [formik.values.selectedMedia, formik.values.uploadedFiles, formik.values.images, formik.values.videos, handleInputChange]);
+    
+    // Update formik values ONCE with all processed files
+    const currentUploadedFiles = formik.values.uploadedFiles || [];
+    const currentImages = formik.values.images || [];
+    const currentVideos = formik.values.videos || [];
+    
+    const newUploadedFiles = [...currentUploadedFiles, ...processedFiles];
+    const newImages = [...currentImages, ...processedFiles.filter(f => f.type.startsWith('image/'))];
+    const newVideos = [...currentVideos, ...processedFiles.filter(f => f.type.startsWith('video/'))];
+    
+    handleInputChange('uploadedFiles', newUploadedFiles);
+    handleInputChange('images', newImages);
+    handleInputChange('videos', newVideos);
+  }
+}, [formik.values.selectedMedia, formik.values.uploadedFiles, formik.values.images, formik.values.videos, handleInputChange]);
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -392,11 +395,11 @@ const Media = ({
                 type="file"
                 multiple
                 accept={selectedMedia.includes('picture') && selectedMedia.includes('video') 
-                  ? 'image/jpeg,image/png,video/mp4,video/avi,video/*' 
+                  ? 'image/jpeg,image/png,video/*' 
                   : selectedMedia.includes('picture') 
                     ? 'image/jpeg,image/png'
                     : selectedMedia.includes('video')
-                      ? 'video/mp4,video/avi,video/*'
+                      ? 'video/*'
                       : ''}
                 onChange={handleFileInput}
                 className="hidden"

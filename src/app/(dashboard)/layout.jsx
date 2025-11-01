@@ -16,7 +16,7 @@ export default function Layout({ children }) {
                 <main className="bg-white">
                     <ContactHeader />
                     <Header />
-                    <div className="flex mt-10 mx-20 gap-6">
+                    <div className="flex mt-10 mx-20 gap-6 min-h-screen px-[80px]">
                         <Sidebar />
                         {children}
                     </div>
