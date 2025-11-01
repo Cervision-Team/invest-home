@@ -21,6 +21,7 @@ const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors
   const [searchQuery, setSearchQuery] = useState(formik.values.searchQuery || '')
   const [searchResults, setSearchResults] = useState([])
   const [isSearching, setIsSearching] = useState(false)
+  const [touched, setTouched] = useState({});
   const [showSearchResults, setShowSearchResults] = useState(false)
 
   // Validation state
@@ -57,6 +58,7 @@ const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors
   // Validate location data whenever form values change
 useEffect(() => {
   const timeoutId = setTimeout(async () => {
+    if (!isValidating && Object.keys(touched).length === 0) return; // Only validate if touched or explicitly validating
     if (!formik.values) return;
     try {
       setIsValidatingLocal(true);
@@ -86,7 +88,8 @@ useEffect(() => {
   formik.values.selectedAddress,
   formik.values.searchQuery,
   formik.values.selectedLocation,
-  setStepErrors
+  setStepErrors,
+  touched, isValidating
 ]);
 
   // Update formik when local state changes
@@ -124,6 +127,7 @@ useEffect(() => {
   if (formik.values.selectedLocation !== selectedLocation) {
     formik.setFieldValue('selectedLocation', selectedLocation);
   }
+  setTouched(prev => ({ ...prev, selectedLocation: true })); // Mark as touched when selectedLocation changes
 }, [selectedLocation, formik.values.selectedLocation, formik]);
 
   // Clear all selections
@@ -141,6 +145,7 @@ useEffect(() => {
     formik.setFieldValue('latitude', null);
     formik.setFieldValue('longitude', null);
     
+    setTouched({}); // Reset touched state
     // Remove marker from map
     if (currentMarkerRef.current && mapInstanceRef.current) {
       mapInstanceRef.current.removeLayer(currentMarkerRef.current);
@@ -162,6 +167,7 @@ useEffect(() => {
   // Handle search input changes
   const handleSearchInputChange = async (e) => {
     const value = e.target.value;
+    setTouched(prev => ({ ...prev, searchQuery: true, selectedAddress: true }));
     setSearchQuery(value);
     
     // Close other dropdowns when typing
@@ -559,6 +565,7 @@ useEffect(() => {
   const handleSelectCity = (value, label) => {
     setSelectedCity(value)
     setIsCityOpen(false)
+    setTouched(prev => ({ ...prev, selectedCity: true }));
     // Close other dropdowns
     setIsDistrictOpen(false)
     setIsSettlementOpen(false)
@@ -568,6 +575,7 @@ useEffect(() => {
   const handleSelectDistrict = (value, label) => {
     setSelectedDistrict(value)
     setIsDistrictOpen(false)
+    setTouched(prev => ({ ...prev, selectedDistrict: true }));
     // Close other dropdowns
     setIsCityOpen(false)
     setIsSettlementOpen(false)
@@ -577,6 +585,7 @@ useEffect(() => {
   const handleSelectSettlement = (value, label) => {
     setSelectedSettlement(value)
     setIsSettlementOpen(false)
+    setTouched(prev => ({ ...prev, selectedSettlement: true }));
     // Close other dropdowns
     setIsCityOpen(false)
     setIsDistrictOpen(false)
@@ -603,7 +612,7 @@ useEffect(() => {
   // Error display component
   const ErrorMessage = ({ error, fieldName }) => {
     const displayError = validationErrors[fieldName] || stepErrors?.[fieldName] || error;
-    
+    if (!touched[fieldName]) return null; // Only show error if field has been touched
     if (!displayError) return null;
     
     return (
@@ -642,7 +651,7 @@ useEffect(() => {
                   }}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${
                     isCityOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 
-                    validationErrors.selectedCity || stepErrors?.selectedCity ? 'border-red-500' : 'border-black'
+                    (validationErrors.selectedCity || stepErrors?.selectedCity) && touched.selectedCity ? 'border-red-500' : 'border-black'
                   } ${selectedCity ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -689,7 +698,7 @@ useEffect(() => {
                   }}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${
                     isDistrictOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 
-                    validationErrors.selectedDistrict || stepErrors?.selectedDistrict ? 'border-red-500' : 'border-black'
+                    (validationErrors.selectedDistrict || stepErrors?.selectedDistrict) && touched.selectedDistrict ? 'border-red-500' : 'border-black'
                   } ${selectedDistrict ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -736,7 +745,7 @@ useEffect(() => {
                   }}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${
                     isSettlementOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 
-                    validationErrors.selectedSettlement || stepErrors?.selectedSettlement ? 'border-red-500' : 'border-black'
+                    (validationErrors.selectedSettlement || stepErrors?.selectedSettlement) && touched.selectedSettlement ? 'border-red-500' : 'border-black'
                   } ${selectedSettlement ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -798,7 +807,9 @@ useEffect(() => {
                 }}
                 placeholder={getPlaceholderText()}
                 className={`w-full px-3 py-2 bg-white border rounded-lg shadow-sm transition-all duration-200 hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] pr-10 ${
-                  validationErrors.selectedAddress || stepErrors?.selectedAddress ? 'border-red-500' : 'border-black'
+                  (validationErrors.selectedAddress || stepErrors?.selectedAddress) && touched.selectedAddress
+                    ? 'border-red-500'
+                    : 'border-black'
                 }`}
               />
               
