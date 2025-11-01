@@ -23,9 +23,11 @@ export default function DataTable() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState({});
   const [editRow, setEditRow] = useState(null);
+  const [filterColumn, setFilterColumn] = useState(null);
+  const [filters, setFilters] = useState({});
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false); // ✅ yeni state
+  const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [newRow, setNewRow] = useState(
     Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
@@ -45,11 +47,42 @@ export default function DataTable() {
   }, [openMenu]);
 
   const filteredData = useMemo(() => {
-    if (!search) return data;
-    return data.filter((d) =>
-      Object.values(d).join(" ").toLowerCase().includes(search.toLowerCase())
-    );
-  }, [data, search]);
+    let result = data;
+
+    // Axtarış filtri
+    if (search.trim() !== "") {
+      const query = search.toLowerCase();
+      result = result.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(query)
+        )
+      );
+    }
+
+    // Sütun əsaslı filtr
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        result = result.filter((d) => {
+          const cellValue = String(d[key]).toLowerCase();
+
+          // Əgər qiymət aralığı seçilibsə (məsələn: "< 100000")
+          if (key === "price") {
+            const price = Number(d[key]);
+            if (value.includes("<")) return price < 100000;
+            if (value.includes(">")) return price > 200000;
+            if (value.includes("-")) {
+              const [min, max] = value.split("-").map((v) => Number(v.trim()));
+              return price >= min && price <= max;
+            }
+          }
+
+          return cellValue.includes(String(value).toLowerCase());
+        });
+      }
+    });
+
+    return result;
+  }, [data, filters, search]);
 
   const columns = useMemo(() => {
     const baseCols = columnHeaders.map((col) => ({
@@ -182,18 +215,55 @@ export default function DataTable() {
       },
     ];
   }, [filteredData, selected, openMenu]);
+  const filterDropdowns = {
+    price: ({ onSelect }) => (
+      <div className="flex flex-col gap-2">
+        {["< 100000", "100000 - 200000", "> 200000"].map((label) => (
+          <div
+            key={label}
+            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
+            onClick={() => onSelect(label)}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+    ),
+    room: ({ onSelect }) => (
+      <div className="flex flex-col gap-2">
+        {[1, 2, 3, 4, 5].map((r) => (
+          <div
+            key={r}
+            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
+            onClick={() => onSelect(r)}
+          >
+            {r} otaqlı
+          </div>
+        ))}
+      </div>
+    ),
+    city: ({ onSelect }) => (
+      <div className="flex flex-col gap-2">
+        {["Bakı", "Gəncə", "Sumqayıt"].map((c) => (
+          <div
+            key={c}
+            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
+            onClick={() => onSelect(c)}
+          >
+            {c}
+          </div>
+        ))}
+      </div>
+    ),
+  };
+  const handleHeaderFilterClick = (colKey) => {
+    setFilterColumn((prev) => (prev === colKey ? null : colKey));
+  };
 
   const table = useReactTable({
     data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 5,
-      },
-    },
   });
 
   const handleEditSave = () => {
@@ -284,18 +354,19 @@ export default function DataTable() {
           <Button />
         </div>
       </div>
-      <p className="text-[20px] font-[600] pb-[25px]">Bütün elanlar</p>
+      <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-[1400px] w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
-          <thead>
-            {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id}>
-                {hg.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className={`
-                      text-left whitespace-nowrap sticky overflow-visible top-0 z-10 text-[14px] font-[500] align-middle leading-none
+        <div className="max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <table className="min-w-[1400px] w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
+            <thead>
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className={`
+                      text-left whitespace-nowrap sticky overflow-visible top-0 z-20 text-[14px] font-[500] align-middle leading-none bg-white
                       ${
                         header.id === "select"
                           ? "left-0 z-20 bg-white p-0"
@@ -303,82 +374,99 @@ export default function DataTable() {
                       }
                       ${
                         header.id === "actions"
-                          ? "bg-white right-0 bg-white p-0"
+                          ? "bg-white right-0 bg-white p-0 z-20"
                           : "p-4"
                       }
                     `}
-                  >
-                    <div className="flex gap-[8px] items-center">
-                      <p>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </p>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        className={`
+                    >
+                      <div className="flex gap-[8px] items-center">
+                        <p>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                        </p>
+                        <svg
+                          onClick={() =>
+                            handleHeaderFilterClick(header.column.id)
+                          }
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          className={`
                       ${header.id === "select" ? "hidden" : ""}
                       ${header.id === "actions" ? "hidden" : ""}
                     `}
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                      >
-                        <path
-                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                          stroke="#1B1F27"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                          stroke="black"
-                          strokeOpacity="0.2"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                          stroke="black"
-                          strokeOpacity="0.2"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                          stroke="black"
-                          strokeOpacity="0.2"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                          stroke="black"
-                          strokeOpacity="0.2"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td
-                    key={cell.id}
-                    className={`
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                            stroke="#1B1F27"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                            stroke="black"
+                            strokeOpacity="0.2"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                            stroke="black"
+                            strokeOpacity="0.2"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                            stroke="black"
+                            strokeOpacity="0.2"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                            stroke="black"
+                            strokeOpacity="0.2"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        {filterColumn === header.column.id &&
+                          filterDropdowns[header.column.id] && (
+                            <div className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md p-3 z-50 w-48">
+                              {filterDropdowns[header.column.id]({
+                                onSelect: (value) => {
+                                  setFilters((prev) => ({
+                                    ...prev,
+                                    [header.column.id]: value,
+                                  }));
+                                  setFilterColumn(null);
+                                },
+                              })}
+                            </div>
+                          )}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className={`
                       whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
                       ${
                         cell.column.id === "select"
@@ -392,39 +480,18 @@ export default function DataTable() {
                       }
                       ${cell.column.id === "photo" ? "p-0" : "p-4"}
                     `}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-6">
-        <button
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] bg-[var(--primary-color)] text-white hover:opacity-90 transition-all duration-200"
-        >
-          <Image src={arrowLeftWhite} alt="Arrow Left White" />
-          <span className="font-[500] text-[16px]">Geri Qayıt</span>
-        </button>
-        <span>
-          Səhifə {table.getState().pagination.pageIndex + 1} /{" "}
-          {table.getPageCount()}
-        </span>
-        <button
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className="cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] bg-[var(--primary-color)] text-white hover:opacity-90 transition-all duration-200"
-
-        >
-          <span className="font-[500] text-[16px]">Növbəti</span>
-          <Image src={arrowRightWhite} alt="Arrow Right White" />
-        </button>
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Edit Modal */}
