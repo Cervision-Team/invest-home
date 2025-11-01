@@ -23,7 +23,7 @@ const Wallet = () => {
                 </div>
                 <button onClick={handleClick} className='w-1/3 h-[150px] rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F] cursor-pointer' >
                     Balans artır
-                    <Image src={addIcon} />
+                    <Image src={addIcon} alt='add icon'/>
                 </button>
             </section>
 
