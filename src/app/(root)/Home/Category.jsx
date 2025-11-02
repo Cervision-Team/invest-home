@@ -14,6 +14,7 @@ import {
   Rent,
   Sale,
   Store,
+  Mortgage
 } from "../../../components/core/Svg";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -75,8 +76,17 @@ const categories = [
     announcementTypes: ["sell", "rent", "daily", "roommate"],
     propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
   },
+  {
+    id: 2,
+    label: "İpoteka",
+    icon: Mortgage,
+    filter: "mortgage",
+    route: "/listings",
+    announcementTypes: ["sell", "rent", "daily", "roommate"],
+    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+  },
   { 
-    id: 2, 
+    id: 3, 
     label: "Satılıq", 
     icon: Sale,
     filter: "sell",
@@ -85,7 +95,7 @@ const categories = [
     propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
   },
   { 
-    id: 3, 
+    id: 4, 
     label: "Kirayə", 
     icon: Rent,
     filter: "rent",
@@ -94,7 +104,7 @@ const categories = [
     propertyTypes: ["apartment", "house", "office", "object"]
   },
   { 
-    id: 4, 
+    id: 5, 
     label: "Populyar elanlar", 
     icon: Popular,
     filter: "popular",
@@ -103,7 +113,7 @@ const categories = [
     propertyTypes: ["apartment", "house", "office", "object"]
   },
   { 
-    id: 5, 
+    id: 6, 
     label: "Qonşuluq əmlakları", 
     icon: Neighbour,
     filter: "roommate",
@@ -112,7 +122,7 @@ const categories = [
     propertyTypes: ["apartment"]
   },
   { 
-    id: 6, 
+    id: 7, 
     label: "Mənzil", 
     icon: Building,
     filter: "apartment",
@@ -121,7 +131,7 @@ const categories = [
     propertyTypes: ["apartment"]
   },
   { 
-    id: 7, 
+    id: 8, 
     label: "Bağ Evi", 
     icon: Datcha,
     filter: "house",
@@ -130,7 +140,7 @@ const categories = [
     propertyTypes: ["house"]
   },
   { 
-    id: 8, 
+    id: 9, 
     label: "Obyekt", 
     icon: Store,
     filter: "object",
@@ -139,7 +149,7 @@ const categories = [
     propertyTypes: ["object"]
   },
   { 
-    id: 9, 
+    id: 10, 
     label: "Torpaq", 
     icon: Land,
     filter: "land",
@@ -148,7 +158,7 @@ const categories = [
     propertyTypes: ["land"]
   },
   { 
-    id: 10, 
+    id: 11, 
     label: "Ofis", 
     icon: Office,
     filter: "office",

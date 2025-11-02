@@ -22,7 +22,7 @@ export default function Agents() {
       className="mt-[100px] max-w-[1600px] mx-auto w-auto flex flex-col gap-[70px] px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]"
     >
       <div className="text-center flex flex-col gap-[15px]">
-        <h5 className="text-primary text-[20px] font-medium">ÖZÜNÜZÜ TƏQDİM EDİN</h5>
+        <h5 className="text-primary text-[20px] font-medium">KOMANDAMIZLA TANIŞ OLUN</h5>
         <h2 className="text-black text-[49px] max-[431px]:text-[20px] font-semibold">
           Mütəxəssislər Qrupumuz
         </h2>

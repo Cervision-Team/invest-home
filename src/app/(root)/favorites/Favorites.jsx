@@ -75,7 +75,14 @@ const Favorites = () => {
   if (favorites.length === 0) return <p className="text-center py-4">No favorites yet.</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+    <div className='w-full px-[80px] flex flex-col gap-10'>
+      <div className='w-full h-[60px] flex justify-center items-center rounded-[8px] bg-primary '>
+        <h5 className='text-white text-[24px]/[28px]'>
+        Seçilmişlər
+        </h5>
+      </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
       {favorites.map((house) => (
         <HouseCard
           key={house.id}
@@ -85,6 +92,7 @@ const Favorites = () => {
           // onRemove={() => removeFavorite(house.id)} // Uncomment when backend ready
         />
       ))}
+    </div>
     </div>
   );
 };

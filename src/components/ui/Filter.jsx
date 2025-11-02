@@ -13,7 +13,7 @@ const PROPERTY_TYPES = {
     { id: 'apartment', name: 'Mənzil' },
     { id: 'object', name: 'Obyekt' },
     { id: 'land', name: 'Torpaq sahəsi' },
-    { id: 'house', name: 'Ev' },
+    { id: 'house', name: 'Həyət evi/Bağ evi' },
     { id: 'office', name: 'Ofis' },
     { id: 'garage', name: 'Qaraj' }
   ],
@@ -21,7 +21,7 @@ const PROPERTY_TYPES = {
     { id: 'apartment', name: 'Mənzil' },
     { id: 'object', name: 'Obyekt' },
     { id: 'land', name: 'Torpaq sahəsi' },
-    { id: 'house', name: 'Ev' },
+    { id: 'house', name: 'Həyət evi/Bağ evi' },
     { id: 'office', name: 'Ofis' },
     { id: 'garage', name: 'Qaraj' }
   ],
@@ -29,7 +29,7 @@ const PROPERTY_TYPES = {
     { id: 'apartment', name: 'Mənzil' },
     { id: 'object', name: 'Obyekt' },
     { id: 'land', name: 'Torpaq sahəsi' },
-    { id: 'house', name: 'Ev' },
+    { id: 'house', name: 'Həyət evi/Bağ evi' },
     { id: 'office', name: 'Ofis' },
     { id: 'garage', name: 'Qaraj' }
   ],
@@ -622,7 +622,7 @@ useEffect(() => {
   const handleSearch = useCallback(
     (e) => {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopPropagation(); // Prevent event bubbling
 
       const searchFilters = {
         announcementType,
@@ -630,7 +630,7 @@ useEffect(() => {
         location: selectedLocation,
         priceMin: priceRange.min || null,
         priceMax: priceRange.max || null,
-        rooms: selectedRooms.length > 0 ? selectedRooms : null,
+        rooms: (announcementType !== 'all' && selectedRooms.length > 0) ? selectedRooms : null,
         ...Object.fromEntries(
           Object.entries(additionalFilters).filter(
             ([, value]) => value !== '' && value !== null && value !== undefined
@@ -654,7 +654,7 @@ useEffect(() => {
 
       Object.entries(searchFilters).forEach(([key, value]) => {
         if (!value || value === 'all') return;
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach(v => v && query.append(key, v.toString()));
         } else {
           query.append(key, value.toString());
@@ -942,6 +942,7 @@ useEffect(() => {
 
             <div className="w-[1px] h-[32px] bg-[#D9D9D9]" />
 
+            {announcementType !== 'all' && (
             <div className="cursor-pointer w-full flex flex-col min-w-0 relative">
               <span className="inline-block text-[13px] text-[#969696] whitespace-nowrap overflow-hidden text-ellipsis">
                 Otaq
@@ -1001,6 +1002,7 @@ useEffect(() => {
                 </div>
               </Dropdown>
             </div>
+            )}
           </div>
 
           <div className="flex min-w-0 items-center justify-end gap-[14px] basis-[30%]">
