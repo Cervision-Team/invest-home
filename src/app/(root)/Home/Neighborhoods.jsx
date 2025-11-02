@@ -13,7 +13,7 @@ const Neighborhoods = () => {
               <div className="text-center flex flex-col gap-[10px] ">
                 <h4 className="text-[var(--primary-color)] text-[1.5rem] font-400">
                   {/* {t("Şəhərə böyük sahələr")} */}
-                  Şəhərə böyük sahələr
+                  Şəhərdə aktiv sahələr
                 </h4>
                 <h2 className="text-var[var(--text-color-2)] font-600 text-[1.9rem] max-[769px]:text-[1.5rem]">
                   {/* {t("Qonşuluq Əmlakları")} */}

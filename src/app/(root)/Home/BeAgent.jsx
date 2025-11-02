@@ -34,7 +34,7 @@ function BeAgent() {
                     <div className="min-w-0 flex gap-[10px] items-center justify-between w-full h-full">
                         <div className="max-w-[412px] flex flex-col gap-[10px]">
                             <h5 className="text-[48px] font-[500] text-white max-[1480px]:text-[36px] max-[431px]:text-[16px] max-[1000px]:text-[20px] whitespace-nowrap">Agent ol</h5>
-                            <p className="text-[20px]/[24px] text-white max-[1480px]:text-[16px]/[20px] max-[431px]:text-[8px] max-[1000px]:text-[12px] max-[431px]:leading-[1.2]">Fusce venenatis tellus a felis scelerisque. venenatis tellus a felis scelerisque. </p>
+                            <p className="text-[20px]/[24px] text-white max-[1480px]:text-[16px]/[20px] max-[431px]:text-[8px] max-[1000px]:text-[12px] max-[431px]:leading-[1.2]">İnvest Home komandasının arasında olmaq üçün indi müraciət edin </p>
                         </div>
                         <Link href="/become-agent/information" className="max-[769px]:hidden min-w-0 px-[54px] py-[10px] text-[16px] font-[500] text-primary bg-white rounded-[30px] border border-[#096338] hover:bg-[var(--yellow)] hover:text-white transition-colors duration-300 cursor-pointer">
                             <span className="block overflow-hidden text-ellipsis whitespace-nowrap">
