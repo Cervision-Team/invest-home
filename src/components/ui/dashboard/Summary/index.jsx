@@ -3,11 +3,11 @@ import Image from 'next/image'
 import profilePhoto from "../../../../../public/images/profile/novruz.jpg"
 import { Button } from '../Buttons/ProfileButtons'
 
-const Summary = ({ isEditing, handleToggle, user }) => {
+const Summary = ({ isEditing, handleToggle, user,openChat }) => {
     return (
         <>
             <div className='flex justify-between w-full'>
-                <div className='flex gap-[24px] items-center'>
+                <div className='flex gap-6 items-center'>
                     <div className='w-[100px] h-[100px]'>
                         <Image src={profilePhoto} alt='profile photo' className='w-full h-full object-cover object-top rounded-full' />
                     </div>
@@ -17,9 +17,9 @@ const Summary = ({ isEditing, handleToggle, user }) => {
                     </div>
                 </div>
 
-                <div className='flex items-center gap-[24px]'>
-                    <button type='submit' onClick={handleToggle} className='bg-[#02836F] text-white font-medium py-[12px] px-[24px] rounded-lg cursor-pointer'>{isEditing ? "Yadda saxla" : "Redaktə et"}</button>
-                    <Button/>
+                <div className='flex items-center gap-6'>
+                    <button type='submit' onClick={handleToggle} className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'>{isEditing ? "Yadda saxla" : "Redaktə et"}</button>
+                    <Button openChat={openChat}/>
                 </div>
             </div>
 

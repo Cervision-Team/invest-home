@@ -1,11 +1,11 @@
 "use client"
-import Image from 'next/image'
 import React, { useState } from 'react'
-import doneIcon from "../../../../public/icons/profile/done-icon.svg"
-import pendingIcon from "../../../../public/icons/profile/pending-icon.svg"
-import dromenuIcon from "../../../../public/icons/profile/dropmenu-icon.svg"
 import TransactionList from '@/components/ui/dashboard/TransactionList'
+import Search from '@/components/ui/dashboard/Search';
+import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons';
 const TransactionHistory = () => {
+    const [search, setSearch] = useState("");
+
     const [historyData] = useState([
         {
             id: 1,
@@ -36,11 +36,17 @@ const TransactionHistory = () => {
         }
     ]);
 
-
-
     return (
         <main className='w-full text-[#1B1F27]'>
-            <h1 className='text-[#1B1F27] text-[30px] font-semibold mb-8'>Ödənişlərim</h1>
+            <div className='flex justify-between mb-10'>
+                <div className='min-w-[410px]'>
+                    <Search search={search} setSearch={setSearch} />
+                </div>
+                <div className='flex gap-6'>
+                    <Button />
+                </div>
+            </div>
+            <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Ödənişlərim</h1>
             <section className='flex flex-col gap-5'>
                 <TransactionList transcations={historyData} />
             </section>

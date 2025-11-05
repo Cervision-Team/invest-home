@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import chatIcon from "../../../../../public/icons/profile/chat-icon.svg";
 import notificationIcon from "../../../../../public/icons/profile/notification-icon.svg";
 
-export const Button = () => {
+export const Button = ({openChat}) => {
   return (
     <>
-      <button className="relative flex justify-center items-center bg-[#F5F5F5] rounded-[12px] w-[44px] h-[44px] cursor-pointer">
-        <span className="absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]"></span>
+      <button onClick={openChat} type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
+        <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={chatIcon} alt="chat icon" />
       </button>
-      <button className="relative flex justify-center items-center bg-[#F5F5F5] rounded-[12px] w-[44px] h-[44px] cursor-pointer">
-        <span className="absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]"></span>
+      <button type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
+        <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={notificationIcon} alt="notification icon" />
       </button>
     </>
@@ -23,7 +23,7 @@ export const TypeOfHouse = ({ src, srcOnHover, text, isActive, onClick }) => {
   return (
     <>
       <div
-        className={`h-[46px] flex justify-center items-center gap-[8px] border border-solid rounded-[8px] transition-colors duration-200 cursor-pointer
+        className={`h-[46px] flex justify-center items-center gap-2 border border-solid rounded-2 transition-colors duration-200 cursor-pointer
         ${
           isActive
             ? "border-primary bg-primary text-white"
