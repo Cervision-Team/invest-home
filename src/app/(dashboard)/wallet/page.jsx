@@ -2,20 +2,27 @@
 import React, { useState } from 'react'
 import addIcon from "../../../../public/icons/profile/add-icon.svg"
 import Image from 'next/image'
+import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 
 const Wallet = () => {
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const handleClick = () => {
         setIsOpen(true);
     };
-    
+
     const handleClose = (e) => {
         if (e.target.id === "overlay") setIsOpen(false);
     };
     return (
         <main className='w-full '>
-            <h1 className='text-[#1B1F27] text-[30px] font-semibold mb-8'>Balansım</h1>
+            <div className='flex justify-between mb-10'>
+                <div></div>
+                <div className='flex gap-6'>
+                    <Button />
+                </div>
+            </div>
+            <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Balansım</h1>
             <section className='flex gap-4 text-2xl'>
                 <div className='w-1/3 h-[150px]  rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F]'>
                     Hazırki balans
@@ -23,7 +30,7 @@ const Wallet = () => {
                 </div>
                 <button onClick={handleClick} className='w-1/3 h-[150px] rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F] cursor-pointer' >
                     Balans artır
-                    <Image src={addIcon} alt='add icon'/>
+                    <Image src={addIcon} alt='add icon' />
                 </button>
             </section>
 
