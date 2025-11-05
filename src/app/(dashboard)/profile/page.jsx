@@ -68,7 +68,7 @@ const Profile = () => {
 
       <section className='relative'>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
-          <Summary isChat={isChat} openChat={openChat}  setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
+          <Summary isChat={isChat}   setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
             fullName: "Nihat Aliyev",
             birthDate: "17.06.2004",
             phone: "+9940513888181",
@@ -92,11 +92,7 @@ const Profile = () => {
             </div>
           </div>
         )}
-        {
-          isChat &&
-          <Chat search={search} setSearch={setSearch} closeChat={closeChat}/>
-        }
-
+   
 
       </section>
 
