@@ -23,7 +23,7 @@ const ChatPreview = () => {
                                 Ok, ele ise baslayaq 😉
                             </span>
                         </div>
-                        <span className='w-[20px] h-[20px] bg-[#02836F] rounded-full flex justify-center items-center text-[14px] text-white font-semibold pt-0.5'>1</span>
+                        <span className='w-5 h-5 bg-[#02836F] rounded-full flex justify-center items-center text-[14px] text-white font-semibold pt-0.5'>1</span>
                     </div>
                 </div>
             </div>
