@@ -15,6 +15,20 @@ const ChatList = () => {
             <ChatPreview />
             <ChatPreview />
             <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
+            <ChatPreview />
 
         </div>
     )

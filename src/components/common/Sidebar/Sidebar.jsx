@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { ClockIcon, ProfileIcon, DatabaseIcon, PhoneIcon, SearchIcon, WalletIcon, LogoutIcon, StatisticIcon, EmployeesIcon, OrderIcon, CustomerIcon } from './MenuIcons';
 import { usePathname } from "next/navigation";
-import userAdmin from "../../../../public/images/profile/user-admin.jpg"
+import userAdmin from "../../../../public/images/profile/novruz.jpg"
 import Image from 'next/image';
 const menuItems = [
     { title: "Profilim", href: "/profile", icon: ProfileIcon },
@@ -24,9 +24,9 @@ const Sidebar = () => {
             <nav className='w-[302px] h-fit bg-white rounded-xl pt-6 pb-10 items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]'>
                 <div className='flex justify-center items-center gap-3 mb-6'>
                     <div className='w-[50px] h-[50px]'>
-                        <Image className='rounded-full w-[50px] h-[50px] object-cover' src={userAdmin} alt='profile image' />
+                        <Image className='rounded-full w-[50px] h-[50px] object-cover object-top' src={userAdmin} alt='profile image' />
                     </div>
-                    <span className='font-medium text-lg'>Süsən</span>
+                    <span className='font-medium text-lg'>Novruz</span>
                 </div>
 
                 <ul className='flex flex-col gap-4'>

@@ -22,7 +22,7 @@ const Profile = () => {
   const [search, setSearch] = useState("");
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      fullName: "Nihat Aliyev",
+      fullName: "Novruz Huseynov",
       birthDate: "17.06.2004",
       phone: "+9940513888181",
       location: "baku,xetai",
@@ -43,7 +43,6 @@ const Profile = () => {
 
   const handleToggle = () => {
     setIsEditing(prev => !prev)
-    console.log("clicccccccckkkkkeeeeeeeeddddddd")
   }
 
   useEffect(() => {
@@ -69,7 +68,7 @@ const Profile = () => {
       <section className='relative'>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
           <Summary isChat={isChat}   setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
-            fullName: "Nihat Aliyev",
+            fullName: "Novruz Huseynov",
             birthDate: "17.06.2004",
             phone: "+9940513888181",
             location: "baku,xetai",
