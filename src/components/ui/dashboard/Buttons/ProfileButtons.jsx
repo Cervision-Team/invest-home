@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import chatIcon from "../../../../../public/icons/profile/chat-icon.svg";
 import notificationIcon from "../../../../../public/icons/profile/notification-icon.svg";
 import Chat from "../Chat";
+import Notification from "../Notification";
 
 export const Button = () => {
   const [isChat, setIsChat] = useState(false);
+  const [isNotification, setisNotification] = useState(false);
   const [search, setSearch] = useState("");
   const openChat = () => {
     setIsChat(true)
@@ -14,21 +16,29 @@ export const Button = () => {
   const closeChat = () => {
     setIsChat(false)
   }
+  const openNotification = () => {
+    setisNotification(true)
+  }
+  const closeNotification = () => {
+    setisNotification(false)
+  }
   return (
     <div className="flex gap-6 relative">
       <button onClick={openChat} type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
         <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={chatIcon} alt="chat icon" />
       </button>
-      <button type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
+      <button onClick={openNotification} type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
         <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={notificationIcon} alt="notification icon" />
       </button>
       {
         isChat &&
         <Chat search={search} setSearch={setSearch} closeChat={closeChat} />
+      }{
+        isNotification &&
+        <Notification search={search} setSearch={setSearch} closeNotification={closeNotification} />
       }
-
     </div>
   );
 };

@@ -17,7 +17,7 @@ const ChatPreview = () => {
                     <div className='flex justify-between'>
                         <div className='flex items-center gap-1'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M3 9.675L5.35725 12.375L11.25 5.625M15 5.67225L8.571 12.4222L8.25 12" stroke="#0A0D14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M3 9.675L5.35725 12.375L11.25 5.625M15 5.67225L8.571 12.4222L8.25 12" stroke="#0A0D14" strokeWidth-widt="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                             <span className='text-[#00000099] leading-[18px]'>
                                 Ok, ele ise baslayaq 😉
