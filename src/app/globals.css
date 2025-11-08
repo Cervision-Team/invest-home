@@ -111,7 +111,7 @@ body {
 	padding-right: 30px;
 }
 
-@keyframes reverseSlideRight {
+/* @keyframes reverseSlideRight {
 	0% {
 		opacity: 1;
 		transform: translateX(0) scale(1);
@@ -201,7 +201,7 @@ body {
 
 .group:hover .arrow-anim-left {
 	animation: slideLeft 0.8s 1;
-}
+} */
 
 .hide-scrollbar {
 	-ms-overflow-style: none; /* IE and Edge */

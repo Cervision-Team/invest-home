@@ -27,12 +27,12 @@ export const ButtonWithArrowRight = ({
       <Image
         src={icon}
         alt="Arrow Right"
-        className="arrow-anim-right group-hover:hidden"
+        className="group-hover:hidden"
       />
       <Image
         src={iconOnHover}
         alt="Arrow Right White"
-        className="arrow-anim-right hidden group-hover:block"
+        className="hidden group-hover:block"
       />
     </div>
   );
@@ -65,14 +65,13 @@ export const ButtonWithArrowLeft = ({
       <Image
         src={icon}
         alt="Arrow Left"
-        className="arrow-anim-left group-hover:hidden"
+        className="group-hover:hidden"
       />
       <Image
         src={iconOnHover}
         alt="Arrow Left White"
-        className="arrow-anim-left hidden group-hover:block"
+        className="hidden group-hover:block"
       />
     </div>
   );
 };
-
