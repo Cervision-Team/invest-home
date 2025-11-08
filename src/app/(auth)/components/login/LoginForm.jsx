@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { loginWithPhone } from "@/lib/authService";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import GoogleLoginButton from "@/components/ui/GoogleLoginButton"; 
+import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import Phone from "../../../../../public/icons/phone-auth.svg";
 
 const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
@@ -16,12 +16,20 @@ const schema = yup.object({
     .string()
     .required("Telefon nömrəsi vacibdir")
     .matches(globalPhoneRegex, "Telefon nömrəsi düzgün formatda deyil"),
+  password: yup
+    .string()
+    .required("Şifrə vacibdir")
+    .min(6, "Şifrə ən azı 6 simvol olmalıdır")
+    .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
+    .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
+    .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır"),
 });
 
 const LoginForm = () => {
   const {
     control,
     handleSubmit,
+    register,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
@@ -29,10 +37,11 @@ const LoginForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      await loginWithPhone(data.phone);
-      localStorage.setItem("phone", data.phone);
-      localStorage.setItem("entranceType", "LOGIN");
-      router.replace("/otp");
+      const res = await loginWithPhone({ "phoneNumber": data.phone, "password": data.password });
+      localStorage.setItem("access-token", res)
+      // localStorage.setItem("phoneNumber", data.phone);
+      // localStorage.setItem("entranceType", "LOGIN");
+      router.replace("/");
     } catch (error) {
       if (error.response?.status === 404) {
         toast.error(error.response.data.message || "İstifadəçi tapılmadı");
@@ -73,7 +82,21 @@ const LoginForm = () => {
             <p className="text-red-500 text-sm">{errors.phone.message}</p>
           )}
         </div>
-
+        <div className="flex flex-col gap-1 mt-[4px]">
+          <label htmlFor="password" className="text-sm font-medium text-black">
+            Şifrə<span className="text-red-500">*</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Şifrənizi daxil edin"
+            {...register("password")}
+            className="border border-black p-2 rounded-md text-base placeholder:pl-2"
+          />
+          <div className="h-[28px] text-sm text-red-500">
+            {errors.password?.message}
+          </div>
+        </div>
         {/* Buttons */}
         <div className="flex flex-col gap-[24px]">
           <button
