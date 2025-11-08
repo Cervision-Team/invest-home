@@ -3,19 +3,43 @@ import Image from "next/image";
 import React, { useState } from "react";
 import chatIcon from "../../../../../public/icons/profile/chat-icon.svg";
 import notificationIcon from "../../../../../public/icons/profile/notification-icon.svg";
+import Chat from "../Chat";
+import Notification from "../Notification";
 
 export const Button = () => {
+  const [isChat, setIsChat] = useState(false);
+  const [isNotification, setisNotification] = useState(false);
+  const [search, setSearch] = useState("");
+  const openChat = () => {
+    setIsChat(true)
+  }
+  const closeChat = () => {
+    setIsChat(false)
+  }
+  const openNotification = () => {
+    setisNotification(true)
+  }
+  const closeNotification = () => {
+    setisNotification(false)
+  }
   return (
-    <>
-      <button className="relative flex justify-center items-center bg-[#F5F5F5] rounded-[12px] w-[44px] h-[44px] cursor-pointer">
-        <span className="absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]"></span>
+    <div className="flex gap-6 relative">
+      <button onClick={openChat} type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
+        <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={chatIcon} alt="chat icon" />
       </button>
-      <button className="relative flex justify-center items-center bg-[#F5F5F5] rounded-[12px] w-[44px] h-[44px] cursor-pointer">
-        <span className="absolute right-[4px] top-[4px] w-[10px] h-[10px] rounded-full bg-[#FF403D]"></span>
+      <button onClick={openNotification} type="button" className="relative flex justify-center items-center bg-[#F5F5F5] rounded-xl w-11 h-11 cursor-pointer">
+        <span className="absolute right-1 top-1 w-2.5 h-2.5 rounded-full bg-[#FF403D]"></span>
         <Image src={notificationIcon} alt="notification icon" />
       </button>
-    </>
+      {
+        isChat &&
+        <Chat search={search} setSearch={setSearch} closeChat={closeChat} />
+      }{
+        isNotification &&
+        <Notification search={search} setSearch={setSearch} closeNotification={closeNotification} />
+      }
+    </div>
   );
 };
 export const TypeOfHouse = ({ src, srcOnHover, text, isActive, onClick }) => {
@@ -23,12 +47,11 @@ export const TypeOfHouse = ({ src, srcOnHover, text, isActive, onClick }) => {
   return (
     <>
       <div
-        className={`h-[46px] flex justify-center items-center gap-[8px] border border-solid rounded-[8px] transition-colors duration-200 cursor-pointer
-        ${
-          isActive
+        className={`h-[46px] flex justify-center items-center gap-2 border border-solid rounded-2 transition-colors duration-200 cursor-pointer
+        ${isActive
             ? "border-primary bg-primary text-white"
             : "border-[#E9E9E9] bg-[#FAFAFA] text-black hover:border-[#26B5A0] hover:bg-primary hover:text-white"
-        }`}
+          }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}

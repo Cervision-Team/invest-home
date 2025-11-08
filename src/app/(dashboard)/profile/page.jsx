@@ -10,15 +10,19 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import editIcon from "../../../../public/icons/profile/edit-icon.svg"
 import Image from 'next/image';
-// import archiveIcon from "../../../../public/icons/profile/archive-icon.svg"
+import Search from '@/components/ui/dashboard/Search';
+
+import Chat from '@/components/ui/dashboard/Chat';
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChat, setIsChat] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [search, setSearch] = useState("");
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      fullName: "Nihat Aliyev",
+      fullName: "Novruz Huseynov",
       birthDate: "17.06.2004",
       phone: "+9940513888181",
       location: "baku,xetai",
@@ -52,13 +56,19 @@ const Profile = () => {
   const handleClose = (e) => {
     setIsOpen(false);
   };
-
+  const openChat = () => {
+    setIsChat(true)
+  }
+  const closeChat = () => {
+    setIsChat(false)
+  }
   return (
     <main className='w-full flex flex-col gap-6'>
-      <section className=''>
+
+      <section className='relative'>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
-          <Summary isEditing={isEditing} handleToggle={handleToggle} user={userData || {
-            fullName: "Nihat Aliyev",
+          <Summary isChat={isChat}   setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
+            fullName: "Novruz Huseynov",
             birthDate: "17.06.2004",
             phone: "+9940513888181",
             location: "baku,xetai",
@@ -81,6 +91,8 @@ const Profile = () => {
             </div>
           </div>
         )}
+   
+
       </section>
 
 

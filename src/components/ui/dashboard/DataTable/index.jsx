@@ -15,6 +15,7 @@ import {
   RealEstateData,
 } from "@/components/core/RealEstateData";
 import { Button } from "../Buttons/ProfileButtons";
+import Search from "../Search";
 
 export default function DataTable() {
   const [data, setData] = useState(RealEstateData);
@@ -343,44 +344,18 @@ export default function DataTable() {
     <div>
       {/* Search + Buttons */}
       <div className="flex mb-6 flex-wrap justify-between">
-        <div className="relative">
-          <input
-            placeholder="Axtarış"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="shadow-md px-5 rounded-[20px] flex-1 min-w-[410px] h-[44px] placeholder:text-black"
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            className="absolute top-[30%] right-5"
-            viewBox="0 0 18 18"
-            fill="none"
-          >
-            <path
-              d="M13.666 13.667L17.416 17.417"
-              stroke="#141B34"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M15.75 8.25C15.75 4.10786 12.3921 0.75 8.25 0.75C4.10786 0.75 0.75 4.10786 0.75 8.25C0.75 12.3921 4.10786 15.75 8.25 15.75C12.3921 15.75 15.75 12.3921 15.75 8.25Z"
-              stroke="#141B34"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <div className="min-w-[410px]">
+
+          <Search search={search} setSearch={setSearch} />
         </div>
         <div className="flex gap-4">
           <button
             onClick={() => setDeleteModal(true)}
             disabled={Object.keys(selected).length === 0}
-            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${
-              Object.keys(selected).length === 0
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer"
-            }`}
+            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${Object.keys(selected).length === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer"
+              }`}
           >
             <Image
               src={deleteHome}
@@ -419,17 +394,15 @@ export default function DataTable() {
                     <th
                       key={header.id}
                       className={`
-                      text-left whitespace-nowrap sticky overflow-visible top-0 z-10 text-[14px] font-[500] align-middle leading-none bg-white
-                      ${
-                        header.id === "select"
+                      text-left whitespace-nowrap sticky overflow-visible top-0 z-20 text-[14px] font-[500] align-middle leading-none bg-white
+                      ${header.id === "select"
                           ? "left-0 z-20 bg-white p-0"
                           : "p-4"
-                      }
-                      ${
-                        header.id === "actions"
-                          ? "right-0 bg-white p-0 z-20"
+                        }
+                      ${header.id === "actions"
+                          ? "bg-white right-0 bg-white p-0 z-20"
                           : "p-4"
-                      }
+                        }
                     `}
                     >
                       <div className="flex gap-[8px] items-center">
@@ -521,16 +494,14 @@ export default function DataTable() {
                       key={cell.id}
                       className={`
                       whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
-                      ${
-                        cell.column.id === "select"
+                      ${cell.column.id === "select"
                           ? "left-0 bg-white z-10"
                           : ""
-                      }
-                      ${
-                        cell.column.id === "actions"
+                        }
+                      ${cell.column.id === "actions"
                           ? "right-0 bg-white z-10"
                           : ""
-                      }
+                        }
                       ${cell.column.id === "photo" ? "p-0" : "p-4"}
                     `}
                     >
@@ -656,11 +627,10 @@ export default function DataTable() {
               disabled={
                 !Object.values(newRow).every((v) => v !== "" && v !== null)
               }
-              className={`px-6 py-3 text-sm text-white rounded-[8px] ${
-                Object.values(newRow).every((v) => v !== "" && v !== null)
-                  ? "bg-primary hover:bg-primary/90 cursor-pointer"
-                  : "bg-gray-400 cursor-not-allowed"
-              } transition`}
+              className={`px-6 py-3 text-sm text-white rounded-[8px] ${Object.values(newRow).every((v) => v !== "" && v !== null)
+                ? "bg-primary hover:bg-primary/90 cursor-pointer"
+                : "bg-gray-400 cursor-not-allowed"
+                } transition`}
             >
               Əlavə et
             </button>

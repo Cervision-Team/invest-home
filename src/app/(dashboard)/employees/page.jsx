@@ -1,15 +1,28 @@
-
+"use client"
 import Image from 'next/image'
 import Link from 'next/link'
 import whatsappIcon from "../../../../public/icons/profile/whatsapp-icon.svg"
 import instagramIcon from "../../../../public/icons/profile/instagram-icon.svg"
 import linkedinIcon from "../../../../public/icons/profile/linkedin-icon.svg"
 import agentsData from '@/components/core/AgentsData'
+import Search from '@/components/ui/dashboard/Search'
+import { useState } from 'react'
+import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 
 const Employees = () => {
-
+  const [search, setSearch] = useState("");
   return (
     <main className="w-full h-full">
+      <div className='flex justify-between mb-10 '>
+        <div className='min-w-[410px]'>
+
+        <Search search={search} setSearch={setSearch} />
+        </div>
+        <div className='flex gap-6'>
+          <Button />
+        </div>
+      </div>
+      <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün əməkdaşlar</h1>
       <section
         className={`
           grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
@@ -19,6 +32,7 @@ const Employees = () => {
           max-h-[80vh] overflow-y-auto
         `}
       >
+
         {agentsData.map((agent, index) => (
           <Link href={`/about-us/${agent.id}`} className="group block" key={index}>
             <div className="flex flex-col items-center justify-between p-2">
