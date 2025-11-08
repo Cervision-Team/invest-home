@@ -106,41 +106,87 @@ export default function DataTable() {
     return [
       {
         id: "select",
-        header: () => (
-          <input
-            type="checkbox"
-            checked={
-              filteredData.length > 0 &&
-              filteredData.every((d) => selected[d.elan_id])
-            }
-            onChange={(e) => {
-              if (e.target.checked) {
-                const all = {};
-                filteredData.forEach((d) => (all[d.elan_id] = true));
-                setSelected(all);
-              } else setSelected({});
-            }}
-            className="cursor-pointer w-[20px] h-[20px] accent-primary"
-          />
-        ),
+        header: () => {
+          const allSelected =
+            data.length > 0 && Object.keys(selected).length === data.length;
+
+          return (
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const all = Object.fromEntries(
+                      data.map((d) => [d.elan_id, true])
+                    );
+                    setSelected(all);
+                  } else {
+                    setSelected({});
+                  }
+                }}
+                className="hidden peer"
+              />
+              <div
+                className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
+             peer-checked:bg-primary peer-checked:border-primary transition-all"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="11"
+                  viewBox="0 0 14 11"
+                  fill="none"
+                  className="peer-checked:opacity-100 transition-opacity"
+                >
+                  <path
+                    d="M4.31002 8.46835L1.41835 5.57668C1.26254 5.42087 1.05121 5.33333 0.83085 5.33333C0.610495 5.33333 0.399165 5.42087 0.24335 5.57668C0.0875358 5.7325 0 5.94383 0 6.16418C0 6.27329 0.0214908 6.38133 0.0632449 6.48214C0.104999 6.58294 0.166199 6.67453 0.24335 6.75168L3.72668 10.235C4.05168 10.56 4.57668 10.56 4.90168 10.235L13.7183 1.41835C13.8742 1.26254 13.9617 1.05121 13.9617 0.830851C13.9617 0.610495 13.8742 0.399165 13.7183 0.243351C13.5625 0.087536 13.3512 0 13.1308 0C12.9105 0 12.6992 0.087536 12.5433 0.243351L4.31002 8.46835Z"
+                    fill="#FAFAFA"
+                  />
+                </svg>
+              </div>
+            </label>
+          );
+        },
         cell: ({ row }) => (
-          <input
-            type="checkbox"
-            checked={!!selected[row.original.elan_id]}
-            onChange={(e) =>
-              setSelected((prev) => {
-                const updated = {
-                  ...prev,
-                  [row.original.elan_id]: e.target.checked,
-                };
-                if (!e.target.checked) delete updated[row.original.elan_id];
-                return updated;
-              })
-            }
-            className="cursor-pointer w-[20px] h-[20px] accent-primary"
-          />
+          <label className="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!!selected[row.original.elan_id]}
+              onChange={(e) =>
+                setSelected((prev) => {
+                  const updated = {
+                    ...prev,
+                    [row.original.elan_id]: e.target.checked,
+                  };
+                  if (!e.target.checked) delete updated[row.original.elan_id];
+                  return updated;
+                })
+              }
+              className="hidden peer"
+            />
+            <div
+              className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
+           peer-checked:bg-primary peer-checked:border-primary transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="11"
+                viewBox="0 0 14 11"
+                fill="none"
+                className="peer-checked:opacity-100 transition-opacity"
+              >
+                <path
+                  d="M4.31002 8.46835L1.41835 5.57668C1.26254 5.42087 1.05121 5.33333 0.83085 5.33333C0.610495 5.33333 0.399165 5.42087 0.24335 5.57668C0.0875358 5.7325 0 5.94383 0 6.16418C0 6.27329 0.0214908 6.38133 0.0632449 6.48214C0.104999 6.58294 0.166199 6.67453 0.24335 6.75168L3.72668 10.235C4.05168 10.56 4.57668 10.56 4.90168 10.235L13.7183 1.41835C13.8742 1.26254 13.9617 1.05121 13.9617 0.830851C13.9617 0.610495 13.8742 0.399165 13.7183 0.243351C13.5625 0.087536 13.3512 0 13.1308 0C12.9105 0 12.6992 0.087536 12.5433 0.243351L4.31002 8.46835Z"
+                  fill="#FAFAFA"
+                />
+              </svg>
+            </div>
+          </label>
         ),
       },
+
       ...baseCols,
       {
         id: "actions",
@@ -229,16 +275,19 @@ export default function DataTable() {
       </div>
     ),
     room: ({ onSelect }) => (
-      <div className="flex flex-col gap-2">
-        {[1, 2, 3, 4, 5].map((r) => (
-          <div
-            key={r}
-            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
-            onClick={() => onSelect(r)}
-          >
-            {r} otaqlı
-          </div>
-        ))}
+      <div className="flex flex-col gap-3">
+        <p className="text-center">Otaq sayı</p>
+        <div className="flex flex-col gap-2">
+          {[1, 2, 3, 4, 5].map((r) => (
+            <div
+              key={r}
+              className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
+              onClick={() => onSelect(r)}
+            >
+              {r}
+            </div>
+          ))}
+        </div>
       </div>
     ),
     city: ({ onSelect }) => (
@@ -330,8 +379,14 @@ export default function DataTable() {
       <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>
       {/* Table */}
       <div className="overflow-x-auto">
-        <div className="max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-          <table className="min-w-[1400px] w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
+        <div
+          className="h-[450px] overflow-y-auto
+    scrollbar-thin
+    scrollbar-thumb-primary
+    scrollbar-track-gray-100
+    hover:scrollbar-thumb-primary"
+        >
+          <table className="w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
             <thead>
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
