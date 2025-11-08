@@ -23,7 +23,6 @@ import {
   WalletIcon,
 } from "@/components/ui/MenuIcons";
 
-// ✅ One icon map for all sections
 const iconMap = {
   document: documentIcon,
   livingRoomRental: livingRoomRentalIcon,
@@ -62,7 +61,7 @@ const Sidebar = ({ items, variant }) => {
 
         <ul className="flex flex-col gap-4">
           {items.map(({ title, href, icon }) => {
-            const MenuIcon = iconMap[icon]; // 🧠 map string → component
+            const MenuIcon = iconMap[icon]; 
             const isActive = pathName === href;
 
             return (

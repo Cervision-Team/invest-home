@@ -6,11 +6,11 @@ import ArrowLeft from "../../../public/icons/mobile-category/arrow-left.svg"
 const ReturnBack = () => {
   return (
     <>
-    <div className='flex flex-row items-center justify-center  '>
+    <div className='flex flex-row items-center justify-center cursor-pointer'
+            onClick={() => window.history.back()}>
       <Image
         src={ArrowLeft}
         className='cursor-pointer'
-        onClick={() => window.history.back()}
         alt="arrow-left"
         width={24}
         height={24}

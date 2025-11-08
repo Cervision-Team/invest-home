@@ -15,7 +15,7 @@ import "swiper/css/pagination";
 const Imagesvg = "/icons/image.svg";
 const PaintIcon = "/icons/paint.svg";
 const ClipboardIcon = "/icons/clipboard.svg";
-const MetroIcon = "/images/metro.png";
+const MetroIcon = "/icons/metro.svg";
 const SquareMetersIcon = "/icons/Square Meters.svg";
 const ShareSvg = "/icons/share.svg";
 const BedIcon = "/icons/guidance_hotel-room.svg";

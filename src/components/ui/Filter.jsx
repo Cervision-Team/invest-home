@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 import { useRouter } from 'next/navigation'; 
 import CustomSelect from './CustomSelect.jsx'
 import Image from 'next/image.js';
+import { createPortal } from "react-dom";
+
 
 
 // Mock data based on validation schema - will be replaced with API calls
@@ -204,34 +206,51 @@ export const Button = ({ onSelect, selectedValue = "all" }) => {
   );
 };
 
-const Dropdown = ({ children, isOpen, onClose, className = "" }) => {
+
+const Dropdown = ({ children, isOpen, onClose, className = "", triggerRef }) => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      const isOutsideDropdown =
+        dropdownRef.current && !dropdownRef.current.contains(event.target);
+      const isOutsideTrigger =
+        triggerRef?.current && !triggerRef.current.contains(event.target);
+
+      if (isOutsideDropdown && isOutsideTrigger) {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, triggerRef]);
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       ref={dropdownRef}
-      className={`absolute bottom-full left-0 w-[calc(100%+100px)] -ml-[16px] bg-white border border-[#E9E9E9] rounded-t-[12px] shadow-lg z-50 mb-1 ${className}`}
+      className={`absolute bg-white border border-[#E9E9E9] rounded-b-[12px] shadow-lg z-[9999] mt-1 ${className}`}
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        position: "absolute",
+        top:
+          triggerRef?.current?.getBoundingClientRect().bottom +
+          window.scrollY +
+          "px",
+        left: (triggerRef?.current?.getBoundingClientRect().left - 50) + "px",
+         width: (triggerRef?.current?.offsetWidth + 100) + "px",
+      }}
     >
       {children}
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -310,7 +329,8 @@ const PropertyTypeSelector = ({ announcementType, selectedTypes, onTypeChange })
         <div className="text-sm font-medium text-gray-700 mb-3">Əmlak növü</div>
         <div className="space-y-2">
           {availableTypes.map((type) => (
-            <label key={type.id} className="flex items-center cursor-pointer">
+            <label key={type.id} className="flex items-center cursor-pointer"
+            onClick={(e) => e.stopPropagation()}>
               <input
                 type="checkbox"
                 className="mr-3 w-4 h-4 text-[#02836F] border-gray-300 rounded focus:ring-[#02836F] svg-checkbox"
@@ -548,6 +568,11 @@ export default function AdvancedFilter({ onSearch, initialFilters = {} }) {
   const [previousAnnouncementType, setPreviousAnnouncementType] = useState("all");
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+   const locationTriggerRef = useRef(null);
+  const propertyTypeTriggerRef = useRef(null);
+  const priceTriggerRef = useRef(null);
+  const roomsTriggerRef = useRef(null);
+
   useEffect(() => {
     const savedFilters = sessionStorage.getItem('searchFilters');
     if (savedFilters) {
@@ -777,6 +802,7 @@ useEffect(() => {
                 Ünvan
               </span>
               <div 
+               ref={locationTriggerRef}
                 className="flex items-center justify-between"
                 onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
               >
@@ -789,7 +815,7 @@ useEffect(() => {
                   height="25" 
                   fill="none" 
                   viewBox="0 0 24 25"
-                  className={`transition-transform ${activeDropdown === 'location' ? 'rotate-0' : 'rotate-180'}`}
+                  className={`transition-transform ${activeDropdown === 'location' ? 'rotate-180' : 'rotate-0'}`}
                 >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -801,6 +827,7 @@ useEffect(() => {
               <Dropdown 
                 isOpen={activeDropdown === 'location'} 
                 onClose={() => setActiveDropdown(null)}
+                triggerRef={locationTriggerRef} 
               >
                 <div className="p-4">
                   <input
@@ -833,8 +860,11 @@ useEffect(() => {
                     Əmlak növü
                   </span>
                   <div 
+                   ref={propertyTypeTriggerRef} 
                     className="flex items-center justify-between"
-                    onClick={() => setActiveDropdown(activeDropdown === 'propertyType' ? null : 'propertyType')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setActiveDropdown(activeDropdown === 'propertyType' ? null : 'propertyType')}}
                   >
                     <span className="inline-block add-text text-[16px] whitespace-nowrap min-w-0 overflow-hidden text-ellipsis">
                       {getDisplayText('propertyType')}
@@ -845,7 +875,7 @@ useEffect(() => {
                       height="25" 
                       fill="none" 
                       viewBox="0 0 24 25"
-                      className={`transition-transform ${activeDropdown === 'propertyType' ? 'rotate-0' : 'rotate-180'}`}
+                      className={`transition-transform ${activeDropdown === 'propertyType' ? 'rotate-180' : 'rotate-0'}`}
                     >
                       <path
                         d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -855,6 +885,7 @@ useEffect(() => {
                   </div>
                   
                   <Dropdown 
+                   triggerRef={propertyTypeTriggerRef} 
                     isOpen={activeDropdown === 'propertyType'} 
                     onClose={() => setActiveDropdown(null)}
                   >
@@ -876,6 +907,7 @@ useEffect(() => {
                 Qiymət
               </span>
               <div 
+               ref={priceTriggerRef} 
                 className="flex items-center justify-between"
                 onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
               >
@@ -888,7 +920,7 @@ useEffect(() => {
                   height="25" 
                   fill="none" 
                   viewBox="0 0 24 25"
-                  className={`transition-transform ${activeDropdown === 'price' ? 'rotate-0' : 'rotate-180'}`}
+                  className={`transition-transform ${activeDropdown === 'price' ? 'rotate-180' : 'rotate-0'}`}
                 >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -900,6 +932,7 @@ useEffect(() => {
               <Dropdown 
                 isOpen={activeDropdown === 'price'} 
                 onClose={() => setActiveDropdown(null)}
+                 triggerRef={priceTriggerRef}
               >
                 <div className="p-4 space-y-3">
                   <div>
@@ -948,6 +981,7 @@ useEffect(() => {
                 Otaq
               </span>
               <div 
+               ref={roomsTriggerRef} 
                 className="flex items-center justify-between"
                 onClick={() => setActiveDropdown(activeDropdown === 'rooms' ? null : 'rooms')}
               >
@@ -960,7 +994,7 @@ useEffect(() => {
                   height="25" 
                   fill="none" 
                   viewBox="0 0 24 25"
-                  className={`transition-transform ${activeDropdown === 'rooms' ? 'rotate-0' : 'rotate-180'}`}
+                  className={`transition-transform ${activeDropdown === 'rooms' ? 'rotate-180' : 'rotate-0'}`}
                 >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -970,6 +1004,7 @@ useEffect(() => {
               </div>
               
               <Dropdown 
+               triggerRef={roomsTriggerRef} 
                 isOpen={activeDropdown === 'rooms'} 
                 onClose={() => setActiveDropdown(null)}
               >
