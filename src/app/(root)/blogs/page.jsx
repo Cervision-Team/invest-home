@@ -83,7 +83,7 @@ const Page = () => {
                 />
               </div>
               <p className='text-[#161A20] text-center text-[32px] font-medium mt-[10px]'>"{data.title}"</p>
-              <p className='text-[#828080] text-[16px]/[20px] font-normal ml-3 text-center'>{data.description}</p>
+              <p className='text-[#828080] text-[16px]/[20px] font-normal ml-3 text-center mt-1'>{data.description}</p>
             </div>
           </Link>
         ))}
