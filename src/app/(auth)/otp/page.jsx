@@ -15,17 +15,27 @@ const OTPPage = () => {
   const [minutes, setMinutes] = useState(1);
   const [seconds, setSeconds] = useState(0);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  
   const router = useRouter();
-
+  
+  const otp = localStorage.getItem("otp") || "";
+  useEffect(() => {
+    if (otp.length === 4) {
+      setValues(otp.split(""))
+      setIsButtonActive(true)
+    }
+  }, [])
   const handleVerify = async () => {
-    const otp = values.join("");
 
     try {
-      const response = await verifyOTP(otp);
+      
+      const response = await verifyOTP(values.join(""));
+      console.log("bls");
+      
       const token = response.token;
 
       if (token) {
-        localStorage.setItem("token", token);
+        localStorage.setItem("access-token", token);
         toast.success("Giriş uğurlu!");
         router.push("/");
       } else {
@@ -39,7 +49,8 @@ const OTPPage = () => {
   };
 
   const handleResend = async () => {
-    await resendOTP();
+    const res = await resendOTP();
+    setValues(String(res).split(""))
     setMinutes(1);
     setSeconds(0);
   };
@@ -82,7 +93,7 @@ const OTPPage = () => {
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
       const newValues = [...values];
-      
+
       if (newValues[index] !== "") {
         newValues[index] = "";
         setValues(newValues);
@@ -90,16 +101,20 @@ const OTPPage = () => {
       } else if (index > 0) {
         newValues[index - 1] = "";
         setValues(newValues);
-        
+
         for (let i = index; i < values.length; i++) {
           inputRefs.current[i].setAttribute("disabled", true);
         }
-        
+
         inputRefs.current[index - 1].focus();
         setIsButtonActive(false);
       }
     }
   };
+  useEffect(()=>{
+    console.log(values);
+
+  },[])
 
   return (
     <section className="min-[431px]:bg-primary min-h-screen min-[431px]:text-white text-center min-[431px]:flex min-[431px]:items-center">

@@ -27,8 +27,16 @@ const schema = yup.object({
         .string()
         .required("Telefon nömrəsi vacibdir")
         .matches(globalPhoneRegex, "Telefon nömrəsi düzgün formatda deyil"),
+    password: yup
+        .string()
+        .required("Şifrə vacibdir")
+        .min(6, "Şifrə ən azı 6 simvol olmalıdır")
+        .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
+        .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
+        .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır"),
     terms: yup.boolean().oneOf([true], "Zəhmət olmasa şərtləri qəbul edin"),
 });
+
 
 const RegisterForm = () => {
     const {
@@ -42,8 +50,9 @@ const RegisterForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            await registerUser({ fullName: data.fullName, phone: data.phone });
-            localStorage.setItem("phone", data.phone);
+            const res = await registerUser({ fullName: data.fullName, phoneNumber: data.phone, password: data.password });
+            localStorage.setItem("otp",res);
+            localStorage.setItem("phoneNumber", data.phone);
             localStorage.setItem("entranceType", "SIGNUP");
             router.replace("/otp");
         } catch (error) {
@@ -105,7 +114,21 @@ const RegisterForm = () => {
                         {errors.phone?.message}
                     </div>
                 </div>
-
+                <div className="flex flex-col gap-1 mt-[4px]">
+                    <label htmlFor="password" className="text-sm font-medium text-black">
+                        Şifrə<span className="text-red-500">*</span>
+                    </label>
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Şifrənizi daxil edin"
+                        {...register("password")}
+                        className="border border-black p-2 rounded-md text-base placeholder:pl-2"
+                    />
+                    <div className="h-[28px] text-sm text-red-500">
+                        {errors.password?.message}
+                    </div>
+                </div>
                 <div className="flex flex-col gap-1 mt-[4px]">
                     <div className="flex items-center gap-2.5">
                         <input
@@ -119,10 +142,10 @@ const RegisterForm = () => {
                             className="text-base text-black cursor-pointer"
                         >
                             <Link href={"/terms-and-conditions"}>
-                            
-                            <span className="text-primary hover:text-green-800">
-                                Şərtlər və qaydaları
-                            </span>{" "}
+
+                                <span className="text-primary hover:text-green-800">
+                                    Şərtlər və qaydaları
+                                </span>{" "}
                             </Link>
                             oxudum, razıyam.
                         </label>

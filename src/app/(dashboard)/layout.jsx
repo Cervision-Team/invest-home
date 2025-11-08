@@ -26,12 +26,10 @@ export default function Layout({ children }) {
       <main className="bg-white">
         <ContactHeader />
         <Header />
-
         <div className="flex mt-10 mx-20 gap-6">
           <Sidebar items={dashboardSidebarItems} variant="dashboard"/>
           {children}
         </div>
-
         <TabBar />
         <Footer />
         <SubFooter />
