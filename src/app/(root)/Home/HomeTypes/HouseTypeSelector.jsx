@@ -27,7 +27,7 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
 
   return (
     <>
-      <section className="max-[431px]:mt-[32px] mt-[40px] max-w-[1600px] mx-auto max-[1025px]:px-[20px] max-[431px]:px-[16px] px-[80px]">
+      <section className="max-[431px]:mt-[32px] mt-[55px] max-w-[1600px] mx-auto max-[1025px]:px-[20px] max-[431px]:px-[16px] px-[80px]">
         <Link
           href={{
             pathname:

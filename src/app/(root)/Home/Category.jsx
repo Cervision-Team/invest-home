@@ -239,9 +239,9 @@ return (
       {isMobile ? 
         '' 
         :
-        <section className="mt-[40px] max-w-[1600px] mx-auto px-[80px] max-[1025]:px-[20px] max-[426px]:px-[16px]">
+        <section className="max-[1200px]:mt-[60px] max-[1000px]:mt-[50px] mt-[89px] max-w-[1600px] mx-auto px-[80px] max-[1025]:px-[20px] max-[426px]:px-[16px]">
           <div className="w-full flex justify-start">
-            <div className="flex gap-[90px] items-center relative w-full max-w-full">
+            <div className="flex gap-[84px] max-[1200px]:gap-[50px] max-[1000px]:gap-[25px] items-center relative w-full max-w-full">
               <SamplePrevArrow swiperRef={swiperRef} />
               <Swiper
                 loop={false}
