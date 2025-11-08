@@ -811,7 +811,7 @@ useEffect(() => {
                   height="25" 
                   fill="none" 
                   viewBox="0 0 24 25"
-                  className={`transition-transform ${activeDropdown === 'location' ? 'rotate-180' : 'rotate-0'}`}
+                  className={`shrink-0 transition-transform ${activeDropdown === 'location' ? 'rotate-180' : 'rotate-0'}`}
                 >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -871,7 +871,7 @@ useEffect(() => {
                       height="25" 
                       fill="none" 
                       viewBox="0 0 24 25"
-                      className={`transition-transform ${activeDropdown === 'propertyType' ? 'rotate-180' : 'rotate-0'}`}
+                      className={`shrink-0 transition-transform ${activeDropdown === 'propertyType' ? 'rotate-180' : 'rotate-0'}`}
                     >
                       <path
                         d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
@@ -916,7 +916,7 @@ useEffect(() => {
                   height="25" 
                   fill="none" 
                   viewBox="0 0 24 25"
-                  className={`transition-transform ${activeDropdown === 'price' ? 'rotate-180' : 'rotate-0'}`}
+                  className={`shrink-0 transition-transform ${activeDropdown === 'price' ? 'rotate-180' : 'rotate-0'}`}
                 >
                   <path
                     d="M12 15a1 1 0 01-.53-.15 1 1 0 01-.47-.57l-3.5-3.5a1 1 0 011.41-1.41L12 12.59l3.09-3.22a1 1 0 111.41 1.41l-3.5 3.5a1 1 0 01-.47.57A1 1 0 0112 15Z"
