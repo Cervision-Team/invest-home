@@ -7,12 +7,15 @@ import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
 import {
   columnHeaders,
   RealEstateData,
+  azeCity,
+  azeSettlement,
+  azeDistrict,
+  azeMetro,
 } from "@/components/core/RealEstateData";
 import { Button } from "../Buttons/ProfileButtons";
 import Search from "../Search";
@@ -28,12 +31,14 @@ export default function DataTable() {
   const [addModal, setAddModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [newRow, setNewRow] = useState(
     Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
   );
   const [openMenu, setOpenMenu] = useState(null);
   const menuRefs = useRef({});
 
+  // Click outside menu close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (openMenu) {
@@ -45,10 +50,11 @@ export default function DataTable() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openMenu]);
 
+  // Filtering
   const filteredData = useMemo(() => {
     let result = data;
 
-    // Axtarış filtri
+    // Search filter
     if (search.trim() !== "") {
       const query = search.toLowerCase();
       result = result.filter((row) =>
@@ -57,32 +63,45 @@ export default function DataTable() {
         )
       );
     }
+    const numericColumns = [
+      "price",
+      "area",
+      "floor",
+      "totalFloors",
+      "land_area",
+    ];
 
-    // Sütun əsaslı filtr
     Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        result = result.filter((d) => {
-          const cellValue = String(d[key]).toLowerCase();
+      if (!value) return;
 
-          // Əgər qiymət aralığı seçilibsə (məsələn: "< 100000")
-          if (key === "price") {
-            const price = Number(d[key]);
-            if (value.includes("<")) return price < 100000;
-            if (value.includes(">")) return price > 200000;
-            if (value.includes("-")) {
-              const [min, max] = value.split("-").map((v) => Number(v.trim()));
-              return price >= min && price <= max;
-            }
-          }
+      result = result.filter((row) => {
+        const cellValue = row[key];
 
-          return cellValue.includes(String(value).toLowerCase());
-        });
-      }
+        if (value.min !== undefined || value.max !== undefined) {
+          if (!numericColumns.includes(key)) return true;
+
+          let num = Number(String(cellValue).replace(/[^0-9.]/g, ""));
+
+          const min = value.min ?? -Infinity;
+          const max = value.max ?? Infinity;
+
+          return num >= min && num <= max;
+        }
+
+        // RADIO və DROPDOWN FILTER
+        if (typeof value === "string") {
+          if (numericColumns.includes(key)) return true;
+          return String(cellValue).toLowerCase().includes(value.toLowerCase());
+        }
+
+        return true;
+      });
     });
 
     return result;
   }, [data, filters, search]);
 
+  // Columns
   const columns = useMemo(() => {
     const baseCols = columnHeaders.map((col) => ({
       accessorKey: col.key,
@@ -109,7 +128,6 @@ export default function DataTable() {
         header: () => {
           const allSelected =
             data.length > 0 && Object.keys(selected).length === data.length;
-
           return (
             <label className="flex items-center cursor-pointer">
               <input
@@ -129,7 +147,7 @@ export default function DataTable() {
               />
               <div
                 className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
-             peer-checked:bg-primary peer-checked:border-primary transition-all"
+                peer-checked:bg-primary peer-checked:border-primary transition-all"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +185,7 @@ export default function DataTable() {
             />
             <div
               className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
-           peer-checked:bg-primary peer-checked:border-primary transition-all"
+              peer-checked:bg-primary peer-checked:border-primary transition-all"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -186,7 +204,6 @@ export default function DataTable() {
           </label>
         ),
       },
-
       ...baseCols,
       {
         id: "actions",
@@ -213,20 +230,6 @@ export default function DataTable() {
                   }}
                   className="flex items-center cursor-pointer gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H7v-3a2 2 0 012-2z"
-                    />
-                  </svg>
                   Redaktə et
                 </button>
                 <button
@@ -237,20 +240,6 @@ export default function DataTable() {
                   }}
                   className="flex items-center gap-2 cursor-pointer w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
                   Sil
                 </button>
               </div>
@@ -259,51 +248,403 @@ export default function DataTable() {
         ),
       },
     ];
-  }, [filteredData, selected, openMenu]);
-  const filterDropdowns = {
-    price: ({ onSelect }) => (
-      <div className="flex flex-col gap-2">
-        {["< 100000", "100000 - 200000", "> 200000"].map((label) => (
+  }, [data, selected, openMenu]);
+
+  // Common Filter Dropdown
+  const CommonFilterDropdown = ({ options, onSelect, onClose, title }) => (
+    <div className="relative flex flex-col gap-2">
+      <button
+        className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+        onClick={onClose}
+      >
+        ✕
+      </button>
+      {title && <p className="text-center pt-6">{title}</p>}
+      <div className="pt-6 flex flex-col gap-3">
+        {options.map((opt) => (
           <div
-            key={label}
+            key={opt}
             className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
-            onClick={() => onSelect(label)}
+            onClick={() => onSelect(opt)}
           >
-            {label}
+            {opt}
           </div>
         ))}
       </div>
-    ),
-    room: ({ onSelect }) => (
-      <div className="flex flex-col gap-3">
-        <p className="text-center">Otaq sayı</p>
-        <div className="flex flex-col gap-2">
-          {[1, 2, 3, 4, 5].map((r) => (
-            <div
-              key={r}
-              className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
-              onClick={() => onSelect(r)}
-            >
-              {r}
-            </div>
-          ))}
+    </div>
+  );
+
+  //Mx and min dropdown
+  const MaxAndMinDropdown = ({ columnKey, onSelect, onClose }) => {
+    const [range, setRange] = useState({ min: "", max: "" });
+
+    const getLabel = (type) => {
+      if (columnKey === "price")
+        return type === "min" ? "Minimum qiymət" : "Maksimum qiymət";
+
+      if (columnKey === "floor")
+        return type === "min" ? "Minimum mərtəbə" : "Maksimum mərtəbə";
+
+      if (columnKey === "area")
+        return type === "min" ? "Minimum sahə" : "Maksimum sahə";
+
+      if (columnKey === "totalFloors")
+        return type === "min" ? "Minimum mərtəbə" : "Maksimum mətəbə";
+
+      if (columnKey === "land_area")
+        return type === "min"
+          ? "Minimum torpaq sahəsi"
+          : "Maksimum torpaq sahəsi";
+
+      return type === "min" ? "Minimum" : "Maksimum";
+    };
+
+    const getUnit = () => {
+      if (columnKey === "price") return "azn";
+      if (columnKey === "area" || columnKey === "land_area") return "m²";
+      return null;
+    };
+
+    const unit = getUnit();
+
+    const handleApply = () => {
+      onSelect({
+        min: range.min !== "" ? Number(range.min) : undefined,
+        max: range.max !== "" ? Number(range.max) : undefined,
+      });
+      onClose();
+    };
+
+    return (
+      <div className="relative flex flex-col gap-3 p-4">
+        <button
+          className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+
+        {/* MIN INPUT */}
+        <div>
+          <label className="block text-sm text-gray-700 mb-1">
+            {getLabel("min")}
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              placeholder="0"
+              value={range.min}
+              onChange={(e) =>
+                setRange((prev) => ({ ...prev, min: e.target.value }))
+              }
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-[8px] focus:outline-none focus:border-primary input-no-arrows"
+            />
+            {unit && (
+              <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">
+                {unit}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* MAX INPUT */}
+        <div>
+          <label className="block text-sm text-gray-700 mb-1">
+            {getLabel("max")}
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              placeholder="∞"
+              value={range.max}
+              onChange={(e) =>
+                setRange((prev) => ({ ...prev, max: e.target.value }))
+              }
+              className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-[8px] focus:outline-none focus:border-primary input-no-arrows"
+            />
+            {unit && (
+              <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">
+                {unit}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <button
+            className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 rounded-[8px] hover:bg-gray-50 cursor-pointer"
+            onClick={() => setRange({ min: "", max: "" })}
+          >
+            Təmizlə
+          </button>
+
+          <button
+            className="flex-1 px-3 py-2 bg-primary text-white rounded-[8px] hover:bg-primary/90 cursor-pointer"
+            onClick={handleApply}
+          >
+            Tətbiq et
+          </button>
         </div>
       </div>
-    ),
-    city: ({ onSelect }) => (
-      <div className="flex flex-col gap-2">
-        {["Bakı", "Gəncə", "Sumqayıt"].map((c) => (
-          <div
-            key={c}
-            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
-            onClick={() => onSelect(c)}
-          >
-            {c}
+    );
+  };
+
+  const PrototypeFilterDropdown = ({
+    groups,
+    columnKey,
+    filters,
+    setFilters,
+    onClose,
+    title,
+  }) => {
+    const selectedValue = filters[columnKey] || "";
+
+    const handleSelect = (value) => {
+      setFilters((prev) => ({
+        ...prev,
+        [columnKey]: value,
+      }));
+      onClose();
+    };
+
+    return (
+      <div className="relative flex flex-col gap-2 p-4">
+        <button
+          className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+        {title && <p className="text-center pb-4 font-medium">{title}</p>}
+        {(groups || []).map((group, i) => (
+          <div key={group.label || i} className="mb-2">
+            {group.label && (
+              <p className="text-sm font-semibold text-gray-700 mb-1">
+                {group.label}
+              </p>
+            )}
+            {group.options.map((opt) => (
+              <label
+                key={opt.value}
+                className="flex items-center justify-between gap-2 cursor-pointer px-3 py-2 group rounded hover:bg-primary/10"
+              >
+                <span>{opt.label}</span>
+                <input
+                  type="radio"
+                  name={title}
+                  value={opt.value}
+                  checked={selectedValue === opt.value}
+                  onChange={() => handleSelect(opt.value)}
+                  className="hidden peer"
+                />
+                <span className="w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] border-gray-300 transition-all">
+                  <span
+                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                      selectedValue === opt.value
+                        ? "bg-primary"
+                        : "bg-transparent group-hover:bg-primary"
+                    }`}
+                  ></span>
+                </span>
+              </label>
+            ))}
           </div>
         ))}
       </div>
+    );
+  };
+
+  // Radio filter dropdown
+  const RadioFilterDropdown = ({
+    options,
+    selectedValue,
+    onSelect,
+    onClose,
+    title,
+  }) => (
+    <div className="relative flex flex-col">
+      <button
+        className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+        onClick={onClose}
+      >
+        ✕
+      </button>
+      {title && <p className="text-center pt-6">{title}</p>}
+      <div className="pt-6 flex flex-col">
+        {options.map((opt) => (
+          <label
+            key={opt}
+            className="flex items-center gap-2 cursor-pointer px-3 py-2 group hover:bg-primary/10"
+          >
+            <input
+              type="radio"
+              name={title}
+              value={opt}
+              checked={selectedValue === opt}
+              onChange={() => onSelect(opt)}
+              className="hidden peer"
+            />
+
+            <span
+              className={`
+      w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] transition-all border-[#E1E6EF]
+    `}
+            >
+              <span
+                className={`
+        w-2.5 h-2.5 rounded-full transition-all
+        ${
+          selectedValue === opt
+            ? "bg-primary"
+            : "bg-transparent group-hover:bg-primary"
+        }
+      `}
+              ></span>
+            </span>
+
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+
+  const filterDropdowns = {
+    city: ({ onSelect, onClose }) => (
+      <CommonFilterDropdown
+        options={azeCity}
+        onSelect={onSelect}
+        onClose={onClose}
+      />
+    ),
+    room: ({ onSelect, onClose }) => (
+      <CommonFilterDropdown
+        options={[1, 2, 3, 4, 5, "6+"]}
+        onSelect={onSelect}
+        onClose={onClose}
+        title="Otaq sayı"
+      />
+    ),
+    settlement: ({ onSelect, onClose }) => (
+      <CommonFilterDropdown
+        options={azeSettlement}
+        onSelect={onSelect}
+        onClose={onClose}
+      />
+    ),
+    district: ({ onSelect, onClose }) => (
+      <CommonFilterDropdown
+        options={azeDistrict}
+        onSelect={onSelect}
+        onClose={onClose}
+      />
+    ),
+    metro: ({ onSelect, onClose }) => (
+      <CommonFilterDropdown
+        options={azeMetro}
+        onSelect={onSelect}
+        onClose={onClose}
+      />
+    ),
+    mortgage: ({ onSelect, onClose }) => (
+      <RadioFilterDropdown
+        options={["Var", "Yoxdur"]}
+        selectedValue={filters["mortgage"]}
+        onSelect={(value) => {
+          onSelect(value);
+          onClose();
+        }}
+        onClose={onClose}
+        title="İpoteka"
+      />
+    ),
+    exit: ({ onSelect, onClose }) => (
+      <RadioFilterDropdown
+        options={["Var", "Yoxdur"]}
+        selectedValue={filters["exit"]}
+        onSelect={(value) => {
+          onSelect(value);
+          onClose();
+        }}
+        onClose={onClose}
+        title="Çıxarış"
+      />
+    ),
+    repair_type: ({ onSelect, onClose }) => (
+      <RadioFilterDropdown
+        options={["Əla", "Orta", "Zəif"]}
+        selectedValue={filters["repair_type"]}
+        onSelect={(value) => {
+          onSelect(value);
+          onClose();
+        }}
+        onClose={onClose}
+        title="Təmir növü"
+      />
+    ),
+    price: ({ onSelect, onClose }) => (
+      <MaxAndMinDropdown
+        columnKey="price"
+        onClose={onClose}
+        onSelect={onSelect}
+      />
+    ),
+    area: ({ onSelect, onClose }) => (
+      <MaxAndMinDropdown
+        columnKey="area"
+        onClose={onClose}
+        onSelect={onSelect}
+      />
+    ),
+    floor: ({ onSelect, onClose }) => (
+      <MaxAndMinDropdown
+        columnKey="floor"
+        onClose={onClose}
+        onSelect={onSelect}
+      />
+    ),
+    totalFloors: ({ onSelect, onClose }) => (
+      <MaxAndMinDropdown
+        columnKey="totalFloors"
+        onClose={onClose}
+        onSelect={onSelect}
+      />
+    ),
+    land_area: ({ onSelect, onClose }) => (
+      <MaxAndMinDropdown
+        columnKey="land_area"
+        onClose={onClose}
+        onSelect={onSelect}
+      />
+    ),
+    property_type: ({ onSelect, onClose }) => (
+      <PrototypeFilterDropdown
+        columnKey="property_type"
+        groups={[
+          {
+            label: "Mənzil",
+            options: [
+              { label: "•  Yeni tikili", value: "Yeni tikili" },
+              { label: "•  Köhnə tikili", value: "Köhnə tikili" },
+            ],
+          },
+          {
+            options: [
+              { label: "Həyət evi / Bağ evi", value: "Həyət evi / Bağ evi" },
+              { label: "Ofis", value: "Ofis" },
+              { label: "Torpaq", value: "Torpaq" },
+              { label: "Obyekt", value: "Obyekt" },
+            ],
+          },
+        ]}
+        filters={filters}
+        setFilters={setFilters}
+        onClose={onClose}
+        title="Əmlak növü"
+      />
     ),
   };
+
   const handleHeaderFilterClick = (colKey) => {
     setFilterColumn((prev) => (prev === colKey ? null : colKey));
   };
@@ -314,6 +655,7 @@ export default function DataTable() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  // Edit / Add / Delete Handlers
   const handleEditSave = () => {
     setData((prev) =>
       prev.map((d) => (d.elan_id === editRow.elan_id ? editRow : d))
@@ -340,22 +682,23 @@ export default function DataTable() {
   };
 
   const handleCloseOverlay = () => setShowSuccess(false);
+
   return (
     <div>
       {/* Search + Buttons */}
       <div className="flex mb-6 flex-wrap justify-between">
         <div className="min-w-[410px]">
-
           <Search search={search} setSearch={setSearch} />
         </div>
         <div className="flex gap-4">
           <button
             onClick={() => setDeleteModal(true)}
             disabled={Object.keys(selected).length === 0}
-            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${Object.keys(selected).length === 0
-              ? "opacity-50 cursor-not-allowed"
-              : "cursor-pointer"
-              }`}
+            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${
+              Object.keys(selected).length === 0
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
             <Image
               src={deleteHome}
@@ -378,144 +721,146 @@ export default function DataTable() {
       </div>
       <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>
       {/* Table */}
-      <div className="overflow-x-auto">
-        <div
-          className="h-[450px] overflow-y-auto
+      <div
+        className="h-[450px] overflow-y-auto overflow-x-auto
     scrollbar-thin
     scrollbar-thumb-primary
     scrollbar-track-gray-100
     hover:scrollbar-thumb-primary"
-        >
-          <table className="w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
-            <thead>
-              {table.getHeaderGroups().map((hg) => (
-                <tr key={hg.id}>
-                  {hg.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className={`
-                      text-left whitespace-nowrap sticky overflow-visible top-0 z-20 text-[14px] font-[500] align-middle leading-none bg-white
-                      ${header.id === "select"
+      >
+        <table className="w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
+          <thead>
+            {table.getHeaderGroups().map((hg) => (
+              <tr key={hg.id}>
+                {hg.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className={`
+                      text-left whitespace-nowrap sticky overflow-visible top-0 z-10 text-[14px] font-[500] align-middle leading-none bg-white
+                      ${
+                        header.id === "select"
                           ? "left-0 z-20 bg-white p-0"
                           : "p-4"
-                        }
-                      ${header.id === "actions"
+                      }
+                      ${
+                        header.id === "actions"
                           ? "bg-white right-0 bg-white p-0 z-20"
                           : "p-4"
-                        }
+                      }
                     `}
-                    >
-                      <div className="flex gap-[8px] items-center">
-                        <p>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </p>
-                        <svg
-                          onClick={() =>
-                            handleHeaderFilterClick(header.column.id)
-                          }
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          className={`
+                  >
+                    <div className="flex gap-[8px] items-center">
+                      <p>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </p>
+                      <svg
+                        onClick={() =>
+                          handleHeaderFilterClick(header.column.id)
+                        }
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        className={`
                       ${header.id === "select" ? "hidden" : ""}
                       ${header.id === "actions" ? "hidden" : ""}
                     `}
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                        >
-                          <path
-                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                            stroke="#1B1F27"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                            stroke="black"
-                            strokeOpacity="0.2"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                            stroke="black"
-                            strokeOpacity="0.2"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                            stroke="black"
-                            strokeOpacity="0.2"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
-                            stroke="black"
-                            strokeOpacity="0.2"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        {filterColumn === header.column.id &&
-                          filterDropdowns[header.column.id] && (
-                            <div className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md p-3 z-50 w-48">
-                              {filterDropdowns[header.column.id]({
-                                onSelect: (value) => {
-                                  setFilters((prev) => ({
-                                    ...prev,
-                                    [header.column.id]: value,
-                                  }));
-                                  setFilterColumn(null);
-                                },
-                              })}
-                            </div>
-                          )}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className={`
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="#1B1F27"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M3.75 5.83301H16.25M5.83333 9.99967H14.1667M8.33333 14.1663H11.6667"
+                          stroke="black"
+                          strokeOpacity="0.2"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      {filterColumn === header.column.id &&
+                        filterDropdowns[header.column.id] && (
+                          <div
+                            className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md p-3 z-50 min-w-48 max-h-[300px] overflow-y-auto rounded-[20px] border-1 border-primary shadow-[0_4px_4px_rgba(0,0,0,0.25),_0_4px_10px_rgba(0,0,0,0.25)]
+                            scrollbar-thumb-primary scrollbar-track-gray-100 hover:scrollbar-thumb-primary"
+                          >
+                            {filterDropdowns[header.column.id]({
+                              onSelect: (value) => {
+                                setFilters((prev) => ({
+                                  ...prev,
+                                  [header.column.id]: value,
+                                }));
+                              },
+                              onClose: () => setFilterColumn(null),
+                            })}
+                          </div>
+                        )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className={`
                       whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
-                      ${cell.column.id === "select"
+                      ${
+                        cell.column.id === "select"
                           ? "left-0 bg-white z-10"
                           : ""
-                        }
-                      ${cell.column.id === "actions"
+                      }
+                      ${
+                        cell.column.id === "actions"
                           ? "right-0 bg-white z-10"
                           : ""
-                        }
+                      }
                       ${cell.column.id === "photo" ? "p-0" : "p-4"}
                     `}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Edit Modal */}
@@ -627,10 +972,11 @@ export default function DataTable() {
               disabled={
                 !Object.values(newRow).every((v) => v !== "" && v !== null)
               }
-              className={`px-6 py-3 text-sm text-white rounded-[8px] ${Object.values(newRow).every((v) => v !== "" && v !== null)
-                ? "bg-primary hover:bg-primary/90 cursor-pointer"
-                : "bg-gray-400 cursor-not-allowed"
-                } transition`}
+              className={`px-6 py-3 text-sm text-white rounded-[8px] ${
+                Object.values(newRow).every((v) => v !== "" && v !== null)
+                  ? "bg-primary hover:bg-primary/90 cursor-pointer"
+                  : "bg-gray-400 cursor-not-allowed"
+              } transition`}
             >
               Əlavə et
             </button>
