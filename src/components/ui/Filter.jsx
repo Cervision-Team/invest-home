@@ -10,9 +10,23 @@ import { createPortal } from "react-dom";
 
 
 // Mock data based on validation schema - will be replaced with API calls
+const ALL_PROPERTY_TYPES = [
+  { id: 'apartment', name: 'Mənzil (satılıq/kirayə)' },
+  { id: 'apartmentDaily', name: 'Mənzil (günlük)' },
+  { id: 'object', name: 'Obyekt' },
+  { id: 'land', name: 'Torpaq sahəsi' },
+  { id: 'house', name: 'Həyət evi/Bağ evi' },
+  { id: 'office', name: 'Ofis' },
+  { id: 'garage', name: 'Qaraj' },
+  { id: 'gardenHouse', name: 'Bağ evi' },
+  { id: 'aframe', name: 'A-frame' },
+  { id: 'kotej', name: 'Kotej' },
+  { id: 'room', name: 'Otaq' }
+];
+
 const PROPERTY_TYPES = {
   sell: [
-    { id: 'apartment', name: 'Mənzil' },
+    { id: 'apartment', name: 'Mənzil (satılıq)' },
     { id: 'object', name: 'Obyekt' },
     { id: 'land', name: 'Torpaq sahəsi' },
     { id: 'house', name: 'Həyət evi/Bağ evi' },
@@ -20,15 +34,7 @@ const PROPERTY_TYPES = {
     { id: 'garage', name: 'Qaraj' }
   ],
   rent: [
-    { id: 'apartment', name: 'Mənzil' },
-    { id: 'object', name: 'Obyekt' },
-    { id: 'land', name: 'Torpaq sahəsi' },
-    { id: 'house', name: 'Həyət evi/Bağ evi' },
-    { id: 'office', name: 'Ofis' },
-    { id: 'garage', name: 'Qaraj' }
-  ],
-  all: [
-    { id: 'apartment', name: 'Mənzil' },
+    { id: 'apartment', name: 'Mənzil (kirayə)' },
     { id: 'object', name: 'Obyekt' },
     { id: 'land', name: 'Torpaq sahəsi' },
     { id: 'house', name: 'Həyət evi/Bağ evi' },
@@ -36,15 +42,13 @@ const PROPERTY_TYPES = {
     { id: 'garage', name: 'Qaraj' }
   ],
   daily: [
-    { id: 'apartmentDaily', name: 'Mənzil' },
+    { id: 'apartmentDaily', name: 'Mənzil (günlük)' },
     { id: 'gardenHouse', name: 'Bağ evi' },
     { id: 'aframe', name: 'A-frame' },
     { id: 'kotej', name: 'Kotej' },
     { id: 'room', name: 'Otaq' }
   ],
-  roommate: [
-    { id: 'apartmentRoommate', name: 'Mənzil' }
-  ]
+  all: ALL_PROPERTY_TYPES
 };
 
 const OFFICE_TYPES = [
@@ -144,16 +148,8 @@ const ADDITIONAL_FILTERS = [
 ];
 
 const getAvailablePropertyTypes = (announcementType) => {
-  if (announcementType === 'all') {
-    const map = new Map();
-    Object.values(PROPERTY_TYPES).flat().forEach(t => {
-      if (!map.has(t.id)) map.set(t.id, t);
-    }); 
-    return Array.from(map.values());
-  }
   return PROPERTY_TYPES[announcementType] || [];
-}
-
+};
 
 
 const FilterBtn = () => (
