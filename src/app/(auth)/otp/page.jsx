@@ -18,13 +18,16 @@ const OTPPage = () => {
   
   const router = useRouter();
   
-  const otp = localStorage.getItem("otp") || "";
-  useEffect(() => {
-    if (otp.length === 4) {
-      setValues(otp.split(""))
-      setIsButtonActive(true)
+  // const otp = localStorage.getItem("otp") || "";
+ useEffect(() => {
+    if (typeof window !== "undefined") {
+      const otp = localStorage.getItem("otp") || "";
+      if (otp.length === 4) {
+        setValues(otp.split(""));
+        setIsButtonActive(true);
+      }
     }
-  }, [])
+  }, []);
   const handleVerify = async () => {
 
     try {

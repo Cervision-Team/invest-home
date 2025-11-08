@@ -1,3 +1,4 @@
+"use client"
 import axiosInstance from "@/services/api/axiosInstance";
 import axios from "axios";
 
