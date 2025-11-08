@@ -1,17 +1,16 @@
-"use client"
+"use client";
 import axiosInstance from "@/services/api/axiosInstance";
 import axios from "axios";
 
 const API_URL = "http://172.25.96.20:8081/api/auth/public";
 
-export const loginWithPhone = async (phone) => {
-	const response = await axios.post(
-		`${API_URL}/login/phone`,
-		{}, // empty body
+export const loginWithPhone = async ({ phoneNumber, password }) => {
+	const response = await axiosInstance.post(
+		"/api/auth/login",
 		{
-			params: { phone }, // send as query param
-			headers: { "Content-Type": "application/json" },
-		}
+			phoneNumber,
+			password,
+		},
 	);
 	return response.data;
 };
