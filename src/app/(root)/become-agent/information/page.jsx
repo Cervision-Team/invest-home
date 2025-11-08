@@ -18,22 +18,28 @@ const page = () => {
           <div className="w-full h-auto flex max-[1153px]:flex-col flex-wrap flex-row items-start justify-between max-[430px]:mt-10 mt-15 gap-[24px] ">
             <FlipCard 
             icon={"/icons/money.svg"}
-            heading={"Yüksək Qazanc"}/>
+            heading={"Yüksək Qazanc"}
+            description={"İnvest Home  Pass Sharing System ilə məsləhətçilərinə yüksək qazanc imkanları təklif edir."}/>
             <FlipCard 
             icon={"/icons/trainings.svg"}
-            heading={"Təlimlər"}/>
+            heading={"Təlimlər"}
+            description={"Həftədə iki dəfə müntəzəm təlimlə satış texnikaları tez öyrənilir və Sahə Brokeri onların həyata keçirilməsinə kömək edir."}/>
             <FlipCard 
             icon={"/icons/customer-portfolio.svg"}
-            heading={"Müştəri Portfeli"}/>
+            heading={"Müştəri Portfeli"}
+            description={"Məsləhətçilərin Azərbaycandakı bütün müştəri bazasına çıxışı var və müştəriləri olmasa belə sektora sürətlə daxil ola bilərlər."}/>
             <FlipCard 
             icon={"/icons/technology.svg"}
-            heading={"Yüksək texnologiya"}/>
+            heading={"Yüksək texnologiya"}
+            description={"İnvest Home Google® infrastrukturundan və bir çox inteqrasiya olunmuş sənaye texnologiyalarından ən səmərəli istifadə edən şirkətdir."}/>
             <FlipCard 
             icon={"/icons/desk.svg"}
-            heading={"Rahat iş mühiti"}/>
+            heading={"Rahat iş mühiti"}
+            description={"Müasir və peşəkar iş mühiti ilə məsləhətçilərimiz yalnız öz işlərinə diqqət yetirir, sənədləşmə işləri isə ofisiniz tərəfindən aparılır."}/>
             <FlipCard 
             icon={"/icons/time.svg"}
-            heading={"Vaxtın İdarə Edilməsi"}/>
+            heading={"Vaxtın İdarə Edilməsi"}
+            description={"Bu, ailənizlə vaxt keçirə biləcəyiniz, öz işinizi və tətil cədvəlinizi təşkil edə biləcəyiniz əla sektordur."}/>
           </div>
 
 {/* <Link href="/become-agent/agent-form" className="w-full flex justify-center">
