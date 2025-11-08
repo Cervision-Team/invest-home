@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const FlipCard = ({icon, heading}) => {
+const FlipCard = ({icon, heading, description}) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
@@ -53,10 +53,8 @@ const FlipCard = ({icon, heading}) => {
             boxShadow: "0 2px 0 0 #006C73"
           }}
         >
-          <p className="text-black text-base leading-relaxed">
-            "Agent ol" – əmlak elanlarını paylaşaraq satışdan qazanc əldə etmə
-            yoludur. Buradakı əsas məqsəd müştərilərə arzuladıqları əmlakı
-            doğru, tez və asan bir şəkildə tapmaqdır.
+          <p className="text-black text-[18px] leading-relaxed">
+            {description}
           </p>
         </div>
       </div>

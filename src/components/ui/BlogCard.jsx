@@ -14,7 +14,7 @@ export const BlogCard = ({ id, image, title, description, day, month, titleColor
         />
         <div className="absolute inset-0 bg-black opacity-30 rounded-[30px]"></div>
       </div>
-      <div className=" h-[50px] w-[50px] rounded-[0px_0px_10px_10px] flex flex-col justify-center items-center bg-white shadow-[4px_4px_15px_0px_rgba(0,0,0,0.25)] absolute left-[50px]">
+      <div className=" h-[55px] w-[50px] rounded-[0px_0px_10px_10px] flex flex-col justify-center items-center gap-[10px] bg-white shadow-[4px_4px_15px_0px_rgba(0,0,0,0.25)] absolute left-[50px]">
         <h4 className="h-5 text-2 text-[19.4px] font-medium">{day}</h4>
         <p className="text-3 text-[16px] leading-tight font-normal">
           {month}
