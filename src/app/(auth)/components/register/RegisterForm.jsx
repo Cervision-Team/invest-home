@@ -11,6 +11,7 @@ import Phone from "../../../../../public/icons/phone-auth.svg"
 import Google from "../../../../../public/icons/google.svg"
 import EntryGate from "../EntryGate";
 import Link from "next/link";
+import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 
 const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 
@@ -168,19 +169,8 @@ const RegisterForm = () => {
                         <span className="text-sm text-1 whitespace-nowrap">və ya</span>
                         <span className="h-px w-full bg-[#866AB4]" />
                     </div>
-
-                    <button
-                        type="button"
-                        className="w-full flex items-center justify-center gap-2 border border-primary text-[#1B1F27] py-3 rounded-lg hover:bg-green-50 cursor-pointer"
-                    >
-                        <Image
-                            src={Google.src}
-                            alt="Google"
-                            width={20}
-                            height={20}
-                        />
-                        <span className="font-medium">Sign up with Google</span>
-                    </button>
+                
+                <GoogleLoginButton />
                 </div>
             </form>
         </>

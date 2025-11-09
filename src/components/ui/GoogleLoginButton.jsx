@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import Google from "../../../public/icons/google.svg"
+import Image from "next/image";
+
 
 export default function GoogleLoginButton() {
   useEffect(() => {
@@ -78,5 +81,19 @@ export default function GoogleLoginButton() {
     }
   }, []);
 
-  return <div id="googleLoginDiv"></div>;
+  return (
+                         <button
+                             type="button"
+                             className="w-full flex items-center justify-center gap-2 border border-primary text-[#1B1F27] py-3 rounded-lg hover:bg-green-50 cursor-pointer"
+                         >
+                             <Image
+                                 src={Google.src}
+                                 alt="Google"
+                                 width={20}
+                                 height={20}
+                             />
+                             <span className="font-medium">Sign up with Google</span>
+                         </button>
+     
+  );
 }

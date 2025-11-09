@@ -140,7 +140,7 @@ const Hero = ({ id }) => {
     {/* Close button in its own positioned container */}
     <div className="fixed inset-0 pointer-events-none z-[10000]">
       <button
-        className="absolute top-6 right-0 text-white hover:text-gray-300 transition-colors pointer-events-auto"
+        className="absolute top-6 right-5 text-white hover:text-gray-300 transition-colors pointer-events-auto"
         onClick={(e) => {
           e.stopPropagation();
           closePreview();
@@ -150,7 +150,6 @@ const Hero = ({ id }) => {
       </button>
     </div>
 
-    {/* Image content */}
     {dimensions.width > 0 && dimensions.height > 0 ? (
       <div
         className="relative"

@@ -10,7 +10,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <section className="relative h-screen">
+      <section className="relative h-[110vh]">
         <div className="max-[1025px]:hidden flex min-h-full">
           <div className="bg-[#02836F] w-[50%]">
 
@@ -58,7 +58,7 @@ const RegisterPage = () => {
                 <RegisterForm />
                 <div className="min-[1025px]:hidden w-full flex flex-col items-center gap-[24px]">
                   <span>
-                    Hesabınız varmı? <Link className="text-primary" href={"/login"}>Daxil olun</Link>.
+                    Hesabınız varmı? <Link className="text-primary" href={"/login"}>Daxil ol</Link>.
                   </span>
                 </div>
               </div>

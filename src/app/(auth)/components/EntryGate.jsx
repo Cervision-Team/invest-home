@@ -37,7 +37,7 @@ const EntryGate = () => {
                 <div className='flex flex-col gap-[24px] items-center'>
                     <span className='text-[16px] font-[400] text-center text-white'>{path === '/login' ? "Hesabınız yoxdur? Qeydiyyatdan keçin." : "Hesabınız varmı? Daxil olun."}</span>
                     <Link className='py-[12px] border-[1px] rounded-[8px] border-white text-white w-full max-w-[361px]' href={`${path === '/login' ? "/register" : "/login"}`}>
-                        <button className='cursor-pointer w-full'>{path === '/login' ? "Qeydiyyat" : "Daxil Ol"}</button>
+                        <button className='cursor-pointer w-full'>{path === '/login' ? "Qeydiyyat" : "Daxil ol"}</button>
                     </Link>
                 </div>
             </div>
