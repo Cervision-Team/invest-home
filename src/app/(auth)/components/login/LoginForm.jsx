@@ -38,7 +38,9 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       const res = await loginWithPhone({ "phoneNumber": data.phone, "password": data.password });
-      localStorage.setItem("access-token", res)
+      
+      
+      localStorage.setItem("access-token", res.token)
       // localStorage.setItem("phoneNumber", data.phone);
       // localStorage.setItem("entranceType", "LOGIN");
       router.replace("/");
