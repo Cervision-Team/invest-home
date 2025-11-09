@@ -368,7 +368,7 @@ const AnnouncementForm = () => {
     <>
       <section className='min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
         <div className='flex gap-[36px]'>
-          <div className='max-[768px]:hidden basis-[340px] h-auto px-[19px] pt-[34.5px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+          <div className='max-[768px]:hidden w-[340px] h-auto px-[19px] py-[34.5px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
             <div className="logo-container my-[15.5px]">
               <div className='image-container flex items-center justify-center'>
                 <Image

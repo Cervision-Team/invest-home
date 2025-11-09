@@ -17,7 +17,7 @@ const EstablishmentsButton = ({ name, icon, iconHover, width, height }) => {
         alt={name}
         width={width}
         height={height}
-        className="transition duration-200"
+        className="transition duration-200 w-[24px] h-[24px] object-contain"
       />
       <span className={`transition duration-200 ${isHovered ? 'text-white' : 'text-primary'}`}>
         {name}

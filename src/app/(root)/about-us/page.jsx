@@ -20,7 +20,7 @@ const page = () => {
                     </h1>
 
                     <p className="max-w-[700px] mt-10 text-white text-[24px] max-[769px]:text-[16px] font-medium">
-                        İnvesthome, daşınmaz əmlak sahəsində güvənli və şəffaf xidmət göstərməyi qarşısına məqsəd qoymuş peşəkar komandadır. İllərin təcrübəsi və bazar bilgiləri ilə biz müştərilərimizə ən uyğun əmlak seçimində dəstək olur, alqı-satqı və kirayə proseslərini asanlaşdırırıq.
+İnvestHome daşınmaz əmlakda etibarlı tərəfdaşınızdır. Təcrübəmiz və bazar biliklərimizlə sizə ən uyğun evi tapmağa, alqı-satqı və kirayə prosesini rahat və şəffaf şəkildə keçirməyə kömək edirik.
                     </p>
                 </div>
             </div>

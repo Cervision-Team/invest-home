@@ -17,7 +17,7 @@ import marketplaceWhite from "../../../../public/icons/marketplace-white.svg";
 
 const items = [
   { icon: BusStopPrimary, iconHover: BusStopWhite, width: 24, height: 24, name: "Dayanacaq" },
-  { icon: hospital, iconHover: hospitalWhite, width: 24, height: 24, name: "Klinika" },
+  { icon: hospital, iconHover: hospitalWhite, width: 20, height: 20, name: "Klinika" },
   { icon: school, iconHover: schoolWhite, width: 24, height: 24, name: "Məktəb" },
   { icon: park, iconHover: parkWhite, width: 24, height: 24, name: "Park" },
   { icon: metro, iconHover: metroWhite, width: 24, height: 24, name: "Metro" },

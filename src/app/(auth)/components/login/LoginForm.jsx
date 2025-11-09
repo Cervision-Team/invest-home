@@ -103,7 +103,7 @@ const LoginForm = () => {
             type="submit"
             className="cursor-pointer w-full bg-primary text-white py-3 px-6 rounded-lg hover:opacity-90"
           >
-            Daxil ol
+            Daxil olun
           </button>
 
           <div className="flex items-center justify-center gap-[6px]">
@@ -112,7 +112,6 @@ const LoginForm = () => {
             <span className="h-px w-full bg-[#866AB4]" />
           </div>
 
-          {/* ✅ Google Login Button here */}
           <div className="flex justify-center">
             <GoogleLoginButton />
           </div>
