@@ -1,10 +1,10 @@
 import axios from "../axiosInstance";
 
 
-export const getAccessControl = async () => {
+export const getMenu = async () => {
 	try {
-		const res = axios.get("/menu");
-		return res;
+		const res = await axios.get("/menu");
+		return res.data;
 	} catch (err) {
 		console.log(err);
 	}

@@ -6,7 +6,7 @@ const API_URL = "http://172.25.96.20:8081/api/auth/public";
 
 export const loginWithPhone = async ({ phoneNumber, password }) => {
 	const response = await authAxiosInstance.post(
-		"/api/auth/login",
+		"/auth/login",
 		{
 			phoneNumber,
 			password,
