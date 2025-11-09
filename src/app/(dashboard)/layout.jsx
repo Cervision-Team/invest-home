@@ -9,14 +9,14 @@ import { LangProvider } from "@/context/LangContext";
 
 // ✅ Pass only serializable values (strings, not functions)
 const dashboardSidebarItems = [
-  { title: "Profilim", href: "/profile", icon: "profile" },
-  { title: "Statistika", href: "/statistics", icon: "statistic" },
-  { title: "Əməkdaşlar", href: "/employees", icon: "employees" },
-  { title: "Elan bazası", href: "/database-table", icon: "database" },
-  { title: "Sifarişlər", href: "/orders", icon: "order" },
-  { title: "Müştərilər", href: "/customers", icon: "customer" },
-  { title: "Balansım", href: "/wallet", icon: "wallet" },
-  { title: "Ödəniş tarixçəsi", href: "/transaction-history", icon: "wallet" },
+  { name: "Profilim", path: "/profile", icon: "profile" },
+  { name: "Statistika", path: "/statistics", icon: "statistic" },
+  { name: "Əməkdaşlar", path: "/employees", icon: "employees" },
+  { name: "Elan bazası", path: "/database-table", icon: "database" },
+  { name: "Sifarişlər", path: "/orders", icon: "order" },
+  { name: "Müştərilər", path: "/customers", icon: "customer" },
+  { name: "Balansım", path: "/wallet", icon: "wallet" },
+  { name: "Ödəniş tarixçəsi", path: "/transaction-history", icon: "wallet" },
 ];
 
 export default function Layout({ children }) {

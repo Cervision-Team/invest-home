@@ -1,6 +1,6 @@
 import localFont from 'next/font/local';
 import "./globals.css";
-
+// import "@/services/api/configs/interceptors.js";
 const poppins = localFont({
   src: [
     {

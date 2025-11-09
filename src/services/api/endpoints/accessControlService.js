@@ -1,8 +1,8 @@
-import axios from "../axiosInstance";
+import axios from "../configs/axiosInstance";
 
 export const getAccessControl = async () => {
 	try {
-		const res = axios.get("/v1/role-claim/matrix");
+		const res = axios.get("/role-claim/matrix");
 		return res;
 	} catch (err) {
 		console.log(err);
@@ -10,7 +10,7 @@ export const getAccessControl = async () => {
 };
 export const upadteAccessControl = async (payload) => {
 	try {
-		const res = axios.put("/v1/role-claim", payload);
+		const res = axios.put("/role-claim", payload);
 		return res;
 	} catch (err) {
 		console.log(err);
