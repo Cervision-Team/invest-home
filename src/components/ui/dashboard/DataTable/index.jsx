@@ -218,7 +218,7 @@ export default function DataTable() {
               <div className="absolute right-8 top-[-10px] py-6 w-42 bg-white border border-gray-200 rounded-[12px] shadow-[0_4px_10px_0_rgba(0,0,0,0.1)] z-[1000] overflow-hidden">
                 <button
                   onClick={() => setOpenMenu(null)}
-                  className="absolute right-3 top-3 text-gray-500 hover:text-red-600 cursor-pointer"
+                  className="absolute right-3 top-3 text-gray-500 font-[600] text-[18px] hover:text-red-600 cursor-pointer"
                 >
                   ✕
                 </button>
@@ -254,7 +254,7 @@ export default function DataTable() {
                     setSelected({ [row.original.elan_id]: true });
                     setOpenMenu(null);
                   }}
-                  className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm text-[#E9222C] transition-colors duration-150"
+                  className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm text-[#E9222C] hover:bg-red-50 transition-colors duration-150"
                 >
                   <Image src={remove} className="p-[2px]" alt="remove" />
                   <p>Elanı sil</p>
@@ -279,7 +279,7 @@ export default function DataTable() {
       <div className="relative flex flex-col w-[400px]">
         <div className="flex justify-end mr-2 mb-1">
           <button
-            className="text-gray-500 hover:text-red-600 cursor-pointer"
+            className="text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
             onClick={onClose}
           >
             ✕
@@ -342,7 +342,8 @@ export default function DataTable() {
 
     const getUnit = () => {
       if (columnKey === "price") return "azn";
-      if (columnKey === "area" || columnKey === "land_area") return "m²";
+      if (columnKey === "area") return "m²";
+      if (columnKey === "land_area") return "ha";
       return null;
     };
 
@@ -359,7 +360,7 @@ export default function DataTable() {
     return (
       <div className="relative flex flex-col gap-3 p-4">
         <button
-          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
           onClick={onClose}
         >
           ✕
@@ -445,7 +446,7 @@ export default function DataTable() {
     return (
       <div className="relative flex flex-col gap-2 p-4">
         <button
-          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
           onClick={onClose}
         >
           ✕
@@ -491,7 +492,7 @@ export default function DataTable() {
     <div className="relative flex flex-col">
       <div className="flex justify-end mb-1 mr-2">
         <button
-          className=" text-gray-500 hover:text-red-600 cursor-pointer"
+          className=" text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
           onClick={onClose}
         >
           ✕
@@ -521,7 +522,7 @@ export default function DataTable() {
   const RadioFilterDropdown = ({ options, selectedValue, onSelect, onClose, title }) => (
     <div className="relative flex flex-col">
       <button
-        className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+        className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
         onClick={onClose}
       >
         ✕
@@ -573,6 +574,7 @@ export default function DataTable() {
         options={azeCity}
         onSelect={onSelect}
         onClose={onClose}
+        title="Şəhər"
       />
     ),
     room: ({ onSelect, onClose }) => (
@@ -588,6 +590,7 @@ export default function DataTable() {
         options={azeSettlement}
         onSelect={onSelect}
         onClose={onClose}
+        title="Qəsəbə"
       />
     ),
     district: ({ onSelect, onClose }) => (
@@ -595,6 +598,7 @@ export default function DataTable() {
         options={azeDistrict}
         onSelect={onSelect}
         onClose={onClose}
+        title="Rayon"
       />
     ),
     metro: ({ onSelect, onClose }) => (
@@ -602,6 +606,7 @@ export default function DataTable() {
         options={azeMetro}
         onSelect={onSelect}
         onClose={onClose}
+        title="Metro"
       />
     ),
     mortgage: ({ onSelect, onClose }) => (
