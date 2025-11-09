@@ -4,19 +4,13 @@ import Image from "next/image";
 import addHome from "../../../../../public/images/profile/add-row.svg";
 import deleteHome from "../../../../../public/images/profile/delete-row.svg";
 import editIcon from "../../../../../public/icons/profile/edit-icon.svg";
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import {
-  columnHeaders,
-  RealEstateData,
-  azeCity,
-  azeSettlement,
-  azeDistrict,
-  azeMetro,
-} from "@/components/core/RealEstateData";
+import approved from "../../../../../public/icons/profile/approved.svg";
+import editing from "../../../../../public/icons/profile/editing.svg";
+import rejected from "../../../../../public/icons/profile/rejected.svg";
+import remove from "../../../../../public/icons/profile/remove.svg";
+import share from "../../../../../public/icons/profile/share-outline.svg";
+import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
+import { columnHeaders, RealEstateData, azeCity, azeSettlement, azeDistrict, azeMetro } from "@/components/core/RealEstateData";
 import { Button } from "../Buttons/ProfileButtons";
 import Search from "../Search";
 
@@ -31,7 +25,6 @@ export default function DataTable() {
   const [addModal, setAddModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [newRow, setNewRow] = useState(
     Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
   );
@@ -113,7 +106,7 @@ export default function DataTable() {
             alt="photo"
             width={80}
             height={80}
-            className="object-cover rounded-[8px]"
+            className="object-cover rounded-[8px] mx-auto"
           />
         ) : col.key === "price" ? (
           `${getValue()} azn`
@@ -146,7 +139,7 @@ export default function DataTable() {
                 className="hidden peer"
               />
               <div
-                className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
+                className="p-[5px] border border-gray-400 rounded-[4px] flex items-center justify-center
                 peer-checked:bg-primary peer-checked:border-primary transition-all"
               >
                 <svg
@@ -184,7 +177,7 @@ export default function DataTable() {
               className="hidden peer"
             />
             <div
-              className="p-[5px] border-1 border-gray-400 rounded-[4px] flex items-center justify-center
+              className="p-[5px] border border-gray-400 rounded-[4px] flex items-center justify-center
               peer-checked:bg-primary peer-checked:border-primary transition-all"
             >
               <svg
@@ -217,20 +210,43 @@ export default function DataTable() {
               onClick={() =>
                 setOpenMenu((prev) => (prev === row.id ? null : row.id))
               }
-              className="p-1 hover:bg-gray-100 rounded text-xl cursor-pointer"
+              className={`p-1 rounded text-xl cursor-pointer ${openMenu === row.id ? "bg-gray-300" : "hover:bg-gray-200"}`}
             >
               ⋮
             </button>
             {openMenu === row.id && (
-              <div className="absolute right-0 top-[-10px] mt-1 w-36 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden">
+              <div className="absolute right-8 top-[-10px] py-6 w-42 bg-white border border-gray-200 rounded-[12px] shadow-[0_4px_10px_0_rgba(0,0,0,0.1)] z-[1000] overflow-hidden">
+                <button
+                  onClick={() => setOpenMenu(null)}
+                  className="absolute right-3 top-3 text-gray-500 hover:text-red-600 cursor-pointer"
+                >
+                  ✕
+                </button>
                 <button
                   onClick={() => {
                     setEditRow(row.original);
                     setOpenMenu(null);
                   }}
-                  className="flex items-center cursor-pointer gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
+                  className="flex items-center cursor-pointer gap-3 w-full px-5 py-2 text-sm text-[#1B1F27] transition-colors duration-150"
                 >
-                  Redaktə et
+                  <Image
+                    src={editing}
+                    className="py-[2px] px-[1.999px]"
+                    alt="edit"
+                  />
+                  <p>Redaktə et</p>
+                </button>
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm  text-[#1B1F27] transition-colors duration-150">
+                  <Image
+                    src={approved}
+                    className="py-[2px] px-[2.5px]"
+                    alt="approve"
+                  />
+                  <p>Təsdiqlə</p>
+                </button>
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm text-[#1B1F27] transition-colors duration-150">
+                  <Image src={rejected} className="p-[3px]" alt="reject" />
+                  <p>Rədd et</p>
                 </button>
                 <button
                   onClick={() => {
@@ -238,9 +254,14 @@ export default function DataTable() {
                     setSelected({ [row.original.elan_id]: true });
                     setOpenMenu(null);
                   }}
-                  className="flex items-center gap-2 cursor-pointer w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
+                  className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm text-[#E9222C] transition-colors duration-150"
                 >
-                  Sil
+                  <Image src={remove} className="p-[2px]" alt="remove" />
+                  <p>Elanı sil</p>
+                </button>
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm  text-[#1B1F27] transition-colors duration-150">
+                  <Image src={share} alt="share" />
+                  <p>Paylaş</p>
                 </button>
               </div>
             )}
@@ -250,29 +271,49 @@ export default function DataTable() {
     ];
   }, [data, selected, openMenu]);
 
-  // Common Filter Dropdown
-  const CommonFilterDropdown = ({ options, onSelect, onClose, title }) => (
-    <div className="relative flex flex-col gap-2">
-      <button
-        className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
-        onClick={onClose}
-      >
-        ✕
-      </button>
-      {title && <p className="text-center pt-6">{title}</p>}
-      <div className="pt-6 flex flex-col gap-3">
-        {options.map((opt) => (
-          <div
-            key={opt}
-            className="h-[40px] flex justify-center items-center border border-[#E9E9E9] rounded-[8px] hover:bg-primary hover:text-white cursor-pointer"
-            onClick={() => onSelect(opt)}
+  //Announcement Type Filter Dropdown
+  const AnnouncementTypeFilterDropdown = ({ options, onSelect, onClose, title }) => {
+    const [hovered, setHovered] = useState(null);
+
+    return (
+      <div className="relative flex flex-col w-[400px]">
+        <div className="flex justify-end mr-2 mb-1">
+          <button
+            className="text-gray-500 hover:text-red-600 cursor-pointer"
+            onClick={onClose}
           >
-            {opt}
+            ✕
+          </button>
+        </div>
+
+        {title && (
+          <div className="px-2">
+            <p>{title}</p>
+            <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
           </div>
-        ))}
+        )}
+
+        <div className="pt-3 px-2 grid grid-cols-2 gap-3">
+          {options.map((opt) => (
+            <div
+              key={opt.label}
+              onClick={() => onSelect(opt.value)}
+              onMouseEnter={() => setHovered(opt.value)}
+              onMouseLeave={() => setHovered(null)}
+              className="py-[19px] px-[20px] flex flex-row items-center justify-center gap-2 overflow-hidden border border-[#E9E9E9] rounded-[8px] bg-[#FAFAFA] hover:bg-primary hover:text-white cursor-pointer transition"
+            >
+              <img
+                src={hovered === opt.value ? opt.hoverIcon : opt.icon}
+                alt={opt.label}
+                className="w-[24px] h-[24px] transition-all duration-200"
+              />
+              <p>{opt.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   //Mx and min dropdown
   const MaxAndMinDropdown = ({ columnKey, onSelect, onClose }) => {
@@ -318,7 +359,7 @@ export default function DataTable() {
     return (
       <div className="relative flex flex-col gap-3 p-4">
         <button
-          className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
           onClick={onClose}
         >
           ✕
@@ -389,14 +430,8 @@ export default function DataTable() {
     );
   };
 
-  const PrototypeFilterDropdown = ({
-    groups,
-    columnKey,
-    filters,
-    setFilters,
-    onClose,
-    title,
-  }) => {
+  //Prototype Filter Dropdown
+  const PropertypeFilterDropdown = ({ groups, columnKey, filters, setFilters, onClose, title }) => {
     const selectedValue = filters[columnKey] || "";
 
     const handleSelect = (value) => {
@@ -410,23 +445,20 @@ export default function DataTable() {
     return (
       <div className="relative flex flex-col gap-2 p-4">
         <button
-          className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
           onClick={onClose}
         >
           ✕
         </button>
-        {title && <p className="text-center pb-4 font-medium">{title}</p>}
+        {title && <p className="font-medium">{title}</p>}
+        <p className="a w-full h-[1px] mb-2 bg-[rgba(200,199,199,0.32)]"></p>
         {(groups || []).map((group, i) => (
-          <div key={group.label || i} className="mb-2">
-            {group.label && (
-              <p className="text-sm font-semibold text-gray-700 mb-1">
-                {group.label}
-              </p>
-            )}
+          <div key={group.label || i}>
+            {group.label && <p className="text-sm  mb-1">{group.label}</p>}
             {group.options.map((opt) => (
               <label
                 key={opt.value}
-                className="flex items-center justify-between gap-2 cursor-pointer px-3 py-2 group rounded hover:bg-primary/10"
+                className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 group rounded hover:bg-primary/10"
               >
                 <span>{opt.label}</span>
                 <input
@@ -439,7 +471,7 @@ export default function DataTable() {
                 />
                 <span className="w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] border-gray-300 transition-all">
                   <span
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    className={`w-3 h-3 rounded-full transition-all ${
                       selectedValue === opt.value
                         ? "bg-primary"
                         : "bg-transparent group-hover:bg-primary"
@@ -454,27 +486,53 @@ export default function DataTable() {
     );
   };
 
+  // Common Filter Dropdown
+  const CommonFilterDropdown = ({ options, onSelect, onClose, title }) => (
+    <div className="relative flex flex-col">
+      <div className="flex justify-end mb-1 mr-2">
+        <button
+          className=" text-gray-500 hover:text-red-600 cursor-pointer"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+      </div>
+      {title && (
+        <div>
+          <p className="text-center">{title}</p>
+          <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
+        </div>
+      )}
+      <div className="pt-3 flex flex-col gap-3">
+        {options.map((opt) => (
+          <div
+            key={opt}
+            className="py-[10px] flex justify-center items-center border border-[#E9E9E9] rounded-[10px] hover:bg-primary hover:text-white cursor-pointer"
+            onClick={() => onSelect(opt)}
+          >
+            {opt}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   // Radio filter dropdown
-  const RadioFilterDropdown = ({
-    options,
-    selectedValue,
-    onSelect,
-    onClose,
-    title,
-  }) => (
+  const RadioFilterDropdown = ({ options, selectedValue, onSelect, onClose, title }) => (
     <div className="relative flex flex-col">
       <button
-        className="absolute right-1 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
+        className="absolute right-2 top-1 text-gray-500 hover:text-red-600 cursor-pointer"
         onClick={onClose}
       >
         ✕
       </button>
       {title && <p className="text-center pt-6">{title}</p>}
-      <div className="pt-6 flex flex-col">
+      <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
+      <div className="pt-3 flex flex-col">
         {options.map((opt) => (
           <label
             key={opt}
-            className="flex items-center gap-2 cursor-pointer px-3 py-2 group hover:bg-primary/10"
+            className="flex items-center gap-3 cursor-pointer px-3 py-2 group hover:bg-primary/10"
           >
             <input
               type="radio"
@@ -492,7 +550,7 @@ export default function DataTable() {
             >
               <span
                 className={`
-        w-2.5 h-2.5 rounded-full transition-all
+        w-3 h-3 rounded-full transition-all
         ${
           selectedValue === opt
             ? "bg-primary"
@@ -582,6 +640,43 @@ export default function DataTable() {
         title="Təmir növü"
       />
     ),
+    announcement_type: ({ onSelect, onClose }) => (
+      <AnnouncementTypeFilterDropdown
+        title="Elan növü"
+        onSelect={(value) => {
+          setFilters((prev) => ({ ...prev, announcement_type: value }));
+          onClose();
+        }}
+        onClose={onClose}
+        options={[
+          {
+            label: "Satıram",
+            value: "Satıram",
+            icon: "/icons/selling-black.svg",
+            hoverIcon: "/icons/selling-white.svg",
+          },
+          {
+            label: "Kirayə axtarıram",
+            value: "Kirayə axtarıram",
+            icon: "/icons/searching-for-rent-black.svg",
+            hoverIcon: "/icons/searching-for-rent-white.svg",
+          },
+          {
+            label: "Alıram",
+            value: "Alıram",
+            icon: "/icons/buying-black.svg",
+            hoverIcon: "/icons/buying-white.svg",
+          },
+          {
+            label: "Kirayə verirəm",
+            value: "Kirayə verirəm",
+            icon: "/icons/renting-black.svg",
+            hoverIcon: "/icons/renting-white.svg",
+          },
+        ]}
+      />
+    ),
+
     price: ({ onSelect, onClose }) => (
       <MaxAndMinDropdown
         columnKey="price"
@@ -618,7 +713,7 @@ export default function DataTable() {
       />
     ),
     property_type: ({ onSelect, onClose }) => (
-      <PrototypeFilterDropdown
+      <PropertypeFilterDropdown
         columnKey="property_type"
         groups={[
           {
@@ -722,13 +817,13 @@ export default function DataTable() {
       <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>
       {/* Table */}
       <div
-        className="h-[450px] overflow-y-auto overflow-x-auto
+        className="h-[520px] overflow-y-auto overflow-x-auto
     scrollbar-thin
     scrollbar-thumb-primary
     scrollbar-track-gray-100
     hover:scrollbar-thumb-primary"
       >
-        <table className="w-full border-separate border-spacing-y-[20px] border-spacing-x-[12px]">
+        <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>
@@ -736,20 +831,20 @@ export default function DataTable() {
                   <th
                     key={header.id}
                     className={`
-                      text-left whitespace-nowrap sticky overflow-visible top-0 z-10 text-[14px] font-[500] align-middle leading-none bg-white
+                      text-left whitespace-nowrap sticky overflow-visible top-0 z-40 text-[14px] font-[500] align-middle leading-none bg-white
                       ${
                         header.id === "select"
-                          ? "left-0 z-20 bg-white p-0"
+                          ? "left-0 z-50 bg-white px-4"
                           : "p-4"
                       }
                       ${
                         header.id === "actions"
-                          ? "bg-white right-0 bg-white p-0 z-20"
+                          ? "bg-white right-0 bg-white p-4 z-50"
                           : "p-4"
                       }
                     `}
                   >
-                    <div className="flex gap-[8px] items-center">
+                    <div className="flex gap-2 items-center">
                       <p>
                         {flexRender(
                           header.column.columnDef.header,
@@ -765,6 +860,12 @@ export default function DataTable() {
                         className={`
                       ${header.id === "select" ? "hidden" : ""}
                       ${header.id === "actions" ? "hidden" : ""}
+                     ${
+                       filterDropdowns[header.column.id] &&
+                       filterColumn === header.column.id
+                         ? "bg-gray-300 rounded-full p-2"
+                         : ""
+                     }
                     `}
                         height="20"
                         viewBox="0 0 20 20"
@@ -811,9 +912,9 @@ export default function DataTable() {
                         />
                       </svg>
                       {filterColumn === header.column.id &&
-                        filterDropdowns[header.column.id] && (
+                        filterDropdowns[header.column.id] &&(
                           <div
-                            className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md p-3 z-50 min-w-48 max-h-[300px] overflow-y-auto rounded-[20px] border-1 border-primary shadow-[0_4px_4px_rgba(0,0,0,0.25),_0_4px_10px_rgba(0,0,0,0.25)]
+                            className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md px-2 py-4 z-40 min-w-48 max-h-[300px] overflow-y-auto rounded-[20px] border border-primary shadow-[0_4px_4px_rgba(0,0,0,0.25),_0_4px_10px_rgba(0,0,0,0.25)]
                             scrollbar-thumb-primary scrollbar-track-gray-100 hover:scrollbar-thumb-primary"
                           >
                             {filterDropdowns[header.column.id]({
@@ -843,7 +944,7 @@ export default function DataTable() {
                       whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
                       ${
                         cell.column.id === "select"
-                          ? "left-0 bg-white z-10"
+                          ? "left-0 bg-white z-40"
                           : ""
                       }
                       ${
@@ -851,7 +952,7 @@ export default function DataTable() {
                           ? "right-0 bg-white z-10"
                           : ""
                       }
-                      ${cell.column.id === "photo" ? "p-0" : "p-4"}
+                      ${cell.column.id === "photo" ? "p-0" : "py-8 px-4"}
                     `}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -895,7 +996,7 @@ export default function DataTable() {
           <div className="flex justify-end gap-3 mt-8">
             <button
               onClick={() => setEditRow(null)}
-              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
@@ -918,13 +1019,13 @@ export default function DataTable() {
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setDeleteModal(false)}
-              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
             <button
               onClick={handleDeleteSelected}
-              className="px-6 py-3 text-sm bg-red-600 cursor-pointer text-white rounded-[8px] hover:bg-red-700 transition"
+              className="px-10 py-3 text-sm border bg-red-600 cursor-pointer text-white rounded-[8px] hover:bg-red-700 transition"
             >
               Sil
             </button>
@@ -963,7 +1064,7 @@ export default function DataTable() {
           <div className="flex justify-end gap-3 mt-6">
             <button
               onClick={() => setAddModal(false)}
-              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:bg-gray-50 hover:text-red-700 hover:border-red-500 transition"
+              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:text-red-700 hover:border-red-500 transition"
             >
               Ləğv et
             </button>
@@ -983,6 +1084,7 @@ export default function DataTable() {
           </div>
         </ModalLayout>
       )}
+
       {showSuccess && (
         <div
           id="overlay"
@@ -1042,4 +1144,4 @@ function ModalLayout({ children, onClose }) {
       </div>
     </div>
   );
-}
+}   
