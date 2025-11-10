@@ -35,7 +35,7 @@ const DailyAnncDetails = ({
   
     const handleBlur = useCallback(async (fieldName) => {
       const currentValues = formik.values;
-      const schema = getValidationSchema(3, 'daily', currentValues); 
+      const schema = getValidationSchema(2, 'daily', currentValues); 
   
       try {
         await schema.validateAt(fieldName, currentValues);

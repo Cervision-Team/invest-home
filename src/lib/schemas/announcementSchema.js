@@ -441,7 +441,15 @@ export const validateStep = async (step, formValues) => {
   try {
     const formType = getFormType(formValues);
     const schema = getValidationSchema(step, formType, formValues);
-    await schema.validate(formValues, { abortEarly: false });
+
+    // 💡 Extract only fields present in this schema
+    const schemaFields = Object.keys(schema.fields);
+    const filteredValues = Object.fromEntries(
+      Object.entries(formValues).filter(([key]) => schemaFields.includes(key))
+    );
+
+    await schema.validate(filteredValues, { abortEarly: false });
+
     return { isValid: true, errors: {} };
   } catch (error) {
     const errors = {};
@@ -455,7 +463,6 @@ export const validateStep = async (step, formValues) => {
     return { isValid: false, errors };
   }
 };
-
 export const validateLocationStep = async (formValues) => {
   try {
     await locationValidationSchema.validate(formValues, { abortEarly: false });

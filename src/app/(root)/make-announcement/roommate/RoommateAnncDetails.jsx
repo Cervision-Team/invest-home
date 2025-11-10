@@ -35,7 +35,7 @@ const RoommateAnncDetails = ({
 
   const handleBlur = useCallback(async (fieldName) => {
     const currentValues = formik.values;
-    const schema = getValidationSchema(3, 'roommate', currentValues);
+    const schema = getValidationSchema(2, 'roommate', currentValues);
 
     try {
       await schema.validateAt(fieldName, currentValues);

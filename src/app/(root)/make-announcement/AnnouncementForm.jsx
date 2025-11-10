@@ -411,9 +411,9 @@ const AnnouncementForm = () => {
                     </div>
                     <div className='flex items-center gap-[10px] relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 3 ? 'border-primary' : 'border-[#6C707A]'
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
                           }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 3 ? 'bg-primary' : 'bg-[#6C707A]'
+                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
                             }`}></div>
                         </div>
                       </div>
@@ -425,12 +425,12 @@ const AnnouncementForm = () => {
               <div className="accordion">
                 <div className=' accordion-head flex gap-[6px]'>
                   <div
-                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 4 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
+                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 3 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 4
+                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 3
                       ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                      : formIndex > 4
+                      : formIndex > 3
                         ? 'bg-[#02836F1A] text-[var(--primary-color)]'
                         : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
                       }`}
@@ -442,12 +442,12 @@ const AnnouncementForm = () => {
               <div className="accordion">
                 <div className=' accordion-head flex gap-[6px]'>
                   <div
-                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 5 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
+                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 4 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 5
+                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 4
                       ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                      : formIndex > 5
+                      : formIndex > 4
                         ? 'bg-[#02836F1A] text-[var(--primary-color)]'
                         : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
                       }`}
@@ -479,7 +479,7 @@ const AnnouncementForm = () => {
                     {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
                   </button>
                 </>
-              ) : formIndex === 5 ? (
+              ) : formIndex === 4 ? (
                 <>
                   <button
                     onClick={() => changeForm("decrement")}

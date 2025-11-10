@@ -41,7 +41,7 @@ const Media = ({
   // Blur handler with validation
   const handleBlur = useCallback(async (fieldName) => {
     const currentValues = formik.values;
-    const schema = getValidationSchema(5, 'default', currentValues); // Assuming step 3 for media
+    const schema = getValidationSchema(4, 'default', currentValues); // Assuming step 3 for media
 
     try {
       await schema.validateAt(fieldName, currentValues);
