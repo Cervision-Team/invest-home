@@ -1,5 +1,6 @@
 import Details from '../Details'
 import Hero from '../Hero'
+import HeroAndDetails from '../HeroAndDetails'
 import Map from '../Map'
 import SimilarAnnouncements from '../SimilarAnnouncements'
 
@@ -9,8 +10,7 @@ const page = async ({ params }) => {
 
   return (
     <>
-      <Hero id={id} />
-      <Details />
+    <HeroAndDetails id={id} />
       <Map />
       <SimilarAnnouncements />
     </>
