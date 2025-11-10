@@ -50,7 +50,6 @@ const Hero = ({ id }) => {
       <section className='max-w-[1600px] mx-[auto]'>
         <div className='px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[0]'>
           <div className='min-[431px]:p-[20px] min-[430px]:rounded-[20px] min-[431px]:bg-[rgba(255,255,255,0.50)] min-[431px]:shadow-[0px_4px_10px_0px_rgba(2,131,111,0.10)] flex flex-col gap-[30px] mt-[20px]'>
-            {/* Title & buttons */}
             <div className='max-[431px]:px-[16px] flex justify-between items-start gap-4'>
               <h1 className='text-[#111] text-[24px] lg:text-[32px] leading-[1.2] font-medium max-[431px]:text-[14px]'>
                 Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
@@ -131,13 +130,11 @@ const Hero = ({ id }) => {
         </div>
       </section>
 
-      {/* Image Preview Modal */}
 {previewImage && (
   <div
     className="fixed inset-0 z-[9999] bg-black flex items-center justify-center p-4"
     onClick={closePreview}
   >
-    {/* Close button in its own positioned container */}
     <div className="fixed inset-0 pointer-events-none z-[10000]">
       <button
         className="absolute top-6 right-5 text-white hover:text-gray-300 transition-colors pointer-events-auto"
