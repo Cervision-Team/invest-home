@@ -8,7 +8,6 @@ import { validationSchemas, getValidationSchema, validateStep } from '../../../l
 import arrowRightWhite from "../../../../public/icons/arrow-right-white-small.svg"
 import arrowLeftWhite from "../../../../public/icons/arrow-left-white.svg"
 import NewAnnc from './NewAnnc';
-import TypeOfAnnc from './TypeOfAnnc';
 import ForSale from './for-sale/ForSale';
 import ForRent from './for-rent/ForRent';
 import Daily from './daily/Daily';
@@ -32,10 +31,7 @@ const AnnouncementForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      // Step 0 - NewAnnc
-      newAnnouncement: '',
-
-      // Step 1 - TypeOfAnnc
+      // Step 1 - NewAnnc
       announcementType: '',
 
       // Step 2 - Property details (conditional based on announcement type)
@@ -121,8 +117,8 @@ const AnnouncementForm = () => {
 
 
   const getFormType = useCallback((formValues) => {
-    if (formValues.announcementType === 'roommate') return 'roommate';
-    else if (formValues.announcementType === 'daily') return 'daily';
+    if (formValues.announcementType === 'rentIn') return 'rentIn';
+    else if (formValues.announcementType === 'buy') return 'buy';
     else return 'default';
   }, []);
 
@@ -254,16 +250,14 @@ const AnnouncementForm = () => {
 
     switch (formIndex) {
       case 0:
-        return <NewAnnc {...commonProps} setIsValidating={setIsValidatingStep} />;
-      case 1:
         return (
-          <TypeOfAnnc
+          <NewAnnc
             {...commonProps}
             activeButton={formik.values.announcementType}
             onAnnouncementTypeChange={handleAnnouncementTypeChange}
           />
         );
-      case 2:
+      case 1:
         switch (formik.values.announcementType) {
           case 'sell':
             return (
@@ -273,7 +267,7 @@ const AnnouncementForm = () => {
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
               />
             );
-          case 'rent':
+          case 'rentOut':
             return (
               <ForRent
                 {...commonProps}
@@ -281,7 +275,7 @@ const AnnouncementForm = () => {
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
               />
             );
-          case 'daily':
+          case 'buy':
             return (
               <Daily
                 {...commonProps}
@@ -289,7 +283,7 @@ const AnnouncementForm = () => {
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
               />
             );
-          case 'roommate':
+          case 'rentIn':
             return (
               <Roommate
                 {...commonProps}
@@ -304,18 +298,18 @@ const AnnouncementForm = () => {
               </div>
             );
         }
-      case 3:
+      case 2:
         const formType = getFormType(formik.values);
-        if (formType === 'roommate') {
+        if (formType === 'rentIn') {
           return <RoommateAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
-        } else if (formType === 'daily') {
+        } else if (formType === 'buy') {
           return <DailyAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />
          } else {
           return <AnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
         }
-      case 4:
+      case 3:
         return <Location {...commonProps} />
-      case 5:
+      case 4:
         return <Media {...commonProps} />
       default:
         return <div></div>;
@@ -327,23 +321,21 @@ const AnnouncementForm = () => {
 
 
     switch (formIndex) {
-      case 0:
-        return !!formik.values.newAnnouncement && Object.keys(stepErrors).length === 0;
 
-      case 1:
+      case 0:
         return !!formik.values.announcementType && Object.keys(stepErrors).length === 0;
 
-      case 2:
+      case 1:
 
         const hasPropertyType = !!formik.values.propertyType;
         const hasNoStepErrors = Object.keys(stepErrors).length === 0;
 
         return hasPropertyType && hasNoStepErrors;
 
-      case 3:
+      case 2:
         return Object.keys(stepErrors).length === 0;
 
-      case 4:
+      case 3:
         return (
           !!formik.values.selectedCity &&
           !!formik.values.selectedDistrict &&
@@ -352,7 +344,7 @@ const AnnouncementForm = () => {
           formik.values.selectedAddress.length >= 10 &&
           Object.keys(stepErrors).length === 0
         );
-      case 5:
+      case 4:
         return (
           formik.values.selectedMedia?.length > 0 &&
           formik.values.uploadedFiles?.length > 0 &&
@@ -408,9 +400,9 @@ const AnnouncementForm = () => {
                   <div className='mt-[16px] flex flex-col gap-[28px]'>
                     <div className='flex items-center gap-[10px] relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'border-primary' : 'border-[#6C707A]'
                           }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
+                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'bg-primary' : 'bg-[#6C707A]'
                             }`}></div>
                         </div>
                       </div>

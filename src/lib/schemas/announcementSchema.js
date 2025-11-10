@@ -1,20 +1,13 @@
 import * as Yup from "yup";
 
-// Step 0 - NewAnnc Validation Schema
-export const newAnncValidationSchema = Yup.object().shape({
-  newAnnouncement: Yup.string()
-    .required("Elan vermə səbəbi seçilməlidir")
-    .oneOf(["sell", "buy", "rentOut", "rentIn"], "Düzgün elan səbəbi seçin"),
-});
-
-// Step 1 - TypeOfAnnc Validation Schema
-const typeOfAnncValidationSchema = Yup.object().shape({
+// Step 0 - NewAnnc Validation Schema (formerly Step 1)
+const NewAnncValidationSchema = Yup.object().shape({
   announcementType: Yup.string()
     .required("Elan növü seçilməlidir")
-    .oneOf(["sell", "rent", "daily", "roommate"], "Düzgün elan növü seçin"),
+    .oneOf(["sell", "buy", "rentOut", "rentIn"], "Düzgün elan növü seçin"),
 });
 
-// Step 2 - ForSale & ForRent (dynamic)
+// Step 1 - ForSale & ForRent (dynamic) (formerly Step 2)
 const getForSaleOrRentValidationSchema = (
   propertyType,
   officeType,
@@ -159,7 +152,7 @@ const getForSaleOrRentValidationSchema = (
   return Yup.object().shape(schema);
 };
 
-// Step 2 - Daily
+// Step 1 - Daily (formerly Step 2)
 const getDailyValidationSchema = (propertyType) => {
   const schema = {
     propertyType: Yup.string()
@@ -225,7 +218,7 @@ const getDailyValidationSchema = (propertyType) => {
   return Yup.object().shape(schema);
 };
 
-// Step 2 - Roommate
+// Step 1 - Roommate (formerly Step 2)
 const getRoommateValidationSchema = () =>
   Yup.object().shape({
     propertyType: Yup.string()
@@ -272,7 +265,7 @@ const getRoommateValidationSchema = () =>
       .oneOf(["renewed", "notRenewed"], "Düzgün təmir vəziyyəti seçin")
   });
 
-// Step 3 - AnncDetails
+// Step 2 - AnncDetails (formerly Step 3)
 export const anncDetailsSchema = Yup.object().shape({
   exit: Yup.string().required("Çıxarış seçilməlidir"),
   mortgage: Yup.string().required("İpoteka uyğunluğu seçilməlidir"),
@@ -283,7 +276,7 @@ export const anncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
-// Step 3 - DailyAnncDetails
+// Step 2 - DailyAnncDetails (formerly Step 3)
 
 export const dailyAnncDetailsSchema = Yup.object().shape({
   features: Yup.array().of(Yup.string()),
@@ -293,7 +286,7 @@ export const dailyAnncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
-// Step 3 - RoommateAnncDetails
+// Step 2 - RoommateAnncDetails (formerly Step 3)
 export const roommateAnncDetailsSchema = Yup.object().shape({
   utilities: Yup.string().required("Kommunal seçilməlidir"),
   roomType: Yup.string().required("Otaq tipi seçilməlidir"),
@@ -317,7 +310,7 @@ export const roommateAnncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
-// Step 4 - Location
+// Step 3 - Location (formerly Step 4)
 export const locationValidationSchema = Yup.object({
   selectedCity: Yup.string()
     .required('Şəhər seçilməlidir')
@@ -369,7 +362,7 @@ export const locationValidationSchema = Yup.object({
     })
 });
 
-// Step 5 - Media
+// Step 4 - Media (formerly Step 5)
 const getMediaValidationSchema = () =>
   Yup.object().shape({
     selectedMedia: Yup.array()
@@ -395,30 +388,27 @@ const getMediaValidationSchema = () =>
   });
 
 export const validationSchemas = [
-  newAnncValidationSchema,
-  typeOfAnncValidationSchema,
-  Yup.object().shape({}), // Step 2 - dynamic
-  Yup.object().shape({}), // Step 3 - dynamic
+  NewAnncValidationSchema,
+  Yup.object().shape({}), // Step 1 - dynamic (formerly Step 2)
+  Yup.object().shape({}), // Step 2 - dynamic (formerly Step 3)
   locationValidationSchema,
   getMediaValidationSchema(),
 ];
 
 const getFormType = (formValues) => {
-  if (formValues.announcementType === "roommate") return "roommate";
-  if (formValues.announcementType === "daily") return "daily";
+  if (formValues.announcementType === "rentIn") return "rentIn";
+  if (formValues.announcementType === "buy") return "buy";
   return "default";
 };
 
 export const getValidationSchema = (step, formType, formValues = {}) => {
   switch (step) {
-    case 0:
-      return newAnncValidationSchema;
-    case 1:
-      return typeOfAnncValidationSchema;
-    case 2:
+    case 0: // This is now the first step
+      return NewAnncValidationSchema;
+    case 1: // This is now the second step
       if (
         formValues.announcementType === "sell" ||
-        formValues.announcementType === "rent"
+        formValues.announcementType === "rentOut"
       ) {
         return getForSaleOrRentValidationSchema(
           formValues.propertyType,
@@ -427,20 +417,20 @@ export const getValidationSchema = (step, formType, formValues = {}) => {
           formValues.announcementType
         );
       }
-      if (formValues.announcementType === "daily") {
+      if (formValues.announcementType === "buy") {
         return getDailyValidationSchema(formValues.propertyType);
       }
-      if (formValues.announcementType === "roommate") {
+      if (formValues.announcementType === "rentIn") {
         return getRoommateValidationSchema(formValues.propertyType);
       }
-      return Yup.object().shape({});
-    case 3:
-      return formType === "roommate"
-        ? roommateAnncDetailsSchema : formType === "daily" ? dailyAnncDetailsSchema
+      return Yup.object().shape({}); // Default for step 1 if no announcementType
+    case 2: // This is now the third step
+      return formType === "rentIn"
+        ? roommateAnncDetailsSchema : formType === "buy" ? dailyAnncDetailsSchema
         : anncDetailsSchema;
-    case 4:
+    case 3: // This is now the fourth step
       return locationValidationSchema;
-    case 5:
+    case 4: // This is now the fifth step
       return getMediaValidationSchema();
     default:
       return Yup.object().shape({});
