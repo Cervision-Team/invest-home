@@ -1,22 +1,38 @@
 "use client"
+
+import { useEffect, useState } from "react";
+import { animate, useMotionValue } from "framer-motion";
 import { CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-const CircleProgressBar = ({ percentage, color }) => {
+
+const CircleProgressBar = ({ percentage, color = "#02836F", duration = 1 }) => {
+
+    const [value, setValue] = useState(0);
+    const motionValue = useMotionValue(0);
+
+    useEffect(() => {
+        const controls = animate(motionValue, percentage, { duration, ease: "easeOut" });
+        const unsubscribe = motionValue.on("change", (v) => setValue(v));
+
+        return () => {
+            controls.stop();
+            unsubscribe();
+        };
+    }, [percentage, duration]);
+
 
     return (
         <div className='w-[90px] h-[90px]'>
-            <CircularProgressbarWithChildren circleRatio={1}  value={percentage} styles={{
-                path: {
-                    stroke: color
-                },
-                trail: {
-                    stroke: "#F1F3F9"
-                }
-            }}>
+            <CircularProgressbarWithChildren
+                value={value}
+                circleRatio={1}
+                styles={{
+                    path: { stroke: color, transition: "none" },
+                    trail: { stroke: "#F1F3F9" },
+                }}
+            >
 
-                <div className='w-[60px] h-[60px] flex items-center justify-center bg-[#F1F3F9] rounded-full'>
-                    <strong style={{ color: color }}>{percentage}%</strong>
-                </div>
+                <div className="text-sm font-semibold">{Math.round(value)}%</div>
             </CircularProgressbarWithChildren>
         </div>
     )
