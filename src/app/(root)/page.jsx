@@ -8,10 +8,10 @@ import MobileCategory from "./Home/MobileCategory";
 import MobileSearch from "./Home/MobileSearch";
 import Neighborhoods from "./Home/Neighborhoods";
 import Services from "./Home/Services";
-import WhoAreWe from "./Home/WhoAreWe";
 import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
 import { Suspense } from "react";
 import RecentHousesSkeleton from "@/components/ui/skeleton/RecentHousesSkeleton";
+import OpenOffice from "./Home/OpenOffice";
 
 
 export default function Home() {
@@ -41,7 +41,9 @@ export default function Home() {
       <Neighborhoods />
       <Services />
       <BeAgent />
-      <WhoAreWe />
+      <div className="mt-[124px]">
+      <OpenOffice />
+      </div>
       <div className="max-[431px]:hidden">
         <Agents />
       </div>
