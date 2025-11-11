@@ -18,6 +18,7 @@ import Media from './for-sale/Media';
 import RoommateAnncDetails from './roommate/RoommateAnncDetails';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import DailyAnncDetails from './daily/DailyAnncDetails';
+import { createAnnouncement } from '@/services/api/endpoints/announcementService';
 
 const AnnouncementForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
@@ -108,9 +109,100 @@ const AnnouncementForm = () => {
     },
     validationSchema: validationSchemas[0],
     onSubmit: async (values) => {
-      console.log('Form submitted:', values);
+      const formData = new FormData();
 
+      // 1️⃣ DTO üçün JSON obyektini formalaşdır
+      const dto = {
+        announcementType: values.announcementType,
+        propertyType: values.propertyType,
+        officeType: values.officeType,
+        buildingType: values.buildingType,
+        repairStatus: values.repairStatus,
+        isMortgaged: values.isMortgaged,
+        price: +values.price,
+        area: +values.area,
+        landArea: +values.landArea,
+        pricePerSqm: +values.pricePerSqm,
+        floor: +values.floor,
+        totalFloors: +values.totalFloors,
+        rooms: +values.rooms,
+        bathrooms: +values.bathrooms,
+        dailyPrice: +values.dailyRate,
+        guestCount: +values.guestCount,
+        nightCount: +values.nightCount,
+        checkInTime: values.checkInTime,
+        checkOutTime: values.checkOutTime,
+        initialPayment: +values.initialPayment,
+        monthlyPayment: +values.monthlyPayment,
+        remainingYears: +values.remainingYears,
+        remainingMonths: +values.remainingMonths,
+        yearBuilt: values.yearBuilt,
+        condition: values.condition,
+        features: values.features,
+        exit: values.exit,
+        mortgage: values.mortgage === "yes",
+        utilities: values.utilities,
+        bedType: values.bedType,
+        ownerLives: values.ownerLives,
+        residentsCount: values.residentsCount,
+        houseComposition: values.houseComposition,
+        gender: values.gender,
+        workStatus: values.workStatus,
+        smoking: values.smoking,
+        pets: values.pets,
+        visitors: +values.visitors,
+        description: values.description,
+        selectedCity: values.selectedCity,
+        selectedDistrict: values.selectedDistrict,
+        selectedSettlement: values.selectedSettlement,
+        selectedAddress: values.selectedAddress,
+        latitude: values.latitude,
+        longitude: values.longitude,
+        virtualTour: values.virtualTour,
+      };
+
+      console.log(dto);
+
+      // 2️⃣ dto JSON kimi əlavə olunur (RequestParam("dto"))
+      formData.append("announcement", new Blob(
+        [JSON.stringify(dto)],
+        { type: "application/json" } // <-- vacibdir
+      ));
+
+      // 3️⃣ şəkilləri əlavə et
+      values.images.forEach((img) => {
+        if (img.file instanceof File) {
+          formData.append("images", img.file);
+        }
+      });
+
+      // 4️⃣ videolar varsa əlavə et
+      values.videos.forEach((vid) => {
+        if (vid.file instanceof File) {
+          formData.append("videos", vid.file);
+        }
+      });
+      // 🔹 Sadə text/string/number tipləri əlavə edirik
+      // Object.keys(dto).forEach((key) => {
+      //   // images, videos və s. xaric
+      //   if (!["images", "videos", "uploadedFiles"].includes(key)) {
+      //     formData.append(key, values[key]);
+      //   }
+      // });
+      // 🔹 Əgər əlavə fayllar (uploadedFiles) varsa
+      values.uploadedFiles.forEach((file) => {
+        if (file instanceof File) {
+          formData.append("uploadedFiles", file);
+        }
+      });
+
+
+
+      // 5️⃣ backend çağırışı
+      await createAnnouncement(formData);
     },
+
+
     validateOnChange: false,
     validateOnBlur: false,
   });
@@ -192,7 +284,9 @@ const AnnouncementForm = () => {
 
     if (isValid) {
       try {
-        await formik.submitForm();
+        const res = await formik.submitForm();
+        // console.log(res);
+
         setIsModalOpen(true);
       } catch (error) {
         console.error('Form submission error:', error);
@@ -304,7 +398,7 @@ const AnnouncementForm = () => {
           return <RoommateAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
         } else if (formType === 'buy') {
           return <DailyAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />
-         } else {
+        } else {
           return <AnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
         }
       case 3:
