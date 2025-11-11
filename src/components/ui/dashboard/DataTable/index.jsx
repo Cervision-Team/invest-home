@@ -9,8 +9,19 @@ import editing from "../../../../../public/icons/profile/editing.svg";
 import rejected from "../../../../../public/icons/profile/rejected.svg";
 import remove from "../../../../../public/icons/profile/remove.svg";
 import share from "../../../../../public/icons/profile/share-outline.svg";
-import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
-import { columnHeaders, RealEstateData, azeCity, azeSettlement, azeDistrict, azeMetro } from "@/components/core/RealEstateData";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import {
+  columnHeaders,
+  RealEstateData,
+  azeCity,
+  azeSettlement,
+  azeDistrict,
+  azeMetro,
+} from "@/components/core/RealEstateData";
 import { Button } from "../Buttons/ProfileButtons";
 import Search from "../Search";
 
@@ -20,6 +31,7 @@ export default function DataTable() {
   const [selected, setSelected] = useState({});
   const [editRow, setEditRow] = useState(null);
   const [filterColumn, setFilterColumn] = useState(null);
+  const [dropdownSearch, setDropdownSearch] = useState("");
   const [filters, setFilters] = useState({});
   const [deleteModal, setDeleteModal] = useState(false);
   const [addModal, setAddModal] = useState(false);
@@ -31,17 +43,38 @@ export default function DataTable() {
   const [openMenu, setOpenMenu] = useState(null);
   const menuRefs = useRef({});
 
-  // Click outside menu close
+  // Click outside menu & filter close
+  const filterRefs = useRef({});
+
+  const filterIconRefs = useRef({});
+
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // --- Row ACTION MENU Outside Click ---
       if (openMenu) {
         const ref = menuRefs.current[openMenu];
-        if (ref && !ref.contains(event.target)) setOpenMenu(null);
+        if (ref && !ref.contains(event.target)) {
+          setOpenMenu(null);
+        }
+      }
+
+      // --- FILTER DROPDOWN Outside Click ---
+      if (filterColumn) {
+        const dropdownRef = filterRefs.current[filterColumn];
+        const iconRef = filterIconRefs.current[filterColumn];
+
+        const clickedInsideDropdown = dropdownRef?.contains(event.target);
+        const clickedOnIcon = iconRef?.contains(event.target);
+
+        if (!clickedInsideDropdown && !clickedOnIcon) {
+          setFilterColumn(null);
+        }
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [openMenu]);
+  }, [openMenu, filterColumn]);
 
   // Filtering
   const filteredData = useMemo(() => {
@@ -79,6 +112,40 @@ export default function DataTable() {
           const max = value.max ?? Infinity;
 
           return num >= min && num <= max;
+        }
+
+        // ✅ FLOOR SPECIAL FILTER
+        if (key === "floor") {
+          const floorVal = row[key];
+
+          // ✅ CHECKBOX FILTER (birdən çox seçim ola bilər)
+          if (Array.isArray(value.radio) && value.radio.length > 0) {
+            // 1-ci mərtəbə olmasın
+            if (
+              value.radio.includes("1-ci mərtəbə olmasın") &&
+              floorVal === 1
+            ) {
+              return false;
+            }
+
+            // Sonuncu mərtəbə olmasın
+            if (
+              value.radio.includes("Sonuncu mərtəbə olmasın") &&
+              floorVal === row.totalFloors
+            ) {
+              return false;
+            }
+          }
+
+          // ✅ RANGE FILTER
+          const min = value.min ?? -Infinity;
+          const max = value.max ?? Infinity;
+
+          if (floorVal < min || floorVal > max) {
+            return false;
+          }
+
+          return true;
         }
 
         // RADIO və DROPDOWN FILTER
@@ -210,12 +277,14 @@ export default function DataTable() {
               onClick={() =>
                 setOpenMenu((prev) => (prev === row.id ? null : row.id))
               }
-              className={`p-1 rounded text-xl cursor-pointer ${openMenu === row.id ? "bg-gray-300" : "hover:bg-gray-200"}`}
+              className={`p-1 rounded text-xl cursor-pointer ${
+                openMenu === row.id ? "bg-gray-300" : "hover:bg-gray-200"
+              }`}
             >
               ⋮
             </button>
             {openMenu === row.id && (
-              <div className="absolute right-8 top-[-10px] py-6 w-42 bg-white border border-gray-200 rounded-[12px] shadow-[0_4px_10px_0_rgba(0,0,0,0.1)] z-[1000] overflow-hidden">
+              <div className="absolute right-8 top-[-10px] pb-6 pt-8 p w-42 bg-white border border-gray-200 rounded-[12px] shadow-[0_4px_10px_0_rgba(0,0,0,0.1)] z-[1000] overflow-hidden">
                 <button
                   onClick={() => setOpenMenu(null)}
                   className="absolute right-3 top-3 text-gray-500 font-[600] text-[18px] hover:text-red-600 cursor-pointer"
@@ -227,7 +296,7 @@ export default function DataTable() {
                     setEditRow(row.original);
                     setOpenMenu(null);
                   }}
-                  className="flex items-center cursor-pointer gap-3 w-full px-5 py-2 text-sm text-[#1B1F27] transition-colors duration-150"
+                  className="flex items-center cursor-pointer gap-3 w-full px-5 py-2 text-sm hover:bg-blue-50 text-[#1B1F27] transition-colors duration-150"
                 >
                   <Image
                     src={editing}
@@ -236,7 +305,7 @@ export default function DataTable() {
                   />
                   <p>Redaktə et</p>
                 </button>
-                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm  text-[#1B1F27] transition-colors duration-150">
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm hover:bg-blue-50 text-[#1B1F27] transition-colors duration-150">
                   <Image
                     src={approved}
                     className="py-[2px] px-[2.5px]"
@@ -244,7 +313,7 @@ export default function DataTable() {
                   />
                   <p>Təsdiqlə</p>
                 </button>
-                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm text-[#1B1F27] transition-colors duration-150">
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm hover:bg-blue-50 text-[#1B1F27] transition-colors duration-150">
                   <Image src={rejected} className="p-[3px]" alt="reject" />
                   <p>Rədd et</p>
                 </button>
@@ -259,7 +328,7 @@ export default function DataTable() {
                   <Image src={remove} className="p-[2px]" alt="remove" />
                   <p>Elanı sil</p>
                 </button>
-                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm  text-[#1B1F27] transition-colors duration-150">
+                <button className="flex items-center gap-3 cursor-pointer w-full px-5 py-2 text-sm hover:bg-blue-50 text-[#1B1F27] transition-colors duration-150">
                   <Image src={share} alt="share" />
                   <p>Paylaş</p>
                 </button>
@@ -272,12 +341,18 @@ export default function DataTable() {
   }, [data, selected, openMenu]);
 
   //Announcement Type Filter Dropdown
-  const AnnouncementTypeFilterDropdown = ({ options, onSelect, onClose, title }) => {
+  const AnnouncementTypeFilterDropdown = ({
+    options,
+    onSelect,
+    onClose,
+    title,
+  }) => {
     const [hovered, setHovered] = useState(null);
 
     return (
       <div className="relative flex flex-col w-[400px]">
-        <div className="flex justify-end mr-2 mb-1">
+        <div className="flex justify-between items-center mx-5 mt-5">
+          {title && <p>{title}</p>}
           <button
             className="text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
             onClick={onClose}
@@ -285,15 +360,8 @@ export default function DataTable() {
             ✕
           </button>
         </div>
-
-        {title && (
-          <div className="px-2">
-            <p>{title}</p>
-            <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
-          </div>
-        )}
-
-        <div className="pt-3 px-2 grid grid-cols-2 gap-3">
+        <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
+        <div className="p-5 grid grid-cols-2 gap-4">
           {options.map((opt) => (
             <div
               key={opt.label}
@@ -316,28 +384,31 @@ export default function DataTable() {
   };
 
   //Mx and min dropdown
-  const MaxAndMinDropdown = ({ columnKey, onSelect, onClose }) => {
+  const MaxAndMinDropdown = ({ columnKey, onSelect, onClose, selectedValue }) => {
     const [range, setRange] = useState({ min: "", max: "" });
+    useEffect(() => {
+      setRange({
+        min: selectedValue?.min ?? "",
+        max: selectedValue?.max ?? "",
+      });
+    }, [selectedValue]); 
 
     const getLabel = (type) => {
       if (columnKey === "price")
         return type === "min" ? "Minimum qiymət" : "Maksimum qiymət";
 
-      if (columnKey === "floor")
-        return type === "min" ? "Minimum mərtəbə" : "Maksimum mərtəbə";
-
       if (columnKey === "area")
         return type === "min" ? "Minimum sahə" : "Maksimum sahə";
-
-      if (columnKey === "totalFloors")
-        return type === "min" ? "Minimum mərtəbə" : "Maksimum mətəbə";
 
       if (columnKey === "land_area")
         return type === "min"
           ? "Minimum torpaq sahəsi"
           : "Maksimum torpaq sahəsi";
 
-      return type === "min" ? "Minimum" : "Maksimum";
+      if (columnKey === "totalFloors")
+        return type === "min"
+          ? "Minimum ümumi mərtəbə"
+          : "Maksimum ümumi mərtəbə";
     };
 
     const getUnit = () => {
@@ -349,18 +420,30 @@ export default function DataTable() {
 
     const unit = getUnit();
 
+    // ✅ TƏTBİQ ET → filteri ötür, dropdown bağlanır, input sıfırlanır
     const handleApply = () => {
       onSelect({
         min: range.min !== "" ? Number(range.min) : undefined,
         max: range.max !== "" ? Number(range.max) : undefined,
       });
+
+      // ✅ UI RESET
+      setRange({ min: "", max: "" });
       onClose();
     };
 
+    // ✅ TƏMİZLƏ → UI + FILTER sıfırlanır
+    const handleClear = () => {
+      setRange({ min: "", max: "" });
+    };
+
     return (
-      <div className="relative flex flex-col gap-3 p-4">
+      <div
+        className="relative flex flex-col gap-3 px-5 pb-5 pt-10 w-[238px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
-          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
+          className="absolute right-5 top-5 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
           onClick={onClose}
         >
           ✕
@@ -415,7 +498,7 @@ export default function DataTable() {
         <div className="flex gap-2 pt-2">
           <button
             className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 rounded-[8px] hover:bg-gray-50 cursor-pointer"
-            onClick={() => setRange({ min: "", max: "" })}
+            onClick={handleClear}
           >
             Təmizlə
           </button>
@@ -432,7 +515,14 @@ export default function DataTable() {
   };
 
   //Prototype Filter Dropdown
-  const PropertypeFilterDropdown = ({ groups, columnKey, filters, setFilters, onClose, title }) => {
+  const PropertypeFilterDropdown = ({
+    groups,
+    columnKey,
+    filters,
+    setFilters,
+    onClose,
+    title,
+  }) => {
     const selectedValue = filters[columnKey] || "";
 
     const handleSelect = (value) => {
@@ -444,43 +534,54 @@ export default function DataTable() {
     };
 
     return (
-      <div className="relative flex flex-col gap-2 p-4">
-        <button
-          className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
-          onClick={onClose}
-        >
-          ✕
-        </button>
-        {title && <p className="font-medium">{title}</p>}
-        <p className="a w-full h-[1px] mb-2 bg-[rgba(200,199,199,0.32)]"></p>
+      <div className="flex flex-col w-[238px] pb-5">
+        {/* Header */}
+        <div className="flex justify-between items-center mx-5 mt-5">
+          {title && <p className="font-medium">{title}</p>}
+          <button
+            className="text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="w-full h-[1px] my-2 bg-[rgba(200,199,199,0.32)]"></div>
+
         {(groups || []).map((group, i) => (
-          <div key={group.label || i}>
-            {group.label && <p className="text-sm  mb-1">{group.label}</p>}
-            {group.options.map((opt) => (
-              <label
-                key={opt.value}
-                className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 group rounded hover:bg-primary/10"
-              >
-                <span>{opt.label}</span>
-                <input
-                  type="radio"
-                  name={title}
-                  value={opt.value}
-                  checked={selectedValue === opt.value}
-                  onChange={() => handleSelect(opt.value)}
-                  className="hidden peer"
-                />
-                <span className="w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] border-gray-300 transition-all">
-                  <span
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      selectedValue === opt.value
-                        ? "bg-primary"
-                        : "bg-transparent group-hover:bg-primary"
-                    }`}
-                  ></span>
-                </span>
-              </label>
-            ))}
+          <div key={group.label || i} className="mx-3">
+            {/* Group Label */}
+            {group.label && (
+              <p className="text-sm mb-1 ml-3 font-medium">{group.label}</p>
+            )}
+
+            {/* Options */}
+            <ul className={group.label ? "pl-8 list-disc" : "pl-0"}>
+              {group.options.map((opt) => (
+                <li key={opt.value}>
+                  <label className="flex items-center justify-between cursor-pointer h-[36px] px-3 group rounded-[10px] hover:bg-[#E0F5F1]">
+                    <span>{opt.label}</span>
+                    <input
+                      type="radio"
+                      name={title}
+                      value={opt.value}
+                      checked={selectedValue === opt.value}
+                      onChange={() => handleSelect(opt.value)}
+                      className="hidden peer"
+                    />
+                    <span className="w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] border-[#E1E6EF] group-hover:border-primary transition-all">
+                      <span
+                        className={`w-3 h-3 rounded-full transition-all ${
+                          selectedValue === opt.value
+                            ? "bg-primary"
+                            : "bg-transparent group-hover:bg-primary"
+                        }`}
+                      ></span>
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
           </div>
         ))}
       </div>
@@ -489,8 +590,9 @@ export default function DataTable() {
 
   // Common Filter Dropdown
   const CommonFilterDropdown = ({ options, onSelect, onClose, title }) => (
-    <div className="relative flex flex-col">
-      <div className="flex justify-end mb-1 mr-2">
+    <div className="flex flex-col py-5 w-[360px]">
+      <div className="flex justify-between items-center mx-5">
+        {title && <p>{title}</p>}
         <button
           className=" text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
           onClick={onClose}
@@ -498,13 +600,8 @@ export default function DataTable() {
           ✕
         </button>
       </div>
-      {title && (
-        <div>
-          <p className="text-center">{title}</p>
-          <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
-        </div>
-      )}
-      <div className="pt-3 flex flex-col gap-3">
+      <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
+      <div className="pt-3 flex flex-col gap-3 mx-4">
         {options.map((opt) => (
           <div
             key={opt}
@@ -519,62 +616,231 @@ export default function DataTable() {
   );
 
   // Radio filter dropdown
-  const RadioFilterDropdown = ({ options, selectedValue, onSelect, onClose, title }) => (
-    <div className="relative flex flex-col">
-      <button
-        className="absolute right-2 top-1 text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
-        onClick={onClose}
+  const RadioFilterDropdown = ({
+    options,
+    selectedValue,
+    onSelect,
+    onClose,
+    title,
+    showSearch = false,
+  }) => {
+    const [localSearch, setLocalSearch] = useState("");
+
+    const filteredOptions = options.filter((opt) =>
+      opt.toLowerCase().includes(localSearch.toLowerCase())
+    );
+
+    return (
+      <div
+        className="relative flex flex-col w-[238px] py-5"
+        onClick={(e) => e.stopPropagation()}
       >
-        ✕
-      </button>
-      {title && <p className="text-center pt-6">{title}</p>}
-      <p className="w-full h-[1px] mt-2 bg-[rgba(200,199,199,0.32)]"></p>
-      <div className="pt-3 flex flex-col">
-        {options.map((opt) => (
+        {/* Close button */}
+        <div className="flex justify-between items-center mx-5">
+          {title && <p className="text-center font-medium">{title}</p>}
+          <button
+            className="text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="w-full h-[1px] bg-gray-200 my-2"></div>
+
+        {/* Local Search Input (yalnız showSearch=true olduqda) */}
+        {showSearch && (
+          <div className="mx-4 mb-3">
+            <input
+              type="text"
+              value={localSearch}
+              onChange={(e) => setLocalSearch(e.target.value)}
+              placeholder="Axtar"
+              className="w-[204px] px-5 h-[38px] shadow-[0_4px_100px_0_rgba(0,0,0,0.10)] bg-[FAFAFA] border border-[#9CA3AF] border-[0.2px] rounded-[28px] focus:outline-none focus:border-primary text-sm"
+            />
+          </div>
+        )}
+
+        {/* Filtered Options */}
+        <div className="flex flex-col max-h-[170px] overflow-y-auto">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((opt) => (
+              <label
+                key={opt}
+                className="flex items-center justify-between cursor-pointer mx-3 px-3 py-2 rounded-[10px] group hover:bg-[#E0F5F1]"
+              >
+                <span>{opt}</span>
+                <input
+                  type="radio"
+                  name={title}
+                  value={opt}
+                  checked={selectedValue === opt}
+                  onChange={() => onSelect(opt)}
+                  className="hidden peer"
+                />
+                <span className="w-5 h-5 flex items-center justify-center rounded-full border border-[#E1E6EF] group-hover:border-primary">
+                  <span
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      selectedValue === opt
+                        ? "bg-primary"
+                        : "bg-transparent group-hover:bg-primary"
+                    }`}
+                  />
+                </span>
+              </label>
+            ))
+          ) : (
+            <p className="text-center text-gray-400 py-2">Seçim tapılmadı</p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Floor Mx and min dropdown
+  const FloorDropdown = ({ onSelect, onClose, title, selectedValue }) => {
+    const [range, setRange] = useState({ min: "", max: "" });
+    const [selectedRadios, setSelectedRadios] = useState([]);
+
+    const radioOptions = ["1-ci mərtəbə olmasın", "Sonuncu mərtəbə olmasın"];
+
+    useEffect(() => {
+      setRange({
+        min: "",
+        max: "",
+      });
+      setSelectedRadios([]);
+    }, [selectedValue]);
+
+    const toggleRadio = (opt) => {
+      setSelectedRadios((prev) =>
+        prev.includes(opt) ? prev.filter((r) => r !== opt) : [...prev, opt]
+      );
+    };
+
+    // ✅ TƏTBİQ ET
+    const handleApply = () => {
+      onSelect({
+        radio: selectedRadios,
+        min: range.min !== "" ? Number(range.min) : undefined,
+        max: range.max !== "" ? Number(range.max) : undefined,
+      });
+
+      // ✅ UI reset
+      setRange({ min: "", max: "" });
+      setSelectedRadios([]);
+
+      onClose();
+    };
+
+    // ✅ TƏMİZLƏ
+    const handleClear = () => {
+      setRange({ min: "", max: "" });
+      setSelectedRadios([]);
+    };
+
+    return (
+      <div
+        className="flex flex-col py-5 w-[400px] bg-white rounded-[20px]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mx-5">
+          {title && <p className="text-center font-medium">{title}</p>}
+          <button
+            className="text-gray-500 hover:text-red-600 font-[600] text-[18px] cursor-pointer"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="w-full h-[1px] bg-gray-200 my-2"></div>
+
+        {/* ✅ RADIO OPTIONS */}
+        {radioOptions.map((opt) => (
           <label
             key={opt}
-            className="flex items-center gap-3 cursor-pointer px-3 py-2 group hover:bg-primary/10"
+            className={`flex items-center gap-4 group cursor-pointer mx-5 px-3 py-2 rounded-[10px]
+
+            ${
+              selectedRadios.includes(opt)
+                ? "bg-[#E0F5F1]"
+                : "hover:bg-[#E0F5F1]"
+            }
+          `}
           >
             <input
-              type="radio"
+              type="checkbox"
               name={title}
               value={opt}
-              checked={selectedValue === opt}
-              onChange={() => onSelect(opt)}
-              className="hidden peer"
+              checked={selectedRadios.includes(opt)}
+              onChange={() => toggleRadio(opt)}
+              className="hidden"
             />
 
-            <span
-              className={`
-      w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] transition-all border-[#E1E6EF]
-    `}
-            >
+            <span className="w-5 h-5 flex items-center justify-center rounded-full border group-hover:border-primary border-[#E1E6EF]">
               <span
-                className={`
-        w-3 h-3 rounded-full transition-all
-        ${
-          selectedValue === opt
-            ? "bg-primary"
-            : "bg-transparent group-hover:bg-primary"
-        }
-      `}
-              ></span>
+                className={`w-3 h-3 rounded-full transition-all ${
+                  selectedRadios.includes(opt)
+                    ? "bg-primary"
+                    : "group-hover:bg-primary"
+                }`}
+              />
             </span>
-
             <span>{opt}</span>
           </label>
         ))}
+
+        {/* ✅ RANGE INPUTS */}
+        <div className="flex gap-[37px] mx-5 px-5 my-3 py-[11px] rounded-[20px] border-[0.5px] border-[rgba(2,131,111,0.2)] shadow-[0_4px_100px_0_rgba(0,0,0,0.10)]">
+          <div className="flex-1">
+            <input
+              type="number"
+              placeholder="Min."
+              value={range.min}
+              onChange={(e) => setRange((p) => ({ ...p, min: e.target.value }))}
+              className="w-full px-3 py-2 bg-[rgba(156,163,175,0.10)] rounded-[20px] focus:outline-none focus:border-primary"
+            />
+          </div>
+
+          <div className="flex-1">
+            <input
+              type="number"
+              placeholder="Maks."
+              value={range.max}
+              onChange={(e) => setRange((p) => ({ ...p, max: e.target.value }))}
+              className="w-full px-3 py-2 rounded-[20px] bg-[rgba(156,163,175,0.10)] focus:outline-none focus:border-primary"
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-2 mx-5">
+          <button
+            className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 rounded-md hover:bg-gray-100 cursor-pointer"
+            onClick={handleClear}
+          >
+            Təmizlə
+          </button>
+
+          <button
+            className="flex-1 px-3 py-2 bg-primary text-white rounded-md hover:bg-primary/90 cursor-pointer"
+            onClick={handleApply}
+          >
+            Tətbiq et
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const filterDropdowns = {
     city: ({ onSelect, onClose }) => (
-      <CommonFilterDropdown
+      <RadioFilterDropdown
         options={azeCity}
         onSelect={onSelect}
         onClose={onClose}
         title="Şəhər"
+        showSearch={true}
       />
     ),
     room: ({ onSelect, onClose }) => (
@@ -586,27 +852,30 @@ export default function DataTable() {
       />
     ),
     settlement: ({ onSelect, onClose }) => (
-      <CommonFilterDropdown
+      <RadioFilterDropdown
         options={azeSettlement}
         onSelect={onSelect}
         onClose={onClose}
         title="Qəsəbə"
+        showSearch={true}
       />
     ),
     district: ({ onSelect, onClose }) => (
-      <CommonFilterDropdown
+      <RadioFilterDropdown
         options={azeDistrict}
         onSelect={onSelect}
         onClose={onClose}
         title="Rayon"
+        showSearch={true}
       />
     ),
     metro: ({ onSelect, onClose }) => (
-      <CommonFilterDropdown
+      <RadioFilterDropdown
         options={azeMetro}
         onSelect={onSelect}
         onClose={onClose}
         title="Metro"
+        showSearch={true}
       />
     ),
     mortgage: ({ onSelect, onClose }) => (
@@ -697,10 +966,12 @@ export default function DataTable() {
       />
     ),
     floor: ({ onSelect, onClose }) => (
-      <MaxAndMinDropdown
+      <FloorDropdown
         columnKey="floor"
         onClose={onClose}
         onSelect={onSelect}
+        title="Mərtəbə"
+        selectedValue={filters["floor"]}
       />
     ),
     totalFloors: ({ onSelect, onClose }) => (
@@ -708,6 +979,7 @@ export default function DataTable() {
         columnKey="totalFloors"
         onClose={onClose}
         onSelect={onSelect}
+        title="Ümumi mərtəbə"
       />
     ),
     land_area: ({ onSelect, onClose }) => (
@@ -724,8 +996,8 @@ export default function DataTable() {
           {
             label: "Mənzil",
             options: [
-              { label: "•  Yeni tikili", value: "Yeni tikili" },
-              { label: "•  Köhnə tikili", value: "Köhnə tikili" },
+              { label: "Yeni tikili", value: "Yeni tikili" },
+              { label: "Köhnə tikili", value: "Köhnə tikili" },
             ],
           },
           {
@@ -745,8 +1017,8 @@ export default function DataTable() {
     ),
   };
 
-  const handleHeaderFilterClick = (colKey) => {
-    setFilterColumn((prev) => (prev === colKey ? null : colKey));
+  const handleHeaderFilterClick = (columnId) => {
+    setFilterColumn((prev) => (prev === columnId ? null : columnId));
   };
 
   const table = useReactTable({
@@ -849,7 +1121,7 @@ export default function DataTable() {
                       }
                     `}
                   >
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2 items-center justify-center">
                       <p>
                         {flexRender(
                           header.column.columnDef.header,
@@ -857,6 +1129,9 @@ export default function DataTable() {
                         )}
                       </p>
                       <svg
+                        ref={(el) =>
+                          (filterIconRefs.current[header.column.id] = el)
+                        }
                         onClick={() =>
                           handleHeaderFilterClick(header.column.id)
                         }
@@ -868,7 +1143,7 @@ export default function DataTable() {
                      ${
                        filterDropdowns[header.column.id] &&
                        filterColumn === header.column.id
-                         ? "bg-gray-300 rounded-full p-2"
+                         ? "bg-gray-300 rounded-full"
                          : ""
                      }
                     `}
@@ -917,9 +1192,12 @@ export default function DataTable() {
                         />
                       </svg>
                       {filterColumn === header.column.id &&
-                        filterDropdowns[header.column.id] &&(
+                        filterDropdowns[header.column.id] && (
                           <div
-                            className="absolute top-6 right-0 bg-white shadow-lg border border-gray-200 rounded-md px-2 py-4 z-40 min-w-48 max-h-[300px] overflow-y-auto rounded-[20px] border border-primary shadow-[0_4px_4px_rgba(0,0,0,0.25),_0_4px_10px_rgba(0,0,0,0.25)]
+                            ref={(el) =>
+                              (filterRefs.current[header.column.id] = el)
+                            }
+                            className="absolute top-10 right-0 bg-white border border-gray-200 rounded-md z-40 rounded-[20px] border border-primary shadow-[0_4px_4px_rgba(0,0,0,0.25),_0_4px_10px_rgba(0,0,0,0.25)]
                             scrollbar-thumb-primary scrollbar-track-gray-100 hover:scrollbar-thumb-primary"
                           >
                             {filterDropdowns[header.column.id]({
@@ -1149,4 +1427,4 @@ function ModalLayout({ children, onClose }) {
       </div>
     </div>
   );
-}   
+}
