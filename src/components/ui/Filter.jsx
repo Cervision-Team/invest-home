@@ -113,12 +113,6 @@ const ADDITIONAL_FILTERS = [
     applicable: ['apartment', 'house', 'office', 'object', 'apartmentDaily', 'aframe', 'apartmentRoommate']
   },
   {
-    id: 'bathrooms',
-    label: 'Sanitar qovşaq sayı',
-    type: 'range',
-    applicable: ['apartment', 'house', 'object', 'office', 'apartmentDaily', 'gardenHouse', 'aframe', 'kotej', 'room', 'apartmentRoommate']
-  },
-  {
     id: 'buildingType',
     label: 'Bina növü',
     type: 'select',
@@ -141,7 +135,7 @@ const ADDITIONAL_FILTERS = [
   },
   {
     id: 'isMortgaged',
-    label: 'İpotekada',
+    label: 'İpoteka',
     type: 'boolean',
     applicable: ['apartment', 'object', 'house', 'office', 'garage', 'land']
   }

@@ -31,7 +31,7 @@ const HeroAndDetails = ({ id }) => {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  
+
   const textRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 430px)');
   const isTablet = useMediaQuery('(max-width: 768px)');
@@ -47,20 +47,20 @@ const thumbnailWidth = 70;
 const gap = 4;
 const maxVisibleThumbnails = useMemo(() => {
   if (containerWidth === 0) return house.images.length;
-  const availableWidth = containerWidth; // Account for padding
+  const availableWidth = containerWidth - 5; // Account for padding
   const count = Math.floor((availableWidth + gap) / (thumbnailWidth + gap));
   return Math.max(1, Math.min(count, house.images.length));
 }, [containerWidth, house.images.length]);
 
 useEffect(() => {
   if (!containerRef.current) return;
-  
+
   const resizeObserver = new ResizeObserver((entries) => {
     for (let entry of entries) {
       setContainerWidth(entry.contentRect.width);
     }
   });
-  
+
   resizeObserver.observe(containerRef.current);
   return () => resizeObserver.disconnect();
 }, []);
@@ -78,22 +78,22 @@ useEffect(() => {
       if (currentClamp) el.classList.add("line-clamp-4");
     }
   }, []);
-  
+
 useEffect(() => {
   if (thumbnailContainerRef.current && thumbnailRefs.current[selectedIndex]) {
     const container = thumbnailContainerRef.current;
     const thumbnail = thumbnailRefs.current[selectedIndex];
-    
+
     const containerRect = container.getBoundingClientRect();
     const thumbnailRect = thumbnail.getBoundingClientRect();
-    
+
     const thumbnailLeft = thumbnailRect.left - containerRect.left + container.scrollLeft;
     const thumbnailRight = thumbnailLeft + thumbnailRect.width;
     const containerScrollLeft = container.scrollLeft;
     const containerWidth = container.clientWidth;
-    
+
     const padding = 100;
-    
+
     if (thumbnailLeft < containerScrollLeft + padding) {
       const newScrollLeft = Math.max(0, thumbnailLeft - padding);
       container.scrollTo({
@@ -130,7 +130,7 @@ if (!house) {
 
   const closePreview = () => {
     setPreviewImage(null);
-    setDimensions({ width: 0, height: 0 }); 
+    setDimensions({ width: 0, height: 0 });
   };
 
   return (
@@ -164,7 +164,7 @@ if (!house) {
         <div className='mt-[20px] relative flex max-[769px]:flex-col-reverse gap-[20px] justify-between items-start px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
           <div className='basis-[708px] max-[431px]:px-[0]'>
             <div ref={containerRef} className='min-[431px]:p-[20px] min-[430px]:rounded-[20px] min-[431px]:bg-[rgba(255,255,255,0.50)] min-[431px]:shadow-[0px_4px_10px_0px_rgba(2,131,111,0.10)] flex flex-col gap-[30px]'>
-            
+
               {isMobile ? (
                 <div>
                   <Swiper
@@ -175,7 +175,7 @@ if (!house) {
                   >
                     {house.images.map((image) => (
                       <SwiperSlide key={image.id}>
-                        <div 
+                        <div
                           className='relative w-full h-[233px] cursor-pointer'
                           onClick={() => openPreview(image)}
                         >
@@ -191,8 +191,8 @@ if (!house) {
                   </Swiper>
                 </div>
               ) : (
-                <div className="flex flex-col gap-[10px] w-full">
-                  <div 
+                <div className="flex flex-col gap-[10px] w-full items-center">
+                  <div
                     className="relative w-full h-[434px] rounded-[8px] overflow-hidden cursor-pointer"
                     onClick={() => openPreview(house.images[selectedIndex])}
                   >
@@ -203,15 +203,15 @@ if (!house) {
                       className="object-cover"
                     />
                   </div>
-                  
+
                   <div className="flex gap-[4px] overflow-hidden">
                     {house.images.slice(0, maxVisibleThumbnails).map((image, idx) => {
                       const isLastVisible = idx === maxVisibleThumbnails - 1;
                       const remainingCount = house.images.length - maxVisibleThumbnails;
                       const shouldShowOverlay = isLastVisible && remainingCount > 0;
-                      
+
                       return (
-                        <div 
+                        <div
                           key={idx}
                           className="relative min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-opacity hover:opacity-80"
                           onMouseEnter={() => setSelectedIndex(idx)}
@@ -236,7 +236,7 @@ if (!house) {
                   </div>
                 </div>
               )}
-            </div>         
+            </div>
             <div className='mt-[60px] max-[431px]:mt-[20px]'>
               <div className="w-full flex flex-col items-start justify-center">
                 <h1 className="text-2xl sm:text-3xl font-bold">Elan haqqında</h1>
@@ -346,33 +346,70 @@ if (!house) {
         </div>
       </section>
 
-    {previewImage && (
+{previewImage && (
       <div
-        className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center p-4"
+        className="fixed inset-0 z-[9999] bg-black flex flex-col"
         onClick={closePreview}
       >
-        <div className="fixed inset-0 pointer-events-none z-[10000]">
-          <button
-            className="absolute top-6 right-5 text-white hover:text-gray-300 transition-colors pointer-events-auto"
-            onClick={(e) => {
-              e.stopPropagation();
-              closePreview();
-            }}
-          >
-            <LuX size={40} />
-          </button>
+        <div className="w-full bg-white px-4 py-2.5 flex items-center justify-between gap-3 shadow-md" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <h1 className='text-[#111] text-[16px] leading-[1.2] font-medium truncate'>
+              Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="flex flex-col items-end gap-0.5">
+              <h2 className="text-[18px] font-[500] leading-none">280,000 AZN</h2>
+              <p className="text-[13px] font-[400] leading-none text-gray-600">1781 AZN / m2</p>
+            </div>
+
+            <div className="flex gap-2">
+              <div className="scale-90">
+                <RoundedBlackButton
+                  icon={<Image src={ShareWhite} alt="Share" width={16} height={16} />}
+                  backgroundColor="#02836F"
+                />
+              </div>
+              <div onClick={handleFavToggle} className="scale-90">
+                <RoundedBlackButton
+                  icon={
+                    <LuHeart
+                      className={`${isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"} text-[1rem]`}
+                    />
+                  }
+                  backgroundColor="#02836F"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 scale-90">
+              <ConnectionButton name="Zəng et" />
+              <ConnectionButton name="Mesaj yaz" />
+            </div>
+
+            <button
+              className="text-black hover:text-gray-600 transition-colors p-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                closePreview();
+              }}
+            >
+              <LuX size={24} />
+            </button>
+          </div>
         </div>
     
-        <div className="flex-1 flex items-center justify-center w-full relative">
+        <div className="flex-1 flex items-center justify-center w-full relative px-4 py-2">
           <button
-            className="cursor-pointer absolute left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+            className="cursor-pointer absolute left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedIndex((prev) => (prev > 0 ? prev - 1 : house.images.length - 1));
               setPreviewImage(house.images[selectedIndex > 0 ? selectedIndex - 1 : house.images.length - 1]);
             }}
           >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 18l-6-6 6-6" />
             </svg>
           </button>
@@ -383,8 +420,8 @@ if (!house) {
               style={{
                 width: `${dimensions.width}px`,
                 height: `${dimensions.height}px`,
-                maxWidth: "90vw",
-                maxHeight: "calc(90vh - 120px)",
+                maxWidth: "85vw",
+                maxHeight: "calc(100vh - 180px)",
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -405,8 +442,8 @@ if (!house) {
               onLoadingComplete={(img) => {
                 const naturalWidth = img.naturalWidth;
                 const naturalHeight = img.naturalHeight;
-                const maxWidth = window.innerWidth * 0.9;
-                const maxHeight = (window.innerHeight * 0.9) - 120;
+                const maxWidth = window.innerWidth * 0.85;
+                const maxHeight = (window.innerHeight) - 180;
     
                 const scale = Math.min(
                   maxWidth / naturalWidth,
@@ -422,29 +459,29 @@ if (!house) {
           )}
     
           <button
-            className="cursor-pointer absolute right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+            className="cursor-pointer absolute right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
             onClick={(e) => {
               e.stopPropagation();
               setSelectedIndex((prev) => (prev < house.images.length - 1 ? prev + 1 : 0));
               setPreviewImage(house.images[selectedIndex < house.images.length - 1 ? selectedIndex + 1 : 0]);
             }}
           >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" />
             </svg>
           </button>
         </div>
     
-        <div 
-          className="w-full max-w-[90vw] mt-4 pb-4"
+         <div 
+          className="w-full pb-3 flex justify-center"
           onClick={(e) => e.stopPropagation()}
         >
-          <div ref={thumbnailContainerRef} className="flex gap-[4px] overflow-x-hidden justify-center scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+          <div ref={thumbnailContainerRef} className="max-w-[85vw] flex gap-[4px] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"> 
             {house.images.map((image, idx) => (
               <div
                 key={idx}
                 ref={(el) => thumbnailRefs.current[idx] = el}
-                className={`relative flex-shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-all ${
+                className={`relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-all ${
                   selectedIndex === idx 
                     ? 'opacity-100' 
                     : 'opacity-60 hover:opacity-100'
@@ -467,7 +504,7 @@ if (!house) {
         </div>
       </div>
     )}
-    </>
+        </>
   );
 };
 
