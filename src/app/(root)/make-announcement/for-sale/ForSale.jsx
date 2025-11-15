@@ -117,7 +117,7 @@ const ForSale = ({
     clearErrorForField('isMortgaged');
 
     if (!status) {
-      const mortgageFields = ['initialPayment', 'monthlyPayment', 'remainingYears', 'remainingMonths'];
+      const mortgageFields = ['initialPayment', 'monthlyPayment', 'remainingMonths'];
       mortgageFields.forEach(field => {
         formik.setFieldValue(field, '');
         clearErrorForField(field);
@@ -399,7 +399,9 @@ useEffect(() => {
                 )}
 
                 <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-                  <p className='text-[#000] text-[16px]/[20px] font-medium'>Hazırda ipotekadadır?</p>
+                  <p className='text-[#000] text-[16px]/[20px] font-medium'>
+                  {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
+                  </p>
                   {hasError('isMortgaged') && <p className="error-text">{getErrorMessage('isMortgaged')}</p>}
 
                   <div className='flex flex-row items-center justify-center mt-[9px]'>
@@ -427,7 +429,9 @@ useEffect(() => {
 
                 {isMortgaged && (
                   <div className='w-full grid gap-[18px] mt-[40px]'>
-                    <p className='text-[#000] text-[16px]/[20px] font-medium'>İpoteka detalları</p>
+                    <p className='text-[#000] text-[16px]/[20px] font-medium'>
+                      {activePropertyType === 'garage' ? "Kredit məlumatları" : "İpoteka/Kredit məlumatları"}
+                    </p>
 
                     <div className='grid grid-cols-[148px_148px_148px_148px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
                       <div className='grid gap-2'>
@@ -459,20 +463,6 @@ useEffect(() => {
                       </div>
 
                       <div className='grid gap-2'>
-                        <label htmlFor="remainingYears" className='text-[#000] text-[16px]/[20px]'>Qalıq il</label>
-                        <input
-                          type="number"
-                          id="remainingYears"
-                          value={formik.values.remainingYears || ''}
-                          onChange={(e) => handleInputChange('remainingYears', e.target.value)}
-                          onBlur={() => handleBlur("remainingYears")}
-                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingYears') ? 'error' : 'border-black'}`}
-                          placeholder="Məs: 10"
-                        />
-                        {hasError('remainingYears') && <p className="error-text">{getErrorMessage('remainingYears')}</p>}
-                      </div>
-
-                      <div className='grid gap-2'>
                         <label htmlFor="remainingMonths" className='text-[#000] text-[16px]/[20px]'>Qalıq ay</label>
                         <input
                           type="number"
@@ -492,7 +482,9 @@ useEffect(() => {
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
                   {shouldShowField('area') && (
                     <div className="grid gap-2">
-                      <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">Sahə</label>
+                      <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">
+                      {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
+                      </label>
                       <div className="relative ">
                         <input
                           type="number"
@@ -503,7 +495,10 @@ useEffect(() => {
                           className={`min-w-0 w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('area') ? 'error' : 'border-black'}`}
                           placeholder="Sahə"
                         />
-                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
+                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">
+                          {activePropertyType === 'house' ||
+          (activePropertyType === 'office' && activeOfficeType === 'gardenHouse') ? 'sot' : 'm²'}
+                          </span>
                       </div>
                       {hasError('area') && <p className="error-text">{getErrorMessage('area')}</p>}
                     </div>
@@ -522,7 +517,7 @@ useEffect(() => {
                           className={`min-w-0 w-full h-10 pr-12 pl-[10px] py-2 input-field remove-arrow ${hasError('landArea') ? 'error' : 'border-black'}`}
                           placeholder="Sahə"
                         />
-                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">m²</span>
+                        <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">sot</span>
                       </div>
                       {hasError('landArea') && <p className="error-text">{getErrorMessage('landArea')}</p>}
                     </div>

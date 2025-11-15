@@ -134,13 +134,6 @@ const getForSaleOrRentValidationSchema = (
       .positive("Müsbət olmalıdır")
       .required("Aylıq ödəniş daxil edilməlidir");
 
-    schema.remainingYears = Yup.number()
-      .typeError("Qalıq il rəqəm olmalıdır")
-      .integer("Tam ədəd olmalıdır")
-      .min(0, "0 və ya daha böyük olmalıdır")
-      .max(50, "Qalıq il 50-dən çox ola bilməz")
-      .required("Qalıq il daxil edilməlidir");
-
     schema.remainingMonths = Yup.number()
       .typeError("Qalıq ay rəqəm olmalıdır")
       .integer("Tam ədəd olmalıdır")

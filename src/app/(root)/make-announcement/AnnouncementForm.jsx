@@ -63,7 +63,6 @@ const AnnouncementForm = () => {
       // Mortgage fields
       initialPayment: '',
       monthlyPayment: '',
-      remainingYears: '',
       remainingMonths: '',
 
       // Step 3 - Detailed Property Information
@@ -452,9 +451,9 @@ const AnnouncementForm = () => {
 
   return (
     <>
-      <section className='min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
-        <div className='flex gap-[36px]'>
-          <div className='max-[768px]:hidden w-[340px] h-auto px-[19px] py-[34.5px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+      <section className='min-[430px]:bg-white min-[430px]:px-8 min-[430px]:pt-10 min-[430px]:pb-[68px] min-[430px]:rounded-xl min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
+        <div className='flex gap-9'>
+          <div className='max-[768px]:hidden w-[340px] h-auto px-[19px] py-[34.5px] rounded-xl border-[0.5px] border-primary shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
             <div className="logo-container my-[15.5px]">
               <div className='image-container flex items-center justify-center'>
                 <Image
@@ -465,22 +464,22 @@ const AnnouncementForm = () => {
                 />
               </div>
               <div className='mt-[7px]'>
-                <h1 className='text-center text-[20px] font-[600] main-logo-style'>INVEST <span className='text-[var(--primary-color)]'>HOME</span></h1>
+                <h1 className='text-center text-[20px] font-semibold main-logo-style'>INVEST <span className='text-primary'>HOME</span></h1>
               </div>
             </div>
 
-            <ul className="mt-[38px] flex flex-col gap-[16px]">
+            <ul className="mt-[38px] flex flex-col gap-4">
               <div className="accordion">
-                <div className='accordion-head flex gap-[6px]'>
+                <div className='accordion-head flex gap-1.5'>
                   <div
-                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 0 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
+                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 0 ? 'bg-primary' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 0
-                      ? 'bg-[#02836F1A] text-[var(--primary-color)]'
+                    className={`transition-colors duration-300 ease-in-out w-full font-medium text-[14px] px-5 py-4 rounded-lg ${formIndex === 0
+                      ? 'bg-[#02836F1A] text-primary'
                       : formIndex > 0
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
+                        ? 'bg-[#02836F1A] text-primary'
+                        : 'bg-white text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
                       }`}
                   >
                     Əsas məlumat
@@ -491,23 +490,23 @@ const AnnouncementForm = () => {
                   style={{ maxHeight: height[0] }}
                   className={`transition-[max-height] overflow-hidden duration-300 ease-in-out accordion-body ml-[9px]`}
                 >
-                  <div className='mt-[16px] flex flex-col gap-[28px]'>
-                    <div className='flex items-center gap-[10px] relative'>
+                  <div className='mt-4 flex flex-col gap-7'>
+                    <div className='flex items-center gap-2.5 relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'border-primary' : 'border-[#6C707A]'
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-2 w-5 h-5 transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'border-primary' : 'border-[#6C707A]'
                           }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'bg-primary' : 'bg-[#6C707A]'
+                          <div className={`radio-base rounded-[100%] w-2.5 h-2.5 transition-colors duration-300 ease-in-out ${formIndex >= 1 ? 'bg-primary' : 'bg-[#6C707A]'
                             }`}></div>
                         </div>
                       </div>
                       <span className='text-[#737373] text-[16px]'>Xüsusiyyətlər</span>
-                      <div className='line absolute w-[1px] h-[28px] rounded-[1px] bg-[var(--primary-color)] left-[10px] top-[24px] translate-x-[-50%] translate-y-[0]'></div>
+                      <div className='line absolute w-px h-7 rounded-[1px] bg-primary left-2.5 top-6 translate-x-[-50%] translate-y-0'></div>
                     </div>
-                    <div className='flex items-center gap-[10px] relative'>
+                    <div className='flex items-center gap-2.5 relative'>
                       <div className="radio-container">
-                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-[2px] w-[20px] h-[20px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
+                        <div className={`radio-outline rounded-[100%] flex items-center justify-center border-2 w-5 h-5 transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'border-primary' : 'border-[#6C707A]'
                           }`}>
-                          <div className={`radio-base rounded-[100%] w-[10px] h-[10px] transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
+                          <div className={`radio-base rounded-[100%] w-2.5 h-2.5 transition-colors duration-300 ease-in-out ${formIndex >= 2 ? 'bg-primary' : 'bg-[#6C707A]'
                             }`}></div>
                         </div>
                       </div>
@@ -517,16 +516,16 @@ const AnnouncementForm = () => {
                 </div>
               </div>
               <div className="accordion">
-                <div className=' accordion-head flex gap-[6px]'>
+                <div className=' accordion-head flex gap-1.5'>
                   <div
-                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 3 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
+                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 3 ? 'bg-primary' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 3
-                      ? 'bg-[#02836F1A] text-[var(--primary-color)]'
+                    className={`transition-colors duration-300 ease-in-out w-full font-medium text-[14px] px-5 py-4 rounded-lg ${formIndex === 3
+                      ? 'bg-[#02836F1A] text-primary'
                       : formIndex > 3
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
+                        ? 'bg-[#02836F1A] text-primary'
+                        : 'bg-white text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
                       }`}
                   >
                     Ünvan
@@ -534,16 +533,16 @@ const AnnouncementForm = () => {
                 </div>
               </div>
               <div className="accordion">
-                <div className=' accordion-head flex gap-[6px]'>
+                <div className=' accordion-head flex gap-1.5'>
                   <div
-                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 4 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'}`}
+                    className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 4 ? 'bg-primary' : 'bg-[#9CA3AF]'}`}
                   />
                   <li
-                    className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 4
-                      ? 'bg-[#02836F1A] text-[var(--primary-color)]'
+                    className={`transition-colors duration-300 ease-in-out w-full font-medium text-[14px] px-5 py-4 rounded-lg ${formIndex === 4
+                      ? 'bg-[#02836F1A] text-primary'
                       : formIndex > 4
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
+                        ? 'bg-[#02836F1A] text-primary'
+                        : 'bg-white text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
                       }`}
                   >
                     Media
@@ -553,21 +552,21 @@ const AnnouncementForm = () => {
             </ul>
           </div>
 
-          <div className='basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-[100%] flex flex-col justify-between'>
+          <div className='basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-full flex flex-col justify-between'>
             {renderFormContent()}
 
-            <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-[20px] mt-[16px]`}>
+            <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-5 mt-4`}>
               {formIndex === 0 ? (
                 <>
                   <button
                     onClick={handleNextClick}
                     disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-3 rounded-lg py-3 px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-primary text-[white] hover:opacity-90'
                       : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
-                    <span className='font-[500] text-[16px]'>
+                    <span className='font-medium text-[16px]'>
                       {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
                     </span>
                     {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
@@ -578,20 +577,20 @@ const AnnouncementForm = () => {
                   <button
                     onClick={() => changeForm("decrement")}
                     disabled={isValidatingStep}
-                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-3 text-[white] bg-primary rounded-lg py-3 px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-medium text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button
                     onClick={handleConfirmClick}
                     disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`max-[768px]:justify-center cursor-pointer rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                    className={`max-[768px]:justify-center cursor-pointer rounded-lg py-3 px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-primary text-[white] hover:opacity-90'
                       : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
-                    <span className='font-[500] text-[16px]'>
+                    <span className='font-medium text-[16px]'>
                       {isValidatingStep ? 'Yoxlanılır...' : 'Təsdiqlə'}
                     </span>
                   </button>
@@ -601,20 +600,20 @@ const AnnouncementForm = () => {
                   <button
                     onClick={() => changeForm("decrement")}
                     disabled={isValidatingStep}
-                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] text-[white] bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
+                    className='max-[768px]:justify-center cursor-pointer flex items-center gap-3 text-[white] bg-primary rounded-lg py-3 px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
-                    <span className='line-clamp-1 font-[500] text-[16px]'>Geriyə Qayıt</span>
+                    <span className='line-clamp-1 font-medium text-[16px]'>Geriyə Qayıt</span>
                   </button>
                   <button
                     onClick={handleNextClick}
                     disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-[var(--primary-color)] text-[white] hover:opacity-90'
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-3 rounded-lg py-3 px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
+                      ? 'bg-primary text-[white] hover:opacity-90'
                       : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
-                    <span className='font-[500] text-[16px]'>
+                    <span className='font-medium text-[16px]'>
                       {isValidatingStep ? 'Yoxlanılır...' : 'Növbəti'}
                     </span>
                     {!isValidatingStep && <Image src={arrowRightWhite} alt="Arrow Right White" />}
