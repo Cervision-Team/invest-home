@@ -120,7 +120,7 @@ const ADDITIONAL_FILTERS = [
     applicable: ['apartment', 'object', 'office', 'apartmentDaily', 'apartmentRoommate']
   },
   {
-    id: 'repairStatus',
+    id: 'repairStatus', 
     label: 'Təmir vəziyyəti',
     type: 'select',
     options: REPAIR_STATUS,

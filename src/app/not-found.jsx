@@ -24,8 +24,8 @@ export default function NotFound() {
           <button
             className="w-full md:w-auto flex-none
         flex items-center justify-center gap-[12px]
-        bg-[var(--primary-color)] text-white rounded-[8px]
-        py-[14px] px-[34px]
+        bg-primary text-white rounded-[8px]
+        py-3.5 px-[34px]
         cursor-pointer"
           >
             <span className="font-[500] text-[16px]">Əsas səhifəyə qayıt</span>
