@@ -1,10 +1,17 @@
+'use client';
+
+
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MapPin, X } from 'lucide-react'
+import { azeCity, azeDistrict, azeSettlement } from '@/components/core/RealEstateData';
 
 const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors = {}, setStepErrors = () => {}, isValidating = false }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const currentMarkerRef = useRef(null);
+  const googleMapsLoadedRef = useRef(false);
+  const scriptLoadingRef = useRef(false);
+  const loadingPromiseRef = useRef(null);
   
   const [selectedLocation, setSelectedLocation] = useState(formik.values.selectedLocation || '')
   const [selectedCity, setSelectedCity] = useState(formik.values.selectedCity || '')
@@ -28,17 +35,6 @@ const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors
   const [validationErrors, setValidationErrors] = useState({})
   const [isValidatingLocal, setIsValidatingLocal] = useState(false)
 
-  const locations = [
-    { value: 'baku-center', label: 'Bakı - Mərkəz' },
-    { value: 'baku-sabail', label: 'Bakı - Sabail rayonu' },
-    { value: 'baku-nasimi', label: 'Bakı - Nəsimi rayonu' },
-    { value: 'baku-yasamal', label: 'Bakı - Yasamal rayonu' },
-    { value: 'baku-nizami', label: 'Bakı - Nizami rayonu' },
-    { value: 'ganja', label: 'Gəncə' },
-    { value: 'sumgayit', label: 'Sumqayıt' },
-    { value: 'mingachevir', label: 'Mingəçevir' },
-    { value: 'other', label: 'Digər' }
-  ]
 
   // Mock validation function
   const validateLocationStep = async (data) => {
@@ -56,79 +52,79 @@ const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors
   };
 
   // Validate location data whenever form values change
-useEffect(() => {
-  const timeoutId = setTimeout(async () => {
-    if (!isValidating && Object.keys(touched).length === 0) return; // Only validate if touched or explicitly validating
-    if (!formik.values) return;
-    try {
-      setIsValidatingLocal(true);
-      const validationResult = await validateLocationStep({
-        selectedCity: formik.values.selectedCity,
-        selectedDistrict: formik.values.selectedDistrict,
-        selectedSettlement: formik.values.selectedSettlement,
-        selectedAddress: formik.values.selectedAddress,
-        searchQuery: formik.values.searchQuery,
-        latitude: formik.values.latitude,
-        longitude: formik.values.longitude,
-        selectedLocation: formik.values.selectedLocation
-      });
-      if (timeoutId) { // only apply if effect is still current
-        setValidationErrors(validationResult.errors || {});
-        setStepErrors?.(validationResult.errors || {});
-      }
-    } catch (err) { console.error(err); }
-    finally { setIsValidatingLocal(false); }
-  }, 300);
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (!isValidating && Object.keys(touched).length === 0) return;
+      if (!formik.values) return;
+      try {
+        setIsValidatingLocal(true);
+        const validationResult = await validateLocationStep({
+          selectedCity: formik.values.selectedCity,
+          selectedDistrict: formik.values.selectedDistrict,
+          selectedSettlement: formik.values.selectedSettlement,
+          selectedAddress: formik.values.selectedAddress,
+          searchQuery: formik.values.searchQuery,
+          latitude: formik.values.latitude,
+          longitude: formik.values.longitude,
+          selectedLocation: formik.values.selectedLocation
+        });
+        if (timeoutId) {
+          setValidationErrors(validationResult.errors || {});
+          setStepErrors?.(validationResult.errors || {});
+        }
+      } catch (err) { console.error(err); }
+      finally { setIsValidatingLocal(false); }
+    }, 300);
 
-  return () => clearTimeout(timeoutId);
-}, [
-  formik.values.selectedCity,
-  formik.values.selectedDistrict,
-  formik.values.selectedSettlement,
-  formik.values.selectedAddress,
-  formik.values.searchQuery,
-  formik.values.selectedLocation,
-  setStepErrors,
-  touched, isValidating
-]);
+    return () => clearTimeout(timeoutId);
+  }, [
+    formik.values.selectedCity,
+    formik.values.selectedDistrict,
+    formik.values.selectedSettlement,
+    formik.values.selectedAddress,
+    formik.values.searchQuery,
+    formik.values.selectedLocation,
+    setStepErrors,
+    touched, isValidating
+  ]);
 
   // Update formik when local state changes
-useEffect(() => {
-  if (formik.values.selectedCity !== selectedCity) {
-    formik.setFieldValue('selectedCity', selectedCity);
-  }
-}, [selectedCity, formik.values.selectedCity, formik]);
+  useEffect(() => {
+    if (formik.values.selectedCity !== selectedCity) {
+      formik.setFieldValue('selectedCity', selectedCity);
+    }
+  }, [selectedCity, formik.values.selectedCity, formik]);
 
-useEffect(() => {
-  if (formik.values.selectedDistrict !== selectedDistrict) {
-    formik.setFieldValue('selectedDistrict', selectedDistrict);
-  }
-}, [selectedDistrict, formik.values.selectedDistrict, formik]);
+  useEffect(() => {
+    if (formik.values.selectedDistrict !== selectedDistrict) {
+      formik.setFieldValue('selectedDistrict', selectedDistrict);
+    }
+  }, [selectedDistrict, formik.values.selectedDistrict, formik]);
 
-useEffect(() => {
-  if (formik.values.selectedSettlement !== selectedSettlement) {
-    formik.setFieldValue('selectedSettlement', selectedSettlement);
-  }
-}, [selectedSettlement, formik.values.selectedSettlement, formik]);
+  useEffect(() => {
+    if (formik.values.selectedSettlement !== selectedSettlement) {
+      formik.setFieldValue('selectedSettlement', selectedSettlement);
+    }
+  }, [selectedSettlement, formik.values.selectedSettlement, formik]);
 
-useEffect(() => {
-  if (formik.values.selectedAddress !== selectedAddress) {
-    formik.setFieldValue('selectedAddress', selectedAddress);
-  }
-}, [selectedAddress, formik.values.selectedAddress, formik]);
+  useEffect(() => {
+    if (formik.values.selectedAddress !== selectedAddress) {
+      formik.setFieldValue('selectedAddress', selectedAddress);
+    }
+  }, [selectedAddress, formik.values.selectedAddress, formik]);
 
-useEffect(() => {
-  if (formik.values.searchQuery !== searchQuery) {
-    formik.setFieldValue('searchQuery', searchQuery);
-  }
-}, [searchQuery, formik.values.searchQuery, formik]);
+  useEffect(() => {
+    if (formik.values.searchQuery !== searchQuery) {
+      formik.setFieldValue('searchQuery', searchQuery);
+    }
+  }, [searchQuery, formik.values.searchQuery, formik]);
 
-useEffect(() => {
-  if (formik.values.selectedLocation !== selectedLocation) {
-    formik.setFieldValue('selectedLocation', selectedLocation);
-  }
-  setTouched(prev => ({ ...prev, selectedLocation: true })); // Mark as touched when selectedLocation changes
-}, [selectedLocation, formik.values.selectedLocation, formik]);
+  useEffect(() => {
+    if (formik.values.selectedLocation !== selectedLocation) {
+      formik.setFieldValue('selectedLocation', selectedLocation);
+    }
+    setTouched(prev => ({ ...prev, selectedLocation: true }));
+  }, [selectedLocation, formik.values.selectedLocation, formik]);
 
   // Clear all selections
   const clearAllSelections = () => {
@@ -138,20 +134,24 @@ useEffect(() => {
     setSearchResults([])
     setShowSearchResults(false)
     
-    // Update formik values
     formik.setFieldValue('selectedLocation', '');
     formik.setFieldValue('selectedAddress', '');
     formik.setFieldValue('searchQuery', '');
     formik.setFieldValue('latitude', null);
     formik.setFieldValue('longitude', null);
     
-    setTouched({}); // Reset touched state
+    setTouched({});
+    
     // Remove marker from map
-    if (currentMarkerRef.current && mapInstanceRef.current) {
-      mapInstanceRef.current.removeLayer(currentMarkerRef.current);
+    if (currentMarkerRef.current) {
+      currentMarkerRef.current.setMap(null);
       currentMarkerRef.current = null;
-      // Reset map to default Azerbaijan view
-      mapInstanceRef.current.setView([40.1431, 47.5769], 7);
+    }
+    
+    // Reset map to default Azerbaijan view
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setCenter({ lat: 40.1431, lng: 47.5769 });
+      mapInstanceRef.current.setZoom(7);
     }
   };
 
@@ -170,18 +170,15 @@ useEffect(() => {
     setTouched(prev => ({ ...prev, searchQuery: true, selectedAddress: true }));
     setSearchQuery(value);
     
-    // Close other dropdowns when typing
     setIsCityOpen(false)
     setIsDistrictOpen(false)
     setIsSettlementOpen(false)
     
-    // If user clears the input, clear everything
     if (value === '') {
       clearAllSelections();
       return;
     }
     
-    // Clear previous selections when user starts typing
     if (selectedLocation && selectedLocation !== 'custom-address') {
       setSelectedLocation('');
     }
@@ -189,11 +186,9 @@ useEffect(() => {
       setSelectedAddress('');
     }
     
-    // Show dropdown when typing
     setIsOpen(true);
     setShowSearchResults(true);
     
-    // Perform search if query is long enough
     if (value.length >= 3) {
       setIsSearching(true);
       try {
@@ -211,7 +206,6 @@ useEffect(() => {
   };
 
   const searchAddress = async (query) => {
-    // Mock search results for demonstration
     const mockResults = [
       {
         id: 'mock-1',
@@ -228,10 +222,9 @@ useEffect(() => {
     ];
 
     try {
-      // Try direct request first (might work in some environments)
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
         
         const directResponse = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=az&limit=5&addressdetails=1`,
@@ -258,7 +251,6 @@ useEffect(() => {
         console.log('Direct search failed:', directError.message);
       }
       
-      // Try different CORS proxies
       const proxies = [
         `https://cors-anywhere.herokuapp.com/`,
         `https://api.codetabs.com/v1/proxy?quest=`,
@@ -289,7 +281,6 @@ useEffect(() => {
         }
       }
       
-      // Return mock data if all methods fail
       console.log('All search methods failed, returning mock data');
       return mockResults.filter(result => 
         result.label.toLowerCase().includes(query.toLowerCase())
@@ -310,11 +301,9 @@ useEffect(() => {
     setShowSearchResults(false);
     setIsOpen(false);
     
-    // Update formik with coordinates
     formik.setFieldValue('latitude', result.lat);
     formik.setFieldValue('longitude', result.lng);
     
-    // Add marker to map
     addMarkerToMap(result.lat, result.lng, result.label);
   };
 
@@ -322,7 +311,6 @@ useEffect(() => {
   const handleSelect = (value, label) => {
     if (value === 'custom-address') return;
     
-    // Clear search-related state
     setSearchQuery(label);
     setSelectedLocation(value);
     setSelectedAddress('');
@@ -330,33 +318,62 @@ useEffect(() => {
     setShowSearchResults(false);
     setIsOpen(false);
     
-    // Clear coordinates
     formik.setFieldValue('latitude', null);
     formik.setFieldValue('longitude', null);
     
-    // Remove marker and reset map view
-    if (currentMarkerRef.current && mapInstanceRef.current) {
-      mapInstanceRef.current.removeLayer(currentMarkerRef.current);
+    if (currentMarkerRef.current) {
+      currentMarkerRef.current.setMap(null);
       currentMarkerRef.current = null;
-      mapInstanceRef.current.setView([40.1431, 47.5769], 7);
+    }
+    
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setCenter({ lat: 40.1431, lng: 47.5769 });
+      mapInstanceRef.current.setZoom(7);
     }
   }
 
   // Add marker to map helper function
   const addMarkerToMap = (lat, lng, address = null) => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !window.google) return;
     
     // Remove existing marker
     if (currentMarkerRef.current) {
-      mapInstanceRef.current.removeLayer(currentMarkerRef.current);
+      currentMarkerRef.current.setMap(null);
     }
     
-    // Add new marker
-    const marker = window.L.marker([lat, lng]).addTo(mapInstanceRef.current);
+    // Create new draggable marker
+    const marker = new window.google.maps.Marker({
+      position: { lat, lng },
+      map: mapInstanceRef.current,
+      draggable: true,
+      animation: window.google.maps.Animation.DROP
+    });
+    
+    // Add drag end listener
+    marker.addListener('dragend', async (event) => {
+      const newLat = event.latLng.lat();
+      const newLng = event.latLng.lng();
+      
+      // Update coordinates in formik
+      formik.setFieldValue('latitude', newLat);
+      formik.setFieldValue('longitude', newLng);
+      
+      // Get new address
+      try {
+        const newAddress = await getAddressFromCoords(newLat, newLng);
+        setSelectedAddress(newAddress);
+        setSearchQuery(newAddress);
+        setSelectedLocation('custom-address');
+      } catch (error) {
+        console.error('Failed to get address:', error);
+      }
+    });
+    
     currentMarkerRef.current = marker;
     
     // Pan to location
-    mapInstanceRef.current.setView([lat, lng], 13);
+    mapInstanceRef.current.panTo({ lat, lng });
+    mapInstanceRef.current.setZoom(15);
     
     // Update address and coordinates if provided
     if (address) {
@@ -372,30 +389,35 @@ useEffect(() => {
   const panMap = useCallback((direction) => {
     if (!mapInstanceRef.current) return;
 
-    const panPixels = 100; // how many pixels to pan per click
-    let offset = [0, 0];
+    const currentCenter = mapInstanceRef.current.getCenter();
+    const currentZoom = mapInstanceRef.current.getZoom();
+    
+    // Calculate pan distance based on zoom level
+    const panAmount = 0.05 / Math.pow(2, currentZoom - 7);
+    
+    let newLat = currentCenter.lat();
+    let newLng = currentCenter.lng();
 
     switch (direction) {
       case "north":
-        offset = [0, -panPixels];
+        newLat += panAmount;
         break;
       case "south":
-        offset = [0, panPixels];
+        newLat -= panAmount;
         break;
       case "east":
-        offset = [panPixels, 0];
+        newLng += panAmount;
         break;
       case "west":
-        offset = [-panPixels, 0];
+        newLng -= panAmount;
         break;
     }
 
-    mapInstanceRef.current.panBy(offset, { animate: true });
+    mapInstanceRef.current.panTo({ lat: newLat, lng: newLng });
   }, []);
 
   // Get address from coordinates
   const getAddressFromCoords = async (lat, lng) => {
-    // Generate a reasonable mock address based on coordinates
     const generateMockAddress = (lat, lng) => {
       const streets = ['Nizami', 'Həsən bəy Zərdabi', 'Təbriz', 'Azadlıq', 'Füzuli', 'Nəsimi', 'Atatürk'];
       const districts = ['Nəsimi rayonu', 'Yasamal rayonu', 'Nizami rayonu', 'Səbail rayonu'];
@@ -408,7 +430,6 @@ useEffect(() => {
     };
 
     try {
-      // Try direct request first with timeout
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -433,7 +454,6 @@ useEffect(() => {
         console.log('Direct reverse geocoding failed:', directError.message);
       }
       
-      // Try different CORS proxies
       const proxies = [
         `https://cors-anywhere.herokuapp.com/`,
         `https://api.codetabs.com/v1/proxy?quest=`,
@@ -459,7 +479,6 @@ useEffect(() => {
         }
       }
       
-      // Return mock address if all methods fail
       console.log('All reverse geocoding methods failed, generating mock address');
       return generateMockAddress(lat, lng);
       
@@ -468,67 +487,126 @@ useEffect(() => {
       return generateMockAddress(lat, lng);
     }
   };
-
-  // Initialize map
+// Initialize Google Maps
   useEffect(() => {
     let isMounted = true;
+    let checkInterval;
+
+    const waitForGoogleMaps = () => {
+      return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 10 seconds total (100 * 100ms)
+        
+        checkInterval = setInterval(() => {
+          attempts++;
+          
+          if (window.google?.maps?.Map) {
+            clearInterval(checkInterval);
+            console.log("Google Maps fully initialized!");
+            resolve();
+          } else if (attempts >= maxAttempts) {
+            clearInterval(checkInterval);
+            reject(new Error("Google Maps failed to load after 10 seconds"));
+          }
+        }, 100);
+      });
+    };
+
+    const loadGoogleMapsScript = () => {
+      // If already loading, return existing promise
+      if (scriptLoadingRef.current && loadingPromiseRef.current) {
+        console.log("Script already loading, returning existing promise...");
+        return loadingPromiseRef.current;
+      }
+
+      // If already loaded, return resolved promise
+      if (window.google?.maps?.Map) {
+        console.log("Google Maps already loaded!");
+        return Promise.resolve();
+      }
+
+      scriptLoadingRef.current = true;
+
+      loadingPromiseRef.current = new Promise((resolve, reject) => {
+        // Check if script already exists (check more broadly)
+        const existingScript = document.querySelector('script[src*="maps.googleapis"]');
+        if (existingScript) {
+          // Script exists, wait for it to load
+          waitForGoogleMaps()
+            .then(() => {
+              scriptLoadingRef.current = false;
+              resolve();
+            })
+            .catch((err) => {
+              scriptLoadingRef.current = false;
+              reject(err);
+            });
+          return;
+        }
+
+        // Validate API key exists
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+          scriptLoadingRef.current = false;
+          reject(new Error("Google Maps API key is missing. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY"));
+          return;
+        }
+
+        
+        // Create new script with loading=async
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+        script.async = true;
+        
+        script.onload = () => {
+          waitForGoogleMaps()
+            .then(() => {
+              scriptLoadingRef.current = false;
+              resolve();
+            })
+            .catch((err) => {
+              scriptLoadingRef.current = false;
+              reject(err);
+            });
+        };
+        
+        script.onerror = () => {
+          scriptLoadingRef.current = false;
+          reject(new Error("Failed to load Google Maps script"));
+        };
+        
+        document.head.appendChild(script);
+      });
+
+      return loadingPromiseRef.current;
+    };
 
     const initMap = async () => {
       try {
-        // Load Leaflet CSS if not already loaded
-        if (!document.querySelector('link[href*="leaflet.css"]')) {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-          link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-          link.crossOrigin = '';
-          document.head.appendChild(link);
-        }
+        if (!isMounted || !mapRef.current || mapInstanceRef.current) return;
 
-        // Load Leaflet script dynamically
-        let L;
-        if (!window.L) {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-            script.crossOrigin = '';
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-          });
+        // Load script (returns existing promise if already loading)
+        if (!googleMapsLoadedRef.current) {
+          await loadGoogleMapsScript();
+          googleMapsLoadedRef.current = true;
         }
-        L = window.L;
         
         if (!isMounted || !mapRef.current || mapInstanceRef.current) return;
 
-        // Create map with specific dimensions
-        const map = L.map(mapRef.current, {
-          center: [40.1431, 47.5769], // Baku, Azerbaijan
+        // Final check
+        if (!window.google?.maps?.Map) {
+          throw new Error("Google Maps API not available");
+        }
+
+
+        // Create map
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: { lat: 40.1431, lng: 47.5769 },
           zoom: 7,
-          zoomControl: true,
-          minZoom: 6,
-          maxZoom: 18,
-          preferCanvas: true
         });
-        
-        // Add tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap',
-          maxZoom: 18,
-          minZoom: 6
-        }).addTo(map);
-
-        // Set bounds to Azerbaijan
-        const azerbaijanBounds = L.latLngBounds(
-          L.latLng(38.3929, 44.7939), // Southwest
-          L.latLng(41.9555, 50.3928)  // Northeast
-        );
-        map.setMaxBounds(azerbaijanBounds);
-
-        // Add click handler to get address
-        map.on('click', async (e) => {
-          const { lat, lng } = e.latlng;
+                map.addListener('click', async (event) => {
+          const lat = event.latLng.lat();
+          const lng = event.latLng.lng();
           
           try {
             const address = await getAddressFromCoords(lat, lng);
@@ -546,7 +624,8 @@ useEffect(() => {
         }
         
       } catch (error) {
-        console.error('Failed to initialize map:', error);
+        console.error('Failed to initialize map:', error); 
+        googleMapsLoadedRef.current = false;
       }
     };
 
@@ -554,11 +633,11 @@ useEffect(() => {
 
     return () => {
       isMounted = false;
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
+      if (currentMarkerRef.current) {
+        currentMarkerRef.current.setMap(null);
+        currentMarkerRef.current = null;
       }
-      currentMarkerRef.current = null;
+      mapInstanceRef.current = null;
     };
   }, []);
 
@@ -566,7 +645,6 @@ useEffect(() => {
     setSelectedCity(value)
     setIsCityOpen(false)
     setTouched(prev => ({ ...prev, selectedCity: true }));
-    // Close other dropdowns
     setIsDistrictOpen(false)
     setIsSettlementOpen(false)
     setIsOpen(false)
@@ -576,7 +654,6 @@ useEffect(() => {
     setSelectedDistrict(value)
     setIsDistrictOpen(false)
     setTouched(prev => ({ ...prev, selectedDistrict: true }));
-    // Close other dropdowns
     setIsCityOpen(false)
     setIsSettlementOpen(false)
     setIsOpen(false)
@@ -586,13 +663,11 @@ useEffect(() => {
     setSelectedSettlement(value)
     setIsSettlementOpen(false)
     setTouched(prev => ({ ...prev, selectedSettlement: true }));
-    // Close other dropdowns
     setIsCityOpen(false)
     setIsDistrictOpen(false)
     setIsOpen(false)
   }
 
-  // Get the display value for the input
   const getInputDisplayValue = () => {
     if (selectedLocation === 'custom-address' && selectedAddress) {
       return selectedAddress;
@@ -600,19 +675,10 @@ useEffect(() => {
     return searchQuery;
   };
 
-  // Get placeholder text
-  const getPlaceholderText = () => {
-    if (selectedLocation && selectedLocation !== 'custom-address') {
-      const found = locations.find(loc => loc.value === selectedLocation);
-      return found?.label || 'Ünvan axtarın və ya xəritədən seçin...';
-    }
-    return 'Ünvan axtarın və ya xəritədən seçin...';
-  };
 
-  // Error display component
   const ErrorMessage = ({ error, fieldName }) => {
     const displayError = validationErrors[fieldName] || stepErrors?.[fieldName] || error;
-    if (!touched[fieldName]) return null; // Only show error if field has been touched
+    if (!touched[fieldName]) return null;
     if (!displayError) return null;
     
     return (
@@ -622,9 +688,9 @@ useEffect(() => {
     );
   };
 
-  const selectedCityLabel = locations.find(loc => loc.value === selectedCity)?.label || 'Şəhər seçin'
-  const selectedDistrictLabel = locations.find(loc => loc.value === selectedDistrict)?.label || 'Rayon seçin'
-  const selectedSettlementLabel = locations.find(loc => loc.value === selectedSettlement)?.label || 'Qəsəbə seçin'
+  const selectedCityLabel = azeCity.find(loc => loc.value === selectedCity)?.label || 'Şəhər seçin'
+  const selectedDistrictLabel = azeDistrict.find(loc => loc.value === selectedDistrict)?.label || 'Rayon seçin'
+  const selectedSettlementLabel = azeSettlement.find(loc => loc.value === selectedSettlement)?.label || 'Qəsəbə seçin'
 
   return (
     <div className="w-full h-full pb-4 border-b border-gray-300 flex items-start justify-start max-h-[500px] overflow-y-auto">
@@ -642,7 +708,7 @@ useEffect(() => {
                 Şəhər
               </h6>
 
-              <div className="relative w-full">
+              <div className="relative w-full ">
                 <button
                   type="button"
                   onClick={() => {
@@ -667,13 +733,13 @@ useEffect(() => {
                 <ErrorMessage fieldName="selectedCity" />
                 
                 {isCityOpen && (
-                  <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto">
-                    {locations.map((location) => (
+                  <div className="absolute z-9999 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom ">
+                    {azeCity.map((location) => (
                       <button
                         key={location.value}
                         type="button"
                         onClick={() => handleSelectCity(location.value, location.label)}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0 "
                       >
                         <span className="text-gray-900 font-medium">{location.label}</span>
                       </button>
@@ -714,8 +780,8 @@ useEffect(() => {
                 <ErrorMessage fieldName="selectedDistrict" />
                 
                 {isDistrictOpen && (
-                  <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto">
-                    {locations.map((location) => (
+                  <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom">
+                    {azeDistrict.map((location) => (
                       <button
                         key={location.value}
                         type="button"
@@ -761,8 +827,8 @@ useEffect(() => {
                 <ErrorMessage fieldName="selectedSettlement" />
                 
                 {isSettlementOpen && (
-                  <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto">
-                    {locations.map((location) => (
+                  <div className="absolute z-9999 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom ">
+                    {azeSettlement.map((location) => (
                       <button
                         key={location.value}
                         type="button"
@@ -797,7 +863,6 @@ useEffect(() => {
                   }
                 }}
                 onBlur={(e) => {
-                  // Delay closing to allow clicks on dropdown items
                   setTimeout(() => {
                     if (e.currentTarget && !e.currentTarget.contains(document.activeElement)) {
                       setIsOpen(false);
@@ -805,7 +870,7 @@ useEffect(() => {
                     }
                   }, 150);
                 }}
-                placeholder={getPlaceholderText()}
+                placeholder={"Ünvan axtarın və ya xəritədən seçin..."}
                 className={`w-full px-3 py-2 bg-white border rounded-lg shadow-sm transition-all duration-200 hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] pr-10 ${
                   (validationErrors.selectedAddress || stepErrors?.selectedAddress) && touched.selectedAddress
                     ? 'border-red-500'
@@ -813,7 +878,6 @@ useEffect(() => {
                 }`}
               />
               
-              {/* Clear button */}
               {(searchQuery || selectedAddress) && (
                 <button
                   type="button"
@@ -826,10 +890,8 @@ useEffect(() => {
               
               <ErrorMessage fieldName="selectedAddress" />
               
-              {/* Search Results Dropdown */}
               {isOpen && (
                 <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto">
-                  {/* Show loading state */}
                   {isSearching && showSearchResults && (
                     <div className="px-4 py-3 text-center text-gray-500">
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mx-auto mb-2"></div>
@@ -837,7 +899,6 @@ useEffect(() => {
                     </div>
                   )}
                   
-                  {/* Show search results */}
                   {searchResults.length > 0 && showSearchResults && !isSearching && (
                     <>
                       <div className="px-4 py-2 text-sm text-gray-500 border-b border-gray-100">
@@ -857,14 +918,12 @@ useEffect(() => {
                     </>
                   )}
                   
-                  {/* Show no results message */}
                   {searchQuery && searchQuery.length >= 3 && searchResults.length === 0 && !isSearching && showSearchResults && (
                     <div className="px-4 py-3 text-center text-gray-500">
                       "{searchQuery}" üçün heç bir nəticə tapılmadı
                     </div>
                   )}
                   
-                  {/* Show hint when dropdown is open but no search query */}
                   {isOpen && !searchQuery && searchResults.length === 0 && !showSearchResults && (
                     <div className="px-4 py-3 text-center text-gray-500 text-sm">
                       Ünvan axtarmaq üçün yazmağa başlayın...
@@ -876,80 +935,32 @@ useEffect(() => {
           </div>
 
           {/* Map Section */}
-          <div className='flex flex-col items-start justify-center gap-3 w-full'>
-            <h6 className='text-black text-xl font-medium'>
-              Xəritədə seçin
-            </h6>
-            <p className='text-gray-600 text-sm'>
-              Dəqiq ünvan üçün xəritədə istədiyiniz yeri klikləyin və ya sağ tərəfdəki idarəetmə düymələrindən istifadə edin
-            </p>
-            
-            <div className="relative w-full max-w-2xl" style={{ height: '250px' }}>
-              {!mapLoaded && (
-                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg border">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent mx-auto mb-2"></div>
-                    <p className="text-gray-600 text-sm">Xəritə yüklənir...</p>
-                  </div>
-                </div>
-              )}
-              
-              {/* Navigation Controls */}
-              {mapLoaded && (
-                <div 
-                  className="absolute top-2 right-2 bg-white rounded-lg shadow-lg border border-gray-200"
-                  style={{ zIndex: 1000 }}
-                >
-                  <button
-                    onClick={() => panMap('north')}
-                    className="block p-2 hover:bg-gray-100 transition-colors border-b border-gray-200 rounded-t-lg"
-                    title="North"
-                    type="button"
-                  >
-                    <ChevronUp className="w-4 h-4 text-gray-700" />
-                  </button>
-                  
-                  <div className="flex">
-                    <button
-                      onClick={() => panMap('west')}
-                      className="p-2 hover:bg-gray-100 transition-colors border-r border-gray-200"
-                      title="West"
-                      type="button"
-                    >
-                      <ChevronLeft className="w-4 h-4 text-gray-700" />
-                    </button>
-                    <button
-                      onClick={() => panMap('east')}
-                      className="p-2 hover:bg-gray-100 transition-colors"
-                      title="East"
-                      type="button"
-                    >
-                      <ChevronRight className="w-4 h-4 text-gray-700" />
-                    </button>
-                  </div>
-                  
-                  <button
-                    onClick={() => panMap('south')}
-                    className="block p-2 hover:bg-gray-100 transition-colors border-t border-gray-200 rounded-b-lg"
-                    title="South"
-                    type="button"
-                  >
-                    <ChevronDown className="w-4 h-4 text-gray-700" />
-                  </button>
-                </div>
-              )}
-              
-              <div 
-                ref={mapRef} 
-                className="w-full h-full rounded-lg border border-gray-300"
-                style={{ 
-                  background: '#e5e7eb'
-                }}
-              />
-            </div>
-          </div>
+<div className="flex flex-col items-start justify-center gap-3 w-full">
+  <h6 className="text-black text-xl font-medium">Xəritədə seçin</h6>
+  <p className="text-gray-600 text-sm">
+    Dəqiq ünvan üçün xəritədə istədiyiniz yeri klikləyin. Markeri sürükləyərək yerini dəyişə bilərsiniz.
+  </p>
 
-          {/* Validation Summary */}
+  <div className="relative w-full max-w-2xl" style={{ height: '400px' }}>
+    {/* Loading Overlay */}
+    {!mapLoaded && (
+      <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg border z-10">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent mx-auto mb-2"></div>
+          <p className="text-gray-600 text-sm">Xəritə yüklənir...</p>
+        </div>
+      </div>
+    )}
+
+    {/* Map Container */}
+    <div
+      ref={mapRef}
+      className="w-full h-full rounded-lg border border-gray-300"
+      style={{ background: '#e5e7eb' }}
+    />
+  </div>
+</div>
+
           {(isValidatingLocal || isValidating) && (
             <div className="flex items-center gap-2 text-blue-600 text-sm">
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
@@ -957,7 +968,6 @@ useEffect(() => {
             </div>
           )}
           
-          {/* General validation error */}
           {(validationErrors.general || stepErrors?.general) && (
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
               <span>{validationErrors.general || stepErrors.general}</span>

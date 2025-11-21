@@ -24,6 +24,8 @@ import {
 } from "@/components/core/RealEstateData";
 import { Button } from "../Buttons/ProfileButtons";
 import Search from "../Search";
+import EditPropertyModal from "../EditPropertyModal";
+import AddPropertyModal from "../AddPropertyModal";
 
 export default function DataTable() {
   const [data, setData] = useState(RealEstateData);
@@ -41,6 +43,7 @@ export default function DataTable() {
     Object.fromEntries(columnHeaders.map((col) => [col.key, ""]))
   );
   const [openMenu, setOpenMenu] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const menuRefs = useRef({});
 
   // Click outside menu & filter close
@@ -1037,6 +1040,71 @@ export default function DataTable() {
     setShowSuccess(true);
   };
 
+// const handleEditSave = async (updatedData) => {
+//   try {
+//     // Make API call to update database
+//     const response = await fetch(`/api/properties/update/${editRow.elan_id}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(updatedData),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error('Failed to update property');
+//     }
+
+//     const result = await response.json();
+    
+//     // Update local state with new data
+//     setData((prev) =>
+//       prev.map((d) => (d.elan_id === editRow.elan_id ? { ...d, ...updatedData } : d))
+//     );
+    
+//     setEditRow(null);
+//     setSuccessMessage("Dəyişikliklər uğurla yadda saxlanıldı.");
+//     setShowSuccess(true);
+    
+//   } catch (error) {
+//     console.error('Error updating property:', error);
+//     alert('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
+//   }
+// };
+
+const handleAddProperty = async (newData) => {
+  try {
+    // 1. Send new property to your backend
+    const response = await fetch(`/api/properties/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create property");
+    }
+
+    const result = await response.json();
+
+    // 2. Add new property to local table state
+    setData((prev) => [...prev, result]);
+
+    // 3. Close modal
+    setAddModal(false);
+
+    // 4. Show success message
+    setSuccessMessage("Əmlak uğurla əlavə olundu.");
+    setShowSuccess(true);
+
+  } catch (error) {
+    console.error("Error creating property:", error);
+    alert("Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
+  }
+};
+
   const handleDeleteSelected = () => {
     setData((prev) => prev.filter((d) => !selected[d.elan_id]));
     setSelected({});
@@ -1248,50 +1316,13 @@ export default function DataTable() {
       </div>
 
       {/* Edit Modal */}
-      {editRow && (
-        <ModalLayout onClose={() => setEditRow(null)}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {columnHeaders.map((col) => (
-              <div key={col.key} className="flex flex-col">
-                <label className="text-sm font-medium text-gray-700 mb-1">
-                  {col.label}:
-                </label>
-                <input
-                  value={editRow[col.key]}
-                  disabled={["photo", "elan_id", "application_date"].includes(
-                    col.key
-                  )}
-                  onChange={(e) =>
-                    setEditRow({
-                      ...editRow,
-                      [col.key]: ["price", "area", "room", "floor"].includes(
-                        col.key
-                      )
-                        ? +e.target.value
-                        : e.target.value,
-                    })
-                  }
-                  className="border border-gray-300 focus:border-primary rounded-[8px] focus:ring-1 focus:ring-primary px-3 py-2 outline-none text-sm transition"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-end gap-3 mt-8">
-            <button
-              onClick={() => setEditRow(null)}
-              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:text-red-700 hover:border-red-500 transition"
-            >
-              Ləğv et
-            </button>
-            <button
-              onClick={handleEditSave}
-              className="px-6 py-3 text-sm bg-primary text-white rounded-[8px] cursor-pointer hover:bg-primary/90 transition"
-            >
-              Yadda saxla
-            </button>
-          </div>
-        </ModalLayout>
-      )}
+{editRow && (
+  <EditPropertyModal
+    editRow={editRow}
+    onClose={() => setEditRow(null)}
+    onSave={handleEditSave}
+  />
+)}
 
       {/* Delete Modal */}
       {deleteModal && (
@@ -1318,55 +1349,11 @@ export default function DataTable() {
 
       {/* Add Modal */}
       {addModal && (
-        <ModalLayout onClose={() => setAddModal(false)}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {columnHeaders.map((col) => (
-              <label
-                key={col.key}
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                {col.label}:
-                <input
-                  value={newRow[col.key]}
-                  onChange={(e) =>
-                    setNewRow({
-                      ...newRow,
-                      [col.key]: ["price", "area", "room", "floor"].includes(
-                        col.key
-                      )
-                        ? +e.target.value
-                        : e.target.value,
-                    })
-                  }
-                  required
-                  className="border rounded-[8px] w-full mt-1 border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-lg px-3 py-2 outline-none text-sm transition"
-                />
-              </label>
-            ))}
-          </div>
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              onClick={() => setAddModal(false)}
-              className="px-6 py-3 text-sm border border-gray-300 cursor-pointer rounded-[8px] text-gray-700 hover:text-red-700 hover:border-red-500 transition"
-            >
-              Ləğv et
-            </button>
-            <button
-              onClick={handleAddRow}
-              disabled={
-                !Object.values(newRow).every((v) => v !== "" && v !== null)
-              }
-              className={`px-6 py-3 text-sm text-white rounded-[8px] ${
-                Object.values(newRow).every((v) => v !== "" && v !== null)
-                  ? "bg-primary hover:bg-primary/90 cursor-pointer"
-                  : "bg-gray-400 cursor-not-allowed"
-              } transition`}
-            >
-              Əlavə et
-            </button>
-          </div>
-        </ModalLayout>
-      )}
+  <AddPropertyModal
+    onClose={() => setAddModal(false)}
+    onSave={handleAddProperty}
+  />
+)}
 
       {showSuccess && (
         <div

@@ -145,7 +145,7 @@ useEffect(() => {
   setIsMortgaged(prev =>
     prev === !!isMortgaged ? prev : !!isMortgaged
   );
-}, [formik.values]);   // depend on the single object, not every field
+}, [formik.values]);
 
   const shouldShowField = useCallback((fieldName) => {
     switch (fieldName) {
@@ -254,8 +254,8 @@ useEffect(() => {
 
       <div className='flex flex-col justify-center gap-[30px] h-full border-b-[1px] border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
         <div className='flex flex-col gap-[30px]'>
-          <h5 className='text-[#000] text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
-          <h6 className='text-[#000] text-[20px]/[24px]'>Əmlak növü</h6>
+          <h5 className='text-black text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
+          <h6 className='text-black text-[20px]/[24px]'>Əmlak növü</h6>
           {hasError('propertyType') && <p className="error-text">{getErrorMessage('propertyType')}</p>}
         </div>
         <form className='mb-[23px]'>
