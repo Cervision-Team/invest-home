@@ -1,7 +1,6 @@
 import axios from "../axiosInstance";
 
-
-export const getUser = async (id) => {
+export const getUser = async () => {
 	try {
 		const res = axios.get(`/user`);
 		return res;
