@@ -32,10 +32,10 @@ const OTPPage = () => {
 
     try {
       
-      const response = await verifyOTP(values.join(""));
+      const res = await verifyOTP(values.join(""));
       console.log("bls");
       
-      const token = response.token;
+      const token = res.token;
 
       if (token) {
         localStorage.setItem("access-token", token);

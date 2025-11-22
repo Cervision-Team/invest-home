@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { getAccessControl, upadteAccessControl } from "@/services/api/endpoints/accessControlService";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
+import { ToastContainer, toast } from "react-toastify";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
     const [matrix, setMatrix] = useState({});
-    const {fetchMenuPermission} = useMenuPermission();
+    const { fetchMenuPermission } = useMenuPermission();
 
     useEffect(() => {
         (async () => {
@@ -34,18 +35,22 @@ const AccessControl = () => {
     };
 
     const handleSubmit = async () => {
-        const payload = access
-            .filter((a) => a.original || (!a.original && a.hasPermission))
-            .map((a) => ({
-                roleId: a.roleId,
-                claimId: a.claimId,
-                hasPermission: a.hasPermission,
-            }));
+        try {
+            const payload = access
+                .filter((a) => a.original || (!a.original && a.hasPermission))
+                .map((a) => ({
+                    roleId: a.roleId,
+                    claimId: a.claimId,
+                    hasPermission: a.hasPermission,
+                }));
+            const res = await upadteAccessControl(payload)
+            fetchMenuPermission();
+            toast.success(res.data)
+        } catch (err) {
+            console.log(err);
+        }
 
-        await upadteAccessControl(payload)
-         fetchMenuPermission();
-         console.log("yadda saxlan");
-         
+
 
     };
 
@@ -63,9 +68,10 @@ const AccessControl = () => {
         matrix?.claims?.slice()?.sort((a, b) => a.name.localeCompare(b.name)) || []
     );
 
+
     return (
         <section className="w-full">
-
+            <ToastContainer />
             <table className="w-full">
                 <thead>
                     <tr>
