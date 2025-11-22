@@ -1001,7 +1001,7 @@ export default function DataTable() {
         onSelect={onSelect}
       />
     ),
-    property_type: ({onClose }) => (
+    propertyType: ({onClose }) => (
       <PropertypeFilterDropdown
         columnKey="propertyType"
         groups={[
