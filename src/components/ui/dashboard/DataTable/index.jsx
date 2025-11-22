@@ -1001,7 +1001,7 @@ export default function DataTable() {
         onSelect={onSelect}
       />
     ),
-    propertyType: ({ onSelect, onClose }) => (
+    property_type: ({onClose }) => (
       <PropertypeFilterDropdown
         columnKey="propertyType"
         groups={[
@@ -1210,15 +1210,15 @@ const handleAddProperty = async (newData) => {
                           handleHeaderFilterClick(header.column.id)
                         }
                         xmlns="http://www.w3.org/2000/svg"
-                        width="20"
+                        max-width="20"
                         className={`
                       ${header.id === "select" ? "hidden" : ""}
                       ${header.id === "actions" ? "hidden" : ""}
                      ${
                        filterDropdowns[header.column.id] &&
                        filterColumn === header.column.id
-                         ? "bg-gray-300 rounded-full"
-                         : ""
+                         ? "bg-gray-300 rounded-full cursor-pointer"
+                         : "rounded-full hover:bg-gray-200 cursor-pointer"
                      }
                     `}
                         height="20"
