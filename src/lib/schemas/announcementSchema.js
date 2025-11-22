@@ -306,28 +306,13 @@ export const roommateAnncDetailsSchema = Yup.object().shape({
 // Step 3 - Location (formerly Step 4)
 export const locationValidationSchema = Yup.object({
   selectedCity: Yup.string()
-    .required('Şəhər seçilməlidir')
-    .oneOf([
-      'baku-center', 'baku-sabail', 'baku-nasimi', 
-      'baku-yasamal', 'baku-nizami', 'ganja', 
-      'sumgayit', 'mingachevir', 'other'
-    ], 'Etibarlı şəhər seçin'),
+    .required('Şəhər seçilməlidir'),
 
   selectedDistrict: Yup.string()
-    .required('Rayon seçilməlidir')
-    .oneOf([
-      'baku-center', 'baku-sabail', 'baku-nasimi', 
-      'baku-yasamal', 'baku-nizami', 'ganja', 
-      'sumgayit', 'mingachevir', 'other'
-    ], 'Etibarlı rayon seçin'),
+    .required('Rayon seçilməlidir'),
 
   selectedSettlement: Yup.string()
-    .required('Qəsəbə seçilməlidir')
-    .oneOf([
-      'baku-center', 'baku-sabail', 'baku-nasimi', 
-      'baku-yasamal', 'baku-nizami', 'ganja', 
-      'sumgayit', 'mingachevir', 'other'
-    ], 'Etibarlı qəsəbə seçin'),
+    .required('Qəsəbə seçilməlidir'),
 
   selectedAddress: Yup.string()
     .required('Ünvan daxil edilməlidir')
@@ -336,23 +321,8 @@ export const locationValidationSchema = Yup.object({
   searchQuery: Yup.string()
     .max(100, 'Axtarış sorğusu 100 simvoldan çox ola bilməz'),
 
-  latitude: Yup.number()
-    .when('selectedAddress', {
-      is: (value) => value && value.length > 0,
-      then: (schema) => schema
-        .min(38.3929, 'Koordinat Azərbaycan ərazisində olmalıdır')
-        .max(41.9555, 'Koordinat Azərbaycan ərazisində olmalıdır'),
-      otherwise: (schema) => schema.nullable()
-    }),
-
-  longitude: Yup.number()
-    .when('selectedAddress', {
-      is: (value) => value && value.length > 0,
-      then: (schema) => schema
-        .min(44.7939, 'Koordinat Azərbaycan ərazisində olmalıdır')
-        .max(50.3928, 'Koordinat Azərbaycan ərazisində olmalıdır'),
-      otherwise: (schema) => schema.nullable()
-    })
+  latitude: Yup.number().nullable(),
+  longitude: Yup.number().nullable()
 });
 
 // Step 4 - Media (formerly Step 5)
@@ -442,8 +412,9 @@ export const validateStep = async (step, formValues) => {
     );
 
     await schema.validate(filteredValues, { abortEarly: false });
-
     return { isValid: true, errors: {} };
+
+    
   } catch (error) {
     const errors = {};
     if (error.inner) {
