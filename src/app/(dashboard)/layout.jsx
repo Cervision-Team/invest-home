@@ -7,6 +7,7 @@ import Header from "@/components/common/Header/Header";
 import Sidebar from "@/components/common/Sidebar/Sidebar";
 // import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
+import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
 
 
 // ✅ Pass only serializable values (strings, not functions)
@@ -25,19 +26,21 @@ export default function Layout({ children }) {
 
   return (
     // <ProtectedRoute>
-    <LangProvider>
-      <main className="bg-white">
-        <ContactHeader />
-        <Header />
-        <div className="flex mt-10 mx-20 gap-6">
-          <Sidebar variant="dashboard" />
-          {children}
-        </div>
-        <TabBar />
-        <Footer />
-        <SubFooter />
-      </main>
-    </LangProvider>
+    <MenuPermissionProvider>
+      <LangProvider>
+        <main className="bg-white">
+          <ContactHeader />
+          <Header />
+          <div className="flex mt-10 mx-20 gap-6">
+            <Sidebar variant="dashboard" />
+            {children}
+          </div>
+          <TabBar />
+          <Footer />
+          <SubFooter />
+        </main>
+      </LangProvider>
+    </MenuPermissionProvider>
     // </ProtectedRoute>
   );
 }

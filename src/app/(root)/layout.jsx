@@ -4,20 +4,22 @@ import TabBar from "@/components/common/Footer/TabBar";
 import ContactHeader from "@/components/common/Header/ContactHeader";
 import Header from "@/components/common/Header/Header";
 import { LangProvider } from "@/context/LangContext";
+import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
 
 export default function Layout({ children }) {
-    
+
     return (
         <LangProvider>
-            <main>
-                <ContactHeader />
-                <Header />
-                {children}
-                <TabBar />
-                <Footer />
-                <SubFooter />
-               
-            </main>
+            <MenuPermissionProvider>
+                <main>
+                    <ContactHeader />
+                    <Header />
+                    {children}
+                    <TabBar />
+                    <Footer />
+                    <SubFooter />
+                </main>
+            </MenuPermissionProvider>
         </LangProvider >
     )
 }
