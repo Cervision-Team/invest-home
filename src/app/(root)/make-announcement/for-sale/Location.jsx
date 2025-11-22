@@ -942,7 +942,6 @@ const Location = ({ formik, stepErrors = {}, setStepErrors = () => {}, isValidat
   </p>
 
   <div className="relative w-full" style={{ height: '400px' }}>
-    {/* Loading Overlay */}
     {!mapLoaded && (
       <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg border z-10">
         <div className="text-center">
