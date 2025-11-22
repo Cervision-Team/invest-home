@@ -12,7 +12,6 @@ import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
 import { Suspense } from "react";
 import RecentHousesSkeleton from "@/components/ui/skeleton/RecentHousesSkeleton";
 import OpenOffice from "./Home/OpenOffice";
-import WhoAreWe from "./Home/WhoAreWe";
 
 
 export default function Home() {
@@ -42,10 +41,9 @@ export default function Home() {
       <Neighborhoods />
       <Services />
       <BeAgent />
-      {/* <div className="mt-[124px]">
+      <div className="mt-[124px]">
       <OpenOffice />
-      </div> */}
-      <WhoAreWe />
+      </div>
       
       <div className="max-[431px]:hidden">
         <Agents />

@@ -38,7 +38,7 @@ const Header = () => {
       <section className="sticky z-998 top-0 bg-white">
         <div className="max-w-[1600px] w-auto mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]">
           <div className="flex justify-between items-center py-[10px]">
-            <div className="max-[431px]:w-[100%] h-full flex max-[930px]:justify-between justify-center items-center max-[1020px]:gap-[8px] gap-[34px]">
+            <div className="max-[431px]:w-[100%] h-full flex max-[930px]:justify-between justify-center items-center gap-[34px] max-[1327px]:gap-[0px] max-[1020px]:gap-[8px]">
               <Link className="" href="/">
                 <div className="w-auto h-full flex justify-center items-center gap-[15px] max-[431px]:gap-[7px]">
                   {isMobile ?
@@ -101,7 +101,7 @@ const Header = () => {
               </div>
             </div>
 
-            <div className="max-[431px]:hidden flex gap-[24px] items-center">
+            <div className="max-[431px]:hidden flex gap-[24px] max-[1327px]:gap-[12px] max-[1270px]:gap-[24px] items-center">
               <Link href="/favorites">
                 <div className="heart-icon cursor-pointer">
                   <svg

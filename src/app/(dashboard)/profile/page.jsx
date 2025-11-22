@@ -47,7 +47,7 @@ const Profile = () => {
 
   useEffect(() => {
     (async () => {
-      const res = await getUser(1);
+      const res = await getUser();
       setUserData(res.data);
       reset(res.data);
     })()
@@ -94,17 +94,6 @@ const Profile = () => {
    
 
       </section>
-
-
-      {/* <section>
-        <TotalStatisticWithProgressbar text="Ümumi aylıq satış sayı"count={4562} percentage={40}/>
-      </section> */}
-      {/* <section className='grid grid-cols-2 gap-[24px]'>
-        <StatisticWithCircleProgressBar color={"#02836F"} count={2356} text={"Satılan evlər"} target={"3k/aylıq"} percentage={71} />
-        <StatisticWithCircleProgressBar color={"#FF9D14"} count={2356} text={"Kirayə evlər"} target={"3k/aylıq"} percentage={65} />
-        <TotalStatistic icon={licenseIcon} text="Ümumi elan sayı" count={4562} />
-        <TotalStatistic icon={archiveIcon} text="Arxivlənmiş elanlar" count={3028} />
-      </section> */}
     </main>
   )
 }

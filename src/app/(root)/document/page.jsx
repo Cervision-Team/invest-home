@@ -86,7 +86,7 @@ export default function LoanAgreementForm() {
             onMouseEnter={(e) => handleMouseEnter(tooltip, e.currentTarget)}
             onMouseLeave={handleMouseLeave}
           >
-            <Info size={14} className="text-gray-600 flex-shrink-0 hover:text-blue-600" />
+            <Info size={14} className="text-gray-600 flex-shrink-0 hover:text-primary" />
 
             {tooltipInfo.show && tooltipInfo.text === tooltip && (
               <div
@@ -393,7 +393,7 @@ export default function LoanAgreementForm() {
                   href="https://e-legal.az/az/sertler-ve-qaydalar/11"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline"
+                  className="text-primary hover:underline"
                 >
                   Şərtləri və qaydaları qəbul edirəm
                 </a>
@@ -403,7 +403,7 @@ export default function LoanAgreementForm() {
             <div className="text-center">
               <button
                 onClick={handleSubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                className="bg-primary hover:bg-primary text-white font-semibold py-3 px-8 rounded-lg transition-colors"
               >
                 Sənədi hazırla
               </button>

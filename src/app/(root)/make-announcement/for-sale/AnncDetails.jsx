@@ -206,11 +206,12 @@ const AnncDetails = ({
               <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Əlavə xüsusiyyətlər</p>
                 {hasError('features') && <p className="error-text">{getErrorMessage('features')}</p>}
-                <div className={`grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full ${activePropertyType === 'garage'
-                  ? 'grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[560px]:grid-cols-1'
-                  : 'grid-cols-3 max-[1360px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[590px]:grid-cols-1'
-                  }`}>
+                <div className='grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full
+                   grid-cols-3 max-[1360px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[590px]:grid-cols-1'
+                  >
 
+                  {activePropertyType !== 'house' && (
+                  <>
                   {activePropertyType !== 'land' && activePropertyType !== 'garage' && (
                     <>
                       <div className='flex items-center'>
@@ -273,11 +274,7 @@ const AnncDetails = ({
                         />
                         <label htmlFor="lift" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Lift</label>
                       </div>
-                    </>
-                  )}
 
-                  {(activePropertyType !== 'land') && (
-                    <>
                       <div className='flex items-center'>
                         <input
                           type="checkbox"
@@ -314,6 +311,10 @@ const AnncDetails = ({
                         />
                         <label htmlFor="coolingSystem" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Soyutma sistemi</label>
                       </div>
+                    </>
+                  )}
+
+                    {(activePropertyType !== 'land') && (
                       <div className='flex items-center'>
                         <input
                           type="checkbox"
@@ -326,8 +327,159 @@ const AnncDetails = ({
                         />
                         <label htmlFor="security" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Təhlükəsizlik sistemi</label>
                       </div>
-                    </>
                   )}
+                  </>
+                )}
+
+                {(activePropertyType === 'garage') && (
+                  <>
+                    <div className='flex items-center'>
+                      <input
+                        type="checkbox"
+                        id="separateBuilding"
+                        name="features"
+                        value="separateBuilding"
+                        className='shrink-0 svg-checkbox'
+                        checked={(formik.values.features || []).includes('separateBuilding')}
+                        onChange={() => handleFeatureChange('separateBuilding')}
+                      />
+                      <label htmlFor="separateBuilding" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Ayrı tikili</label>
+                    </div>
+                    <div className='flex items-center'>
+                      <input
+                        type="checkbox"
+                        id="underground"
+                        name="features"
+                        value="underground"
+                        className='shrink-0 svg-checkbox'
+                        checked={(formik.values.features || []).includes('underground')}
+                        onChange={() => handleFeatureChange('underground')}
+                      />
+                      <label htmlFor="underground" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Bina altı</label>
+                    </div>
+                  </>
+                )}
+
+
+
+                  {activePropertyType === 'house' && (
+                  <>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="doubleStone"
+                          name="features"
+                          value="doubleStone"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('doubleStone')}
+                          onChange={() => handleFeatureChange('doubleStone')}
+                        />
+                        <label htmlFor="doubleStone" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Qoşa daşla</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="combi"
+                          name="features"
+                          value="combi"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('combi')}
+                          onChange={() => handleFeatureChange('combi')}
+                        />
+                        <label htmlFor="combi" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kombi</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="interfloorMonolith"
+                          name="features"
+                          value="interfloorMonolith"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('interfloorMonolith')}
+                          onChange={() => handleFeatureChange('interfloorMonolith')}
+                        />
+                        <label htmlFor="interfloorMonolith" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mərtəbə arası monolit</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="gas"
+                          name="features"
+                          value="gas"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('gas')}
+                          onChange={() => handleFeatureChange('gas')}
+                        />
+                        <label htmlFor="gas" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Qaz</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="waterTank"
+                          name="features"
+                          value="waterTank"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('waterTank')}
+                          onChange={() => handleFeatureChange('waterTank')}
+                        />
+                        <label htmlFor="waterTank" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Su çəni</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="chair"
+                          name="features"
+                          value="chair"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('chair')}
+                          onChange={() => handleFeatureChange('chair')}
+                        />
+                        <label htmlFor="chair" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kürsü</label>
+                      </div>
+                      <div className='flex items-center'>
+                        <input
+                          type="checkbox"
+                          id="sewage"
+                          name="features"
+                          value="sewage"
+                          className='shrink-0 svg-checkbox'
+                          checked={(formik.values.features || []).includes('sewage')}
+                          onChange={() => handleFeatureChange('sewage')}
+                        />
+                        <label htmlFor="sewage" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mərkəzi kanalizasiya</label>
+                      </div>
+                  </>
+                )}
+
+                {(activePropertyType === 'garage' || activePropertyType === 'house') && (
+                  <>
+                  <div className='flex items-center'>
+                  <input
+                    type="checkbox"
+                    id="light"
+                    name="features"
+                    value="light"
+                    className='shrink-0 svg-checkbox'
+                    checked={(formik.values.features || []).includes('light')}
+                    onChange={() => handleFeatureChange('light')}
+                    />
+                  <label htmlFor="light" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>İşıq</label>
+                </div>
+                <div className='flex items-center'>
+                  <input
+                    type="checkbox"
+                    id="water"
+                    name="features"
+                    value="water"
+                    className='shrink-0 svg-checkbox'
+                    checked={(formik.values.features || []).includes('water')}
+                    onChange={() => handleFeatureChange('water')}
+                  />
+                  <label htmlFor="water" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Su</label>
+                </div>
+                   </>
+                  )}
+
 
                 </div>
               </div>
