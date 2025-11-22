@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getAccessControl, upadteAccessControl } from "@/services/api/endpoints/accessControlService";
+import { useMenuPermission } from "@/context/MenuPermissionContext";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
     const [matrix, setMatrix] = useState({});
+    const {fetchMenuPermission} = useMenuPermission();
 
     useEffect(() => {
         (async () => {
@@ -41,11 +43,15 @@ const AccessControl = () => {
             }));
 
         await upadteAccessControl(payload)
+         fetchMenuPermission();
+         console.log("yadda saxlan");
+         
+
     };
 
     const groupByFirstWord = (claims) => {
         return claims.reduce((groups, claim) => {
-            const firstWord = claim.displayName.split(" ")[0];
+            const firstWord = claim.name.split("_")[0];
             const key = firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
             if (!groups[key]) groups[key] = [];
             groups[key].push(claim);
@@ -54,12 +60,12 @@ const AccessControl = () => {
     };
 
     const groupedClaims = groupByFirstWord(
-        matrix?.claims?.slice()?.sort((a, b) => a.displayName.localeCompare(b.displayName)) || []
+        matrix?.claims?.slice()?.sort((a, b) => a.name.localeCompare(b.name)) || []
     );
 
     return (
         <section className="w-full">
-            
+
             <table className="w-full">
                 <thead>
                     <tr>

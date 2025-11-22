@@ -23,6 +23,7 @@ import {
   CustomerIcon,
   WalletIcon,
 } from "@/components/ui/MenuIcons";
+import { useMenuPermission } from "@/context/MenuPermissionContext";
 
 const iconMap = {
   document: documentIcon,
@@ -43,6 +44,10 @@ const iconMap = {
 const Sidebar = ({  variant }) => {
   const pathName = usePathname();
   const [menu, setMenu] = useState(null);
+  const {menuPermission,fetchMenuPermission} = useMenuPermission()
+  
+  console.log(menuPermission);
+  
   useEffect(() => {
     (async () => {
       const res = await getMenu();
@@ -50,7 +55,7 @@ const Sidebar = ({  variant }) => {
       console.log(res);
       
     })()
-  }, [])
+  }, [menuPermission])
   return (
     <div>
       <nav className="w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
