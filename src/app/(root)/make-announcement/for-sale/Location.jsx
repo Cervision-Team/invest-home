@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MapPin, X } from 'lucide-react'
 import { azeCity, azeDistrict, azeSettlement } from '@/components/core/RealEstateData';
 
-const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors = {}, setStepErrors = () => {}, isValidating = false }) => {
+const Location = ({ formik, stepErrors = {}, setStepErrors = () => {}, isValidating = false }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const currentMarkerRef = useRef(null);
@@ -941,7 +941,7 @@ const Location = ({ formik = { values: {}, setFieldValue: () => {} }, stepErrors
     Dəqiq ünvan üçün xəritədə istədiyiniz yeri klikləyin. Markeri sürükləyərək yerini dəyişə bilərsiniz.
   </p>
 
-  <div className="relative w-full max-w-2xl" style={{ height: '400px' }}>
+  <div className="relative w-full" style={{ height: '400px' }}>
     {/* Loading Overlay */}
     {!mapLoaded && (
       <div className="absolute inset-0 bg-gray-100 flex items-center justify-center rounded-lg border z-10">

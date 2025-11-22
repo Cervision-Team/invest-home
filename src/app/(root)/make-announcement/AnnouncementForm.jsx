@@ -428,16 +428,18 @@ const AnnouncementForm = () => {
       case 2:
         return Object.keys(stepErrors).length === 0;
 
-      case 3:
-        return (
-          !!formik.values.selectedCity &&
-          !!formik.values.selectedDistrict &&
-          !!formik.values.selectedSettlement &&
-          !!formik.values.selectedAddress?.trim() &&
-          formik.values.selectedAddress.length >= 10 &&
-          Object.keys(stepErrors).length === 0
-        );
-      case 4:
+case 3:
+  const usingCustomAddress = formik.values.selectedLocation === "custom-address";
+
+  return (
+    !!formik.values.selectedCity &&
+    (usingCustomAddress || !!formik.values.selectedDistrict) &&
+    (usingCustomAddress || !!formik.values.selectedSettlement) &&
+    !!formik.values.selectedAddress?.trim() &&
+    formik.values.selectedAddress.length >= 10 &&
+    Object.keys(stepErrors).length === 0
+  );
+        case 4:
         return (
           formik.values.selectedMedia?.length > 0 &&
           formik.values.uploadedFiles?.length > 0 &&
