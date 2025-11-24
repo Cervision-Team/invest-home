@@ -41,7 +41,7 @@ export default function Home() {
       <Neighborhoods />
       <Services />
       <BeAgent />
-      <div className="mt-[124px]">
+      <div className="mt-20">
       <OpenOffice />
       </div>
       

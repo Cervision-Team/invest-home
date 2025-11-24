@@ -6,11 +6,11 @@ const Neighborhoods = () => {
   return (
     <>
       <>
-        <section className="mt-[48px] max-w-[1600px] mx-auto">
+        <section className="mt-[72px] max-w-[1600px] mx-auto">
           <div className="max-w-full w-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]">
             {/* Changed background color to transparent and adjusted padding for better responsiveness */}
-            <div className="flex flex-col gap-[60px] bg-transparent max-[769px]:pb-[5rem]">
-              <div className="text-center flex flex-col gap-[10px] ">
+            <div className="flex flex-col gap-[30px] bg-transparent max-[769px]:pb-20">
+              <div className="text-center flex flex-col gap-[40px] ">
                 <h4 className="text-[var(--primary-color)] text-[1.5rem] font-400">
                   {/* {t("Şəhərə böyük sahələr")} */}
                   Şəhərdə aktiv sahələr
