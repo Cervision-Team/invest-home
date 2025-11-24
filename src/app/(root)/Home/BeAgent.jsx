@@ -20,8 +20,11 @@ function BeAgent() {
 
     return (
         <>
-            <section onClick={handleClick} id="agent" className="max-[768px]:cursor-pointer max-w-[1600px] mx-[auto] w-auto flex justify-center relative mt-[144px] max-[1025px]:mt-[60px] max-[431px]:mt-[20px] max-[431px]:mb-[5px] max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[1400px]:mt-[100px] max-[1400px]:mb-[100px] px-[80px]">
-                <div className="gap-[20px] w-full flex max-[431px]:flex-row-reverse bg-primary pr-[100px] max-[769px]:pr-[20px] min-[768px]:pl-[17px] max-[431px]:pl-[20px] rounded-[40px] max-[769px]:rounded-[12px] max-[431px]:rounded-[8px]">
+            <section onClick={handleClick} id="agent" className="max-[768px]:cursor-pointer max-w-[1600px] mx-[auto] w-auto flex justify-center relative mt-[176px] max-[1025px]:mt-[60px] max-[431px]:mt-[20px] max-[431px]:mb-[5px] max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[1400px]:mt-[100px] max-[1400px]:mb-[100px] px-[80px]">
+                <div className="gap-[20px] w-full flex max-[431px]:flex-row-reverse pr-[100px] max-[769px]:pr-[20px] min-[768px]:pl-[17px] max-[431px]:pl-[20px] rounded-[40px] max-[769px]:rounded-[12px] max-[431px]:rounded-[8px]"
+                style={{
+                  background: "linear-gradient(90deg, #02836F 0%, #01372E 0%, #015044 50%, #02836F 100%)"
+                }}>
                     <div className="mt-[-5%] max-[768px]:w-[40%] max-[430px]:w-[100%] w-[30%] flex items-end">
                         <Image
                             src={Agent}
