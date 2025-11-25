@@ -1,14 +1,14 @@
-"use client"
+"use client";
 import Footer from "@/components/common/Footer/Footer";
 import SubFooter from "@/components/common/Footer/SubFooter";
 import TabBar from "@/components/common/Footer/TabBar";
 import ContactHeader from "@/components/common/Header/ContactHeader";
 import Header from "@/components/common/Header/Header";
 import Sidebar from "@/components/common/Sidebar/Sidebar";
+import ProtectedLayout from "@/components/router/ProtectedLayout";
 // import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
-
 
 // ✅ Pass only serializable values (strings, not functions)
 const dashboardSidebarItems = [
@@ -23,24 +23,25 @@ const dashboardSidebarItems = [
 ];
 
 export default function Layout({ children }) {
-
   return (
     // <ProtectedRoute>
-    <MenuPermissionProvider>
-      <LangProvider>
-        <main className="bg-white">
-          <ContactHeader />
-          <Header />
-          <div className="flex mt-10 mx-20 gap-6">
-            <Sidebar variant="dashboard" />
-            {children}
-          </div>
-          <TabBar />
-          <Footer />
-          <SubFooter />
-        </main>
-      </LangProvider>
-    </MenuPermissionProvider>
+    <ProtectedLayout>
+      <MenuPermissionProvider>
+        <LangProvider>
+          <main className="bg-white">
+            <ContactHeader />
+            <Header />
+            <div className="flex mt-10 mx-20 gap-6">
+              <Sidebar variant="dashboard" />
+              {children}
+            </div>
+            <TabBar />
+            <Footer />
+            <SubFooter />
+          </main>
+        </LangProvider>
+      </MenuPermissionProvider>
+    </ProtectedLayout>
     // </ProtectedRoute>
   );
 }
