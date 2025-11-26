@@ -5,17 +5,17 @@ import Image from "next/image";
 function Services() {
     return (
         <section id="service" className="mt-20 max-[431px]:mt-[0px] max-w-[1600px] mx-auto font-primary bg-text-6 px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]">
-            <div className="flex flex-col items-center text-center gap-6 mb-10 max-[431px]:mb-[50px]">
-                <h3 className="text-primary text-center text-[48px]/[44px] leading-[28px] font-[400]">
+            <div className="flex flex-col items-center text-center gap-6 max-[769px]:gap-3 mb-10 max-[431px]:mb-[50px]">
+                <h3 className="text-primary text-center text-[48px]/[44px] leading-[28px] font-[400] max-[769px]:text-[1.5rem] max-[769px]:leading-[24px]">
                     Xidmətlərimiz
                 </h3>
-                <h2 className="max-[431px]:text-[20px] max-[431px]:leading-[23px] text-[#0B090A] font-[500] text-[34px] leading-[46px] max-w-2xl">
+                <h2 className="max-[431px]:text-[20px] max-[431px]:leading-[23px] text-[#0B090A] font-[500] text-[34px] leading-[46px] max-w-2xl max-[769px]:text-[1.5rem]">
                     İnvest Home ilə əmlakı asanlıqla tapın.
                 </h2>
             </div>
 
             <div className="grid grid-cols-3 max-[769px]:grid-cols-1 grid-rows-1 gap-x-[21px] gap-y-[16px]">
-                <ServiceCard title="Satılıq" image="/icons/services-sale.svg"/>
+                <ServiceCard title="Satılıq" image="/icons/services-sale.svg" />
                 <ServiceCard title="Kirayə" image="/icons/services-rent.svg" width="58" height="58" />
                 <ServiceCard title="Günlük" image="/icons/services-daily.svg" />
             </div>
@@ -23,7 +23,7 @@ function Services() {
     );
 }
 
-function ServiceCard({ title, image, width="48", height="48" }) {
+function ServiceCard({ title, image, width = "48", height = "48" }) {
     return (
         <>
             <div className="border-2 border-solid  border-[#80C1B7] rounded-[30px] p-[20px] pl-[48px] pb-[61px] max-[1025px]:p-[20px] max-[769px]:p-[16px] flex flex-col max-[769px]:flex-row max-[769px]:items-center gap-[26px] shadow-[4px_10px_30px_0_rgba(0,0,0,0.03)]">
