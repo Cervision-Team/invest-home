@@ -6,7 +6,7 @@ const OpenOffice = () => {
   return (
     <>
       <div className='w-full h-auto px-[80px] '>
-        <div className='w-full h-auto px-[28px] py-[36px] flex flex-row items-center justify-start gap-[60px] relative'>
+        <div className='md:flex-row  w-full h-auto px-[28px] py-[36px] flex flex-col items-center justify-start gap-[60px] relative '>
           <Image
             src='/images/openoffice.jpg'
             alt='OpenOffice Logo'
@@ -15,7 +15,7 @@ const OpenOffice = () => {
           />
 
           <div className='max-w-[550px] flex flex-col justify-center items-start gap-[33px]'>
-            <h2 className='text-black text-[40px]/[47px] font-semibold'>Ofis açmaq istəyirsən?  Elə isə doğru ünvandasan!</h2>
+            <h2 className='text-[30px]/[36px] text-black md:text-[40px]/[47px] font-semibold'>Ofis açmaq istəyirsən?  Elə isə doğru ünvandasan!</h2>
 
             <p className='max-w-[415px] text-[#2B2B2B] text-[16px]/[26px] font-normal'>
               Fusce venenatis tellus a felis scelerisque, non pulvinar est pellentesque. 
