@@ -5,7 +5,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import userAdmin from "../../../../public/images/profile/novruz.jpg";
-import { LogoutIcon } from "@/components/ui/MenuIcons";
+import { LogoutIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
 import { getMenu } from "@/services/api/endpoints/menuService";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +40,8 @@ const iconMap = {
   order: OrderIcon,
   customer: CustomerIcon,
   wallet: WalletIcon,
+  transaction: TransactionHistoryIcon,
+  
 };
 
 const Sidebar = ({  variant }) => {
