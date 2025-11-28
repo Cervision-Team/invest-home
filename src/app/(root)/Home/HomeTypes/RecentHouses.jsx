@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { houseData } from "../../../../components/core/house";
 import RecentHousesSkeleton from '@/components/ui/skeleton/RecentHousesSkeleton';
+import { getAnnouncement, getAnnouncementFilter } from '@/services/api/endpoints/announcementService';
 
 const RecentHouses = ({ houseType }) => {
   // const { t } = useTranslation();
@@ -20,27 +21,33 @@ const RecentHouses = ({ houseType }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showArrows, setShowArrows] = useState(false);
+  const [houseData, setHouseData] = useState([]);
   const swiperRef = useRef(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    // fetch(`/api/houses?type=${activeType}`)
-    //   .then((res) => res.json())
-    //   .then((data) => { setHouses(data); setLoading(false); })
-    //   .catch((err) => { setError(err.message); setLoading(false); });
+  getAnnouncementFilter()
+    .then(res => {
+      const mapped = res?.content?.map((item, index) => ({
+        ...item,
+        type: activeType,
+      }));
 
-    const filtered =
-      activeType === "enSon"
-        ? houseData
-        : houseData.filter((house) => house.type === activeType);
+      setHouseData(mapped); 
 
-    setTimeout(() => {
+      const filtered =
+        activeType === "enSon"
+          ? mapped
+          : mapped.filter((house) => house.type === activeType);
+
       setHouses(filtered);
-      setLoading(false);
-    }, 300);
-  }, [activeType]); 
+    })
+    .catch(err => setError(err.message))
+    .finally(() => setLoading(false));
+}, [activeType]);
+
 
   const handlePrev = () => {
     if (swiperRef.current && swiperRef.current.swiper) {
@@ -54,6 +61,11 @@ const RecentHouses = ({ houseType }) => {
     }
   };
 
+  useEffect(() => {
+    console.log("houseData", houseData);
+    console.log("houses", houses);
+  }, [houseData,houses])
+
   if (loading) return <RecentHousesSkeleton />;
   if (error) return <p className="text-center mt-10 text-red-500">Xəta baş verdi: {error}</p>;
 
@@ -65,7 +77,7 @@ const RecentHouses = ({ houseType }) => {
         setActiveType={setActiveType}
       />
 
-      <section 
+      <section
         className="max-[431px]:mt-[10px] mt-[60px] max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[431px]:pr-0"
         onMouseEnter={() => setShowArrows(true)}
         onMouseLeave={() => setShowArrows(false)}
@@ -83,22 +95,25 @@ const RecentHouses = ({ houseType }) => {
                 480: { spaceBetween: 24, slidesPerView: 2.2 },
                 600: { spaceBetween: 24, slidesPerView: 3.2 },
                 1024: { spaceBetween: 24, slidesPerView: 3.6 },
-                1180: { spaceBetween: 24, slidesPerView:  4.0},
+                1180: { spaceBetween: 24, slidesPerView: 4.0 },
                 1255: { spaceBetween: 24, slidesPerView: 4.4 },
               }}
             >
-              {houses.map((house) => (
-                <SwiperSlide key={house.id}>
-                  <HouseCard house={house} />
-                </SwiperSlide>
-              ))}
+              {
+                houses?.length !== 0 &&
+                houses?.map((house) => (
+                  <SwiperSlide key={house.id}>
+                    <HouseCard house={house} />
+                  </SwiperSlide>
+                ))
+              }
             </Swiper>
 
             {/* Left Arrow */}
-{/* Left Arrow */}
-<button
-  onClick={handlePrev}
-  className={`absolute 
+            {/* Left Arrow */}
+            <button
+              onClick={handlePrev}
+              className={`absolute 
     left-[-60px] 
     max-[1024px]:hidden
     top-1/2 -translate-y-1/2 z-20 
@@ -107,23 +122,23 @@ const RecentHouses = ({ houseType }) => {
     transition-all duration-300 ease-in-out
     ${showArrows ? 'opacity-100 visible translate-x-0' : 'opacity-0 invisible translate-x-[-20px]'}
   `}
-  aria-label="Previous slide"
-  style={{ pointerEvents: showArrows ? 'auto' : 'none' }}
->
-  <ChevronLeft
-    className="
+              aria-label="Previous slide"
+              style={{ pointerEvents: showArrows ? 'auto' : 'none' }}
+            >
+              <ChevronLeft
+                className="
       w-[24px] h-[24px]
       max-[1255px]:w-[20px] max-[1255px]:h-[20px]
       max-[1180px]:w-[16px] max-[1180px]:h-[16px]
       max-[1025px]:w-[12px] max-[1025px]:h-[12px]
     "
-  />
-</button>
+              />
+            </button>
 
-{/* Right Arrow */}
-<button
-  onClick={handleNext}
-  className={`absolute 
+            {/* Right Arrow */}
+            <button
+              onClick={handleNext}
+              className={`absolute 
     right-[-60px] 
     max-[1024px]:hidden
     top-1/2 -translate-y-1/2 z-20 
@@ -132,18 +147,18 @@ const RecentHouses = ({ houseType }) => {
     transition-all duration-300 ease-in-out
     ${showArrows ? 'opacity-100 visible translate-x-0' : 'opacity-0 invisible translate-x-[20px]'}
   `}
-  aria-label="Next slide"
-  style={{ pointerEvents: showArrows ? 'auto' : 'none' }}
->
-  <ChevronRight
-    className="
+              aria-label="Next slide"
+              style={{ pointerEvents: showArrows ? 'auto' : 'none' }}
+            >
+              <ChevronRight
+                className="
       w-[24px] h-[24px]
       max-[1255px]:w-[20px] max-[1255px]:h-[20px]
       max-[1180px]:w-[16px] max-[1180px]:h-[16px]
       max-[1025px]:w-[12px] max-[1025px]:h-[12px]
     "
-  />
-</button>
+              />
+            </button>
           </div>
 
           <div className="max-[431px]:hidden flex cursor-pointer justify-center items-center my-9 hover:text-[var(--primary-color)] transition-all duration-300 ease-in">
