@@ -6,6 +6,7 @@ import Link from "next/link";
 import HamMenu from "./HamMenu";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import ProfileMenu from "./ProfileDropdown";
 // import { useTranslation } from "i18next";
 
 const Header = () => {
@@ -120,7 +121,9 @@ const Header = () => {
                   </svg>
                 </div>
               </Link>
-              {
+              <ProfileMenu isLogin={isLogin}  />
+
+              {/* {
                 isLogin ?
                   <Link href="/profile">
                     <button className="text-black flex justify-center items-center gap-[10px] text-[18px] cursor-pointer">
@@ -190,7 +193,8 @@ const Header = () => {
                       <span className="max-[1440px]:hidden text-[16px] flex-shrink-0 font-[500]">Daxil ol</span>
                     </button>
                   </Link>
-              }
+              } */}
+             
               <Link href="/make-announcement">
                 <button className="flex-shrink-0 py-[12px] max-[1440px]:px-[12px] px-[26px] rounded-[50px] bg-[#FF9D14] text-white flex justify-center items-center gap-[20px] max-[769px]:gap-[12px] cursor-pointer">
                   <div className="plus-icon relative h-[20px] w-[20px]">
