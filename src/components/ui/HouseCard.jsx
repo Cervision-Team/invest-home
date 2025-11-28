@@ -110,7 +110,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
           >
             <div className={`card custom-prev-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
             <div className={`card custom-next-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
-            {house.images.map((img, index) => (
+            {house.images?.map((img, index) => (
               <SwiperSlide key={`${house.id}-${index}`}>
                 <div className="relative aspect-[302/262]">
                   <Image
@@ -149,7 +149,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
               onClick={(e) => e.preventDefault()}
               className="dynamic-dots"
             >
-              {house.images && house.images.map((_, index) => (
+              {house.images && house.images?.map((_, index) => (
                 <div
                   key={index}
                   className={`dot ${index === activeSlide ? "active" : ""}`}
@@ -245,10 +245,10 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             </span>
           </div>
           <div className="flex items-center gap-[5px] shrink min-w-0 overflow-hidden">
-            <span className="text-[24px] font-[600] max-[1200]:text-[18px]">
+            <span className="text-[18px] font-[600] max-[1200]:text-[16px]">
               {house.price}
             </span>
-            <Image src={Manat} alt="Manat" width={18} height={18} />
+            <Image src={Manat} alt="Manat" width={14} height={14} />
           </div>
         </div>
       </div>
