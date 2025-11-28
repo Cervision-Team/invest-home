@@ -15,8 +15,7 @@ const Employees = () => {
     <main className="w-full h-full">
       <div className='flex justify-between mb-10 '>
         <div className='min-w-[410px]'>
-
-        <Search search={search} setSearch={setSearch} />
+          <Search search={search} setSearch={setSearch} />
         </div>
         <div className='flex gap-6'>
           <Button />
@@ -30,7 +29,7 @@ const Employees = () => {
           pr-2 
           hide-scrollbar
           `}
-          >
+      >
         {/* max-h-[80vh] overflow-y-auto */}
 
         {agentsData.map((agent, index) => (
