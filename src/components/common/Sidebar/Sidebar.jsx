@@ -24,6 +24,7 @@ import {
   WalletIcon,
 } from "@/components/ui/MenuIcons";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
+import { useRouter } from "next/navigation";
 
 const iconMap = {
   document: documentIcon,
@@ -45,17 +46,21 @@ const Sidebar = ({  variant }) => {
   const pathName = usePathname();
   const [menu, setMenu] = useState(null);
   const {menuPermission,fetchMenuPermission} = useMenuPermission()
-  
-  console.log(menuPermission);
+      const router = useRouter();
+
   
   useEffect(() => {
     (async () => {
       const res = await getMenu();
       setMenu(res)
-      console.log(res);
       
     })()
   }, [menuPermission])
+
+    const handleLogout = () => {
+        localStorage.removeItem("access-token");
+        router.push("/login");
+    };
   return (
     <div>
       <nav className="w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
@@ -100,7 +105,7 @@ const Sidebar = ({  variant }) => {
         </ul>
         {variant === "dashboard" && (
           <div className="px-8 mt-8">
-            <button className="flex justify-center py-2.5 bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-lg gap-[15px] items-center">
+            <button onClick={handleLogout} className="flex justify-center py-2.5 bg-white w-full text-[#E9222C] text-[15px] font-medium rounded-lg gap-[15px] items-center cursor-pointer">
               <LogoutIcon /> Çıxış
             </button>
           </div>
