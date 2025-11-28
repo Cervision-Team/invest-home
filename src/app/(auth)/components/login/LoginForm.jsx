@@ -79,9 +79,7 @@ const LoginForm = () => {
 
                   >
                     <option value="+994">+994</option>
-                    <option value="+1">+1</option>
-                    <option value="+90">+90</option>
-                    <option value="+44">+44</option>
+
                   </select>
                 )}
               />
@@ -89,7 +87,6 @@ const LoginForm = () => {
               <Controller
                 name="phone"
                 control={control}
-
                 render={({ field }) => (
                   <input
                     {...field}
