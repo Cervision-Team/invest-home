@@ -29,9 +29,9 @@ const Employees = () => {
           gap-y-6 gap-x-4 
           pr-2 
           hide-scrollbar
-          max-h-[80vh] overflow-y-auto
-        `}
-      >
+          `}
+          >
+        {/* max-h-[80vh] overflow-y-auto */}
 
         {agentsData.map((agent, index) => (
           <Link href={`/about-us/${agent.id}`} className="group block" key={index}>
