@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useRef,useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +11,7 @@ export default function ProfileMenu({ isLogin }) {
     const handleLogout = () => {
         localStorage.removeItem("access-token");
         router.push("/login");
+        setOpen(false)
     };
 
     useEffect(() => {
@@ -67,12 +68,15 @@ export default function ProfileMenu({ isLogin }) {
             </button>
 
             {open && (
-                <div  className="absolute right-0 mt-2 w-40 bg-white border rounded-md  z-50">
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md  z-50">
                     <ul className="py-2 text-sm">
 
                         <li>
                             <button
-                                onClick={() => router.push("/profile")}
+                                onClick={() => {
+                                    router.push("/profile")
+                                    setOpen(false)
+                                }}
                                 className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer  text-[16px] font-[500]"
                             >
                                 Profil
