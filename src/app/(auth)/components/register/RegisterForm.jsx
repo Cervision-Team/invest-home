@@ -31,7 +31,7 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Şifrə vacibdir")
-    .min(6, "Şifrə ən azı 6 simvol olmalıdır")
+    .min(8, "Şifrə ən azı 8 simvol olmalıdır")
     .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
     .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
     .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır"),

@@ -9,20 +9,23 @@ import { toast } from "react-toastify";
 import Image from "next/image";
 import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import Phone from "../../../../../public/icons/phone-auth.svg";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 const schema = yup.object({
   phone: yup
     .string()
     .required("Telefon nömrəsi vacibdir")
-    .matches(globalPhoneRegex, "Telefon nömrəsi düzgün formatda deyil"),
+    .matches(/^\d{9}$/, "Telefon nömrəsi 9 rəqəm olmalıdır"),
   password: yup
     .string()
     .required("Şifrə vacibdir")
-    .min(6, "Şifrə ən azı 6 simvol olmalıdır")
+    .min(8, "Şifrə ən azı 8 simvol olmalıdır")
     .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
     .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
-    .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır"),
+    .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır")
+    .matches(/[^A-Za-z0-9]/, "Şifrədə ən azı bir xüsusi simvol olmalıdır"),
 });
 
 const LoginForm = () => {
@@ -31,15 +34,18 @@ const LoginForm = () => {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(schema), defaultValues: { prefix: "+994" }, });
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
-      const res = await loginWithPhone({ "phoneNumber": data.phone, "password": data.password });
-      
-      
+      const fullPhone = `${data.prefix}${data.phone}`;
+
+      const res = await loginWithPhone({ "phoneNumber": fullPhone, "password": data.password });
+
+
       localStorage.setItem("access-token", res.token)
       // localStorage.setItem("phoneNumber", data.phone);
       // localStorage.setItem("entranceType", "LOGIN");
@@ -62,20 +68,39 @@ const LoginForm = () => {
             Telefon<span className="text-red-500">*</span>
           </label>
           <div className="relative w-full">
-            <Controller
-              name="phone"
-              control={control}
-              defaultValue="+994"
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="tel"
-                  id="phone"
-                  placeholder="994*********"
-                  className="h-[44px] px-4 border border-black w-full text-base rounded-lg"
-                />
-              )}
-            />
+            <div className="flex gap-2">
+              <Controller
+                name="prefix"
+                control={control}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="border border-black rounded-lg h-[44px] px-2"
+
+                  >
+                    <option value="+994">+994</option>
+                    <option value="+1">+1</option>
+                    <option value="+90">+90</option>
+                    <option value="+44">+44</option>
+                  </select>
+                )}
+              />
+
+              <Controller
+                name="phone"
+                control={control}
+
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="tel"
+                    id="phone"
+                    placeholder="50*********"
+                    className="h-[44px] px-4 border border-black w-full text-base rounded-lg"
+                  />
+                )}
+              />
+            </div>
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <Image src={Phone.src} alt="phone" width={20} height={20} />
             </span>
@@ -88,13 +113,30 @@ const LoginForm = () => {
           <label htmlFor="password" className="text-sm font-medium text-black">
             Şifrə<span className="text-red-500">*</span>
           </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Şifrənizi daxil edin"
-            {...register("password")}
-            className="border border-black p-2 rounded-md text-base placeholder:pl-2"
-          />
+          <div className="relative w-full">
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Şifrənizi daxil edin"
+                  className="w-full border border-black p-2 rounded-md text-base placeholder:pl-2"
+                />
+              )}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+
           <div className="h-[28px] text-sm text-red-500">
             {errors.password?.message}
           </div>
