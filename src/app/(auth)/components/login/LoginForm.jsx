@@ -12,6 +12,11 @@ import Phone from "../../../../../public/icons/phone-auth.svg";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+const ERROR_CODE = {
+  USER_NOT_FOUND_BY_NUMBER: "Nömrə təyin olunmayıb",
+  PASSWORD_DONT_MATCH: "Şifrə yanlışdır",
+}
+
 const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 const schema = yup.object({
   phone: yup
@@ -21,11 +26,6 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Şifrə vacibdir")
-    .min(8, "Şifrə ən azı 8 simvol olmalıdır")
-    .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
-    .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
-    .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır")
-    .matches(/[^A-Za-z0-9]/, "Şifrədə ən azı bir xüsusi simvol olmalıdır"),
 });
 
 const LoginForm = () => {
@@ -33,6 +33,7 @@ const LoginForm = () => {
     control,
     handleSubmit,
     register,
+    setError,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema), defaultValues: { prefix: "+994" }, });
   const [showPassword, setShowPassword] = useState(false);
@@ -42,19 +43,30 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       const fullPhone = `${data.prefix}${data.phone}`;
-
       const res = await loginWithPhone({ "phoneNumber": fullPhone, "password": data.password });
-
-
       localStorage.setItem("access-token", res.token)
-      // localStorage.setItem("phoneNumber", data.phone);
-      // localStorage.setItem("entranceType", "LOGIN");
       router.replace("/");
-    } catch (error) {
-      if (error.response?.status === 404) {
-        toast.error(error.response.data.message || "İstifadəçi tapılmadı");
-      } else {
-        toast.error(error.response?.data?.message || "Xəta baş verdi");
+    } catch (err) {
+      const errorResponse = err.response.data.message
+      const errorMessage = ERROR_CODE[errorResponse]
+      const errorIndex = Object.keys(ERROR_CODE).indexOf(errorResponse);
+
+      switch (errorIndex) {
+        case 0:
+          setError("phone", {
+            type: "server",
+            message: errorMessage
+          });
+          break
+        case 1:
+          setError("password", {
+            type: "server",
+            message: errorMessage
+          });
+          break;
+        default:
+          console.log("Unknown backend error:", errorResponse);
+          break;
       }
     }
   };

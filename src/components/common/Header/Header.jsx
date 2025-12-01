@@ -7,6 +7,7 @@ import HamMenu from "./HamMenu";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import ProfileMenu from "./ProfileDropdown";
+import { getUser } from "@/services/api/endpoints/userService";
 // import { useTranslation } from "i18next";
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
   const pathname = usePathname();
 
   const [isOpen, setOpen] = useState(false);
-
+  const [user, setUser] = useState(null);
   const isTablet = useMediaQuery('(max-width: 768px)');
   const isMobile = useMediaQuery('(max-width: 430px)');
 
@@ -33,6 +34,19 @@ const Header = () => {
     const isToken = Boolean(localStorage.getItem("access-token"));
     setIsLogin(isToken)
   }, [])
+
+
+
+  useEffect(() => {
+    (
+      async () => {
+        const res = await getUser();
+        setUser(res.data);
+      }
+    )()
+  }, [])
+  console.log(user?.fullName);
+  
   return (
     <>
       <HamMenu state={isOpen} setState={setOpen} />
@@ -121,7 +135,7 @@ const Header = () => {
                   </svg>
                 </div>
               </Link>
-              <ProfileMenu isLogin={isLogin}  />
+              <ProfileMenu userName={user?.fullName} isLogin={isLogin} />
 
               {/* {
                 isLogin ?
@@ -194,7 +208,7 @@ const Header = () => {
                     </button>
                   </Link>
               } */}
-             
+
               <Link href="/make-announcement">
                 <button className="flex-shrink-0 py-[12px] max-[1440px]:px-[12px] px-[26px] rounded-[50px] bg-[#FF9D14] text-white flex justify-center items-center gap-[20px] max-[769px]:gap-[12px] cursor-pointer">
                   <div className="plus-icon relative h-[20px] w-[20px]">

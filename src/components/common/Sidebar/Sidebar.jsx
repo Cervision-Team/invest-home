@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/MenuIcons";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { useRouter } from "next/navigation";
+import { getUser } from "@/services/api/endpoints/userService";
 
 const iconMap = {
   document: documentIcon,
@@ -41,28 +42,39 @@ const iconMap = {
   customer: CustomerIcon,
   wallet: WalletIcon,
   transaction: TransactionHistoryIcon,
-  
+
 };
 
-const Sidebar = ({  variant }) => {
+const Sidebar = ({ variant }) => {
   const pathName = usePathname();
   const [menu, setMenu] = useState(null);
-  const {menuPermission,fetchMenuPermission} = useMenuPermission()
-      const router = useRouter();
+  const { menuPermission, fetchMenuPermission } = useMenuPermission()
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
-  
   useEffect(() => {
     (async () => {
       const res = await getMenu();
       setMenu(res)
-      
+
     })()
   }, [menuPermission])
 
-    const handleLogout = () => {
-        localStorage.removeItem("access-token");
-        router.push("/login");
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("access-token");
+    router.push("/login");
+  };
+
+
+  useEffect(() => {
+    (
+      async () => {
+        const res = await getUser();
+        setUser(res.data);
+      }
+    )()
+  }, [])
+  const userName = user?.fullName.split(" ")[0]
   return (
     <div>
       <nav className="w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
@@ -76,7 +88,7 @@ const Sidebar = ({  variant }) => {
                 alt="profile image"
               />
             </div>
-            <span className="font-medium text-lg">Novruz</span>
+            <span className="font-medium text-lg">{userName}</span>
           </div>
         )}
 
@@ -101,7 +113,7 @@ const Sidebar = ({  variant }) => {
               );
             })
           ) : (
-            
+
             <li className="px-2 text-gray-400 animate-pulse">Yüklənir...</li>
           )}
         </ul>
