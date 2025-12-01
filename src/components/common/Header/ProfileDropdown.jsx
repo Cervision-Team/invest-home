@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function ProfileMenu({ isLogin }) {
+export default function ProfileMenu({ userName, isLogin }) {
     const [open, setOpen] = useState(false);
     const router = useRouter();
     const menuRef = useRef(null);
@@ -64,7 +64,7 @@ export default function ProfileMenu({ isLogin }) {
                             stroke="#1B1F27" strokeWidth="1.6" />
                     </svg>
                 </div>
-                <span className="max-[1440px]:hidden text-[16px] font-[500]">Novruz</span>
+                <span className="max-[1440px]:hidden text-[16px] font-[500]">{userName}</span>
             </button>
 
             {open && (
