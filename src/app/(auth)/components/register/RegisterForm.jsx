@@ -29,7 +29,7 @@ const schema = yup.object({
   phone: yup
     .string()
     .required("Telefon nömrəsi vacibdir")
-    .matches(globalPhoneRegex, "Telefon nömrəsi düzgün formatda deyil"),
+    .matches(/^\d{9}$/, "Telefon nömrəsi 9 rəqəm olmalıdır"),
   password: yup
     .string()
     .required("Şifrə vacibdir")
