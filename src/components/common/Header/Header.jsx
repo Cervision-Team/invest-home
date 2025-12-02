@@ -40,13 +40,15 @@ const Header = () => {
   useEffect(() => {
     (
       async () => {
-        const res = await getUser();
-        setUser(res.data);
+        const isToken = Boolean(localStorage.getItem("access-token"));
+        if (isToken) {
+          const res = await getUser();
+          setUser(res.data);
+        }
       }
     )()
   }, [])
-  console.log(user?.fullName);
-  
+
   return (
     <>
       <HamMenu state={isOpen} setState={setOpen} />

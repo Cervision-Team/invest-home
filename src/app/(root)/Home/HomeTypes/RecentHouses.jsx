@@ -61,10 +61,10 @@ const RecentHouses = ({ houseType }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("houseData", houseData);
-    console.log("houses", houses);
-  }, [houseData,houses])
+  // useEffect(() => {
+  //   console.log("houseData", houseData);
+  //   console.log("houses", houses);
+  // }, [houseData,houses])
 
   if (loading) return <RecentHousesSkeleton />;
   if (error) return <p className="text-center mt-10 text-red-500">Xəta baş verdi: {error}</p>;

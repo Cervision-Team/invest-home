@@ -4,24 +4,22 @@ import { getMenu } from "@/services/api/endpoints/menuService";
 
 const MenuPermissionContext = createContext({
   menuPermission: [],
-  fetchMenuPermission: () => {},
+  fetchMenuPermission: () => { },
 });
 
 export const MenuPermissionProvider = ({ children }) => {
   const [menuPermission, setMenuPermission] = useState([]);
 
   const fetchMenuPermission = async () => {
-    console.log("islediye");
-    
     const res = await getMenu();
     setMenuPermission(res);
-    console.log(menuPermission);
-    
   };
-  console.log(menuPermission);
-  
+
   useEffect(() => {
-    fetchMenuPermission();
+    const isToken = Boolean(localStorage.getItem("access-token"));
+    if (isToken) {
+      fetchMenuPermission();
+    }
   }, []);
 
   return (

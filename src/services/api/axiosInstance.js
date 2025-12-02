@@ -4,11 +4,13 @@ const axiosInstance = axios.create({
 	baseURL: "http://72.62.33.205:8080/api",
 	timeout: 10000,
 });
-
+// 72.62.33.205
 
 axiosInstance.interceptors.request.use(
 	(config) => {
 		const token = localStorage.getItem("access-token");
+		console.log("request log");
+
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
@@ -17,10 +19,19 @@ axiosInstance.interceptors.request.use(
 	(error) => Promise.reject(error)
 );
 
-axios.interceptors.response.use(
+axiosInstance.interceptors.response.use(
 	(response) => response,
-	(error) => Promise.reject(error)
-);
+	(error) => {
+		if (error.response?.status === 401) {
 
+			localStorage.removeItem("access-token");
+			
+			if (typeof window !== "undefined") {
+				window.location.href = "/login";
+			}
+		}
+		return Promise.reject(error);
+	}
+);
 
 export default axiosInstance;
