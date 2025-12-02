@@ -3,7 +3,7 @@
 import ProfileForm from '@/components/ui/dashboard/ProfileForm';
 // import StatisticWithCircleProgressBar from '@/components/ui/profile/StatisticWithCircleProgressBar'
 import Summary from '@/components/ui/dashboard/Summary'
-import { getUser } from '@/services/api/endpoints/userService';
+import { getUser, updateUser } from '@/services/api/endpoints/userService';
 // import TotalStatistic from '@/components/ui/profile/TotalStatistic'
 // import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisticWithProgressbar'
 import React, { useEffect, useState } from 'react'
@@ -32,9 +32,10 @@ const Profile = () => {
   });
 
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!isEditing) {
       console.log(data)
+      await updateUser(data)
       setIsOpen(true)
     } else {
       console.log("!!!")
@@ -67,7 +68,7 @@ const Profile = () => {
 
       <section className='relative'>
         <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
-          <Summary isChat={isChat}   setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
+          <Summary isChat={isChat} setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
             fullName: "Novruz Huseynov",
             birthDate: "17.06.2004",
             phone: "+9940513888181",
@@ -91,7 +92,7 @@ const Profile = () => {
             </div>
           </div>
         )}
-   
+
 
       </section>
     </main>
