@@ -8,3 +8,11 @@ export const getUser = async () => {
 		console.log(err);
 	}
 };
+export const updateUser = async (user) => {
+	try {
+		const res = axios.put(`/user`, user);
+		return res;
+	} catch (err) {
+		console.log(err);
+	}
+};
