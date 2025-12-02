@@ -5,4 +5,6 @@ const authAxiosInstance = axios.create({
 	timeout: 10000,
 });
 
+// 192.168.0.233
+
 export default authAxiosInstance;

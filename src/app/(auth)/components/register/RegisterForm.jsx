@@ -15,8 +15,12 @@ import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 
+const ERROR_CODE = {
+  PHONE_NUMBER_ALREADY_EXIST: "Bu nömrə mövcuddur",
+}
+
+const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 const schema = yup.object({
   fullName: yup
     .string()
@@ -46,6 +50,7 @@ const RegisterForm = () => {
     control,
     handleSubmit,
     register,
+    setError,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema), defaultValues: { prefix: "+994" }, });
   const [showPassword, setShowPassword] = useState(false);
@@ -65,11 +70,21 @@ const RegisterForm = () => {
       localStorage.setItem("phoneNumber", fullPhone);
       localStorage.setItem("entranceType", "SIGNUP");
       router.replace("/otp");
-    } catch (error) {
-      if (error.response?.status === 302) {
-        toast.info(error.response.data.message || "OTP artıq göndərilib");
-      } else {
-        toast.error(error.response?.data?.message || "Xəta baş verdi");
+    } catch (err) {
+      const errorResponse = err.response.data.message
+      const errorMessage = ERROR_CODE[errorResponse]
+      const errorIndex = Object.keys(ERROR_CODE).indexOf(errorResponse);
+
+      switch (errorIndex) {
+        case 0:
+          setError("phone", {
+            type: "server",
+            message: errorMessage
+          });
+          break
+        default:
+          console.log("Unknown backend error:", errorResponse);
+          break;
       }
     }
   };
