@@ -47,8 +47,8 @@ const HamMenu = ({ state, setState }) => {
         <>
             {state && (
                 <section className={`bg-[rgba(0,0,0,0.3)] w-[100%] h-[100vh] fixed bottom-0 left-[0] z-999`}>
-                    <div ref={menuRef} className='overflow-scroll bg-white h-[100vh] w-[266px] pt-4 fixed bottom-0 right-[0]'>
-                        <div className="sticky top-0 bg-white head py-[10px] px-[16px] flex items-center justify-between">
+                    <div ref={menuRef} className='overflow-scroll bg-white h-[100vh] w-[266px] fixed bottom-0 right-[0]'>
+                        <div className="sticky top-0 bg-white head py-[10px] px-[8px] mt-8 flex items-center justify-between">
                             <div className='flex items-center gap-[7px]'>
                                 <Image
                                     src={"/images/logo.png"}
