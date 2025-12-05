@@ -31,7 +31,7 @@ const VideoSvg = "/icons/lets-icons_video-fill.svg";
  * @param {boolean} props.isFavorite
  * @param {function} props.onToggleFavorite 
  */
-const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
+const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = true }) => {
   const [activeSlide, setActiveSlide] = React.useState(0);
 
   const handleFavClick = (e) => {
@@ -124,7 +124,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
 
               </SwiperSlide>
 
-})}
+            })}
           </Swiper>
 
           <div
@@ -233,18 +233,23 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
         </div>
 
         <div className="max-[769px]:hidden px-[8px] py-[16px] flex justify-between gap-[8px]">
-          <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
-            <Image
-              className="max-[1024px]:hidden"
-              src={Imagesvg}
-              alt="Author"
-              width={35}
-              height={35}
-            />
-            <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-              Əli Bağırov
-            </span>
-          </div>
+          {
+            isActive &&
+            <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
+              <Image
+                className="max-[1024px]:hidden"
+                src={Imagesvg}
+                alt="Author"
+                width={35}
+                height={35}
+              />
+
+              <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
+                Əli Bağırov
+              </span>
+
+            </div>
+          }
           <div className="flex items-center gap-[5px] shrink min-w-0 overflow-hidden">
             <span className="text-[18px] font-[600] max-[1200]:text-[16px]">
               {house.price}
