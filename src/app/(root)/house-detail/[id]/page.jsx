@@ -11,8 +11,8 @@ const page = async ({ params }) => {
   return (
     <>
     <HeroAndDetails id={id} />
-      <Map />
-      <SimilarAnnouncements />
+      {/* <Map />
+      <SimilarAnnouncements /> */}
     </>
   )
 }
