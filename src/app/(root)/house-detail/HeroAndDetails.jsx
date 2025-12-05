@@ -23,6 +23,8 @@ import Parking from "../../../../public/icons/parking.svg"
 import WaterHeater from "../../../../public/icons/water-heater.svg"
 import AirConditioner from "../../../../public/icons/air-conditioner.svg"
 import { getAnnouncementById } from '@/services/api/endpoints/announcementService';
+import Map from './Map';
+import SimilarAnnouncements from './SimilarAnnouncements';
 
 const HeroAndDetails = ({ id }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -36,7 +38,6 @@ const HeroAndDetails = ({ id }) => {
   const textRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 430px)');
   const isTablet = useMediaQuery('(max-width: 768px)');
-
   // const house = houseData.find(h => h.id === Number(id));
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef(null);
@@ -47,8 +48,8 @@ const HeroAndDetails = ({ id }) => {
     (async () => {
       const houseDetail = await getAnnouncementById(id)
       setHouse(houseDetail)
-      console.log("houseDetail",houseDetail);
-      
+      console.log("houseDetail", houseDetail);
+
     })()
   }, [])
 
@@ -149,7 +150,11 @@ const HeroAndDetails = ({ id }) => {
         <div className='mt-[20px] px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
           <div className='flex justify-between items-start gap-4'>
             <h1 className='text-[#111] text-[22px] lg:text-[32px] leading-[1.2] font-medium max-[431px]:text-[14px]'>
-              Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
+              {house?.announcementType == "SELL" ? "Satılır" : "Kiraye"},{" "}
+              {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
+              {house?.rooms} otaq,{" "}
+              {house?.area} m2,{" "}
+              {house?.selectedSettlement}
             </h1>
 
             <div className='flex flex-row items-center gap-[14px] max-[431px]:hidden'>
@@ -252,22 +257,29 @@ const HeroAndDetails = ({ id }) => {
                 <h1 className="text-2xl sm:text-3xl font-bold">Elan haqqında</h1>
 
                 <div className="flex flex-wrap gap-4 sm:gap-6 mt-6">
-                  <PrimarySimpleButton icon={HouseDetailsMetro} name="N.Nərimanov" />
-                  <PrimarySimpleButton icon={HouseDetailsRoom} name="3 Otaq" />
-                  <PrimarySimpleButton icon={HouseDetailsFloor} name="3/12" />
-                  <PrimarySimpleButton icon={HouseDetailsSquare} name="160 m2" />
-                  <PrimarySimpleButton icon={HouseDetailsPaint} name="Tam Təmirli" />
-                  <PrimarySimpleButton icon={HouseDetailsDocument} name="Çıxarışı var" />
+                  <PrimarySimpleButton icon={HouseDetailsMetro} name={house?.selectedDistrict} />
+                  <PrimarySimpleButton icon={HouseDetailsRoom} name={`${house?.rooms} Otaq`} />
+                  <PrimarySimpleButton icon={HouseDetailsFloor} name={`${house?.floor}/${house?.totalFloors}`} />
+                  <PrimarySimpleButton icon={HouseDetailsSquare} name={`${house?.area} m2`} />
+                  {
+                    house?.repairStatus === "RENEWED" ?
+                      <PrimarySimpleButton icon={HouseDetailsPaint} name="Tam Təmirli" />
+                      :
+                      <PrimarySimpleButton icon={HouseDetailsPaint} name="Təmirsiz" />
+                  }
+                  {
+                    house?.exit === "theres" ?
+                      <PrimarySimpleButton icon={HouseDetailsDocument} name="Çıxarışı var" />
+                      :
+                      <PrimarySimpleButton icon={HouseDetailsDocument} name="Çıxarışı yoxdur" />
+                  }
                 </div>
 
                 <p
                   ref={textRef}
                   className={`text-black text-base sm:text-lg leading-[28px] tracking-[0.2px] mt-5 ${showMore ? "" : "max-[431px]:line-clamp-4"}`}
                 >
-                  Nəsimi rayonu Fətəli xan Xoyski küçəsi Nərimanov metrosunun yaxınlığı, 12 mərtəbəli binanın 3-cü mərtəbəsi ümumi
-                  sahəsi 160 kv m olan 3 otaqlı dubleks təmirli əşyalı mənzil. Mənzildə üç geniş yataq otağı, zal, mətbəx, sanuzel,
-                  sanitar qovşağı mövcuddur. Mənzilin balkonunda yay mətbəxi mövcuddur. Böyük terası var. Ətrafında market, məktəb,
-                  baxçabir sıra iaşə obyektləri var. Maraqlanan şəxslər buyurub müraciət edə bilər.
+                  {house?.description}
                 </p>
                 {isOverflowing && (
                   <div className="flex justify-end w-full">
@@ -296,7 +308,19 @@ const HeroAndDetails = ({ id }) => {
                 </h1>
 
                 <div className="flex flex-col gap-4">
-                  {[
+                  {house?.features.map((item, idx) => (
+                    <div key={idx} className="flex flex-row gap-3 items-center text-[#2B2B2B] text-base sm:text-[20px]">
+                      {/* <Image
+                        src={item}
+                        alt={item}
+                        width={24}
+                        height={24}
+                        unoptimized
+                      /> */}
+                      <p>{item}</p>
+                    </div>
+                  ))}
+                  {/* {[
                     { icon: Elevator, label: "Lift" },
                     { icon: Security, label: "Təhlükəsizlik" },
                     { icon: Parking, label: "Parkinq" },
@@ -313,7 +337,7 @@ const HeroAndDetails = ({ id }) => {
                       />
                       <p>{item.label}</p>
                     </div>
-                  ))}
+                  ))} */}
                 </div>
               </div>
             </div>
@@ -327,7 +351,7 @@ const HeroAndDetails = ({ id }) => {
                 </h1>
 
                 <p className="max-[431px]:text-[14px] text-[20px] font-[400] leading-none">
-                  {Math.floor(house?.price/house?.area)} AZN / m2
+                  {Math.floor(house?.price / house?.area)} AZN / m2
                 </p>
               </div>
 
@@ -364,15 +388,20 @@ const HeroAndDetails = ({ id }) => {
           <div className="w-full bg-white px-4 py-2.5 flex items-center justify-between gap-3 shadow-md" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <h1 className='text-[#111] text-[16px] leading-[1.2] font-medium truncate'>
-                Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
+                {house?.announcementType == "SELL" ? "Satılır" : "Kiraye"},{" "}
+                {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
+                {house?.rooms} otaq,{" "}
+                {house?.area} m2,{" "}
+                {house?.selectedSettlement}
               </h1>
             </div>
 
             <div className="flex items-center gap-3 flex-shrink-0">
               <div className="flex flex-col items-end gap-0.5">
-                <h2 className="text-[18px] font-[500] leading-none">280,000 AZN</h2>
-                <p className="text-[13px] font-[400] leading-none text-gray-600">1781 AZN / m2</p>
+                <h2 className="text-[18px] font-[500] leading-none">{house?.price} AZN</h2>
+                <p className="text-[13px] font-[400] leading-none text-gray-600">{Math.floor(house?.price / house?.area)} AZN / m2</p>
               </div>
+
 
               <div className="flex gap-2">
                 <div className="scale-90">
@@ -492,8 +521,8 @@ const HeroAndDetails = ({ id }) => {
                   key={idx}
                   ref={(el) => thumbnailRefs.current[idx] = el}
                   className={`relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-all ${selectedIndex === idx
-                      ? 'opacity-100'
-                      : 'opacity-60 hover:opacity-100'
+                    ? 'opacity-100'
+                    : 'opacity-60 hover:opacity-100'
                     }`}
                   onMouseEnter={() => {
                     setSelectedIndex(idx);
@@ -513,6 +542,8 @@ const HeroAndDetails = ({ id }) => {
           </div>
         </div>
       )}
+      <Map lat={house?.latitude} lng={house?.longitude} />
+      <SimilarAnnouncements />
     </>
   );
 };

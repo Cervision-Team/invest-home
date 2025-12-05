@@ -25,7 +25,7 @@ const items = [
   { icon: marketplace, iconHover: marketplaceWhite, width: 24, height: 24, name: "Market" },
 ];
 
-const Map = () => {
+const Map = ({ lat, lng }) => {
   return (
     <section className='max-w-[1600px] mx-[auto]'>
       <div className='w-full px-4 sm:px-8 lg:px-20 flex flex-col items-start justify-center'>
@@ -45,9 +45,9 @@ const Map = () => {
             />
           ))}
         </div>
-
+        {/* /embed?pb=!1m18!1m12!1m3!1d24236.414997399468!2d49.844775562309536!3d40.405880488250126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d7fc050f3e5%3A0xfc80fae5b4fa5c0a!2zQXrJmXJiYXljYW4gxLBubm92YXNpeWEgTcmZcmvJmXpp!5e0!3m2!1str!2saz!4v1752733537261!5m2!1str!2saz */}
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24236.414997399468!2d49.844775562309536!3d40.405880488250126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d7fc050f3e5%3A0xfc80fae5b4fa5c0a!2zQXrJmXJiYXljYW4gxLBubm92YXNpeWEgTcmZcmvJmXpp!5e0!3m2!1str!2saz!4v1752733537261!5m2!1str!2saz"
+          src="https://www.google.com/maps?q=40.38268442717272,49.863177522738106&z=15&output=embed"
           width="1060"
           height="476"
           className="w-full h-[300px] sm:h-[400px] lg:h-[476px]"
