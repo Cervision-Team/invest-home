@@ -3,7 +3,10 @@ const isTurbopack = process.env.TURBOPACK === '1';
 const isDev = process.env.NODE_ENV === 'development';
 
 const baseConfig = {
-  reactStrictMode: true
+  reactStrictMode: true,
+  images: {
+    domains: ["firebasestorage.googleapis.com"],
+  },
 };
 
 if (!isTurbopack) {

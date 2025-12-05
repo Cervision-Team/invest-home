@@ -23,7 +23,22 @@ export const getAnnouncement = async () => {
 };
 export const getAnnouncementFilter = async () => {
 	try {
-		const res = await axios.post("/announcement/filter?page=0&size=10", {
+		const res = await axios.post("/announcement/filter?page=0&size=10",{});
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+export const getAnnouncementById = async (id) => {
+	try {
+		const res = await axios.get(`/announcement/${id}`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+/*{
 			name: null,
 			address: null,
 			priceFrom: null,
@@ -47,17 +62,4 @@ export const getAnnouncementFilter = async () => {
 			userId: null,
 			agentId: null,
 			neighborhoodId: null,
-		});
-		return res.data;
-	} catch (err) {
-		console.log(err);
-	}
-};
-export const getAnnouncementById = async (id) => {
-	try {
-		const res = await axios.get(`/announcement/${id}`);
-		return res.data;
-	} catch (err) {
-		console.log(err);
-	}
-};
+		}*/
