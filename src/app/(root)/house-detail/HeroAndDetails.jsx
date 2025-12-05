@@ -22,6 +22,7 @@ import Security from "../../../../public/icons/security.svg"
 import Parking from "../../../../public/icons/parking.svg"
 import WaterHeater from "../../../../public/icons/water-heater.svg"
 import AirConditioner from "../../../../public/icons/air-conditioner.svg"
+import { getAnnouncementById } from '@/services/api/endpoints/announcementService';
 
 const HeroAndDetails = ({ id }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -31,39 +32,48 @@ const HeroAndDetails = ({ id }) => {
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-
+  const [house, setHouse] = useState(null);
   const textRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 430px)');
   const isTablet = useMediaQuery('(max-width: 768px)');
 
-  const house = houseData.find(h => h.id === Number(id));
-const [containerWidth, setContainerWidth] = useState(0);
-const containerRef = useRef(null);
-const thumbnailContainerRef = useRef(null);
-const thumbnailRefs = useRef([]);
+  // const house = houseData.find(h => h.id === Number(id));
+  const [containerWidth, setContainerWidth] = useState(0);
+  const containerRef = useRef(null);
+  const thumbnailContainerRef = useRef(null);
+  const thumbnailRefs = useRef([]);
 
-// Each thumbnail is 70px wide + 4px gap = 74px per thumbnail (except last one which doesn't need gap)
-const thumbnailWidth = 70;
-const gap = 4;
-const maxVisibleThumbnails = useMemo(() => {
-  if (containerWidth === 0) return house.images.length;
-  const availableWidth = containerWidth - 5; // Account for padding
-  const count = Math.floor((availableWidth + gap) / (thumbnailWidth + gap));
-  return Math.max(1, Math.min(count, house.images.length));
-}, [containerWidth, house.images.length]);
+  useEffect(() => {
+    (async () => {
+      const houseDetail = await getAnnouncementById(id)
+      setHouse(houseDetail)
+      console.log("houseDetail",houseDetail);
+      
+    })()
+  }, [])
 
-useEffect(() => {
-  if (!containerRef.current) return;
+  // Each thumbnail is 70px wide + 4px gap = 74px per thumbnail (except last one which doesn't need gap)
+  const thumbnailWidth = 70;
+  const gap = 4;
+  const maxVisibleThumbnails = useMemo(() => {
+    if (containerWidth === 0) return house?.medias.length;
+    const availableWidth = containerWidth - 5; // Account for padding
+    const count = Math.floor((availableWidth + gap) / (thumbnailWidth + gap));
+    return Math.max(1, Math.min(count, house?.medias.length));
+  }, [containerWidth, house?.medias.length]);
 
-  const resizeObserver = new ResizeObserver((entries) => {
-    for (let entry of entries) {
-      setContainerWidth(entry.contentRect.width);
-    }
-  });
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-  resizeObserver.observe(containerRef.current);
-  return () => resizeObserver.disconnect();
-}, []);
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     if (textRef.current) {
@@ -79,38 +89,38 @@ useEffect(() => {
     }
   }, []);
 
-useEffect(() => {
-  if (thumbnailContainerRef.current && thumbnailRefs.current[selectedIndex]) {
-    const container = thumbnailContainerRef.current;
-    const thumbnail = thumbnailRefs.current[selectedIndex];
+  useEffect(() => {
+    if (thumbnailContainerRef.current && thumbnailRefs.current[selectedIndex]) {
+      const container = thumbnailContainerRef.current;
+      const thumbnail = thumbnailRefs.current[selectedIndex];
 
-    const containerRect = container.getBoundingClientRect();
-    const thumbnailRect = thumbnail.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const thumbnailRect = thumbnail.getBoundingClientRect();
 
-    const thumbnailLeft = thumbnailRect.left - containerRect.left + container.scrollLeft;
-    const thumbnailRight = thumbnailLeft + thumbnailRect.width;
-    const containerScrollLeft = container.scrollLeft;
-    const containerWidth = container.clientWidth;
+      const thumbnailLeft = thumbnailRect.left - containerRect.left + container.scrollLeft;
+      const thumbnailRight = thumbnailLeft + thumbnailRect.width;
+      const containerScrollLeft = container.scrollLeft;
+      const containerWidth = container.clientWidth;
 
-    const padding = 100;
+      const padding = 100;
 
-    if (thumbnailLeft < containerScrollLeft + padding) {
-      const newScrollLeft = Math.max(0, thumbnailLeft - padding);
-      container.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
-    } else if (thumbnailRight > containerScrollLeft + containerWidth - padding) {
-      const maxScrollLeft = container.scrollWidth - containerWidth;
-      const newScrollLeft = Math.min(maxScrollLeft, thumbnailRight - containerWidth + padding);
-      container.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      });
+      if (thumbnailLeft < containerScrollLeft + padding) {
+        const newScrollLeft = Math.max(0, thumbnailLeft - padding);
+        container.scrollTo({
+          left: newScrollLeft,
+          behavior: 'smooth'
+        });
+      } else if (thumbnailRight > containerScrollLeft + containerWidth - padding) {
+        const maxScrollLeft = container.scrollWidth - containerWidth;
+        const newScrollLeft = Math.min(maxScrollLeft, thumbnailRight - containerWidth + padding);
+        container.scrollTo({
+          left: newScrollLeft,
+          behavior: 'smooth'
+        });
+      }
     }
-  }
-}, [selectedIndex]);
-if (!house) {
+  }, [selectedIndex]);
+  if (!house) {
     return Loading()
   }
 
@@ -173,15 +183,15 @@ if (!house) {
                     speed={500}
                     spaceBetween={8}
                   >
-                    {house.images.map((image) => (
+                    {house?.medias.map((image) => (
                       <SwiperSlide key={image.id}>
                         <div
                           className='relative w-full h-[233px] cursor-pointer'
-                          onClick={() => openPreview(image)}
+                          onClick={() => openPreview(image.imageUrl)}
                         >
                           <Image
                             alt={"house_image"}
-                            src={image}
+                            src={image.imageUrl}
                             fill={true}
                             className={`object-cover`}
                           />
@@ -194,20 +204,20 @@ if (!house) {
                 <div className="flex flex-col gap-[10px] w-full items-center">
                   <div
                     className="relative w-full h-[434px] rounded-[8px] overflow-hidden cursor-pointer"
-                    onClick={() => openPreview(house.images[selectedIndex])}
+                    onClick={() => openPreview(house?.medias[selectedIndex].imageUrl)}
                   >
                     <Image
                       alt={"house_image"}
-                      src={house.images[selectedIndex]}
+                      src={house?.medias[selectedIndex].imageUrl}
                       fill
                       className="object-cover"
                     />
                   </div>
 
                   <div className="flex gap-[4px] overflow-hidden">
-                    {house.images.slice(0, maxVisibleThumbnails).map((image, idx) => {
+                    {house?.medias.slice(0, maxVisibleThumbnails).map((image, idx) => {
                       const isLastVisible = idx === maxVisibleThumbnails - 1;
-                      const remainingCount = house.images.length - maxVisibleThumbnails;
+                      const remainingCount = house?.medias.length - maxVisibleThumbnails;
                       const shouldShowOverlay = isLastVisible && remainingCount > 0;
 
                       return (
@@ -215,11 +225,11 @@ if (!house) {
                           key={idx}
                           className="relative min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-opacity hover:opacity-80"
                           onMouseEnter={() => setSelectedIndex(idx)}
-                          onClick={() => openPreview(image)}
+                          onClick={() => openPreview(image.imageUrl)}
                         >
                           <Image
                             alt={`house_thumbnail_${idx}`}
-                            src={image}
+                            src={image.imageUrl}
                             fill
                             className="object-cover"
                           />
@@ -313,11 +323,11 @@ if (!house) {
             <div className='max-[431px]:items-center flex flex-col min-[431px]:gap-[41px] max-[431px]:flex-row-reverse max-[431px]:justify-between'>
               <div className='flex flex-col gap-[16px]'>
                 <h1 className="max-[431px]:text-[20px] text-[32px] font-[500] leading-none">
-                  280,000 AZN
+                  {house?.price} AZN
                 </h1>
 
                 <p className="max-[431px]:text-[14px] text-[20px] font-[400] leading-none">
-                  1781 AZN / m2
+                  {Math.floor(house?.price/house?.area)} AZN / m2
                 </p>
               </div>
 
@@ -346,165 +356,164 @@ if (!house) {
         </div>
       </section>
 
-{previewImage && (
-      <div
-        className="fixed inset-0 z-[9999] bg-black flex flex-col"
-        onClick={closePreview}
-      >
-        <div className="w-full bg-white px-4 py-2.5 flex items-center justify-between gap-3 shadow-md" onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <h1 className='text-[#111] text-[16px] leading-[1.2] font-medium truncate'>
-              Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
-            </h1>
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black flex flex-col"
+          onClick={closePreview}
+        >
+          <div className="w-full bg-white px-4 py-2.5 flex items-center justify-between gap-3 shadow-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <h1 className='text-[#111] text-[16px] leading-[1.2] font-medium truncate'>
+                Satılır, yeni tikili, 3 otaq, 160 m2, Nərimanov
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex flex-col items-end gap-0.5">
+                <h2 className="text-[18px] font-[500] leading-none">280,000 AZN</h2>
+                <p className="text-[13px] font-[400] leading-none text-gray-600">1781 AZN / m2</p>
+              </div>
+
+              <div className="flex gap-2">
+                <div className="scale-90">
+                  <RoundedBlackButton
+                    icon={<Image src={ShareWhite} alt="Share" width={16} height={16} />}
+                    backgroundColor="#02836F"
+                  />
+                </div>
+                <div onClick={handleFavToggle} className="scale-90">
+                  <RoundedBlackButton
+                    icon={
+                      <LuHeart
+                        className={`${isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"} text-[1rem]`}
+                      />
+                    }
+                    backgroundColor="#02836F"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2 scale-90">
+                <ConnectionButton name="Zəng et" />
+                <ConnectionButton name="Mesaj yaz" />
+              </div>
+
+              <button
+                className="text-black hover:text-gray-600 transition-colors p-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closePreview();
+                }}
+              >
+                <LuX size={24} />
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex flex-col items-end gap-0.5">
-              <h2 className="text-[18px] font-[500] leading-none">280,000 AZN</h2>
-              <p className="text-[13px] font-[400] leading-none text-gray-600">1781 AZN / m2</p>
-            </div>
-
-            <div className="flex gap-2">
-              <div className="scale-90">
-                <RoundedBlackButton
-                  icon={<Image src={ShareWhite} alt="Share" width={16} height={16} />}
-                  backgroundColor="#02836F"
-                />
-              </div>
-              <div onClick={handleFavToggle} className="scale-90">
-                <RoundedBlackButton
-                  icon={
-                    <LuHeart
-                      className={`${isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"} text-[1rem]`}
-                    />
-                  }
-                  backgroundColor="#02836F"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 scale-90">
-              <ConnectionButton name="Zəng et" />
-              <ConnectionButton name="Mesaj yaz" />
-            </div>
-
+          <div className="flex-1 flex items-center justify-center w-full relative px-4 py-2">
             <button
-              className="text-black hover:text-gray-600 transition-colors p-1"
+              className="cursor-pointer absolute left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
               onClick={(e) => {
                 e.stopPropagation();
-                closePreview();
+                setSelectedIndex((prev) => (prev > 0 ? prev - 1 : house?.medias.length - 1));
+                setPreviewImage(house?.medias[selectedIndex > 0 ? selectedIndex - 1 : house?.medias.length - 1].imageUrl);
               }}
             >
-              <LuX size={24} />
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
             </button>
-          </div>
-        </div>
-    
-        <div className="flex-1 flex items-center justify-center w-full relative px-4 py-2">
-          <button
-            className="cursor-pointer absolute left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedIndex((prev) => (prev > 0 ? prev - 1 : house.images.length - 1));
-              setPreviewImage(house.images[selectedIndex > 0 ? selectedIndex - 1 : house.images.length - 1]);
-            }}
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-    
-          {dimensions.width > 0 && dimensions.height > 0 ? (
-            <div
-              className="relative"
-              style={{
-                width: `${dimensions.width}px`,
-                height: `${dimensions.height}px`,
-                maxWidth: "85vw",
-                maxHeight: "calc(100vh - 180px)",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+
+            {dimensions.width > 0 && dimensions.height > 0 ? (
+              <div
+                className="relative"
+                style={{
+                  width: `${dimensions.width}px`,
+                  height: `${dimensions.height}px`,
+                  maxWidth: "85vw",
+                  maxHeight: "calc(100vh - 180px)",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Image
+                  alt="Preview"
+                  src={previewImage}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            ) : (
               <Image
                 alt="Preview"
                 src={previewImage}
-                fill
-                className="object-contain"
-              />
-            </div>
-          ) : (
-            <Image
-              alt="Preview"
-              src={previewImage}
-              width={1}
-              height={1}
-              className="opacity-0"
-              onLoadingComplete={(img) => {
-                const naturalWidth = img.naturalWidth;
-                const naturalHeight = img.naturalHeight;
-                const maxWidth = window.innerWidth * 0.85;
-                const maxHeight = (window.innerHeight) - 180;
-    
-                const scale = Math.min(
-                  maxWidth / naturalWidth,
-                  maxHeight / naturalHeight
-                );
-    
-                setDimensions({
-                  width: naturalWidth * scale,
-                  height: naturalHeight * scale,
-                });
-              }}
-            />
-          )}
-    
-          <button
-            className="cursor-pointer absolute right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedIndex((prev) => (prev < house.images.length - 1 ? prev + 1 : 0));
-              setPreviewImage(house.images[selectedIndex < house.images.length - 1 ? selectedIndex + 1 : 0]);
-            }}
-          >
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </div>
-    
-         <div 
-          className="w-full pb-3 flex justify-center"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div ref={thumbnailContainerRef} className="max-w-[85vw] flex gap-[4px] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"> 
-            {house.images.map((image, idx) => (
-              <div
-                key={idx}
-                ref={(el) => thumbnailRefs.current[idx] = el}
-                className={`relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-all ${
-                  selectedIndex === idx 
-                    ? 'opacity-100' 
-                    : 'opacity-60 hover:opacity-100'
-                }`}
-                onMouseEnter={() => {
-                  setSelectedIndex(idx);
-                  setPreviewImage(image);
-                  setDimensions({ width: 0, height: 0 });
+                width={1}
+                height={1}
+                className="opacity-0"
+                onLoadingComplete={(img) => {
+                  const naturalWidth = img.naturalWidth;
+                  const naturalHeight = img.naturalHeight;
+                  const maxWidth = window.innerWidth * 0.85;
+                  const maxHeight = (window.innerHeight) - 180;
+
+                  const scale = Math.min(
+                    maxWidth / naturalWidth,
+                    maxHeight / naturalHeight
+                  );
+
+                  setDimensions({
+                    width: naturalWidth * scale,
+                    height: naturalHeight * scale,
+                  });
                 }}
-              >
-                <Image
-                  alt={`thumbnail_${idx}`}
-                  src={image}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
+              />
+            )}
+
+            <button
+              className="cursor-pointer absolute right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedIndex((prev) => (prev < house?.medias.length - 1 ? prev + 1 : 0));
+                setPreviewImage(house?.medias[selectedIndex < house?.medias.length - 1 ? selectedIndex + 1 : 0].imageUrl);
+              }}
+            >
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          <div
+            className="w-full pb-3 flex justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div ref={thumbnailContainerRef} className="max-w-[85vw] flex gap-[4px] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              {house?.medias.map((image, idx) => (
+                <div
+                  key={idx}
+                  ref={(el) => thumbnailRefs.current[idx] = el}
+                  className={`relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-all ${selectedIndex === idx
+                      ? 'opacity-100'
+                      : 'opacity-60 hover:opacity-100'
+                    }`}
+                  onMouseEnter={() => {
+                    setSelectedIndex(idx);
+                    setPreviewImage(image.imageUrl);
+                    setDimensions({ width: 0, height: 0 });
+                  }}
+                >
+                  <Image
+                    alt={`thumbnail_${idx}`}
+                    src={image.imageUrl}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    )}
-        </>
+      )}
+    </>
   );
 };
 

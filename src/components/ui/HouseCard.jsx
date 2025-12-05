@@ -110,11 +110,12 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
           >
             <div className={`card custom-prev-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
             <div className={`card custom-next-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
-            {house.images?.map((img, index) => (
-              <SwiperSlide key={`${house.id}-${index}`}>
+            {house.medias?.map((media, index) => {
+              const imageUrl = media.imageUrl
+              return <SwiperSlide key={`${house.id}-${index}`}>
                 <div className="relative aspect-[302/262]">
                   <Image
-                    src={img}
+                    src={imageUrl}
                     alt={`house_image_${index}`}
                     fill
                     className="object-cover"
@@ -123,7 +124,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
 
               </SwiperSlide>
 
-            ))}
+})}
           </Swiper>
 
           <div
@@ -149,7 +150,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
               onClick={(e) => e.preventDefault()}
               className="dynamic-dots"
             >
-              {house.images && house.images?.map((_, index) => (
+              {house.medias && house.medias?.map((_, index) => (
                 <div
                   key={index}
                   className={`dot ${index === activeSlide ? "active" : ""}`}
@@ -184,7 +185,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             </div>
             <div className="name max-[769px]:hidden shrink min-w-0 overflow-hidden">
               <h3 className="whitespace-nowrap font-[500] text-[16px] text-[#111111]">
-                {house.title}
+                {house.propertyType}
               </h3>
             </div>
             <div className="shrink-0 share cursor-pointer">
@@ -195,7 +196,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
           <div className="flex items-center gap-[11px]">
             <CiLocationOn className="text-[var(--text-color-3)] hidden max-[769px]:inline-block" />
             <span className="font-[500] text-[var(--text-color-3)] text-[14px] whitespace-nowrap max-[769px]:hidden">
-              {house.location}
+              {house.selectedAddress}
             </span>
             <Image
               src={MetroIcon}
@@ -213,7 +214,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={BedIcon} alt="Beds" width={10} height={10} />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.beds} <span className="max-[769px]:hidden">beds</span>
+                {house.rooms} <span className="max-[769px]:hidden">beds</span>
               </span>
             </div>
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
@@ -225,7 +226,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite }) => {
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={SquareMetersIcon} alt="Field" width={10} height={10} />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.field}
+                {house.area}
               </span>
             </div>
           </div>
