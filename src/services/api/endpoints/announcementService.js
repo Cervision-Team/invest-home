@@ -23,7 +23,7 @@ export const getAnnouncement = async () => {
 };
 export const getAnnouncementFilter = async () => {
 	try {
-		const res = await axios.post("/announcement/filter?page=0&size=10",{});
+		const res = await axios.post("/announcement/main?page=0&size=10", {});
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -32,6 +32,27 @@ export const getAnnouncementFilter = async () => {
 export const getAnnouncementById = async (id) => {
 	try {
 		const res = await axios.get(`/announcement/${id}`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+export const assignAgent = async (announcementId, agentId) => {
+	try {
+		const res = await axios.patch(
+			`/announcement/${announcementId}/assign-agent/`,{id:agentId}
+		);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+export const approveAnnouncement = async (announcementId, status) => {
+	try {
+		const res = await axios.patch(
+			`/announcement/${announcementId}/approve/${status}`
+		);
 		return res.data;
 	} catch (err) {
 		console.log(err);

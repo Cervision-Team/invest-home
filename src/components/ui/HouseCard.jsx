@@ -236,16 +236,37 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           {
             isActive &&
             <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
-              <Image
-                className="max-[1024px]:hidden"
-                src={Imagesvg}
-                alt="Author"
-                width={35}
-                height={35}
-              />
+              <div className="w-10 h-10">
+                {
+                  house?.publisher?.imageUrl ?
+                    <Image
+                      className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
+                      src={house?.publisher?.imageUrl}
+                      alt="Author"
+                      width={35}
+                      height={35}
+                    />
+                    :
+                    <Image
+                      className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
+                      src={Imagesvg}
+                      alt="Author"
+                      width={35}
+                      height={35}
+                    />
+                }
+
+                <Image
+                  className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
+                  src={house?.publisher?.imageUrl}
+                  alt="Author"
+                  width={35}
+                  height={35}
+                />
+              </div>
 
               <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-                Əli Bağırov
+                {house?.publisher?.fullName}
               </span>
 
             </div>

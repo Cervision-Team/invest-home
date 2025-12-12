@@ -16,3 +16,12 @@ export const updateUser = async (user) => {
 		console.log(err);
 	}
 };
+
+export const getAgent = async () =>{
+	try {
+		const res = await axios.get(`/user/agent`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+}
