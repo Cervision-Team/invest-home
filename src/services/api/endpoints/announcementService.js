@@ -37,17 +37,26 @@ export const getAnnouncementById = async (id) => {
 		console.log(err);
 	}
 };
+export const getAnnouncementByStatus = async (status) => {
+	try {
+	const res = await axios.get(`/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${20}`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
 
 export const assignAgent = async (announcementId, agentId) => {
 	try {
 		const res = await axios.patch(
-			`/announcement/${announcementId}/assign-agent/`,{id:agentId}
+			`/announcement/${announcementId}/assign-agent`,{id:agentId}
 		);
 		return res.data;
 	} catch (err) {
 		console.log(err);
 	}
 };
+
 export const approveAnnouncement = async (announcementId, status) => {
 	try {
 		const res = await axios.patch(
