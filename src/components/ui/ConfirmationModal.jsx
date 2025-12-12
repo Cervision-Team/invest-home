@@ -35,7 +35,7 @@ const modalStyles = `
   }
 `;
 
-const ConfirmationModal = ({ isOpen, text }) => {
+const ConfirmationModal = ({ isOpen, text, buttonText = "Əsas səhifəyə qayıt", url = "/" }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("no-scroll");
@@ -70,9 +70,9 @@ const ConfirmationModal = ({ isOpen, text }) => {
             <p className="max-w-[324px] text-[#1B1F27] text-center text-[16px]/[22px] font-medium mt-5">
               {text}
             </p>
-            <Link href="/">
+            <Link href={url}>
               <button className="cursor-pointer flex items-center gap-[12px] text-white bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] mt-6">
-                <span className="font-[500] text-[16px]">Əsas səhifəyə qayıt</span>
+                <span className="font-[500] text-[16px]">{buttonText}</span>
               </button>
             </Link>
           </div>

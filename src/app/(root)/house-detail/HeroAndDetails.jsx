@@ -25,6 +25,7 @@ import AirConditioner from "../../../../public/icons/air-conditioner.svg"
 import { getAnnouncementById } from '@/services/api/endpoints/announcementService';
 import Map from './Map';
 import SimilarAnnouncements from './SimilarAnnouncements';
+import Link from 'next/link';
 
 const HeroAndDetails = ({ id }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -345,7 +346,16 @@ const HeroAndDetails = ({ id }) => {
 
           <div className="min-[769px]:sticky min-[768px]:basis-[411px] top-[95px] max-[769px]:w-full rounded-[20px] bg-white shadow-[0px_2px_10px_0px_rgba(2,131,111,0.15)] max-[431px]:px-[16px] max-[431px]:py-[20px] px-[34px] py-[32px] flex flex-col gap-[41px] self-start">
             <div className='max-[431px]:items-center flex flex-col min-[431px]:gap-[41px] max-[431px]:flex-row-reverse max-[431px]:justify-between'>
-              <div className='flex flex-col gap-[16px]'>
+              <div className='flex flex-col gap-4 relative'>
+                <Link href={`/confirmation-announcement/${id}`} className='absolute right-0 w-40 h-10 rounded-xl border border-solid border-primary group overflow-hidden'>
+                  <div className='absolute inset-0 w-0 h-full transition-all duration-800 group-hover:w-full'
+                    style={{
+                      background: 'linear-gradient(90deg, #02836F 0%, #1A1919 100%)',
+                    }}></div>
+                  <button className='relative z-10 w-full h-full flex items-center justify-center text-primary text-base font-medium cursor-pointer transition-colors duration-800 group-hover:text-[#FFFEFE]'>
+                    Aktiv et
+                  </button>
+                </Link>
                 <h1 className="max-[431px]:text-[20px] text-[32px] font-[500] leading-none">
                   {house?.price} AZN
                 </h1>
@@ -365,7 +375,7 @@ const HeroAndDetails = ({ id }) => {
                   />
                 </div>
                 <div className="flex flex-col justify-between">
-                  <p className="text-[#111] max-[431px]:text-[16px] text-[20px] font-[500] leading-none ">Amin Bağırov</p>
+                  <p className="text-[#111] max-[431px]:text-[16px] text-[20px] font-[500] leading-none ">{house?.agent?.fullName}</p>
                   <p className="text-black max-[431px]:text-[12px] text-[14px] font-[500] leading-none">Agent</p>
                   <p className="text-black/50 max-[431px]:text-[10px] text-[12px] font-[500] leading-none text-[rgba(0, 0, 0, 0.5)]">1 saat əvvəl</p>
                 </div>
