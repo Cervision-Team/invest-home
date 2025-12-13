@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-	baseURL: "https://api.investhome.az/api",
+	baseURL: "http://172.25.96.108:8080/api",
 	timeout: 10000,
 });
 // 72.62.33.205
