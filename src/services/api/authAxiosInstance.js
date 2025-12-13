@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const authAxiosInstance = axios.create({
-	baseURL: "http://172.25.96.108:8080/api",
+	baseURL: "https://api.investhome.az/api",
 	timeout: 10000,
 });
 
