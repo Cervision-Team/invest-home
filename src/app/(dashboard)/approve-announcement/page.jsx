@@ -5,7 +5,7 @@ import photo from "../../../../public/images/profile/novruz.jpg"
 import announcement from "../../../../public/images/profile/announcement.png"
 import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
-import { approveAnnouncement, getAnnouncementByStatus } from '@/services/api/endpoints/announcementService'
+import { approveAnnouncement, getAnnouncementByUser } from '@/services/api/endpoints/announcementService'
 const ApproveAnnouncmenet = () => {
     const data = Array.from({ length: 10 })
     const [search, setSearch] = useState();
@@ -13,12 +13,12 @@ const ApproveAnnouncmenet = () => {
     const handleStatus = async (id, status) => {
         // await approveAnnouncement(id, status)
         console.log(id, status);
-
+        
     }
 
     useEffect(() => {
         (async () => {
-            const res = await getAnnouncementByStatus("ASSIGNED_TO_AGENT");
+            const res = await getAnnouncementByUser("ASSIGNED_TO_AGENT");
             setAnnouncementData(res.content)
             console.log(res.content);
         })()

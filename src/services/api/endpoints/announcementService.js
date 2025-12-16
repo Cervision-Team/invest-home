@@ -37,9 +37,9 @@ export const getAnnouncementById = async (id) => {
 		console.log(err);
 	}
 };
-export const getAnnouncementByStatus = async (status) => {
+export const getAnnouncementByUser = async (status) => {
 	try {
-	const res = await axios.get(`/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${20}`);
+	const res = await axios.get(`/announcement/by-user?status=${status}&pageIndex=${0}&pageSize=${20}`);
 		return res.data;
 	} catch (err) {
 		console.log(err);
