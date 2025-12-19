@@ -4,7 +4,7 @@ const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) 
     const fields = [
         { label: "Ad/Soyad", name: "fullName", },
         { label: "Doğum tarixi", name: "birthDate" },
-        { label: "Telefon", name: "phone" },
+        { label: "Telefon", name: "phoneNumber" },
         { label: "Yaşayış ünvanı", name: "location" },
         { label: "Email", name: "email" },
         { label: "Vəzifəsi", name: "roleName" },
