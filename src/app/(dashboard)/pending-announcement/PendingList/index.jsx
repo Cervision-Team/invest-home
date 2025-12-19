@@ -37,11 +37,11 @@ const PendingList = () => {
     }, [activeType]);
 
     return (
-        <div className='grid grid-cols-3 gap-6'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6'>
             {
                 houses?.length !== 0 &&
-                houses?.map((house) => (
-                    <div className='w-[300px]'>
+                houses?.map((house, idx) => (
+                    <div key={house?.id ?? idx} className='w-full'>
                         <HouseCard house={house} isActive={false}/>
                     </div>
                 ))

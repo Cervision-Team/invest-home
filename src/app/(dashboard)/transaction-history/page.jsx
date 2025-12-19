@@ -38,11 +38,11 @@ const TransactionHistory = () => {
 
     return (
         <main className='w-full text-[#1B1F27]'>
-            <div className='flex justify-between mb-10'>
-                <div className='min-w-[410px]'>
+            <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10'>
+                <div className='w-full md:max-w-md'>
                     <Search search={search} setSearch={setSearch} />
                 </div>
-                <div className='flex gap-6'>
+                <div className='flex gap-3 md:gap-6 md:justify-end'>
                     <Button />
                 </div>
             </div>

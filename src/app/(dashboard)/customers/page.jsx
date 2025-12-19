@@ -10,21 +10,21 @@ const Customers = () => {
   const [search, setSearch] = useState();
   return (
     <main className="w-full h-full">
-      <div className='flex justify-between mb-10 '>
-        <div className='min-w-[410px]'>
+      <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10'>
+        <div className='w-full md:max-w-md'>
           <Search search={search} setSearch={setSearch} />
         </div>
-        <div className='flex gap-6'>
+        <div className='flex gap-3 md:gap-6 md:justify-end'>
           <Button />
         </div>
       </div>
       <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün müştərilər</h1>
 
-      <div className='grid grid-cols-3 w-full gap-6 '>
+      <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 w-full gap-6 '>
 
         {
           data.map((_, i) => (
-            <div className='rounded-[20px] shadow-[0px_4px_10px_0px_#00000026] p-5'>
+            <div key={i} className='rounded-[20px] shadow-[0px_4px_10px_0px_#00000026] p-5'>
               <div className='flex items-center border-b border-[#02836F33] pb-3 mb-[10px]'>
                 <div className='w-[55px] h-[55px] mr-5'>
                   <Image src={photo} alt='customer photo' className='w-full h-full object-cover object-top rounded-full' />

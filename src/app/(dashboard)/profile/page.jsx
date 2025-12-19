@@ -84,7 +84,7 @@ const Profile = () => {
             className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 "
           >
             <div
-              className="bg-white rounded-2xl shadow-xl px-[51px] pt-10 pb-8 h-[332px] w-[414px] flex flex-col items-center gap-5"
+              className="bg-white rounded-2xl shadow-xl px-6 sm:px-[51px] pt-10 pb-8 w-[90%] max-w-[414px] flex flex-col items-center gap-5"
             >
               <Image src={editIcon} alt='edit' />
               <p className='text-center font-medium text-2xl'>Dəyişikliklər uğurla yadda saxlanıldı.</p>
