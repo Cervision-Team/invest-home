@@ -1,6 +1,9 @@
 import Image from "next/image";
 
+const defaultAvatar = "/icons/image.svg";
+
 export const AgentCard = ({ agent, selected, onSelect}) => {
+    const avatarSrc = agent?.image?.url || defaultAvatar;
     return (
         <div
             role="button"
@@ -12,7 +15,13 @@ export const AgentCard = ({ agent, selected, onSelect}) => {
             <div>
                 <div className="flex items-center  gap-5">
                     <div className="w-20 h-20">
-                        <Image src={agent?.image?.url} className="w-full h-full rounded-full object-cover object-top" width={50} height={50} />
+                        <Image
+                            src={avatarSrc}
+                            alt={agent?.fullName ? `${agent.fullName} foto` : "Agent foto"}
+                            className="w-full h-full rounded-full object-cover object-top"
+                            width={50}
+                            height={50}
+                        />
                     </div>
                     <h3 className="text-lg font-semibold">{agent.fullName}</h3>
                     {/* <div className="text-sm font-medium">{agent.rating} ★</div> */}
