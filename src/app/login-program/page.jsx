@@ -63,7 +63,7 @@ const page = () => {
     setTouched({ name: true, password: true });
 
     if (!nameError && !passwordError) {
-      const allowedUsers = [{ name: "Admin", password: "@invest2511" }];
+      const allowedUsers = [{ name: "Administrator", password: "investhome5465#" }];
       const isAuthorized = allowedUsers.some(
         (u) =>
           u.name.toLowerCase() === formData.name.trim().toLowerCase() &&

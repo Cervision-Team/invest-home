@@ -39,7 +39,7 @@ const Customers = () => {
 
                 </div>
               </div>
-              <div className='bg-[#fafafa] flex justify-between gap-[10px] px-3 py-2 shadow-[0px_4px_10px_0px_#0000000D] '>
+              <div className='bg-[#fafafa] flex justify-between gap-[10px] px-3 py-2 shadow-[0px_4px_10px_0px_#0000000D] hover:scale-105 transition-all duration-200'>
                 <div className='flex flex-col gap-4'>
                   <span className='text-[14px] font-medium'>
                     Xəzər ray. <br /> Buzovna qəsəbəsi
@@ -52,7 +52,7 @@ const Customers = () => {
                 <div className='w-[82px] h-[82px]'>
                   <Image src={announcement} alt='announcement' className='w-full h-full' />
                   <div className='flex gap-2'>
-                    <span className='text-[14px] text-[#9CA3AF] font-medium'>ID</span>
+                    <span className='text-[14px] text-[#FF9D14] font-medium'>ID</span>
                     <span className='text-[14px] text-[#02836F] font-medium'>#567841</span>
                   </div>
                 </div>
