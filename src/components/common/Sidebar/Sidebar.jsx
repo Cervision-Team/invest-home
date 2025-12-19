@@ -67,11 +67,14 @@ const Sidebar = ({ variant }) => {
     hasFetchedUser.current = true;
     fetchUser();
   }, [fetchUser]);
-  const userName = user?.fullName.split(" ")[0]
+  const userName = user?.fullName.split(" ")[0];
+  const linkPadding = variant === "services" ? "pl-7" : "pl-4 md:pl-14";
   return (
-    <div>
-      <nav className="w-full md:w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
-        style={{ paddingTop: variant === "dashboard" ? "24px" : "54px" }}>
+    <div className="w-full md:w-auto">
+      <nav
+        className="w-full md:w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
+        style={{ paddingTop: variant === "dashboard" ? "24px" : "54px" }}
+      >
         {variant === "dashboard" && (
           <div className="flex justify-center items-center gap-3 mb-6">
             <div className="w-[50px] h-[50px]">
@@ -95,16 +98,15 @@ const Sidebar = ({ variant }) => {
 
               return (
                 <li key={name} className="px-2">
-                  <Link
-                    href={path}
-                    className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
-                      }`}
-                    style={{ paddingLeft: variant === "services" ? "28px" : "85px" }}
-                  >
-                    {MenuIcon && <MenuIcon active={isActive} />}
-                    {name}
-                  </Link>
-                </li>
+              <Link
+                href={path}
+                className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
+                      } ${linkPadding}`}
+              >
+                {MenuIcon && <MenuIcon active={isActive} />}
+                {name}
+              </Link>
+            </li>
               );
             })
           ) : (
