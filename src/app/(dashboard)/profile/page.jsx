@@ -24,7 +24,7 @@ const Profile = () => {
     defaultValues: {
       fullName: "Novruz Huseynov",
       birthDate: "17.06.2004",
-      phone: "+9940513888181",
+      phoneNumber: "+9940513888181",
       location: "baku,xetai",
       email: "nihataliyev@gmail.com",
       roleName: "rehber"
@@ -71,7 +71,7 @@ const Profile = () => {
           <Summary isChat={isChat} setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
             fullName: "Novruz Huseynov",
             birthDate: "17.06.2004",
-            phone: "+9940513888181",
+            phoneNumber: "+9940513888181",
             location: "baku,xetai",
             email: "nihataliyev@gmail.com",
             roleName: "rehber"
