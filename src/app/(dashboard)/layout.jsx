@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/router/ProtectedRoute";
 // import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
+import { UserProvider } from "@/context/UserContext";
 
 // ✅ Pass only serializable values (strings, not functions)
 const dashboardSidebarItems = [
@@ -27,21 +28,23 @@ export default function Layout({ children }) {
   return (
     <ProtectedRoute>
     <ProtectedLayout>
-      <MenuPermissionProvider>
-        <LangProvider>
-          <main className="bg-white">
-            <ContactHeader />
-            <Header />
-            <div className="flex mt-10 mx-20 gap-6">
-              <Sidebar variant="dashboard" />
-              {children}
-            </div>
-            <TabBar />
-            <Footer />
-            <SubFooter />
-          </main>
-        </LangProvider>
-      </MenuPermissionProvider>
+      <UserProvider>
+        <MenuPermissionProvider>
+          <LangProvider>
+            <main className="bg-white">
+              <ContactHeader />
+              <Header />
+              <div className="flex mt-10 mx-20 gap-6">
+                <Sidebar variant="dashboard" />
+                {children}
+              </div>
+              <TabBar />
+              <Footer />
+              <SubFooter />
+            </main>
+          </LangProvider>
+        </MenuPermissionProvider>
+      </UserProvider>
     </ProtectedLayout>
     </ProtectedRoute>
   );

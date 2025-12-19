@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import userAdmin from "../../../../public/images/profile/novruz.jpg";
 import { LogoutIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
-import { getMenu } from "@/services/api/endpoints/menuService";
-import { useEffect, useState } from "react";
 import {
   documentIcon,
   livingRoomRentalIcon,
@@ -25,7 +23,7 @@ import {
 } from "@/components/ui/MenuIcons";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { useRouter } from "next/navigation";
-import { getUser } from "@/services/api/endpoints/userService";
+import { useUser } from "@/context/UserContext";
 
 const iconMap = {
   document: documentIcon,
@@ -47,18 +45,16 @@ const iconMap = {
 
 const Sidebar = ({ variant }) => {
   const pathName = usePathname();
-  const [menu, setMenu] = useState(null);
-  const { menuPermission, fetchMenuPermission } = useMenuPermission()
-  const [user, setUser] = useState(null);
+  const { menuPermission, fetchMenuPermission, menuLoading } = useMenuPermission();
+  const { user, fetchUser } = useUser();
   const router = useRouter();
+  const hasFetchedUser = useRef(false);
 
   useEffect(() => {
-    (async () => {
-      const res = await getMenu();
-      setMenu(res)
-
-    })()
-  }, [menuPermission])
+    if (!menuPermission?.length && !menuLoading) {
+      fetchMenuPermission();
+    }
+  }, [menuPermission?.length, menuLoading, fetchMenuPermission]);
 
   const handleLogout = () => {
     localStorage.removeItem("access-token");
@@ -67,13 +63,10 @@ const Sidebar = ({ variant }) => {
 
 
   useEffect(() => {
-    (
-      async () => {
-        const res = await getUser();
-        setUser(res.data);
-      }
-    )()
-  }, [])
+    if (hasFetchedUser.current) return;
+    hasFetchedUser.current = true;
+    fetchUser();
+  }, [fetchUser]);
   const userName = user?.fullName.split(" ")[0]
   return (
     <div>
@@ -93,8 +86,10 @@ const Sidebar = ({ variant }) => {
         )}
 
         <ul className="flex flex-col gap-4">
-          {menu ? (
-            menu.map(({ name, path, icon }) => {
+          {menuLoading ? (
+            <li className="px-2 text-gray-400 animate-pulse">Yüklənir...</li>
+          ) : menuPermission?.length ? (
+            menuPermission.map(({ name, path, icon }) => {
               const MenuIcon = iconMap[icon];
               const isActive = pathName === path;
 
@@ -114,7 +109,7 @@ const Sidebar = ({ variant }) => {
             })
           ) : (
 
-            <li className="px-2 text-gray-400 animate-pulse">Yüklənir...</li>
+            <li className="px-2 text-gray-400">Menyu tapılmadı</li>
           )}
         </ul>
         {variant === "dashboard" && (

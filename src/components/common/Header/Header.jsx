@@ -7,7 +7,7 @@ import HamMenu from "./HamMenu";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import ProfileMenu from "./ProfileDropdown";
-import { getUser } from "@/services/api/endpoints/userService";
+import { useUser } from "@/context/UserContext";
 // import { useTranslation } from "i18next";
 
 const Header = () => {
@@ -16,7 +16,7 @@ const Header = () => {
   const pathname = usePathname();
 
   const [isOpen, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, fetchUser } = useUser();
   const isTablet = useMediaQuery('(max-width: 768px)');
   const isMobile = useMediaQuery('(max-width: 430px)');
 
@@ -38,16 +38,11 @@ const Header = () => {
 
 
   useEffect(() => {
-    (
-      async () => {
-        const isToken = Boolean(localStorage.getItem("access-token"));
-        if (isToken) {
-          const res = await getUser();
-          setUser(res.data);
-        }
-      }
-    )()
-  }, [])
+    const isToken = Boolean(localStorage.getItem("access-token"));
+    if (isToken) {
+      fetchUser();
+    }
+  }, [fetchUser]);
 
   return (
     <>

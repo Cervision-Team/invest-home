@@ -7,21 +7,24 @@ import Header from "@/components/common/Header/Header";
 import ProtectedLayout from "@/components/router/ProtectedLayout";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
+import { UserProvider } from "@/context/UserContext";
 
 export default function Layout({ children }) {
   return (
     <ProtectedLayout>
       <LangProvider>
-        <MenuPermissionProvider>
-          <main>
-            <ContactHeader />
-            <Header />
-            {children}
-            <TabBar />
-            <Footer />
-            <SubFooter />
-          </main>
-        </MenuPermissionProvider>
+        <UserProvider>
+          <MenuPermissionProvider>
+            <main>
+              <ContactHeader />
+              <Header />
+              {children}
+              <TabBar />
+              <Footer />
+              <SubFooter />
+            </main>
+          </MenuPermissionProvider>
+        </UserProvider>
       </LangProvider>
     </ProtectedLayout>
   );
