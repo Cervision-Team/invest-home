@@ -226,14 +226,13 @@ console.log("isSubmitting:", formik.isSubmitting);
         }
       `}</style>
 
-      <div className='w-full h-auto px-20 max-[430px]:px-4 py-12'>
+      <section id="office-form" className='w-full h-auto px-20 max-[430px]:px-4 py-12'>
         <div className='w-full h-full rounded-lg border border-solid border-[#E1E6EF] bg-[rgba(2,131,111,0.10)] px-[106px] max-[430px]:px-4 flex flex-col justify-center items-center pb-32 max-[430px]:pb-16 py-16'>
           <h3 className='w-full max-w-[833px] text-[#1B1F27] text-center text-[24px]/[28px] max-[430px]:text-[18px]/[24px] font-medium mb-12 max-[430px]:mb-8'>
             İnvest Home ailəsinə qoşulun! Öz daşınmaz əmlak ofisinizi açmaq üçün qeydiyyat formasını indi doldurun.
           </h3>
           
           <form onSubmit={formik.handleSubmit} className='w-full flex flex-col gap-7'>
-            {/* Row 1: Name Surname & Email */}
             <div className='flex flex-col md:flex-row justify-between gap-7'>
               <div className="flex flex-col gap-[8px] w-full md:w-[450px]">
                 <label className="max-[430px]:hidden text-[16px] font-medium text-[#1B1F27]">
@@ -274,7 +273,6 @@ console.log("isSubmitting:", formik.isSubmitting);
               </div>
             </div>
 
-            {/* Row 2: Birth Date & Phone */}
             <div className='flex flex-col md:flex-row justify-between gap-7'>
               <div className="flex flex-col gap-[8px] w-full md:w-[450px]">
                 <label className="max-[430px]:hidden text-[16px] font-medium text-[#1B1F27]">
@@ -315,7 +313,6 @@ console.log("isSubmitting:", formik.isSubmitting);
               </div>
             </div>
 
-            {/* Row 3: Country & Office Location */}
             <div className='flex flex-col md:flex-row justify-between gap-7'>
               <div className="flex flex-col gap-[8px] w-full md:w-[450px]">
                 <label className="max-[430px]:hidden text-[16px] font-medium text-[#1B1F27]">
@@ -397,7 +394,6 @@ console.log("isSubmitting:", formik.isSubmitting);
               </div>
             </div>
 
-            {/* Row 4: Real Estate Experience & Current Field */}
             <div className='flex flex-col md:flex-row justify-between gap-7'>
               <div className="flex flex-col gap-[8px] w-full md:w-[450px]">
                 <label className="max-[430px]:hidden text-[16px] font-medium text-[#1B1F27]">
@@ -438,7 +434,6 @@ console.log("isSubmitting:", formik.isSubmitting);
               </div>
             </div>
 
-            {/* Additional Note - Full Width */}
             <div className="flex flex-col gap-[8px]">
               <label className="max-[430px]:hidden text-[16px] font-medium text-[#1B1F27]">
                 Əlavə Qeyd
@@ -467,7 +462,7 @@ console.log("isSubmitting:", formik.isSubmitting);
 </button>
           </form>
         </div>
-      </div>
+      </section>
     </>
   )
 }
