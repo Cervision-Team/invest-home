@@ -1,5 +1,5 @@
 'use client';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import TabBarBg from '../../../../public/images/tab-bar.svg'
@@ -7,6 +7,20 @@ import Link from 'next/link';
 
 const TabBar = () => {
     const isMobile = useMediaQuery('(max-width: 430px)');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const syncAuth = () => {
+            if (typeof window === "undefined") return;
+            setIsLoggedIn(!!localStorage.getItem("access-token"));
+        };
+        syncAuth();
+        window.addEventListener("storage", syncAuth);
+        return () => window.removeEventListener("storage", syncAuth);
+    }, []);
+
+    const profileHref = isLoggedIn ? "/profile" : "/login";
+    const profileLabel = isLoggedIn ? "Profil" : "Daxil ol";
 
     return (
         <>
@@ -72,7 +86,7 @@ const TabBar = () => {
                                     </Link>
                                 </div>
                                 <div className="basis-[63px]">
-                                    <Link href={'/login'} className='flex flex-col justify-between items-center h-full'>
+                                    <Link href={profileHref} className='flex flex-col justify-between items-center h-full'>
                                         <Image
                                             priority
                                             height={24}
@@ -80,7 +94,7 @@ const TabBar = () => {
                                             src={"/icons/profile.svg"}
                                             alt='profile'
                                         />
-                                        <span className="text-white text-[12px] font-[400]">Profil</span>
+                                        <span className="text-white text-[12px] font-[400]">{profileLabel}</span>
                                     </Link>
                                 </div>
                             </div>
