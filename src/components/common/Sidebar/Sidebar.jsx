@@ -70,7 +70,7 @@ const Sidebar = ({ variant }) => {
   const userName = user?.fullName.split(" ")[0]
   return (
     <div>
-      <nav className="w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
+      <nav className="w-full md:w-[302px] h-fit bg-white rounded-xl pb-[54px] items-center border-2 border-[#02836F] shadow-[0px_4px_30px_0px_#0000000D]"
         style={{ paddingTop: variant === "dashboard" ? "24px" : "54px" }}>
         {variant === "dashboard" && (
           <div className="flex justify-center items-center gap-3 mb-6">

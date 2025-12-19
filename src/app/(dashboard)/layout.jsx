@@ -34,9 +34,9 @@ export default function Layout({ children }) {
             <main className="bg-white">
               <ContactHeader />
               <Header />
-              <div className="flex mt-10 mx-20 gap-6">
+              <div className="flex flex-col lg:flex-row items-start gap-6 px-4 sm:px-6 lg:px-10 xl:px-20 mt-6 lg:mt-10">
                 <Sidebar variant="dashboard" />
-                {children}
+                <div className="flex-1 min-w-0 w-full">{children}</div>
               </div>
               <TabBar />
               <Footer />

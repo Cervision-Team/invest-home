@@ -16,19 +16,18 @@ const Wallet = () => {
     };
     return (
         <main className='w-full '>
-            <div className='flex justify-between mb-10'>
-                <div></div>
-                <div className='flex gap-6'>
+            <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-end mb-10'>
+                <div className='flex gap-3 md:gap-6 md:justify-end'>
                     <Button />
                 </div>
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Balansım</h1>
-            <section className='flex gap-4 text-2xl'>
-                <div className='w-1/3 h-[150px]  rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F]'>
+            <section className='grid grid-cols-1 md:grid-cols-2 gap-4 text-2xl'>
+                <div className='w-full h-[150px] rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F]'>
                     Hazırki balans
                     <span className='text-[32px] font-semibold '>15 azn</span>
                 </div>
-                <button onClick={handleClick} className='w-1/3 h-[150px] rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F] cursor-pointer' >
+                <button onClick={handleClick} className='w-full h-[150px] rounded-2xl text-[#1B1F27] p-5 flex items-center justify-between border-2 border-[#02836F] cursor-pointer' >
                     Balans artır
                     <Image src={addIcon} alt='add icon' />
                 </button>
@@ -41,7 +40,7 @@ const Wallet = () => {
                     className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 "
                 >
                     <div
-                        className="bg-white rounded-2xl shadow-xl p-6 h-[90dvh] w-1/2"
+                        className="bg-white rounded-2xl shadow-xl p-6 h-[90dvh] w-[90%] max-w-[640px]"
                     >
                     </div>
                 </div>

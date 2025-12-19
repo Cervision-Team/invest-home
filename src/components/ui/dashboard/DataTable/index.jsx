@@ -1136,11 +1136,11 @@ const handleAddProperty = async (newData) => {
   return (
     <div>
       {/* Search + Buttons */}
-      <div className="flex mb-6 flex-wrap justify-between">
-        <div className="min-w-[410px]">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+        <div className="w-full md:max-w-md">
           <Search search={search} setSearch={setSearch} />
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3 md:gap-4 md:justify-end">
           <button
             onClick={() => setDeleteModal(true)}
             disabled={Object.keys(selected).length === 0}
@@ -1174,7 +1174,7 @@ const handleAddProperty = async (newData) => {
       <div
         className="h-[520px] overflow-y-auto overflow-x-auto scrollbar-custom"
       >
-        <table className="w-full">
+        <table className="w-full min-w-[720px]">
           <thead>
             {table.getHeaderGroups().map((hg) => (
               <tr key={hg.id}>

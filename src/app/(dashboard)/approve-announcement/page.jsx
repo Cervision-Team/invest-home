@@ -37,18 +37,18 @@ const ApproveAnnouncmenet = () => {
     }, [fetchAnnouncements])
     return (
         <main className="w-full h-full">
-            <div className='flex justify-between mb-10 '>
-                <div className='min-w-[410px]'>
+            <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10'>
+                <div className='w-full md:max-w-md'>
                     <Search search={search} setSearch={setSearch} />
                 </div>
-                <div className='flex gap-6'>
+                <div className='flex gap-3 md:gap-6 md:justify-end'>
                     <Button />
                 </div>
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün müştərilər</h1>
 
             {announcementData?.length ? (
-                <div className='grid grid-cols-3 w-full gap-6 '>
+                <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 w-full gap-6 '>
                     {announcementData.map((announcement) => (
                         <div key={announcement?.id} className='rounded-[20px] shadow-[0px_4px_10px_0px_#00000026] p-5'>
                             <div className='flex items-center border-b border-[#02836F33] pb-3 mb-[10px]'>
