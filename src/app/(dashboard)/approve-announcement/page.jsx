@@ -1,28 +1,40 @@
 "use client"
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import photo from "../../../../public/images/profile/novruz.jpg"
 import announcement from "../../../../public/images/profile/announcement.png"
 import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
 import { approveAnnouncement, getAnnouncementByUser } from '@/services/api/endpoints/announcementService'
 const ApproveAnnouncmenet = () => {
-    const data = Array.from({ length: 10 })
     const [search, setSearch] = useState();
-    const [announcementData, setAnnouncementData] = useState(null)
+    const [announcementData, setAnnouncementData] = useState([])
+    const [updatingId, setUpdatingId] = useState(null)
+
+    const fetchAnnouncements = useCallback(async () => {
+        try {
+            const res = await getAnnouncementByUser("ASSIGNED_TO_AGENT");
+            setAnnouncementData(res?.content ?? [])
+        } catch (err) {
+            console.log(err);
+        }
+    }, [])
+
     const handleStatus = async (id, status) => {
-        // await approveAnnouncement(id, status)
-        console.log(id, status);
-        
+        try {
+            setUpdatingId(id)
+            await approveAnnouncement(id, status)
+            await fetchAnnouncements()
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setUpdatingId(null)
+        }
     }
 
     useEffect(() => {
-        (async () => {
-            const res = await getAnnouncementByUser("ASSIGNED_TO_AGENT");
-            setAnnouncementData(res.content)
-            console.log(res.content);
-        })()
-    }, [])
+        fetchAnnouncements()
+    }, [fetchAnnouncements])
     return (
         <main className="w-full h-full">
             <div className='flex justify-between mb-10 '>
@@ -35,10 +47,9 @@ const ApproveAnnouncmenet = () => {
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün müştərilər</h1>
 
-            <div className='grid grid-cols-3 w-full gap-6 '>
-
-                {
-                    announcementData?.map((announcement, i) => (
+            {announcementData?.length ? (
+                <div className='grid grid-cols-3 w-full gap-6 '>
+                    {announcementData.map((announcement) => (
                         <div key={announcement?.id} className='rounded-[20px] shadow-[0px_4px_10px_0px_#00000026] p-5'>
                             <div className='flex items-center border-b border-[#02836F33] pb-3 mb-[10px]'>
                                 <div className='w-[55px] h-[55px] mr-5'>
@@ -73,15 +84,31 @@ const ApproveAnnouncmenet = () => {
                             </div>
 
                             <div className='flex flex-col gap-2 mt-3'>
-                                <button onClick={() => handleStatus(announcement?.id, "APPROVED")} className='cursor-pointer bg-green-200 py-2 rounded-sm'>Tesdiq et</button>
-                                <button onClick={() => handleStatus(announcement?.id, "PENDING")} className='cursor-pointer bg-red-200 py-2 rounded-sm'>Redd et</button>
+                                <button
+                                    onClick={() => handleStatus(announcement?.id, "APPROVED")}
+                                    disabled={updatingId === announcement?.id}
+                                    className='cursor-pointer bg-green-200 py-2 rounded-sm disabled:opacity-60'
+                                >
+                                    {updatingId === announcement?.id ? "Yenilənir..." : "Tesdiq et"}
+                                </button>
+                                <button
+                                    onClick={() => handleStatus(announcement?.id, "PENDING")}
+                                    disabled={updatingId === announcement?.id}
+                                    className='cursor-pointer bg-red-200 py-2 rounded-sm disabled:opacity-60'
+                                >
+                                    {updatingId === announcement?.id ? "Yenilənir..." : "Redd et"}
+                                </button>
                             </div>
 
                         </div>
 
-                    ))
-                }
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">
+                    Hazırda elan yoxdur
+                </div>
+            )}
         </main>
 
     )

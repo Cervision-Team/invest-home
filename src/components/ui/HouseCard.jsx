@@ -33,6 +33,8 @@ const VideoSvg = "/icons/lets-icons_video-fill.svg";
  */
 const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = true }) => {
   const [activeSlide, setActiveSlide] = React.useState(0);
+  const images = house?.medias?.filter((media) => !!media?.imageUrl) ?? [];
+  const publisherImage = house?.publisher?.imageUrl || Imagesvg;
 
   const handleFavClick = (e) => {
     e.preventDefault();
@@ -75,7 +77,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           <Swiper
             modules={[Navigation, Pagination]}
             slidesPerView={1}
-            loop
+            loop={images.length > 1}
             speed={500}
             spaceBetween={5}
             onSlideChange={(swiper) => {
@@ -110,21 +112,36 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           >
             <div className={`card custom-prev-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
             <div className={`card custom-next-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
-            {house.medias?.map((media, index) => {
-              const imageUrl = media.imageUrl
-              return <SwiperSlide key={`${house.id}-${index}`}>
-                <div className="relative aspect-[302/262]">
-                  <Image
-                    src={imageUrl}
-                    alt={`house_image_${index}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+            {images.length
+              ? images.map((media, index) => {
+                const imageUrl = media.imageUrl;
+                return <SwiperSlide key={`${house.id}-${index}`}>
+                  <div className="relative aspect-[302/262]">
+                    <Image
+                      src={imageUrl}
+                      alt={`house_image_${index}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 302px"
+                      className="object-cover"
+                    />
+                  </div>
 
-              </SwiperSlide>
+                </SwiperSlide>;
 
-            })}
+              })
+              : (
+                <SwiperSlide>
+                  <div className="relative aspect-[302/262]">
+                    <Image
+                      src={Imagesvg}
+                      alt="placeholder"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 302px"
+                      className="object-cover"
+                    />
+                  </div>
+                </SwiperSlide>
+              )}
           </Swiper>
 
           <div
@@ -150,7 +167,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               onClick={(e) => e.preventDefault()}
               className="dynamic-dots"
             >
-              {house.medias && house.medias?.map((_, index) => (
+              {images?.map((_, index) => (
                 <div
                   key={index}
                   className={`dot ${index === activeSlide ? "active" : ""}`}
@@ -170,7 +187,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           </div>
 
           <div className="z-1 metro bottom-[12px] left-[8px] absolute max-[769px]:hidden flex items-center gap-[3px] bg-white py-[2.5px] px-[10px] rounded-[8px]">
-            <Image src={MetroIcon} alt="Metro" width={18} height={18} />
+            <Image src={MetroIcon} alt="Metro" width={18} height={18} className="h-auto" />
             <span className="font-[400] text-[var(--text-color-3)] text-[10px] whitespace-nowrap">
               N.Nərimanov
             </span>
@@ -203,7 +220,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               alt="Metro"
               width={18}
               height={18}
-              className="w-[18px] hidden max-[769px]:block"
+              className="w-[18px] h-auto hidden max-[769px]:block"
             />
             <span className="font-[500] text-[var(--text-color-3)] text-[10px] whitespace-nowrap hidden max-[769px]:block">
               N.Nərimanov
@@ -212,19 +229,19 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
           <div className="flex max-[769px]:gap-[8px] gap-[12px] items-center font-[300] text-[12px]">
             <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={BedIcon} alt="Beds" width={10} height={10} />
+              <Image src={BedIcon} alt="Beds" width={10} height={10} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
                 {house.rooms} <span className="max-[769px]:hidden">beds</span>
               </span>
             </div>
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={FloorIcon} alt="Floor" width={10} height={10} />
+              <Image src={FloorIcon} alt="Floor" width={10} height={10} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
                 {house.floor}
               </span>
             </div>
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={SquareMetersIcon} alt="Field" width={10} height={10} />
+              <Image src={SquareMetersIcon} alt="Field" width={10} height={10} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
                 {house.area}
               </span>
@@ -237,28 +254,9 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             isActive &&
             <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
               <div className="w-10 h-10">
-                {
-                  house?.publisher?.imageUrl ?
-                    <Image
-                      className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
-                      src={house?.publisher?.imageUrl}
-                      alt="Author"
-                      width={35}
-                      height={35}
-                    />
-                    :
-                    <Image
-                      className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
-                      src={Imagesvg}
-                      alt="Author"
-                      width={35}
-                      height={35}
-                    />
-                }
-
                 <Image
                   className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
-                  src={house?.publisher?.imageUrl}
+                  src={publisherImage}
                   alt="Author"
                   width={35}
                   height={35}

@@ -1,7 +1,13 @@
 import { rolePermissionMap } from "./rolePermissionMap";
 
-export const hasAccessUrl = (role, url) => {
-	const accessibleRoutes = rolePermissionMap[role] || [];
+// Accept either a role key (backward compatible) or a list of accessible paths
+export const hasAccessUrl = (pathsOrRole, url) => {
+	const accessibleRoutes = Array.isArray(pathsOrRole)
+		? pathsOrRole
+		: rolePermissionMap[pathsOrRole] || [];
+
+	if (!accessibleRoutes?.length) return false;
+
 	return accessibleRoutes.some((route) => {
 		const regexPattern = route
 			.replace(/\[.*?\]/g, "[^/]+")
