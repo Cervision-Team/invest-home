@@ -1,6 +1,6 @@
 "use client"
 import HouseCard from '@/components/ui/HouseCard';
-import { getAnnouncementFilter } from '@/services/api/endpoints/announcementService';
+import { getAnnouncementByStatus, getAnnouncementFilter } from '@/services/api/endpoints/announcementService';
 import React, { useEffect, useState } from 'react'
 
 const PendingList = () => {
@@ -10,27 +10,15 @@ const PendingList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showArrows, setShowArrows] = useState(false);
-    const [houseData, setHouseData] = useState([]);
+    // const [houseData, setHouseData] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setError(null);
 
-        getAnnouncementFilter()
+        getAnnouncementByStatus("PENDING")
             .then(res => {
-                const mapped = res?.content?.map((item, index) => ({
-                    ...item,
-                    type: activeType,
-                }));
-
-                setHouseData(mapped);
-
-                const filtered =
-                    activeType === "enSon"
-                        ? mapped
-                        : mapped.filter((house) => house.type === activeType);
-
-                setHouses(filtered);
+                setHouses(res?.content || []);
             })
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
@@ -42,7 +30,7 @@ const PendingList = () => {
                 houses?.length !== 0 &&
                 houses?.map((house, idx) => (
                     <div key={house?.id ?? idx} className='w-full'>
-                        <HouseCard house={house} isActive={false}/>
+                        <HouseCard house={house} isActive={false} />
                     </div>
                 ))
             }

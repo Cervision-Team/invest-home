@@ -132,7 +132,7 @@ const Header = () => {
                   </svg>
                 </div>
               </Link>
-              <ProfileMenu userName={user?.fullName} isLogin={isLogin} />
+              <ProfileMenu userName={user?.fullName?.split(' ')[0] ? `Salam, ${user?.fullName?.split(' ')[0]}` : ''} isLogin={isLogin} />
 
               {/* {
                 isLogin ?
