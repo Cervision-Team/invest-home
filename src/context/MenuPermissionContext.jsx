@@ -6,11 +6,13 @@ const MenuPermissionContext = createContext({
   menuPermission: [],
   fetchMenuPermission: () => {},
   menuLoading: false,
+  menuLoaded: false,
 });
 
 export const MenuPermissionProvider = ({ children }) => {
   const [menuPermission, setMenuPermission] = useState([]);
   const [menuLoading, setMenuLoading] = useState(false);
+  const [menuLoaded, setMenuLoaded] = useState(false);
   const isFetchingMenu = useRef(false);
   const hasFetchedMenu = useRef(false);
 
@@ -21,13 +23,14 @@ export const MenuPermissionProvider = ({ children }) => {
     try {
       const res = await getMenu();
       setMenuPermission(res ?? []);
-      hasFetchedMenu.current = true;
     } catch (err) {
       console.log(err);
       setMenuPermission([]);
     } finally {
       setMenuLoading(false);
+      setMenuLoaded(true);
       isFetchingMenu.current = false;
+      hasFetchedMenu.current = true;
     }
   }, []);
 
@@ -39,7 +42,9 @@ export const MenuPermissionProvider = ({ children }) => {
   }, [fetchMenuPermission]);
 
   return (
-    <MenuPermissionContext.Provider value={{ menuPermission, fetchMenuPermission, menuLoading }}>
+    <MenuPermissionContext.Provider
+      value={{ menuPermission, fetchMenuPermission, menuLoading, menuLoaded }}
+    >
       {children}
     </MenuPermissionContext.Provider>
   );

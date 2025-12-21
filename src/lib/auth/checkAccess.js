@@ -1,32 +1,42 @@
 import { rolePermissionMap } from "./rolePermissionMap";
 
-// Accept either a role key (backward compatible) or a list of accessible paths
-export const hasAccessUrl = (pathsOrRole, url) => {
-	const accessibleRoutes = Array.isArray(pathsOrRole)
-		? pathsOrRole
-		: rolePermissionMap[pathsOrRole] || [];
+const normalizePath = (value) => {
+	if (typeof value !== "string") return "";
+	let path = value.trim();
+	if (!path) return "";
+	if (!path.startsWith("/")) path = `/${path}`;
+	if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+	return path;
+};
+
+export const hasAccessUrl = (allowedPaths, currentPath) => {
+	const accessibleRoutes = allowedPaths || [];
 
 	if (!accessibleRoutes?.length) return false;
 
+	const normalizedUrl = normalizePath(currentPath);
+
 	return accessibleRoutes.some((route) => {
+		const normalizedRoute = normalizePath(route);
+		if (!normalizedRoute) return false;
+
 		const regexPattern = route
 			.replace(/\[.*?\]/g, "[^/]+")
-			.replace("/", "\\/");
+			.replace(/\//g, "\\/");
 		const regex = new RegExp(`^${regexPattern}$`);
-		return regex.test(url);
+		if (normalizedRoute === normalizedUrl) return true;
+		return regex.test(normalizedUrl);
 	});
 };
 
-const rolePermissions = {
-	admin: ["view:post"],
-};
+// const rolePermissions = {
+// 	admin: ["view:post"],
+// };
 
-export const hasAccess = (role, resource, action) => {
-	const accessiblePermissions = rolePermissions[role] || [];
-	const target = `${resource}:${action}`;
-	return accessiblePermissions.includes(target);
-};
+// export const hasAccess = (role, resource, action) => {
+// 	const accessiblePermissions = rolePermissions[role] || [];
+// 	const target = `${resource}:${action}`;
+// 	return accessiblePermissions.includes(target);
+// };
 
-console.log(hasAccess("admin", "view", "post"));
-
-
+// console.log(hasAccess("admin", "view", "post"));

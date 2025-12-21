@@ -7,7 +7,6 @@ import Header from "@/components/common/Header/Header";
 import Sidebar from "@/components/common/Sidebar/Sidebar";
 import ProtectedLayout from "@/components/router/ProtectedLayout";
 import ProtectedRoute from "@/components/router/ProtectedRoute";
-// import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
 import { UserProvider } from "@/context/UserContext";
@@ -26,26 +25,26 @@ const dashboardSidebarItems = [
 
 export default function Layout({ children }) {
   return (
-    <ProtectedRoute>
-    <ProtectedLayout>
-      <UserProvider>
-        <MenuPermissionProvider>
-          <LangProvider>
-            <main className="bg-white">
-              <ContactHeader />
-              <Header />
-              <div className="flex flex-col lg:flex-row items-start gap-6 px-4 sm:px-6 lg:px-10 xl:px-20 mt-6 lg:mt-10">
-                <Sidebar variant="dashboard" />
-                <div className="flex-1 min-w-0 w-full">{children}</div>
-              </div>
-              <TabBar />
-              <Footer />
-              <SubFooter />
-            </main>
-          </LangProvider>
-        </MenuPermissionProvider>
-      </UserProvider>
-    </ProtectedLayout>
-    </ProtectedRoute>
+    <UserProvider>
+      <MenuPermissionProvider>
+        <LangProvider>
+          <ProtectedLayout>
+            <ProtectedRoute>
+              <main className="bg-white">
+                <ContactHeader />
+                <Header />
+                <div className="flex flex-col lg:flex-row items-start gap-6 px-4 sm:px-6 lg:px-10 xl:px-20 mt-6 lg:mt-10">
+                  <Sidebar variant="dashboard" />
+                  <div className="flex-1 min-w-0 w-full">{children}</div>
+                </div>
+                <TabBar />
+                <Footer />
+                <SubFooter />
+              </main>
+            </ProtectedRoute>
+          </ProtectedLayout>
+        </LangProvider>
+      </MenuPermissionProvider>
+    </UserProvider>
   );
 }
