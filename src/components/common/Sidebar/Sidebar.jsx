@@ -43,6 +43,20 @@ const iconMap = {
 
 };
 
+const toSidebarHref = (value) => {
+  if (typeof value !== "string") return "/";
+  let path = value.trim();
+  if (!path) return "/";
+  if (!path.startsWith("/")) path = `/${path}`;
+  path = path
+    .replace(/\[[^\]]+\]/g, "")
+    .replace(/:[A-Za-z0-9_]+/g, "")
+    .replace(/\/id(?=\/|$)/g, "");
+  path = path.replace(/\/+/g, "/");
+  if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+  return path || "/";
+};
+
 const Sidebar = ({ variant }) => {
   const pathName = usePathname();
   const { menuPermission, fetchMenuPermission, menuLoading } = useMenuPermission();
@@ -94,19 +108,20 @@ const Sidebar = ({ variant }) => {
           ) : menuPermission?.length ? (
             menuPermission.map(({ name, path, icon }) => {
               const MenuIcon = iconMap[icon];
+              const href = toSidebarHref(path);
               const isActive = pathName === path;
 
               return (
                 <li key={name} className="px-2">
-              <Link
-                href={path}
-                className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
+                  <Link
+                    href={href}
+                    className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
                       } ${linkPadding}`}
-              >
-                {MenuIcon && <MenuIcon active={isActive} />}
-                {name}
-              </Link>
-            </li>
+                  >
+                    {MenuIcon && <MenuIcon active={isActive} />}
+                    {name}
+                  </Link>
+                </li>
               );
             })
           ) : (

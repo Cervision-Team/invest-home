@@ -20,12 +20,19 @@ export const hasAccessUrl = (allowedPaths, currentPath) => {
 		const normalizedRoute = normalizePath(route);
 		if (!normalizedRoute) return false;
 
-		const regexPattern = route
-			.replace(/\[.*?\]/g, "[^/]+")
-			.replace(/\//g, "\\/");
-		const regex = new RegExp(`^${regexPattern}$`);
 		if (normalizedRoute === normalizedUrl) return true;
-		return regex.test(normalizedUrl);
+
+		const segments = normalizedRoute.slice(1).split("/");
+		const escaped = segments
+			.map((seg) => {
+				const isDynamic =
+					(seg.startsWith("[") && seg.endsWith("]")) || seg.startsWith(":") || seg === "id";
+				if (isDynamic) return "[^/]+";
+				return seg.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+			})
+			.join("\\/");
+
+		return new RegExp(`^\\/${escaped}$`).test(normalizedUrl);
 	});
 };
 

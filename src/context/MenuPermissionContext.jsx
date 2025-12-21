@@ -4,7 +4,7 @@ import { getMenu } from "@/services/api/endpoints/menuService";
 
 const MenuPermissionContext = createContext({
   menuPermission: [],
-  fetchMenuPermission: () => {},
+  fetchMenuPermission: (_opts) => {},
   menuLoading: false,
   menuLoaded: false,
 });
@@ -16,7 +16,11 @@ export const MenuPermissionProvider = ({ children }) => {
   const isFetchingMenu = useRef(false);
   const hasFetchedMenu = useRef(false);
 
-  const fetchMenuPermission = useCallback(async () => {
+  const fetchMenuPermission = useCallback(async (opts = {}) => {
+    const { force = false } = opts || {};
+    if (force) {
+      hasFetchedMenu.current = false;
+    }
     if (isFetchingMenu.current || hasFetchedMenu.current) return;
     isFetchingMenu.current = true;
     setMenuLoading(true);

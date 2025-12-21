@@ -2,25 +2,9 @@
 
 import { hasAccessUrl } from "@/lib/auth/checkAccess";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
+import { extractMenuPaths, normalizePath } from "@/lib/auth/menuPermissionUtils";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-
-const normalizePath = (value) => {
-    if (typeof value !== "string") return "";
-    let path = value.trim();
-    if (!path) return "";
-    if (!path.startsWith("/")) path = `/${path}`;
-    if (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
-    return path;
-};
-
-const extractPaths = (menuList = []) => {
-    if (!Array.isArray(menuList)) return [];
-    return menuList.flatMap((item) => [
-        item?.path,
-        ...(item?.subMenuEntities?.length ? extractPaths(item.subMenuEntities) : []),
-    ]);
-};
 
 export default function ProtectedRoute({ children }) {
     const { menuPermission, fetchMenuPermission, menuLoading, menuLoaded } = useMenuPermission();
@@ -31,7 +15,7 @@ export default function ProtectedRoute({ children }) {
 
     const normalizedPathname = useMemo(() => normalizePath(pathname), [pathname]);
     const allowedPaths = useMemo(() => {
-        const raw = extractPaths(menuPermission);
+        const raw = extractMenuPaths(menuPermission);
         return raw
             .map(normalizePath)
             .filter((p) => typeof p === "string" && p.length > 0);

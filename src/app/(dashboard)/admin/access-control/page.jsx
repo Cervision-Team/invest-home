@@ -44,7 +44,7 @@ const AccessControl = () => {
                     hasPermission: a.hasPermission,
                 }));
             const res = await upadteAccessControl(payload)
-            fetchMenuPermission();
+            fetchMenuPermission({ force: true });
             toast.success(res.data)
         } catch (err) {
             console.log(err);
