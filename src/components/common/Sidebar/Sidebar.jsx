@@ -106,13 +106,15 @@ const Sidebar = ({ variant }) => {
           {menuLoading ? (
             <li className="px-2 text-gray-400 animate-pulse">Yüklənir...</li>
           ) : menuPermission?.length ? (
-            menuPermission.map(({ name, path, icon }) => {
+            menuPermission
+              .filter((item) => item?.isVisible === true)
+              .map(({ id, name, path, icon }) => {
               const MenuIcon = iconMap[icon];
               const href = toSidebarHref(path);
               const isActive = pathName === path;
 
               return (
-                <li key={name} className="px-2">
+                <li key={id ?? name} className="px-2">
                   <Link
                     href={href}
                     className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
