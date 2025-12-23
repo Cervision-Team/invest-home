@@ -30,6 +30,8 @@ import { hasAccessUrl } from "@/lib/auth/checkAccess";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { extractMenuPaths, normalizePath } from "@/lib/auth/menuPermissionUtils";
 
+const defaultProfileIcon = "/icons/profile.svg";
+
 const HeroAndDetails = ({ id }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [fav, setFav] = useState([]);
@@ -103,6 +105,19 @@ const HeroAndDetails = ({ id }) => {
     resizeObserver.observe(containerRef.current);
     return () => resizeObserver.disconnect();
   }, []);
+
+  const agentName = useMemo(() => {
+    const name = house?.agent?.fullName;
+    return typeof name === "string" && name.trim() ? name.trim() : "Agent";
+  }, [house?.agent?.fullName]);
+
+  const agentAvatarSrc = useMemo(() => {
+    return (
+      house?.agent?.imageUrl || null
+    );
+  }, [house?.agent]);
+
+  const hasAgentAvatar = Boolean(agentAvatarSrc);
 
   useEffect(() => {
     if (textRef.current) {
@@ -396,15 +411,26 @@ const HeroAndDetails = ({ id }) => {
 
               <div className="flex gap-[14px] max-h-[62px]">
                 <div className='relative h-[62px] w-[62px] max-[431px]:h-[50px] max-[431px]:w-[50px]'>
-                  <Image
-                    src={"/icons/HouseDetailAgent.svg"}
-                    alt="agent"
-                    fill
-                    className='h-full w-full'
-                  />
+                  {hasAgentAvatar ? (
+                    <Image
+                      src={agentAvatarSrc}
+                      alt={agentName ? `${agentName} foto` : "Agent foto"}
+                      fill
+                      className='h-full w-full rounded-full object-cover object-top'
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center">
+                      <Image
+                        src={defaultProfileIcon}
+                        alt="Default avatar"
+                        width={24}
+                        height={24}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col justify-between">
-                  <p className="text-[#111] max-[431px]:text-[16px] text-[20px] font-[500] leading-none ">{house?.agent?.fullName}</p>
+                  <p className="text-[#111] max-[431px]:text-[16px] text-[20px] font-[500] leading-none ">{agentName}</p>
                   <p className="text-black max-[431px]:text-[12px] text-[14px] font-[500] leading-none">Agent</p>
                   <p className="text-black/50 max-[431px]:text-[10px] text-[12px] font-[500] leading-none text-[rgba(0, 0, 0, 0.5)]">1 saat əvvəl</p>
                 </div>
