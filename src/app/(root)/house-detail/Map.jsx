@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import BusStopPrimary from "../../../../public/icons/bus-stop-primary.svg";
 import BusStopWhite from "../../../../public/icons/bus-stop-white.svg";
@@ -14,74 +16,139 @@ import parkWhite from "../../../../public/icons/park-white.svg";
 import metroWhite from "../../../../public/icons/metro-white.svg";
 import restaurantWhite from "../../../../public/icons/restaurant-white.svg";
 import marketplaceWhite from "../../../../public/icons/marketplace-white.svg";
+import { useEffect, useMemo, useState } from "react";
 
 const items = [
-  { icon: BusStopPrimary, iconHover: BusStopWhite, width: 24, height: 24, name: "Dayanacaq" },
-  { icon: hospital, iconHover: hospitalWhite, width: 20, height: 20, name: "Klinika" },
-  { icon: school, iconHover: schoolWhite, width: 24, height: 24, name: "Məktəb" },
-  { icon: park, iconHover: parkWhite, width: 24, height: 24, name: "Park" },
-  { icon: metro, iconHover: metroWhite, width: 24, height: 24, name: "Metro" },
-  { icon: restaurant, iconHover: restaurantWhite, width: 24, height: 24, name: "Restoran" },
-  { icon: marketplace, iconHover: marketplaceWhite, width: 24, height: 24, name: "Market" },
+  { type: "bus_stop", icon: BusStopPrimary, iconHover: BusStopWhite, width: 24, height: 24, name: "Dayanacaq" },
+  { type: "clinic", icon: hospital, iconHover: hospitalWhite, width: 20, height: 20, name: "Klinika" },
+  { type: "school", icon: school, iconHover: schoolWhite, width: 24, height: 24, name: "Məktəb" },
+  { type: "park", icon: park, iconHover: parkWhite, width: 24, height: 24, name: "Park" },
+  { type: "metro", icon: metro, iconHover: metroWhite, width: 24, height: 24, name: "Metro" },
+  { type: "restaurant", icon: restaurant, iconHover: restaurantWhite, width: 24, height: 24, name: "Restoran" },
+  { type: "market", icon: marketplace, iconHover: marketplaceWhite, width: 24, height: 24, name: "Market" },
 ];
 
 const Map = ({ lat, lng }) => {
+  const [selectedType, setSelectedType] = useState("bus_stop");
+  const [nearby, setNearby] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const hasCoords = useMemo(
+    () => Number.isFinite(Number(lat)) && Number.isFinite(Number(lng)),
+    [lat, lng]
+  );
+
+  const selectedItem = useMemo(
+    () => items.find((i) => i.type === selectedType) ?? items[0],
+    [selectedType]
+  );
+  
+  const mapSrc = useMemo(() => {
+    if (lat == null || lng == null) return null;
+    return `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+  }, [lat, lng]);
+
+  const formatDistance = (meters) => {
+    if (!Number.isFinite(meters)) return "—";
+    if (meters < 1000) return `${Math.round(meters)} m`;
+    return `${(meters / 1000).toFixed(1)} km`;
+  };
+
+  useEffect(() => {
+    if (!hasCoords) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        setNearby([]);
+        setLoading(true);
+        const res = await fetch(
+          `/api/nearby?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}&type=${encodeURIComponent(selectedType)}&limit=5&radius=1500`
+        );
+        if (!res.ok) throw new Error("nearby request failed");
+        const data = await res.json();
+        if (cancelled) return;
+        setNearby(Array.isArray(data?.items) ? data.items : []);
+      } catch {
+        if (!cancelled) setNearby([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lat, lng, selectedType]);
+
   return (
-    <section className='max-w-[1600px] mx-[auto]'>
+    <section className='max-w-[1600px] mx-auto'>
       <div className='w-full px-4 sm:px-8 lg:px-20 flex flex-col items-start justify-center'>
         <h1 className="text-[#111] text-[24px] sm:text-[28px] font-medium">
           Yaxınlıqdakılar
         </h1>
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 mt-[32px] mb-[35px]">
+        <div className="flex flex-wrap gap-4 sm:gap-6 mt-8 mb-[35px]">
           {items.map((item) => (
             <EstablishmentsButton
-              key={item.name}
+              key={item.type}
               icon={item.icon}
               iconHover={item.iconHover}
               width={item.width}
               height={item.height}
               name={item.name}
+              active={selectedType === item.type}
+              onClick={() => setSelectedType(item.type)}
             />
           ))}
         </div>
-        {/* /embed?pb=!1m18!1m12!1m3!1d24236.414997399468!2d49.844775562309536!3d40.405880488250126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40307d7fc050f3e5%3A0xfc80fae5b4fa5c0a!2zQXrJmXJiYXljYW4gxLBubm92YXNpeWEgTcmZcmvJmXpp!5e0!3m2!1str!2saz!4v1752733537261!5m2!1str!2saz */}
-        <iframe
-          src="https://www.google.com/maps?q=40.38268442717272,49.863177522738106&z=15&output=embed"
-          width="1060"
-          height="476"
-          className="w-full h-[300px] sm:h-[400px] lg:h-[476px]"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        ></iframe>
+       
+        {mapSrc ? (
+          <iframe
+            src={mapSrc}
+            width="1060"
+            height="476"
+            className="w-full h-[300px] sm:h-[400px] lg:h-[476px]"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        ) : null}
 
-        <div className="flex flex-row items-center gap-[6px] mt-[38px]">
+        <div className="flex flex-row items-center gap-1.5 mt-[38px]">
           <Image
-            src={BusStopPrimary}
-            alt="bus"
+            src={selectedItem.icon}
+            alt={selectedItem.name}
             width={24}
             height={24} />
 
           <h1 className="text-[#111] text-[18px]/[16px] font-medium">
-            Dayanacaq
+            {selectedItem.name}
           </h1>
         </div>
 
-        <div className="w-full sm:w-[411px] flex flex-col gap-[16px] mt-[24px] mb-[60px]">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex flex-row items-center justify-between">
-              <div className="flex flex-row items-center gap-[6px]">
-                <Image
-                  src={BusStopPrimary}
-                  alt="bus"
-                  width={20}
-                  height={20}
-                />
-                <p className="text-[#111] text-[16px]/[16px]">Lorem epsum</p>
+        <div className="w-full sm:w-[411px] flex flex-col gap-4 mt-6 mb-[60px]">
+          {!hasCoords ? (
+            <p className="text-3 text-[14px]">Koordinat tapılmadı</p>
+          ) : loading ? (
+            <p className="text-3 text-[14px]">Yüklənir...</p>
+          ) : nearby?.length ? (
+            nearby.map((place) => (
+              <div key={place.id} className="flex flex-row items-center justify-between">
+                <div className="flex flex-row items-center gap-1.5 min-w-0">
+                  <Image
+                    src={selectedItem.icon}
+                    alt={selectedItem.name}
+                    width={20}
+                    height={20}
+                  />
+                  <p className="text-[#111] text-[16px]/[16px] truncate">{place.name}</p>
+                </div>
+                <p className="text-[#111] text-[12px]/[16px] whitespace-nowrap">{formatDistance(place.distanceMeters)}</p>
               </div>
-              <p className="text-[#111] text-[12px]/[16px]">500 m</p>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-3 text-[14px]">Məlumat tapılmadı</p>
+          )}
         </div>
       </div>
     </section>
