@@ -22,7 +22,7 @@ const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) 
                                     id={name}
                                     disabled={!isEditing}
                                     {...register(name)}
-                                    className="border border-[#6C707A] text-[#6C707A] text-[14px] px-[14px] py-3 bg-[#F8F9FC] rounded-[8px]"
+                                    className="border border-[#6C707A] text-[#6C707A] text-[14px] px-3.5 py-3 bg-[#F8F9FC] rounded-lg"
                                     type="text"
                                 />
                             </div>

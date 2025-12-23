@@ -22,6 +22,7 @@ const BedIcon = "/icons/guidance_hotel-room.svg";
 const FloorIcon = "/icons/ph_building-light.svg";
 const Manat = "/icons/fa6-solid_manat-sign.svg";
 const VideoSvg = "/icons/lets-icons_video-fill.svg";
+const DefaultProfileIcon = "/icons/profile.svg";
 
 /**
  * HouseCard Component
@@ -34,7 +35,9 @@ const VideoSvg = "/icons/lets-icons_video-fill.svg";
 const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = true }) => {
   const [activeSlide, setActiveSlide] = React.useState(0);
   const images = house?.medias?.filter((media) => !!media?.imageUrl) ?? [];
-  const publisherImage = house?.publisher?.imageUrl || Imagesvg;
+  const hasPublisherImage = Boolean(house?.publisher?.imageUrl);
+  const publisherName = house?.publisher?.fullName?.trim() || "Elan sahibi";
+  
 
   const handleFavClick = (e) => {
     e.preventDefault();
@@ -131,14 +134,12 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               })
               : (
                 <SwiperSlide>
-                  <div className="relative aspect-[302/262]">
-                    <Image
-                      src={Imagesvg}
-                      alt="placeholder"
-                      fill
-                      sizes="(max-width: 768px) 100vw, 302px"
-                      className="object-cover"
-                    />
+                  <div className="relative aspect-[302/262] bg-[rgba(0,0,0,0.04)]">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                      <span className="text-[12px] font-[500] text-[var(--text-color-3)] opacity-80">
+                        Şəkil mövcud deyil
+                      </span>
+                    </div>
                   </div>
                 </SwiperSlide>
               )}
@@ -146,7 +147,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
           <div
             onClick={handleFavClick}
-            className="cursor-pointer max-[431px]:w-[24px] max-[431px]:h-[24px] w-[30px] h-[30px] flex items-center justify-center absolute bg-[rgba(246,246,246,0.62)] z-[10] rounded-full top-[13px] right-[11px]"
+            className="cursor-pointer max-[431px]:w-6 max-[431px]:h-6 w-[30px] h-[30px] flex items-center justify-center absolute bg-[rgba(246,246,246,0.62)] z-10 rounded-full top-[13px] right-[11px]"
           >
             <LuHeart
               className={`${isFavorite ? "fill-red-500 text-red-500" : "fill-transparent"
@@ -254,17 +255,23 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             isActive &&
             <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
               <div className="w-10 h-10">
-                <Image
-                  className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
-                  src={publisherImage}
-                  alt="Author"
-                  width={35}
-                  height={35}
-                />
+                {hasPublisherImage ? (
+                  <Image
+                    className="max-[1024px]:hidden w-full h-full rounded-full object-cover object-top"
+                    src={house?.publisher?.imageUrl}
+                    alt="Author"
+                    width={35}
+                    height={35}
+                  />
+                ) : (
+                  <div className="max-[1024px]:hidden w-full h-full rounded-full bg-[var(--primary-color)] flex items-center justify-center">
+                    <Image src={DefaultProfileIcon} alt="Default avatar" width={20} height={20} />
+                  </div>
+                )}
               </div>
 
               <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-                {house?.publisher?.fullName}
+                {publisherName}
               </span>
 
             </div>
