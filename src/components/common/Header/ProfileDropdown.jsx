@@ -1,33 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function ProfileMenu({ userName, isLogin }) {
-    const [open, setOpen] = useState(false);
-    const router = useRouter();
-    const menuRef = useRef(null);
-    const handleLogout = () => {
-        localStorage.removeItem("access-token");
-        router.push("/login");
-        setOpen(false)
-    };
-
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (menuRef.current && !menuRef.current.contains(e.target)) {
-                setOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
     if (!isLogin) {
         return (
             <Link href="/login">
@@ -49,11 +24,8 @@ export default function ProfileMenu({ userName, isLogin }) {
     }
 
     return (
-        <div className="relative" ref={menuRef}>
-            <button
-                onClick={() => setOpen(!open)}
-                className="text-black flex justify-center items-center gap-[10px] text-[18px] cursor-pointer"
-            >
+        <Link href="/profile">
+            <button className="text-black flex justify-center items-center gap-[10px] text-[18px] cursor-pointer">
                 <div className="profile-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M5.5 14.5C5.5 12.0147 7.51472 10 10 10C12.4853 10 14.5 12.0147 14.5 14.5"
@@ -66,35 +38,6 @@ export default function ProfileMenu({ userName, isLogin }) {
                 </div>
                 <span className="max-[1440px]:hidden text-[16px] font-[500]">{userName}</span>
             </button>
-
-            {open && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md  z-50">
-                    <ul className="py-2 text-sm">
-
-                        <li>
-                            <button
-                                onClick={() => {
-                                    router.push("/profile")
-                                    setOpen(false)
-                                }}
-                                className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer  text-[16px] font-[500]"
-                            >
-                                Profil
-                            </button>
-                        </li>
-
-                        <li>
-                            <button
-                                onClick={handleLogout}
-                                className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer  text-[16px] font-[500]"
-                            >
-                                Logout
-                            </button>
-                        </li>
-
-                    </ul>
-                </div>
-            )}
-        </div>
+        </Link>
     );
 }

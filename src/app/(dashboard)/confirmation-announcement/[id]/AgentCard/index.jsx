@@ -1,27 +1,39 @@
 import Image from "next/image";
 
-const defaultAvatar = "/icons/image.svg";
+const defaultProfileIcon = "/icons/profile.svg";
 
 export const AgentCard = ({ agent, selected, onSelect}) => {
-    const avatarSrc = agent?.image?.url || defaultAvatar;
+    const hasAvatar = Boolean(agent?.image?.url);
+    const avatarSrc = agent?.image?.url;
     return (
         <div
             role="button"
             onClick={() => onSelect(agent.id)}
-            className={`flex flex-col justify-between p-4 rounded-2xl shadow-sm border transition cursor-pointer hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 ${selected ? "border-blue-500 bg-blue-50 shadow" : "border-gray-100 bg-white"
+            className={`flex flex-col justify-between p-4 rounded-2xl shadow-sm border transition cursor-pointer hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${selected ? "border-(--primary-color) bg-neutral-text shadow" : "border-neutral-disabled/20 bg-white hover:border-(--primary-color)"
                 }`}
             tabIndex={0}
         >
             <div>
                 <div className="flex items-center  gap-5">
                     <div className="w-20 h-20">
-                        <Image
-                            src={avatarSrc}
-                            alt={agent?.fullName ? `${agent.fullName} foto` : "Agent foto"}
-                            className="w-full h-full rounded-full object-cover object-top"
-                            width={50}
-                            height={50}
-                        />
+                        {hasAvatar ? (
+                            <Image
+                                src={avatarSrc}
+                                alt={agent?.fullName ? `${agent.fullName} foto` : "Agent foto"}
+                                className="w-full h-full rounded-full object-cover object-top"
+                                width={80}
+                                height={80}
+                            />
+                        ) : (
+                            <div className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center">
+                                <Image
+                                    src={defaultProfileIcon}
+                                    alt="Default avatar"
+                                    width={30}
+                                    height={30}
+                                />
+                            </div>
+                        )}
                     </div>
                     <h3 className="text-lg font-semibold">{agent.fullName}</h3>
                     {/* <div className="text-sm font-medium">{agent.rating} ★</div> */}
@@ -39,7 +51,7 @@ export const AgentCard = ({ agent, selected, onSelect}) => {
                         onSelect(agent.id);
                     }}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition ${selected
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                        ? "bg-(--primary-color) text-white hover:opacity-90"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                         }`}
                 >
