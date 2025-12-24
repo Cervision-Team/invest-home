@@ -113,7 +113,7 @@ const HeroAndDetails = ({ id }) => {
 
   const agentAvatarSrc = useMemo(() => {
     return (
-      house?.agent?.imageUrl || null
+      house?.agent?.image?.url || null
     );
   }, [house?.agent]);
 

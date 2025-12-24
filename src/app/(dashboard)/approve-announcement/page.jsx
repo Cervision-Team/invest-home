@@ -2,10 +2,10 @@
 import Image from 'next/image'
 import React, { useEffect, useState, useCallback } from 'react'
 import photo from "../../../../public/images/profile/novruz.jpg"
-import announcement from "../../../../public/images/profile/announcement.png"
 import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
 import { approveAnnouncement, getAnnouncementByUser } from '@/services/api/endpoints/announcementService'
+
 const ApproveAnnouncmenet = () => {
     const [search, setSearch] = useState();
     const [announcementData, setAnnouncementData] = useState([])
@@ -75,10 +75,10 @@ const ApproveAnnouncmenet = () => {
                                     </div>
                                 </div>
                                 <div className='w-[82px] h-[82px]'>
-                                    <Image src={announcement?.medias[0]?.imageUrl} alt='announcement' className='w-full h-full' width={82} height={82}/>
+                                    <Image src={announcement?.medias?.[0]?.imageUrl} alt='announcement' className='w-full h-full' width={82} height={82} />
                                     <div className='flex gap-2'>
                                         <span className='text-[14px] text-[#9CA3AF] font-medium'>ID</span>
-                                        <span className='text-[14px] text-[#02836F] font-medium'>#567841</span>
+                                        <span className='text-[14px] text-[#02836F] font-medium'>#{announcement?.id}</span>
                                     </div>
                                 </div>
                             </div>

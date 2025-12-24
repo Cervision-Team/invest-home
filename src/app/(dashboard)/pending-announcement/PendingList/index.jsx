@@ -14,7 +14,6 @@ const PendingList = () => {
     useEffect(() => {
         setLoading(true);
         setError(null);
-
         getAnnouncementByStatus("PENDING")
             .then(res => {
                 setHouses(res?.content || []);
