@@ -54,6 +54,12 @@ export const getAnnouncementByStatus = async (status) => {
 	}
 };
 
+export const getMyActiveAnnouncements = async () => getAnnouncementByUser("APPROVED");
+export const getMyPendingAnnouncements = async () => getAnnouncementByUser("PENDING");
+export const getMyAssignedToAgentAnnouncements = async () => getAnnouncementByUser("ASSIGNED_TO_AGENT");
+export const getMyRejectedAnnouncements = async () => getAnnouncementByUser("REJECTED");
+export const getMyArchivedAnnouncements = async () => getAnnouncementByUser("ARCHIVED");
+
 export const assignAgent = async (announcementId, agentId) => {
 	try {
 		const res = await axios.patch(
