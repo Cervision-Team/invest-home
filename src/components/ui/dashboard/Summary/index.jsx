@@ -7,7 +7,7 @@ import { Button } from '../Buttons/ProfileButtons'
 
 const defaultProfileIcon = "/icons/profile.svg";
 
-const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDeleteImage, imageResetKey }) => {
+const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
     const fileInputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -27,8 +27,15 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
     }, [imageResetKey]);
 
     const avatarSrc = useMemo(() => {
-        return previewUrl || user?.image?.url || null;
-    }, [previewUrl, user]);
+        if (previewUrl) return previewUrl;
+
+        const rawUrl = user?.image?.url;
+        if (!rawUrl) return null;
+
+        if (!avatarVersion) return rawUrl;
+        const join = rawUrl.includes("?") ? "&" : "?";
+        return `${rawUrl}${join}v=${avatarVersion}`;
+    }, [previewUrl, user, avatarVersion]);
 
     const hasAvatar = Boolean(avatarSrc);
 

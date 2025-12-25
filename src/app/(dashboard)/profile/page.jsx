@@ -13,6 +13,7 @@ import Image from 'next/image';
 import Search from '@/components/ui/dashboard/Search';
 
 import Chat from '@/components/ui/dashboard/Chat';
+import { useUser } from '@/context/UserContext';
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,15 +23,18 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [imageResetKey, setImageResetKey] = useState(0);
+  const [avatarVersion, setAvatarVersion] = useState(0);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [search, setSearch] = useState("");
   const { register, handleSubmit, reset } = useForm();
+  const { fetchUser } = useUser();
 
 
   const onSubmit = async (data) => {
     if (!isEditing) return;
 
+    try {
       const userPayload = {
         fullName: data?.fullName,
         birthDate: data?.birthDate,
@@ -41,15 +45,27 @@ const Profile = () => {
       };
 
       await updateUser(userPayload);
+
       if (selectedProfileImage) {
         await updateUserImage(selectedProfileImage);
         setSelectedProfileImage(null);
         setImageResetKey((k) => k + 1);
+        setAvatarVersion(Date.now());
       }
+
+      // Refresh local + global user (so header/sidebar updates immediately)
+      const res = await getUser();
+      setUserData(res.data);
+      reset(res.data);
+      await fetchUser({ force: true });
 
       setIsEditing(false);
       setSuccessText("Dəyişikliklər uğurla yadda saxlanıldı.");
       setIsOpen(true);
+    } catch (err) {
+      setSuccessText("Dəyişiklikləri yadda saxlamaq alınmadı. Yenidən cəhd edin.");
+      setIsOpen(true);
+    }
   }
 
   const handleToggle = () => {
@@ -74,6 +90,8 @@ const Profile = () => {
         const res = await getUser();
         setUserData(res.data);
         reset(res.data);
+        setAvatarVersion(Date.now());
+        await fetchUser({ force: true });
       }
 
       setSuccessText("Profil şəkli silindi.");
@@ -118,6 +136,7 @@ const Profile = () => {
             onImageSelected={(file) => setSelectedProfileImage(file)}
             onRequestDeleteImage={requestDeleteImage}
             imageResetKey={imageResetKey}
+            avatarVersion={avatarVersion}
           />
         </ProfileForm>
 
