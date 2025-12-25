@@ -15,9 +15,16 @@ export const UserProvider = ({ children }) => {
   const cachedUser = useRef(null);
   const pendingPromise = useRef(null);
 
-  const fetchUser = useCallback(async () => {
-    if (cachedUser.current) return cachedUser.current;
-    if (pendingPromise.current) return pendingPromise.current;
+  const fetchUser = useCallback(async (options = {}) => {
+    const force = Boolean(options?.force);
+
+    if (force) {
+      cachedUser.current = null;
+      pendingPromise.current = null;
+    }
+
+    if (!force && cachedUser.current) return cachedUser.current;
+    if (!force && pendingPromise.current) return pendingPromise.current;
     isFetching.current = true;
     setUserLoading(true);
 
