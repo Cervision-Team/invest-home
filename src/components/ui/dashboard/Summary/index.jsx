@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import profilePhoto from "../../../../../public/images/profile/novruz.jpg"
@@ -7,7 +7,7 @@ import { Button } from '../Buttons/ProfileButtons'
 
 const defaultProfileIcon = "/icons/profile.svg";
 
-const Summary = ({ isEditing, handleToggle, user, onImageSelected }) => {
+const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDeleteImage, imageResetKey }) => {
     const fileInputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -16,6 +16,15 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected }) => {
             if (previewUrl) URL.revokeObjectURL(previewUrl);
         };
     }, [previewUrl]);
+
+    useEffect(() => {
+        if (imageResetKey == null) return;
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        setPreviewUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    }, [imageResetKey]);
 
     const avatarSrc = useMemo(() => {
         return previewUrl || user?.image?.url || null;
@@ -37,6 +46,8 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected }) => {
         setPreviewUrl(nextUrl);
         onImageSelected?.(file);
     };
+
+    const canDelete = Boolean(previewUrl || user?.image?.url);
 
     return (
         <>
@@ -74,6 +85,16 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected }) => {
                     <div className='flex flex-col gap-2'>
                         <p className='text-xl font-medium'>{user?.fullName}</p>
                         <span className='text-lg text-[#02836F] capitalize'>{user?.role}</span>
+
+                        {isEditing && canDelete && typeof onRequestDeleteImage === "function" && (
+                            <button
+                                type='button'
+                                onClick={onRequestDeleteImage}
+                                className='w-fit text-sm font-medium text-red-600 hover:text-red-700 underline'
+                            >
+                                Şəkli sil
+                            </button>
+                        )}
                     </div>
                 </div>
 

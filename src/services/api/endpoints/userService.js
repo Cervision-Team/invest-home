@@ -39,6 +39,16 @@ export const updateUserImage = async (image) => {
 	}
 };
 
+export const deleteUserImage = async () => {
+	try {
+		const res = await axios.delete(`/user/delete-image`);
+		return res;
+	} catch (err) {
+		console.log(err);
+		throw err;
+	}
+};
+
 export const getAgent = async () =>{
 	try {
 		const res = await axios.get(`/user/agent`);
