@@ -3,7 +3,7 @@
 import ProfileForm from '@/components/ui/dashboard/ProfileForm';
 // import StatisticWithCircleProgressBar from '@/components/ui/profile/StatisticWithCircleProgressBar'
 import Summary from '@/components/ui/dashboard/Summary'
-import { getUser, updateUser } from '@/services/api/endpoints/userService';
+import { getUser, updateUser, updateUserImage } from '@/services/api/endpoints/userService';
 // import TotalStatistic from '@/components/ui/profile/TotalStatistic'
 // import TotalStatisticWithProgressbar from '@/components/ui/profile/TotalStatisticWithProgressbar'
 import React, { useEffect, useState } from 'react'
@@ -19,31 +19,35 @@ const Profile = () => {
   const [isChat, setIsChat] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [search, setSearch] = useState("");
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      fullName: "Novruz Huseynov",
-      birthDate: "17.06.2004",
-      phoneNumber: "+9940513888181",
-      location: "baku,xetai",
-      email: "nihataliyev@gmail.com",
-      roleName: "rehber"
-    }
-  });
+  const { register, handleSubmit, reset } = useForm();
 
 
   const onSubmit = async (data) => {
-    if (!isEditing) {
-      console.log(data)
-      await updateUser(data)
-      setIsOpen(true)
-    } else {
-      console.log("!!!")
-    }
+    if (!isEditing) return;
+
+      const userPayload = {
+        fullName: data?.fullName,
+        birthDate: data?.birthDate,
+        phoneNumber: data?.phoneNumber,
+        location: data?.location,
+        email: data?.email,
+        roleName: data?.roleName,
+      };
+
+      await updateUser(userPayload);
+      if (selectedProfileImage) {
+        await updateUserImage(selectedProfileImage);
+        setSelectedProfileImage(null);
+      }
+
+      setIsEditing(false);
+      setIsOpen(true);
   }
 
   const handleToggle = () => {
-    setIsEditing(prev => !prev)
+    setIsEditing(true)
   }
 
   useEffect(() => {
@@ -67,15 +71,15 @@ const Profile = () => {
     <main className='w-full flex flex-col gap-6'>
 
       <section className='relative'>
-        <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} user={userData}>
-          <Summary isChat={isChat} setIsChat={setIsChat} isEditing={isEditing} handleToggle={handleToggle} user={userData || {
-            fullName: "Novruz Huseynov",
-            birthDate: "17.06.2004",
-            phoneNumber: "+9940513888181",
-            location: "baku,xetai",
-            email: "nihataliyev@gmail.com",
-            roleName: "rehber"
-          }} />
+        <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register}>
+          <Summary
+            isChat={isChat}
+            setIsChat={setIsChat}
+            isEditing={isEditing}
+            handleToggle={handleToggle}
+            user={userData}
+            onImageSelected={(file) => setSelectedProfileImage(file)}
+          />
         </ProfileForm>
         {isOpen && (
           <div

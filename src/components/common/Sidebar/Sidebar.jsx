@@ -83,6 +83,9 @@ const Sidebar = ({ variant }) => {
   }, [fetchUser]);
   const userName = user?.fullName.split(" ")[0];
   const linkPadding = variant === "services" ? "pl-7" : "pl-4 md:pl-14";
+  const avatarSrc = user?.image?.url || null;
+  const hasAvatar = Boolean(avatarSrc);
+  const defaultProfileIcon = "/icons/profile.svg";
   return (
     <div className="w-full md:w-auto">
       <nav
@@ -91,12 +94,19 @@ const Sidebar = ({ variant }) => {
       >
         {variant === "dashboard" && (
           <div className="flex justify-center items-center gap-3 mb-6">
-            <div className="w-[50px] h-[50px]">
-              <Image
-                className="rounded-full w-[50px] h-[50px] object-cover object-top"
-                src={userAdmin}
-                alt="profile image"
-              />
+            <div className="w-[50px] h-[50px] relative">
+              {hasAvatar ? (
+                <Image
+                  src={avatarSrc}
+                  alt="profile image"
+                  fill
+                  className="h-full w-full rounded-full object-cover object-top"
+                />
+              ) : (
+                <div className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center">
+                  <Image src={defaultProfileIcon} alt="Default avatar" width={24} height={24} />
+                </div>
+              )}
             </div>
             <span className="font-medium text-lg">{userName}</span>
           </div>
