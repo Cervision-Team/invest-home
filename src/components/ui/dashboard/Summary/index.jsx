@@ -1,15 +1,75 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import profilePhoto from "../../../../../public/images/profile/novruz.jpg"
+import editIcon from '../../../../../public/icons/profile/edit-icon.svg'
 import { Button } from '../Buttons/ProfileButtons'
 
-const Summary = ({ isEditing, handleToggle, user }) => {
+const defaultProfileIcon = "/icons/profile.svg";
+
+const Summary = ({ isEditing, handleToggle, user, onImageSelected }) => {
+    const fileInputRef = useRef(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+        };
+    }, [previewUrl]);
+
+    const avatarSrc = useMemo(() => {
+        return previewUrl || user?.image?.url || null;
+    }, [previewUrl, user]);
+
+    const hasAvatar = Boolean(avatarSrc);
+
+    const openPicker = () => {
+        if (!isEditing) return;
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        const nextUrl = URL.createObjectURL(file);
+        setPreviewUrl(nextUrl);
+        onImageSelected?.(file);
+    };
+
     return (
         <>
             <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full'>
                 <div className='flex gap-4 sm:gap-6 items-center'>
-                    <div className='w-[72px] h-[72px] sm:w-[100px] sm:h-[100px] shrink-0'>
-                        <Image src={profilePhoto} alt='profile photo' className='w-full h-full object-cover object-top rounded-full' />
+                    <div className='relative w-[72px] h-[72px] sm:w-[100px] sm:h-[100px] shrink-0'>
+                        {hasAvatar ? (
+                            <Image src={avatarSrc} alt='profile photo' fill className='h-full w-full rounded-full object-cover object-top' />
+                        ) : (
+                            <div className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center">
+                                <Image src={defaultProfileIcon} alt="Default avatar" width={24} height={24} />
+                            </div>
+                        )}
+
+                        {isEditing && (
+                            <button
+                                type='button'
+                                onClick={openPicker}
+                                className='absolute bottom-0 right-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#02836F] flex items-center justify-center cursor-pointer'
+                                aria-label='Profil şəklini yenilə'
+                            >
+                                <Image src={editIcon} alt='edit' width={18} height={18} />
+                            </button>
+                        )}
+
+                        <input
+                            ref={fileInputRef}
+                            type='file'
+                            accept='image/*'
+                            onChange={handleFileChange}
+                            disabled={!isEditing}
+                            className='hidden'
+                        />
                     </div>
                     <div className='flex flex-col gap-2'>
                         <p className='text-xl font-medium'>{user?.fullName}</p>
@@ -18,7 +78,20 @@ const Summary = ({ isEditing, handleToggle, user }) => {
                 </div>
 
                 <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6'>
-                    <button type='submit' onClick={handleToggle} className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'>{isEditing ? "Yadda saxla" : "Redaktə et"}</button>
+                    {isEditing ? (
+                        <button type='submit' className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'>Yadda saxla</button>
+                    ) : (
+                        <button
+                            type='button'
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleToggle?.();
+                            }}
+                            className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'
+                        >
+                            Redaktə et
+                        </button>
+                    )}
                     <Button/>
                 </div>
             </div>

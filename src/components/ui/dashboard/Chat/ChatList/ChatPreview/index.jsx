@@ -1,13 +1,26 @@
+"use client"
+
 import React from 'react'
 import profilePhoto from "../../../../../../../public/images/profile/novruz.jpg"
 import Image from 'next/image'
+import { useUser } from '@/context/UserContext'
 
 const ChatPreview = () => {
+    const { user } = useUser();
+    const avatarSrc = user?.image?.url || null;
+    const hasAvatar = Boolean(avatarSrc);
+    const defaultProfileIcon = "/icons/profile.svg";
     return (
         <div className='bg-[#02836F0D] px-3 py-1.5 rounded-[20px]'>
             <div className='flex gap-[13px]'>
-                <div className='w-[68px] h-[68px]'>
-                    <Image src={profilePhoto} alt='profile photo' className='w-full h-full object-cover rounded-full object-top' />
+                <div className='w-[68px] h-[68px] relative'>
+                    {hasAvatar ? (
+                        <Image src={avatarSrc} alt='profile photo' fill className='h-full w-full rounded-full object-cover object-top' />
+                    ) : (
+                        <div className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center">
+                            <Image src={defaultProfileIcon} alt="Default avatar" width={24} height={24} />
+                        </div>
+                    )}
                 </div>
                 <div className='flex flex-col justify-between flex-1 py-1.5'>
                     <div className='flex justify-between items-center'>
