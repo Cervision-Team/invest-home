@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import userAdmin from "../../../../public/images/profile/novruz.jpg";
-import { LogoutIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
+import { AccessControlIcon, ApproveAnnouncementIcon, LogoutIcon, MyAnnouncements, PendingAnnouncementIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
 import {
   documentIcon,
   livingRoomRentalIcon,
@@ -40,6 +40,10 @@ const iconMap = {
   customer: CustomerIcon,
   wallet: WalletIcon,
   transaction: TransactionHistoryIcon,
+  my_announcement: MyAnnouncements,
+  role: AccessControlIcon,
+  pending: PendingAnnouncementIcon,
+  announcement:ApproveAnnouncementIcon
 
 };
 
@@ -119,23 +123,23 @@ const Sidebar = ({ variant }) => {
             menuPermission
               .filter((item) => item?.isVisible === true)
               .map(({ id, name, path, icon }) => {
-              const MenuIcon = iconMap[icon];
-              const href = toSidebarHref(path);
-              const isActive = pathName === path;
+                const MenuIcon = iconMap[icon];
+                const href = toSidebarHref(path);
+                const isActive = pathName === path;
 
-              return (
-                <li key={id ?? name} className="px-2">
-                  <Link
-                    href={href}
-                    className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
-                      } ${linkPadding}`}
-                  >
-                    {MenuIcon && <MenuIcon active={isActive} />}
-                    {name}
-                  </Link>
-                </li>
-              );
-            })
+                return (
+                  <li key={id ?? name} className="px-2">
+                    <Link
+                      href={href}
+                      className={`flex items-center w-full py-3.5 font-medium gap-2 text-[#1B1F27] menu-link rounded-sm ${isActive ? "active" : ""
+                        } ${linkPadding}`}
+                    >
+                      {MenuIcon && <MenuIcon active={isActive} />}
+                      {name}
+                    </Link>
+                  </li>
+                );
+              })
           ) : (
 
             <li className="px-2 text-gray-400">Menyu tapılmadı</li>
