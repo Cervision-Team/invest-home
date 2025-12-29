@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import userAdmin from "../../../../public/images/profile/novruz.jpg";
-import { AccessControlIcon, ApproveAnnouncementIcon, LogoutIcon, MyAnnouncements, PendingAnnouncementIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
+import { AccessControlIcon, ApproveAnnouncementIcon, LogoutIcon, MyAnnouncementIcon, PendingAnnouncementIcon, TransactionHistoryIcon } from "@/components/ui/MenuIcons";
 import {
   documentIcon,
   livingRoomRentalIcon,
@@ -40,10 +40,10 @@ const iconMap = {
   customer: CustomerIcon,
   wallet: WalletIcon,
   transaction: TransactionHistoryIcon,
-  my_announcement: MyAnnouncements,
+  my_announcement: MyAnnouncementIcon,
   role: AccessControlIcon,
   pending: PendingAnnouncementIcon,
-  announcement:ApproveAnnouncementIcon
+  announcement: ApproveAnnouncementIcon
 
 };
 

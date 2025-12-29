@@ -3,17 +3,57 @@ import React, { useEffect, useState } from "react";
 import { getAccessControl, upadteAccessControl } from "@/services/api/endpoints/accessControlService";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { ToastContainer, toast } from "react-toastify";
+import { createRole, deleteRole, updateRole } from "@/services/api/endpoints/roleService";
+import RoleModal from "./components/RoleModal";
+import AccessControlTable from "./components/AccessControlTable";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
     const [matrix, setMatrix] = useState({});
     const { fetchMenuPermission } = useMenuPermission();
 
+    const [roleModalOpen, setRoleModalOpen] = useState(false);
+    const [roleModalMode, setRoleModalMode] = useState("create");
+    const [activeRoleId, setActiveRoleId] = useState(null);
+    const [activeRoleName, setActiveRoleName] = useState("");
+    const [roleSubmitting, setRoleSubmitting] = useState(false);
+
+    const refreshMatrix = async (opts = {}) => {
+        const { preserveAccess = true } = opts;
+        const res = await getAccessControl();
+        const nextMatrix = res.data;
+
+        const baseline = (nextMatrix?.rolesClaims || []).map((item) => ({ ...item, original: true }));
+
+        if (!preserveAccess) {
+            setMatrix(nextMatrix);
+            setAccess(baseline);
+            return;
+        }
+
+        const prevMap = new Map(
+            (access || []).map((a) => [`${a.roleId}-${a.claimId}`, a])
+        );
+
+        const mergedMap = new Map();
+
+        for (const b of baseline) {
+            const key = `${b.roleId}-${b.claimId}`;
+            const prev = prevMap.get(key);
+            mergedMap.set(key, prev ? { ...b, hasPermission: prev.hasPermission } : b);
+        }
+
+        for (const [key, prev] of prevMap.entries()) {
+            if (!mergedMap.has(key)) mergedMap.set(key, prev);
+        }
+
+        setMatrix(nextMatrix);
+        setAccess(Array.from(mergedMap.values()));
+    };
+
     useEffect(() => {
         (async () => {
-            const res = await getAccessControl();
-            setMatrix(res.data);
-            setAccess(res.data.rolesClaims.map((item) => ({ ...item, original: true })));
+            await refreshMatrix({ preserveAccess: false });
         })();
     }, []);
 
@@ -49,10 +89,51 @@ const AccessControl = () => {
         } catch (err) {
             console.log(err);
         }
-
-
-
     };
+
+    const openCreateRole = () => {
+        setRoleModalMode("create");
+        setActiveRoleId(null);
+        setActiveRoleName("");
+        setRoleModalOpen(true);
+    };
+
+    const openUpdateRole = (role) => {
+        setRoleModalMode("update");
+        setActiveRoleId(role?.id ?? null);
+        setActiveRoleName(role?.name ?? "");
+        setRoleModalOpen(true);
+    };
+
+    const handleRoleSubmit = async (name) => {
+        setRoleSubmitting(true);
+        try {
+            if (roleModalMode === "create") {
+                const res = await createRole({ name });
+                toast.success(res?.data || "Role yaradıldı");
+            } else {
+                const res = await updateRole({ id: activeRoleId, name });
+                toast.success(res?.data || "Role yeniləndi");
+            }
+            setRoleModalOpen(false);
+            await refreshMatrix({ preserveAccess: true });
+        } catch (err) {
+            toast.error("Xəta baş verdi");
+        } finally {
+            setRoleSubmitting(false);
+        }
+    };
+
+    const handleRoleDelete = async (roleId) => {
+        try {
+            await deleteRole(roleId);
+            toast.success("Role silindi");
+            await refreshMatrix({ preserveAccess: true });
+        } catch (err) {
+            toast.error("Xəta baş verdi");
+        }
+    };
+
 
     const groupByFirstWord = (claims) => {
         return claims.reduce((groups, claim) => {
@@ -72,71 +153,28 @@ const AccessControl = () => {
     return (
         <section className="w-full">
             <ToastContainer />
-            <div className="overflow-x-auto">
-                <table className="w-full min-w-[680px]">
-                    <thead>
-                        <tr>
-                            <th className="w-[200px] text-left p-2 py-6">Role & Permission</th>
-                            {matrix?.roles?.map((role) => (
-                                <th key={role?.id} className="p-2">
-                                    {role.name}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {Object.entries(groupedClaims).map(([section, claimsInGroup]) => (
-                            <React.Fragment key={section}>
-                                <tr className="">
-                                    <td
-                                        colSpan={matrix?.roles?.length + 1}
-                                        className="font-semibold p-2  text-white uppercase bg-[#02836f99]  rounded-2xl"
-                                    >
-                                        {section}
-                                    </td>
-                                </tr>
-
-                                {claimsInGroup.map((claim) => (
-                                    <tr key={claim.id}>
-                                        <td className="p-2 font-medium ">{claim.displayName}</td>
-                                        {matrix?.roles?.map((role) => {
-                                            const currentAccess = access?.find(
-                                                (a) => a.roleId === role.id && a.claimId === claim.id
-                                            )?.hasPermission;
-
-                                            return (
-                                                <td key={`${role.id}-${claim.id}`} className="p-2 text-center ">
-
-                                                    <label className="relative inline-flex items-center cursor-pointer">
-                                                        <input
-                                                            className="sr-only peer"
-                                                            type="checkbox"
-                                                            checked={currentAccess || false}
-                                                            // className="w-[15px] h-[15px] cursor-pointer"
-                                                            onChange={() => handleAccess(role.id, claim.id)}
-                                                        />
-                                                        <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none 
-                                                        peer-focus:ring-2 peer-focus:ring-[#02836f] rounded-full peer 
-                                                        peer-checked:after:translate-x-full peer-checked:after:border-white 
-                                                        after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
-                                                        after:bg-white after:border-gray-300 after:border after:rounded-full 
-                                                        after:h-5 after:w-5 after:transition-all peer-checked:bg-[#02836f]"></div>
-                                                    </label>
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                ))}
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <RoleModal
+                open={roleModalOpen}
+                title={roleModalMode === "create" ? "Yeni role əlavə et" : "Role yenilə"}
+                initialValue={activeRoleName}
+                submitText={roleModalMode === "create" ? "Əlavə et" : "Yenilə"}
+                loading={roleSubmitting}
+                onClose={() => setRoleModalOpen(false)}
+                onSubmit={handleRoleSubmit}
+            />
+            <AccessControlTable
+                matrix={matrix}
+                groupedClaims={groupedClaims}
+                access={access}
+                onToggleAccess={handleAccess}
+                onOpenUpdateRole={openUpdateRole}
+                onDeleteRole={handleRoleDelete}
+                onOpenCreateRole={openCreateRole}
+            />
 
             <button
                 onClick={handleSubmit}
-                className="bg-[#02836f] hover:[#02836f] px-4 py-2 rounded-lg text-white mt-4 transition-all cursor-pointer"
+                className="bg-primary hover:[#02836f] px-4 py-2 rounded-lg text-white mt-4 transition-all cursor-pointer"
             >
                 Yadda saxla
             </button>
