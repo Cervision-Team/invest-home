@@ -10,32 +10,68 @@ const PrivateInfo = ({
   setShowAllErrors,
 }) => {
   const [errors, setErrors] = useState({});
+  const stepFields = ["name", "surname", "email", "phone", "experiences"];
+
+  const buildStepData = (overrides = {}) =>
+    stepFields.reduce((acc, field) => {
+      acc[field] = Object.prototype.hasOwnProperty.call(overrides, field) ? overrides[field] : formData[field];
+      return acc;
+    }, {});
 
   const validateField = async (fieldName, value) => {
+    // Special-case experiences: Yup may produce nested paths like experiences[0].endMonth
+    if (fieldName === "experiences") {
+      try {
+        await agentFormSchema.validateAt("experiences", { ...formData, experiences: value });
+        setErrors((prev) => {
+          const copy = { ...prev };
+          delete copy.experiences;
+          Object.keys(copy).forEach((k) => {
+            if (k.startsWith("experiences[")) delete copy[k];
+          });
+          return copy;
+        });
+      } catch (err) {
+        if (err?.name === "ValidationError") {
+          const newErrors = {};
+          if (Array.isArray(err.inner) && err.inner.length) {
+            err.inner.forEach((e) => {
+              if (e.path) newErrors[e.path] = e.message;
+            });
+          } else if (err.path) {
+            newErrors[err.path] = err.message;
+          } else {
+            newErrors.experiences = err.message;
+          }
+
+          setErrors((prev) => {
+            const copy = { ...prev };
+            Object.keys(copy).forEach((k) => {
+              if (k === "experiences" || k.startsWith("experiences[")) delete copy[k];
+            });
+            return { ...copy, ...newErrors };
+          });
+        }
+      }
+
+      await checkFormValidity({ experiences: value });
+      return;
+    }
+
     try {
       await agentFormSchema.validateAt(fieldName, { ...formData, [fieldName]: value });
       setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     } catch (err) {
-      if (err.name === "ValidationError") {
+      if (err?.name === "ValidationError") {
         setErrors((prev) => ({ ...prev, [fieldName]: err.message }));
       }
     }
-    checkFormValidity();
+    await checkFormValidity({ [fieldName]: value });
   };
 
-  const checkFormValidity = async () => {
+  const checkFormValidity = async (overrides = {}) => {
     try {
-      const stepData = (({ fullName, email, phone, about1, about2 }) => ({
-        fullName,
-        email,
-        phone,
-        about1,
-        about2,
-      }))(formData);
-
-      await agentFormSchema
-        .pick(["fullName", "email", "phone", "about1", "about2"])
-        .validate(stepData, { abortEarly: false });
+      await agentFormSchema.pick(stepFields).validate(buildStepData(overrides), { abortEarly: false });
 
       onValidationChange(true);
     } catch {
@@ -45,17 +81,7 @@ const PrivateInfo = ({
 
   const validateAllFields = async () => {
     try {
-      const stepData = (({ fullName, email, phone, about1, about2 }) => ({
-        fullName,
-        email,
-        phone,
-        about1,
-        about2,
-      }))(formData);
-
-      await agentFormSchema
-        .pick(["fullName", "email", "phone", "about1", "about2"])
-        .validate(stepData, { abortEarly: false });
+      await agentFormSchema.pick(stepFields).validate(buildStepData(), { abortEarly: false });
 
       setErrors({});
       onValidationChange(true);
@@ -63,7 +89,7 @@ const PrivateInfo = ({
       if (err.name === "ValidationError") {
         const newErrors = {};
         err.inner.forEach((e) => {
-          newErrors[e.path] = e.message;
+          if (e.path) newErrors[e.path] = e.message;
         });
         setErrors(newErrors);
         onValidationChange(false);
@@ -87,6 +113,50 @@ const PrivateInfo = ({
      max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
      outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
      input-field ${errors[field] ? "error" : ""}`;
+
+  const baseInputClass = (hasError) =>
+    `max-[430px]:placeholder-primary max-[430px]:text-[16px]
+     max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
+     outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
+     input-field ${hasError ? "error" : ""}`;
+
+  const getExpError = (index, field) => errors[`experiences[${index}].${field}`];
+
+  const updateExperience = (index, field, value) => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    const current = next[index] || {
+      position: "",
+      company: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    };
+    next[index] = { ...current, [field]: value };
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
+
+  const addExperience = () => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    next.push({
+      position: "",
+      company: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    });
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
+
+  const removeExperience = (index) => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    next.splice(index, 1);
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
 
   return (
     <>
@@ -143,11 +213,10 @@ const PrivateInfo = ({
           <form>
             <div className="flex flex-col gap-[16px]">
               {[
-                { name: "fullName", label: "Ad Soyad", required: true, placeholder: "Ad Soyad" },
+                { name: "name", label: "Ad", required: true, placeholder: "Ad" },
+                { name: "surname", label: "Soyad", required: true, placeholder: "Soyad" },
                 { name: "email", label: "Email", required: true, placeholder: "investhomeaz@gmail.com", type: "email" },
                 { name: "phone", label: "Telefon", required: true, placeholder: "phone" },
-                { name: "about1", label: "Haqqınızda 1", required: true, placeholder: "İş Təcrübəniz" },
-                { name: "about2", label: "Haqqınızda 2", required: false, placeholder: "İş Təcrübəniz" },
               ].map(({ name, label, required, placeholder, type = "text" }) => (
                 <div key={name} className="flex flex-col gap-[8px]">
                   <label className="max-[430px]:hidden">
@@ -166,6 +235,131 @@ const PrivateInfo = ({
                     onBlur={(e) => validateField(name, e.target.value)}
                   />
                   {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+                </div>
+              ))}
+
+              <div className="mt-[8px] flex items-center justify-between">
+                <label className="max-[430px]:hidden">Təcrübələr</label>
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                >
+                  + Təcrübə əlavə et
+                </button>
+              </div>
+
+              {errors.experiences && <p className="text-red-500 text-sm">{errors.experiences}</p>}
+
+              {(formData.experiences || []).map((exp, index) => (
+                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                  <div className="flex items-center justify-between">
+                    <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
+                    {(formData.experiences || []).length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeExperience(index)}
+                        className="text-red-600 hover:text-red-800 text-[14px]"
+                      >
+                        Sil
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Vəzifə<span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Məs: Satış meneceri"
+                      className={baseInputClass(Boolean(getExpError(index, "position")))}
+                      value={exp?.position || ""}
+                      onChange={(e) => updateExperience(index, "position", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "position") && <p className="text-red-500 text-sm">{getExpError(index, "position")}</p>}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Şirkət<span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Məs: Invest Home"
+                      className={baseInputClass(Boolean(getExpError(index, "company")))}
+                      value={exp?.company || ""}
+                      onChange={(e) => updateExperience(index, "company", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "company") && <p className="text-red-500 text-sm">{getExpError(index, "company")}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                      <input
+                        type="month"
+                        className={baseInputClass(Boolean(getExpError(index, "startMonth")))}
+                        value={exp?.startMonth || ""}
+                        onChange={(e) => updateExperience(index, "startMonth", e.target.value)}
+                        onBlur={() => validateField("experiences", formData.experiences)}
+                      />
+                      {getExpError(index, "startMonth") && <p className="text-red-500 text-sm">{getExpError(index, "startMonth")}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                      <input
+                        type="month"
+                        disabled={Boolean(exp?.isCurrent)}
+                        className={baseInputClass(Boolean(getExpError(index, "endMonth")))}
+                        value={exp?.isCurrent ? "" : (exp?.endMonth || "")}
+                        onChange={(e) => updateExperience(index, "endMonth", e.target.value)}
+                        onBlur={() => validateField("experiences", formData.experiences)}
+                      />
+                      {getExpError(index, "endMonth") && <p className="text-red-500 text-sm">{getExpError(index, "endMonth")}</p>}
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
+                    <input
+                      type="checkbox"
+                      className="w-[16px] h-[16px] cursor-pointer"
+                      style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
+                      checked={Boolean(exp?.isCurrent)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+                        const current = next[index] || {
+                          position: "",
+                          company: "",
+                          startMonth: "",
+                          endMonth: "",
+                          isCurrent: false,
+                          description: "",
+                        };
+                        next[index] = {
+                          ...current,
+                          isCurrent: checked,
+                          endMonth: checked ? "" : current.endMonth,
+                        };
+                        updateForm("experiences", next);
+                        validateField("experiences", next);
+                      }}
+                    />
+                    Hazırda burada işləyirəm
+                  </label>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Təsvir</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Qısa təsvir (istəyə bağlı)"
+                      className={baseInputClass(Boolean(getExpError(index, "description")))}
+                      value={exp?.description || ""}
+                      onChange={(e) => updateExperience(index, "description", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "description") && <p className="text-red-500 text-sm">{getExpError(index, "description")}</p>}
+                  </div>
                 </div>
               ))}
             </div>
