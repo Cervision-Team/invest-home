@@ -7,6 +7,7 @@ import Preview from "./form/Preview";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import arrowRightWhite from "../../../../../public/icons/arrow-right-white-small.svg";
 import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
+import { agentApplicationService, AgentApplicationStatus } from "@/services/agentApplicationService";
 
 const AgentForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
@@ -29,13 +30,61 @@ const AgentForm = () => {
   const [showAllErrors, setShowAllErrors] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [mockApplication, setMockApplication] = useState(null);
+  const [showSubmittedDetails, setShowSubmittedDetails] = useState(false);
 
   useEffect(() => {
     openAccordion(0);
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const existing = await agentApplicationService.getMyApplication();
+      if (existing) setMockApplication(existing);
+    })();
+  }, []);
+
   const updateForm = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const getStatusMeta = (status) => {
+    switch (status) {
+      case AgentApplicationStatus.APPROVED:
+        return { label: "Təsdiqləndi", className: "bg-[#02836F1A] text-[var(--primary-color)]" };
+      case AgentApplicationStatus.REJECTED:
+        return { label: "Rədd edildi", className: "bg-[rgba(239,68,68,0.12)] text-red-600" };
+      case AgentApplicationStatus.PENDING:
+      default:
+        return { label: "Gözləmədə", className: "bg-[#02836F1A] text-[var(--primary-color)]" };
+    }
+  };
+
+  const resetMockApplication = () => {
+    agentApplicationService.clearMyApplication();
+    setMockApplication(null);
+    setShowSubmittedDetails(false);
+    setIsModalOpen(false);
+    setCurrentStepValid(false);
+    setShowAllErrors(false);
+    setSubmitError(null);
+    setSubmitting(false);
+
+    setFormData({
+      name: "",
+      surname: "",
+      email: "",
+      phone: "",
+      experiences: [],
+      educations: [],
+      age: "",
+      address: "",
+      cv: null,
+    });
+
+    setFormIndex(0);
+    setVisitedSections([true, false, false]);
+    openAccordion(0);
   };
 
   const handleNextClick = () => {
@@ -53,6 +102,12 @@ const AgentForm = () => {
     }
 
     console.log("formData", formData);
+
+    // Mock submit (no backend yet). When API is ready, swap service implementation.
+    const record = await agentApplicationService.submitMyApplication(formData);
+    console.log(record);
+    setMockApplication(record);
+    setShowSubmittedDetails(false);
     
 
     /*
@@ -119,8 +174,132 @@ const AgentForm = () => {
 
   return (
     <>
-      <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
-        <div className="flex gap-[36px]">
+      {mockApplication ? (
+        <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[40px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
+          <div className="flex flex-col gap-[16px]">
+            <div className="flex items-start justify-between gap-[12px]">
+              <div>
+                <h2 className="text-[20px] font-[600]">Agent müraciətiniz</h2>
+                <p className="text-[#737373] text-[14px] mt-[4px]">
+                  Müraciət ID: <span className="font-[500]">{mockApplication.id}</span>
+                </p>
+                <p className="text-[#737373] text-[14px] mt-[2px]">
+                  Göndərilmə tarixi: <span className="font-[500]">{new Date(mockApplication.submittedAt).toLocaleString()}</span>
+                </p>
+              </div>
+
+              <span
+                className={`px-[12px] py-[6px] rounded-[999px] text-[13px] font-[500] ${getStatusMeta(mockApplication.status).className}`}
+              >
+                {getStatusMeta(mockApplication.status).label}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-[10px]">
+              <button
+                type="button"
+                onClick={() => setShowSubmittedDetails((v) => !v)}
+                className="text-white bg-[var(--primary-color)] rounded-[10px] py-[10px] px-[14px] hover:opacity-90"
+              >
+                {showSubmittedDetails ? "Formanı gizlət" : "Göndərdiyim formanı gör"}
+              </button>
+
+              <button
+                type="button"
+                onClick={resetMockApplication}
+                className="rounded-[10px] py-[10px] px-[14px] border-[1px] border-[rgba(0,0,0,0.2)] hover:bg-[rgba(0,0,0,0.03)]"
+              >
+                Yeni müraciət yarat
+              </button>
+            </div>
+
+            {showSubmittedDetails && (
+              <div className="mt-[8px] border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[14px]">
+                <div className="grid grid-cols-1 min-[768px]:grid-cols-2 gap-[12px]">
+                  <div>
+                    <p className="text-[13px] text-[#737373]">Ad Soyad</p>
+                    <p className="font-[500]">{mockApplication.data?.fullName || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[13px] text-[#737373]">Əlaqə</p>
+                    <p className="font-[500]">{mockApplication.data?.email || "-"} • {mockApplication.data?.phone || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[13px] text-[#737373]">Yaş</p>
+                    <p className="font-[500]">{mockApplication.data?.age || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[13px] text-[#737373]">Ünvan</p>
+                    <p className="font-[500]">{mockApplication.data?.address || "-"}</p>
+                  </div>
+                </div>
+
+                <div className="mt-[14px]">
+                  <p className="text-[14px] font-[600]">Təcrübələr</p>
+                  {(mockApplication.data?.experiences || []).length === 0 ? (
+                    <p className="text-[#737373] text-[14px] mt-[4px]">Təcrübə əlavə edilməyib.</p>
+                  ) : (
+                    <div className="mt-[8px] flex flex-col gap-[10px]">
+                      {(mockApplication.data?.experiences || []).map((exp, idx) => (
+                        <div key={idx} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[10px] p-[10px]">
+                          <p className="font-[500]">{exp?.position || "-"} • {exp?.company || "-"}</p>
+                          <p className="text-[#737373] text-[14px]">
+                            {exp?.startMonth || "-"} — {exp?.endMonth || "-"}
+                          </p>
+                          {exp?.description ? (
+                            <p className="text-[#737373] text-[14px] mt-[4px]">{exp.description}</p>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-[14px]">
+                  <p className="text-[14px] font-[600]">Təhsil</p>
+                  {(mockApplication.data?.educations || []).length === 0 ? (
+                    <p className="text-[#737373] text-[14px] mt-[4px]">Təhsil əlavə edilməyib.</p>
+                  ) : (
+                    <div className="mt-[8px] flex flex-col gap-[10px]">
+                      {(mockApplication.data?.educations || []).map((edu, idx) => (
+                        <div key={idx} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[10px] p-[10px]">
+                          <p className="font-[500]">{edu?.institution || "-"}</p>
+                          <p className="text-[#737373] text-[14px]">{edu?.degree || "-"}</p>
+                          <p className="text-[#737373] text-[14px]">
+                            {edu?.startMonth || "-"} — {edu?.endMonth || "-"}
+                          </p>
+                          {edu?.description ? (
+                            <p className="text-[#737373] text-[14px] mt-[4px]">{edu.description}</p>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-[14px]">
+                  <p className="text-[14px] font-[600]">CV</p>
+                  {(
+                    typeof mockApplication.data?.cv === "string"
+                      ? mockApplication.data.cv
+                      : mockApplication.data?.cv?.name
+                  ) ? (
+                    <p className="text-[#737373] text-[14px] mt-[4px]">
+                      {typeof mockApplication.data?.cv === "string"
+                        ? mockApplication.data.cv
+                        : mockApplication.data?.cv?.name}
+                    </p>
+                  ) : (
+                    <p className="text-[#737373] text-[14px] mt-[4px]">CV əlavə edilməyib.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
+          <div className="flex gap-[36px]">
           <div className='max-[768px]:hidden basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] pb-[46px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
             <div className="logo-container my-[15.5px]">
               <div className='image-container flex items-center justify-center'>
@@ -339,12 +518,16 @@ const AgentForm = () => {
             </div>
           </div>
         </div>
-      </section>
+        </section>
+      )}
 
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
           text="Təşəkkürlər! CV-niz uğurla yükləndi. Seçim nəticələri e-poçt vasitəsilə göndəriləcək."
+          url=""
+          // buttonText=""
         />
       )}
     </>

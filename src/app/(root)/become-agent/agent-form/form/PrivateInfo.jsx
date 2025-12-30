@@ -255,15 +255,13 @@ const PrivateInfo = ({
                 <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
                   <div className="flex items-center justify-between">
                     <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
-                    {(formData.experiences || []).length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeExperience(index)}
-                        className="text-red-600 hover:text-red-800 text-[14px]"
-                      >
-                        Sil
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeExperience(index)}
+                      className="text-red-600 hover:text-red-800 text-[14px]"
+                    >
+                      Sil
+                    </button>
                   </div>
 
                   <div className="flex flex-col gap-[8px]">
