@@ -13,8 +13,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
   const fileInputRef = useRef(null);
 
   const stepFields = {
-    otherInfo: ["education", "age", "address", "cv"],
-    privateInfo: ["fullName", "email", "phone", "about1", "about2"],
+    otherInfo: ["educations", "age", "address", "cv"],
+    privateInfo: ["name", "surname", "email", "phone", "experiences"],
   };
 
   const allFields = [...stepFields.privateInfo, ...stepFields.otherInfo];
@@ -29,6 +29,46 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
     }
 
     // Try per-field Yup validation (uses a merged object so the immediate value is considered)
+    // Special-case experiences/educations because Yup produces nested paths like experiences[0].endMonth
+    if (fieldName === "experiences" || fieldName === "educations") {
+      const nestedPrefix = fieldName;
+      try {
+        await agentFormSchema.validateAt(nestedPrefix, { ...formData, [nestedPrefix]: value });
+        setErrors(prev => {
+          const copy = { ...prev };
+          delete copy[nestedPrefix];
+          Object.keys(copy).forEach(k => {
+            if (k.startsWith(`${nestedPrefix}[`)) delete copy[k];
+          });
+          return copy;
+        });
+      } catch (err) {
+        if (err && err.name === "ValidationError") {
+          const newErrors = {};
+          if (Array.isArray(err.inner) && err.inner.length) {
+            err.inner.forEach(e => {
+              if (e.path) newErrors[e.path] = e.message;
+            });
+          } else if (err.path) {
+            newErrors[err.path] = err.message;
+          } else {
+            newErrors[nestedPrefix] = err.message;
+          }
+
+          setErrors(prev => {
+            const copy = { ...prev };
+            Object.keys(copy).forEach(k => {
+              if (k === nestedPrefix || k.startsWith(`${nestedPrefix}[`)) delete copy[k];
+            });
+            return { ...copy, ...newErrors };
+          });
+        }
+      }
+
+      await checkFormValidity({ [nestedPrefix]: value });
+      return;
+    }
+
     try {
       await agentFormSchema.validateAt(fieldName, { ...formData, [fieldName]: value });
       // remove field-specific error if it passed
@@ -61,6 +101,11 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
       setErrors(prev => {
         const copy = { ...prev };
         allFields.forEach(f => delete copy[f]);
+        // also remove nested experiences/educations errors
+        Object.keys(copy).forEach(k => {
+          if (k.startsWith("experiences[")) delete copy[k];
+          if (k.startsWith("educations[")) delete copy[k];
+        });
         return copy;
       });
       onValidationChange(true);
@@ -78,6 +123,11 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
           const copy = { ...prev };
           allFields.forEach(f => {
             if (!newErrors[f]) delete copy[f];
+          });
+          // Remove any previous nested experiences errors that no longer fail
+          Object.keys(copy).forEach(k => {
+            if (k.startsWith("experiences[") && !newErrors[k]) delete copy[k];
+              if (k.startsWith("educations[") && !newErrors[k]) delete copy[k];
           });
           return { ...copy, ...newErrors };
         });
@@ -235,6 +285,81 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const getExpError = (index, field) => errors[`experiences[${index}].${field}`];
+  const getEduError = (index, field) => errors[`educations[${index}].${field}`];
+
+  const updateExperience = (index, field, value) => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    const current = next[index] || {
+      position: "",
+      company: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    };
+    next[index] = { ...current, [field]: value };
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
+
+  const addExperience = () => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    next.push({
+      position: "",
+      company: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    });
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
+
+  const removeExperience = (index) => {
+    const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+    next.splice(index, 1);
+    updateForm("experiences", next);
+    validateField("experiences", next);
+  };
+
+  const updateEducation = (index, field, value) => {
+    const next = Array.isArray(formData.educations) ? [...formData.educations] : [];
+    const current = next[index] || {
+      institution: "",
+      degree: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    };
+    next[index] = { ...current, [field]: value };
+    updateForm("educations", next);
+    validateField("educations", next);
+  };
+
+  const addEducation = () => {
+    const next = Array.isArray(formData.educations) ? [...formData.educations] : [];
+    next.push({
+      institution: "",
+      degree: "",
+      startMonth: "",
+      endMonth: "",
+      isCurrent: false,
+      description: "",
+    });
+    updateForm("educations", next);
+    validateField("educations", next);
+  };
+
+  const removeEducation = (index) => {
+    const next = Array.isArray(formData.educations) ? [...formData.educations] : [];
+    next.splice(index, 1);
+    updateForm("educations", next);
+    validateField("educations", next);
+  };
+
   // ----------------- JSX (your form UI, unchanged except validation wiring uses the new funcs) -----------------
   return (
     <>
@@ -301,20 +426,38 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
             <div className="flex flex-col gap-[16px]">
               <div className="flex flex-col gap-[8px]">
                 <label className="max-[430px]:hidden" htmlFor="">
-                  Ad/Soyad<span className="text-red-500">*</span>
+                  Ad<span className="text-red-500">*</span>
                 </label>
                 <input
-                  placeholder="Ad Soyad"
-                  className={`input-field ${errors.fullName ? "error" : ""}`}
+                  placeholder="Ad"
+                  className={`input-field ${errors.name ? "error" : ""}`}
                   type="text"
-                  value={formData.fullName || ""}
+                  value={formData.name || ""}
                   onChange={(e) => {
-                    updateForm("fullName", e.target.value);
-                    validateField("fullName", e.target.value);
+                    updateForm("name", e.target.value);
+                    validateField("name", e.target.value);
                   }}
-                  onBlur={(e) => validateField("fullName", e.target.value)}
+                  onBlur={(e) => validateField("name", e.target.value)}
                 />
-                {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              </div>
+
+              <div className="flex flex-col gap-[8px]">
+                <label className="max-[430px]:hidden" htmlFor="">
+                  Soyad<span className="text-red-500">*</span>
+                </label>
+                <input
+                  placeholder="Soyad"
+                  className={`input-field ${errors.surname ? "error" : ""}`}
+                  type="text"
+                  value={formData.surname || ""}
+                  onChange={(e) => {
+                    updateForm("surname", e.target.value);
+                    validateField("surname", e.target.value);
+                  }}
+                  onBlur={(e) => validateField("surname", e.target.value)}
+                />
+                {errors.surname && <p className="text-red-500 text-sm">{errors.surname}</p>}
               </div>
 
               {/* Email */}
@@ -355,41 +498,132 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
               </div>
 
-              {/* About1 */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
-                  Haqqınızda 1<span className="text-red-500">*</span>
+              <div className="mt-[8px] flex items-center justify-between">
+                <label className="max-[430px]:hidden">
+                  Təcrübələr
                 </label>
-                <input
-                  placeholder="İş Təcrübəniz"
-                  className={`input-field ${errors.about1 ? "error" : ""}`}
-                  type="text"
-                  value={formData.about1 || ""}
-                  onChange={(e) => {
-                    updateForm("about1", e.target.value);
-                    validateField("about1", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("about1", e.target.value)}
-                />
-                {errors.about1 && <p className="text-red-500 text-sm">{errors.about1}</p>}
+                <button
+                  type="button"
+                  onClick={addExperience}
+                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                >
+                  + Təcrübə əlavə et
+                </button>
               </div>
 
-              {/* About2 */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">Haqqınızda 2</label>
-                <input
-                  placeholder="İş Təcrübəniz"
-                  className={`input-field ${errors.about2 ? "error" : ""}`}
-                  type="text"
-                  value={formData.about2 || ""}
-                  onChange={(e) => {
-                    updateForm("about2", e.target.value);
-                    validateField("about2", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("about2", e.target.value)}
-                />
-                {errors.about2 && <p className="text-red-500 text-sm">{errors.about2}</p>}
-              </div>
+              {errors.experiences && <p className="text-red-500 text-sm">{errors.experiences}</p>}
+
+              {(formData.experiences || []).map((exp, index) => (
+                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                  <div className="flex items-center justify-between">
+                    <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
+                    {(formData.experiences || []).length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeExperience(index)}
+                        className="text-red-600 hover:text-red-800 text-[14px]"
+                      >
+                        Sil
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Vəzifə<span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Məs: Satış meneceri"
+                      className={`input-field ${getExpError(index, "position") ? "error" : ""}`}
+                      value={exp?.position || ""}
+                      onChange={(e) => updateExperience(index, "position", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "position") && <p className="text-red-500 text-sm">{getExpError(index, "position")}</p>}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Şirkət<span className="text-red-500">*</span></label>
+                    <input
+                      type="text"
+                      placeholder="Məs: Invest Home"
+                      className={`input-field ${getExpError(index, "company") ? "error" : ""}`}
+                      value={exp?.company || ""}
+                      onChange={(e) => updateExperience(index, "company", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "company") && <p className="text-red-500 text-sm">{getExpError(index, "company")}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                      <input
+                        type="month"
+                        className={`input-field ${getExpError(index, "startMonth") ? "error" : ""}`}
+                        value={exp?.startMonth || ""}
+                        onChange={(e) => updateExperience(index, "startMonth", e.target.value)}
+                        onBlur={() => validateField("experiences", formData.experiences)}
+                      />
+                      {getExpError(index, "startMonth") && <p className="text-red-500 text-sm">{getExpError(index, "startMonth")}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                      <input
+                        type="month"
+                        disabled={Boolean(exp?.isCurrent)}
+                        className={`input-field ${getExpError(index, "endMonth") ? "error" : ""}`}
+                        value={exp?.isCurrent ? "" : (exp?.endMonth || "")}
+                        onChange={(e) => updateExperience(index, "endMonth", e.target.value)}
+                        onBlur={() => validateField("experiences", formData.experiences)}
+                      />
+                      {getExpError(index, "endMonth") && <p className="text-red-500 text-sm">{getExpError(index, "endMonth")}</p>}
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
+                    <input
+                      type="checkbox"
+                      className="w-[16px] h-[16px] cursor-pointer"
+                      style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
+                      checked={Boolean(exp?.isCurrent)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        const next = Array.isArray(formData.experiences) ? [...formData.experiences] : [];
+                        const current = next[index] || {
+                          position: "",
+                          company: "",
+                          startMonth: "",
+                          endMonth: "",
+                          isCurrent: false,
+                          description: "",
+                        };
+                        next[index] = {
+                          ...current,
+                          isCurrent: checked,
+                          endMonth: checked ? "" : current.endMonth,
+                        };
+                        updateForm("experiences", next);
+                        validateField("experiences", next);
+                      }}
+                    />
+                    Hazırda burada işləyirəm
+                  </label>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Təsvir</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Qısa təsvir (istəyə bağlı)"
+                      className={`input-field ${getExpError(index, "description") ? "error" : ""}`}
+                      value={exp?.description || ""}
+                      onChange={(e) => updateExperience(index, "description", e.target.value)}
+                      onBlur={() => validateField("experiences", formData.experiences)}
+                    />
+                    {getExpError(index, "description") && <p className="text-red-500 text-sm">{getExpError(index, "description")}</p>}
+                  </div>
+                </div>
+              ))}
             </div>
           </form>
         </div>
@@ -397,24 +631,133 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
         <div className="min-w-0 basis-[50%]">
           <form action="">
             <div className="flex flex-col gap-[16px]">
-              {/* Education */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              {/* Educations */}
+              <div className="mt-[8px] flex items-center justify-between">
+                <label className="max-[430px]:hidden">
                   Təhsil<span className="text-red-500">*</span>
                 </label>
-                <input
-                  placeholder="Bakı Dövlət Universiteti"
-                  className={`input-field ${errors.education ? "error" : ""}`}
-                  type="text"
-                  value={formData.education || ""}
-                  onChange={(e) => {
-                    updateForm("education", e.target.value);
-                    validateField("education", e.target.value);
-                  }}
-                  onBlur={(e) => validateField("education", e.target.value)}
-                />
-                {errors.education && <p className="text-red-500 text-sm">{errors.education}</p>}
+                <button
+                  type="button"
+                  onClick={addEducation}
+                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                >
+                  + Təhsil əlavə et
+                </button>
               </div>
+
+              {errors.educations && <p className="text-red-500 text-sm">{errors.educations}</p>}
+
+              {(formData.educations || []).map((edu, index) => (
+                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                  <div className="flex items-center justify-between">
+                    <p className="font-[500] text-[14px]">Təhsil {index + 1}</p>
+                    {(formData.educations || []).length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeEducation(index)}
+                        className="text-red-600 hover:text-red-800 text-[14px]"
+                      >
+                        Sil
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Təhsil müəssisəsi<span className="text-red-500">*</span></label>
+                    <input
+                      placeholder="Bakı Dövlət Universiteti"
+                      className={`input-field ${getEduError(index, "institution") ? "error" : ""}`}
+                      type="text"
+                      value={edu?.institution || ""}
+                      onChange={(e) => updateEducation(index, "institution", e.target.value)}
+                      onBlur={() => validateField("educations", formData.educations)}
+                    />
+                    {getEduError(index, "institution") && <p className="text-red-500 text-sm">{getEduError(index, "institution")}</p>}
+                  </div>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">İxtisas / Dərəcə<span className="text-red-500">*</span></label>
+                    <input
+                      placeholder="Məs: Kompüter elmləri (Bakalavr)"
+                      className={`input-field ${getEduError(index, "degree") ? "error" : ""}`}
+                      type="text"
+                      value={edu?.degree || ""}
+                      onChange={(e) => updateEducation(index, "degree", e.target.value)}
+                      onBlur={() => validateField("educations", formData.educations)}
+                    />
+                    {getEduError(index, "degree") && <p className="text-red-500 text-sm">{getEduError(index, "degree")}</p>}
+                  </div>
+
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                      <input
+                        type="month"
+                        className={`input-field ${getEduError(index, "startMonth") ? "error" : ""}`}
+                        value={edu?.startMonth || ""}
+                        onChange={(e) => updateEducation(index, "startMonth", e.target.value)}
+                        onBlur={() => validateField("educations", formData.educations)}
+                      />
+                      {getEduError(index, "startMonth") && <p className="text-red-500 text-sm">{getEduError(index, "startMonth")}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-[8px]">
+                      <label className="max-[430px]:hidden">Bitmə tarixi{edu?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                      <input
+                        type="month"
+                        disabled={Boolean(edu?.isCurrent)}
+                        className={`input-field ${getEduError(index, "endMonth") ? "error" : ""}`}
+                        value={edu?.isCurrent ? "" : (edu?.endMonth || "")}
+                        onChange={(e) => updateEducation(index, "endMonth", e.target.value)}
+                        onBlur={() => validateField("educations", formData.educations)}
+                      />
+                      {getEduError(index, "endMonth") && <p className="text-red-500 text-sm">{getEduError(index, "endMonth")}</p>}
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
+                    <input
+                      type="checkbox"
+                      className="w-[16px] h-[16px] cursor-pointer"
+                      style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
+                      checked={Boolean(edu?.isCurrent)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        const next = Array.isArray(formData.educations) ? [...formData.educations] : [];
+                        const current = next[index] || {
+                          institution: "",
+                          degree: "",
+                          startMonth: "",
+                          endMonth: "",
+                          isCurrent: false,
+                          description: "",
+                        };
+                        next[index] = {
+                          ...current,
+                          isCurrent: checked,
+                          endMonth: checked ? "" : current.endMonth,
+                        };
+                        updateForm("educations", next);
+                        validateField("educations", next);
+                      }}
+                    />
+                    Hazırda oxuyuram
+                  </label>
+
+                  <div className="flex flex-col gap-[8px]">
+                    <label className="max-[430px]:hidden">Qeyd</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Qısa qeyd (istəyə bağlı)"
+                      className={`input-field ${getEduError(index, "description") ? "error" : ""}`}
+                      value={edu?.description || ""}
+                      onChange={(e) => updateEducation(index, "description", e.target.value)}
+                      onBlur={() => validateField("educations", formData.educations)}
+                    />
+                    {getEduError(index, "description") && <p className="text-red-500 text-sm">{getEduError(index, "description")}</p>}
+                  </div>
+                </div>
+              ))}
 
               {/* Age */}
               <div className="flex flex-col gap-[8px]">

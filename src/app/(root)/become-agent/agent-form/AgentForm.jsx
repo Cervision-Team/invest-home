@@ -14,12 +14,12 @@ const AgentForm = () => {
   const [formIndex, setFormIndex] = useState(0);
   const [visitedSections, setVisitedSections] = useState([true, false, false]);
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
+    surname: "",
     email: "",
     phone: "",
-    about1: "",
-    about2: "",
-    education: "",
+    experiences: [],
+    educations: [],
     age: "",
     address: "",
     cv: null,
@@ -52,12 +52,21 @@ const AgentForm = () => {
       return;
     }
 
+    console.log("formData", formData);
+    
+
     /*
       setSubmitting(true);
       setSubmitError(null);
       try {
         const formPayload = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
+        const payload = {
+          ...formData,
+          // keep compatibility if backend expects fullName
+          fullName: `${formData.name || ""} ${formData.surname || ""}`.trim(),
+        };
+
+        Object.entries(payload).forEach(([key, value]) => {
           if (value !== null) formPayload.append(key, value);
         });
 
