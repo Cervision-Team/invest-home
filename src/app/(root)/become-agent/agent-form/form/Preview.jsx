@@ -331,7 +331,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
       degree: "",
       startMonth: "",
       endMonth: "",
-      isCurrent: false,
       description: "",
     };
     next[index] = { ...current, [field]: value };
@@ -346,7 +345,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
       degree: "",
       startMonth: "",
       endMonth: "",
-      isCurrent: false,
       description: "",
     });
     updateForm("educations", next);
@@ -517,15 +515,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
                   <div className="flex items-center justify-between">
                     <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
-                    {(formData.experiences || []).length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeExperience(index)}
-                        className="text-red-600 hover:text-red-800 text-[14px]"
-                      >
-                        Sil
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeExperience(index)}
+                      className="text-red-600 hover:text-red-800 text-[14px]"
+                    >
+                      Sil
+                    </button>
                   </div>
 
                   <div className="flex flex-col gap-[8px]">
@@ -634,7 +630,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               {/* Educations */}
               <div className="mt-[8px] flex items-center justify-between">
                 <label className="max-[430px]:hidden">
-                  Təhsil<span className="text-red-500">*</span>
+                  Təhsil
                 </label>
                 <button
                   type="button"
@@ -651,15 +647,13 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
                   <div className="flex items-center justify-between">
                     <p className="font-[500] text-[14px]">Təhsil {index + 1}</p>
-                    {(formData.educations || []).length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeEducation(index)}
-                        className="text-red-600 hover:text-red-800 text-[14px]"
-                      >
-                        Sil
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeEducation(index)}
+                      className="text-red-600 hover:text-red-800 text-[14px]"
+                    >
+                      Sil
+                    </button>
                   </div>
 
                   <div className="flex flex-col gap-[8px]">
@@ -702,47 +696,17 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     </div>
 
                     <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Bitmə tarixi{edu?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                      <label className="max-[430px]:hidden">Bitmə tarixi<span className="text-red-500">*</span></label>
                       <input
                         type="month"
-                        disabled={Boolean(edu?.isCurrent)}
                         className={`input-field ${getEduError(index, "endMonth") ? "error" : ""}`}
-                        value={edu?.isCurrent ? "" : (edu?.endMonth || "")}
+                        value={edu?.endMonth || ""}
                         onChange={(e) => updateEducation(index, "endMonth", e.target.value)}
                         onBlur={() => validateField("educations", formData.educations)}
                       />
                       {getEduError(index, "endMonth") && <p className="text-red-500 text-sm">{getEduError(index, "endMonth")}</p>}
                     </div>
                   </div>
-
-                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
-                    <input
-                      type="checkbox"
-                      className="w-[16px] h-[16px] cursor-pointer"
-                      style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
-                      checked={Boolean(edu?.isCurrent)}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        const next = Array.isArray(formData.educations) ? [...formData.educations] : [];
-                        const current = next[index] || {
-                          institution: "",
-                          degree: "",
-                          startMonth: "",
-                          endMonth: "",
-                          isCurrent: false,
-                          description: "",
-                        };
-                        next[index] = {
-                          ...current,
-                          isCurrent: checked,
-                          endMonth: checked ? "" : current.endMonth,
-                        };
-                        updateForm("educations", next);
-                        validateField("educations", next);
-                      }}
-                    />
-                    Hazırda oxuyuram
-                  </label>
 
                   <div className="flex flex-col gap-[8px]">
                     <label className="max-[430px]:hidden">Qeyd</label>
