@@ -73,7 +73,7 @@ export const agentFormSchema = yup.object().shape({
     .typeError("Yaş bir rəqəm olmalıdır")
     .min(18, "Ən azı 18 olmalıdır")
     .required("Yaş tələb olunur"),
-  address: yup.string().required("Ünvan tələb olunur"),
+  residentialAddress: yup.string().required("Ünvan tələb olunur"),
   cv: yup
     .mixed()
     .required("CV tələb olunur")

@@ -10,7 +10,7 @@ const PrivateInfo = ({
   setShowAllErrors,
 }) => {
   const [errors, setErrors] = useState({});
-  const stepFields = ["name", "surname", "email", "phone", "experiences"];
+  const stepFields = ["name", "surname", "email", "phoneNumber", "experiences"];
 
   const buildStepData = (overrides = {}) =>
     stepFields.reduce((acc, field) => {
@@ -216,7 +216,7 @@ const PrivateInfo = ({
                 { name: "name", label: "Ad", required: true, placeholder: "Ad" },
                 { name: "surname", label: "Soyad", required: true, placeholder: "Soyad" },
                 { name: "email", label: "Email", required: true, placeholder: "investhomeaz@gmail.com", type: "email" },
-                { name: "phone", label: "Telefon", required: true, placeholder: "phone" },
+                { name: "phoneNumber", label: "Telefon", required: true, placeholder: "phoneNumber" },
               ].map(({ name, label, required, placeholder, type = "text" }) => (
                 <div key={name} className="flex flex-col gap-[8px]">
                   <label className="max-[430px]:hidden">
