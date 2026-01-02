@@ -13,8 +13,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
   const fileInputRef = useRef(null);
 
   const stepFields = {
-    otherInfo: ["educations", "age", "address", "cv"],
-    privateInfo: ["name", "surname", "email", "phone", "experiences"],
+    otherInfo: ["educations", "age", "residentialAddress", "cv"],
+    privateInfo: ["name", "surname", "email", "phoneNumber", "experiences"],
   };
 
   const allFields = [...stepFields.privateInfo, ...stepFields.otherInfo];
@@ -484,16 +484,16 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder=""
-                  className={`input-field ${errors.phone ? "error" : ""}`}
+                  className={`input-field ${errors.phoneNumber ? "error" : ""}`}
                   type="phone"
-                  value={formData.phone || ""}
+                  value={formData.phoneNumber || ""}
                   onChange={(e) => {
-                    updateForm("phone", e.target.value);
-                    validateField("phone", e.target.value);
+                    updateForm("phoneNumber", e.target.value);
+                    validateField("phoneNumber", e.target.value);
                   }}
-                  onBlur={(e) => validateField("phone", e.target.value)}
+                  onBlur={(e) => validateField("phoneNumber", e.target.value)}
                 />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
 
               <div className="mt-[8px] flex items-center justify-between">
@@ -751,16 +751,16 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 </label>
                 <input
                   placeholder="Xəzər ray., Mərdəkan qəs., Əli İsazade küç."
-                  className={`input-field ${errors.address ? "error" : ""}`}
+                  className={`input-field ${errors.residentialAddress ? "error" : ""}`}
                   type="text"
-                  value={formData.address || ""}
+                  value={formData.residentialAddress || ""}
                   onChange={(e) => {
-                    updateForm("address", e.target.value);
-                    validateField("address", e.target.value);
+                    updateForm("residentialAddress", e.target.value);
+                    validateField("residentialAddress", e.target.value);
                   }}
-                  onBlur={(e) => validateField("address", e.target.value)}
+                  onBlur={(e) => validateField("residentialAddress", e.target.value)}
                 />
-                {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+                {errors.residentialAddress && <p className="text-red-500 text-sm">{errors.residentialAddress}</p>}
               </div>
 
               {/* CV Upload */}

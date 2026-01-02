@@ -13,7 +13,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
 
-  const stepFields = ["educations", "age", "address", "cv"];
+  const stepFields = ["educations", "age", "residentialAddress", "cv"];
 
   const buildStepData = (overrides = {}) =>
     stepFields.reduce((acc, field) => {
@@ -454,16 +454,16 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                 <label className="max-[430px]:hidden" htmlFor="">Yaşadığınız Ünvan<span className="text-red-500">*</span></label>
                 <input
                   placeholder='Xəzər ray., Mərdəkan qəs., Əli İsazade küç.'
-                  className={`input-field ${errors.address ? 'error' : ''}`}
+                  className={`input-field ${errors.residentialAddress ? 'error' : ''}`}
                   type="text"
-                  value={formData.address || ''}
+                  value={formData.residentialAddress || ''}
                   onChange={(e) => {
-                    updateForm("address", e.target.value);
-                    validateField("address", e.target.value);
+                    updateForm("residentialAddress", e.target.value);
+                    validateField("residentialAddress", e.target.value);
                   }}
-                  onBlur={(e) => validateField("address", e.target.value)}
+                  onBlur={(e) => validateField("residentialAddress", e.target.value)}
                 />
-                {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+                {errors.residentialAddress && <p className="text-red-500 text-sm">{errors.residentialAddress}</p>}
               </div>
 
               {/* Advanced CV Upload */}
