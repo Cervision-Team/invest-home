@@ -10,7 +10,7 @@ export default function ProtectedLayout({ children }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const loggedIn = sessionStorage.getItem("sessionLogin");
+    const loggedIn = localStorage.getItem("sessionLogin");
 
     if (loggedIn === "true") {
       setAuthorized(true); // kontenti göstər

@@ -18,7 +18,7 @@ const page = () => {
 
   // Əgər onsuz da login olunubsa, root səhifəyə yönləndir
   useEffect(() => {
-    if (sessionStorage.getItem("sessionLogin") === "true") {
+    if (localStorage.getItem("sessionLogin") === "true") {
       router.push("/");
     }
   }, []);
@@ -75,7 +75,7 @@ const page = () => {
         return;
       }
 
-      sessionStorage.setItem("sessionLogin", "true");
+      localStorage.setItem("sessionLogin", "true");
       router.push("/");
     }
   };

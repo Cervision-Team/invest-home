@@ -35,13 +35,14 @@ const Profile = () => {
     if (!isEditing) return;
 
     try {
+      const roleName = userData?.roleName ?? userData?.role ?? userData?.role?.name;
       const userPayload = {
         fullName: data?.fullName,
         birthDate: data?.birthDate,
         phoneNumber: data?.phoneNumber,
         location: data?.location,
         email: data?.email,
-        roleName: data?.roleName,
+        ...(roleName ? { roleName } : {}),
       };
 
       await updateUser(userPayload);

@@ -8,7 +8,6 @@ const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) 
         { label: "Telefon", name: "phoneNumber" },
         { label: "Yaşayış ünvanı", name: "location" },
         { label: "Email", name: "email" },
-        { label: "Vəzifəsi", name: "roleName" },
     ];
     return (
         <>
