@@ -56,6 +56,9 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
 
     const canDelete = Boolean(previewUrl || user?.image?.url);
 
+    const roleLabel = user?.roleName;
+    // const roleLabel = user?.roleName !== "USER" ? user?.roleName : null;
+
     return (
         <>
             <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full'>
@@ -90,8 +93,14 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
                         />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <p className='text-xl font-medium'>{user?.fullName}</p>
-                        <span className='text-lg text-[#02836F] capitalize'>{user?.role}</span>
+                        <div className='flex flex-wrap items-center gap-2'>
+                            <p className='text-xl font-medium'>{user?.fullName}</p>
+                            {roleLabel ? (
+                                <span className='inline-flex items-center rounded-full bg-[#02836F]/10 px-3 py-1 text-xs font-semibold text-[#02836F]'>
+                                    {String(roleLabel).toUpperCase()}
+                                </span>
+                            ) : null}
+                        </div>
 
                         {isEditing && canDelete && typeof onRequestDeleteImage === "function" && (
                             <button
@@ -120,7 +129,7 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
                             Redaktə et
                         </button>
                     )}
-                    <Button/>
+                    <Button />
                 </div>
             </div>
 
