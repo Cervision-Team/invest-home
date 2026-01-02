@@ -4,12 +4,62 @@ import Image from 'next/image'
 import profilePhoto from "../../../../../public/images/profile/novruz.jpg"
 import editIcon from '../../../../../public/icons/profile/edit-icon.svg'
 import { Button } from '../Buttons/ProfileButtons'
+import Cropper from "react-easy-crop";
 
 const defaultProfileIcon = "/icons/profile.svg";
+
+const createImage = (url) =>
+    new Promise((resolve, reject) => {
+        const image = new window.Image();
+        image.addEventListener("load", () => resolve(image));
+        image.addEventListener("error", (error) => reject(error));
+        image.setAttribute("crossOrigin", "anonymous");
+        image.src = url;
+    });
+
+const getCroppedBlob = async (imageSrc, pixelCrop) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas context not available");
+
+    ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+    );
+
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(
+            (blob) => {
+                if (!blob) return reject(new Error("Failed to crop image"));
+                resolve(blob);
+            },
+            "image/jpeg",
+            0.92
+        );
+    });
+};
 
 const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
     const fileInputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
+
+    const [isCropOpen, setIsCropOpen] = useState(false);
+    const [pendingFile, setPendingFile] = useState(null);
+    const [pendingUrl, setPendingUrl] = useState(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [isCropping, setIsCropping] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -18,9 +68,22 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
     }, [previewUrl]);
 
     useEffect(() => {
+        return () => {
+            if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+        };
+    }, [pendingUrl]);
+
+    useEffect(() => {
         if (imageResetKey == null) return;
         if (previewUrl) URL.revokeObjectURL(previewUrl);
         setPreviewUrl(null);
+        if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+        setPendingUrl(null);
+        setPendingFile(null);
+        setIsCropOpen(false);
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
+        setCroppedAreaPixels(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
@@ -48,10 +111,52 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (previewUrl) URL.revokeObjectURL(previewUrl);
-        const nextUrl = URL.createObjectURL(file);
-        setPreviewUrl(nextUrl);
-        onImageSelected?.(file);
+        if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+        const nextPendingUrl = URL.createObjectURL(file);
+        setPendingFile(file);
+        setPendingUrl(nextPendingUrl);
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
+        setCroppedAreaPixels(null);
+        setIsCropOpen(true);
+    };
+
+    const closeCrop = () => {
+        if (isCropping) return;
+        setIsCropOpen(false);
+        setPendingFile(null);
+        if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+        setPendingUrl(null);
+        setZoom(1);
+        setCrop({ x: 0, y: 0 });
+        setCroppedAreaPixels(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
+    const applyCrop = async () => {
+        if (!pendingFile || !pendingUrl || !croppedAreaPixels) return;
+        if (isCropping) return;
+
+        setIsCropping(true);
+        try {
+            const blob = await getCroppedBlob(pendingUrl, croppedAreaPixels);
+            const croppedFile = new File([blob], pendingFile.name, {
+                type: blob.type || pendingFile.type || "image/jpeg",
+                lastModified: Date.now(),
+            });
+
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+            const nextPreviewUrl = URL.createObjectURL(croppedFile);
+            setPreviewUrl(nextPreviewUrl);
+            onImageSelected?.(croppedFile);
+
+            setIsCropOpen(false);
+            setPendingFile(null);
+            if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+            setPendingUrl(null);
+        } finally {
+            setIsCropping(false);
+        }
     };
 
     const canDelete = Boolean(previewUrl || user?.image?.url);
@@ -61,6 +166,69 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
 
     return (
         <>
+            {isCropOpen && pendingUrl ? (
+                <div
+                    onClick={closeCrop}
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-999 p-4"
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-2xl shadow-xl w-[90%] max-w-[560px] overflow-hidden"
+                    >
+                        <div className="px-6 py-4 border-b border-black/10">
+                            <p className="text-lg font-medium">Şəkli kəs</p>
+                        </div>
+
+                        <div className="relative w-full h-[360px] bg-black">
+                            <Cropper
+                                image={pendingUrl}
+                                crop={crop}
+                                zoom={zoom}
+                                aspect={1}
+                                cropShape="round"
+                                showGrid={false}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                                onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+                            />
+                        </div>
+
+                        <div className="px-6 py-4 flex flex-col gap-4">
+                            <div className="flex items-center gap-4">
+                                <span className="text-sm text-black/60">Zoom</span>
+                                <input
+                                    type="range"
+                                    min={1}
+                                    max={3}
+                                    step={0.01}
+                                    value={zoom}
+                                    onChange={(e) => setZoom(Number(e.target.value))}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    disabled={isCropping}
+                                    onClick={closeCrop}
+                                    className="py-3 px-6 rounded-lg cursor-pointer border border-black/10 bg-white"
+                                >
+                                    Ləğv et
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled={isCropping}
+                                    onClick={applyCrop}
+                                    className="py-3 px-6 rounded-lg cursor-pointer text-white bg-[#02836F] disabled:opacity-60"
+                                >
+                                    {isCropping ? "Hazırlanır..." : "Təsdiqlə"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : null}
+
             <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full'>
                 <div className='flex gap-4 sm:gap-6 items-center'>
                     <div className='relative w-[72px] h-[72px] sm:w-[100px] sm:h-[100px] shrink-0'>
