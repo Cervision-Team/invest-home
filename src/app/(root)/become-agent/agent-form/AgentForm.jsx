@@ -7,8 +7,7 @@ import Preview from "./form/Preview";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import arrowRightWhite from "../../../../../public/icons/arrow-right-white-small.svg";
 import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
-import { agentApplicationService, AgentApplicationStatus } from "@/services/agentApplicationService";
-import { createAgent } from "@/services/api/endpoints/agentService";
+import { createAgent, getMyAgents } from "@/services/api/endpoints/agentService";
 
 const AgentForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
@@ -31,46 +30,45 @@ const AgentForm = () => {
   const [showAllErrors, setShowAllErrors] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [mockApplication, setMockApplication] = useState(null);
-  const [showSubmittedDetails, setShowSubmittedDetails] = useState(false);
+  const [myAgents, setMyAgents] = useState([]);
+  const [myAgentsLoading, setMyAgentsLoading] = useState(true);
+  const [myAgentsError, setMyAgentsError] = useState(null);
+  const [expandedAgentId, setExpandedAgentId] = useState(null);
 
   useEffect(() => {
     openAccordion(0);
   }, []);
 
   useEffect(() => {
+    let alive = true;
     (async () => {
-      const existing = await agentApplicationService.getMyApplication();
-      if (existing) setMockApplication(existing);
+      try {
+        setMyAgentsLoading(true);
+        setMyAgentsError(null);
+        const data = await getMyAgents({ pageIndex: 0, pageSize: 50 });
+        const content = Array.isArray(data?.content) ? data.content : [];
+        if (alive) setMyAgents(content);
+      } catch (e) {
+        if (alive) setMyAgentsError("Sorğular yüklənmədi");
+      } finally {
+        if (alive) setMyAgentsLoading(false);
+      }
     })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const updateForm = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const getStatusMeta = (status) => {
-    switch (status) {
-      case AgentApplicationStatus.APPROVED:
-        return { label: "Təsdiqləndi", className: "bg-[#02836F1A] text-[var(--primary-color)]" };
-      case AgentApplicationStatus.REJECTED:
-        return { label: "Rədd edildi", className: "bg-[rgba(239,68,68,0.12)] text-red-600" };
-      case AgentApplicationStatus.PENDING:
-      default:
-        return { label: "Gözləmədə", className: "bg-[#02836F1A] text-[var(--primary-color)]" };
-    }
-  };
-
-  const resetMockApplication = () => {
-    agentApplicationService.clearMyApplication();
-    setMockApplication(null);
-    setShowSubmittedDetails(false);
+  const resetForm = () => {
     setIsModalOpen(false);
     setCurrentStepValid(false);
     setShowAllErrors(false);
     setSubmitError(null);
     setSubmitting(false);
-
     setFormData({
       name: "",
       surname: "",
@@ -82,7 +80,6 @@ const AgentForm = () => {
       residentialAddress: "",
       cv: null,
     });
-
     setFormIndex(0);
     setVisitedSections([true, false, false]);
     openAccordion(0);
@@ -101,25 +98,88 @@ const AgentForm = () => {
       setShowAllErrors(true);
       return;
     }
-    const dto = { ...formData, cvUrl: formData?.cv?.name || null };
-    console.log("formData", dto);
+
+    setSubmitting(true);
+    setSubmitError(null);
+    const toISODate = (value) => {
+      if (!value) return null;
+      if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        return value.toISOString().slice(0, 10);
+      }
+      const s = String(value).trim();
+      if (!s) return null;
+      // Accept YYYY-MM-DD or YYYY-MM; normalize month-only to first day.
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      if (/^\d{4}-\d{2}$/.test(s)) return `${s}-01`;
+      return null;
+    };
+
+    const agentPayload = {
+      name: formData?.name || "",
+      surname: formData?.surname || "",
+      age: formData?.age === "" ? null : Number(formData?.age),
+      phoneNumber: formData?.phoneNumber || "",
+      email: formData?.email || "",
+      residentialAddress: formData?.residentialAddress || "",
+      about: formData?.about ?? null,
+      // Some backends persist this field directly; keep both casings for compatibility.
+      cvURL: formData?.cv?.name || null,
+      experiences: (formData?.experiences || []).map((exp) => {
+        const isCurrent = Boolean(exp?.isCurrent ?? exp?.current);
+        return {
+          position: exp?.position || "",
+          company: exp?.company || "",
+          startDate: toISODate(exp?.startDate ?? exp?.startMonth),
+          endDate: isCurrent ? null : toISODate(exp?.endDate ?? exp?.endMonth),
+          description: exp?.description || "",
+          current: isCurrent,
+        };
+      }),
+      educations: (formData?.educations || []).map((edu) => ({
+        institution: edu?.institution || "",
+        degree: edu?.degree || "",
+        startDate: toISODate(edu?.startDate ?? edu?.startMonth),
+        endDate: toISODate(edu?.endDate ?? edu?.endMonth),
+        description: edu?.description || "",
+      })),
+    };
+
+    console.log("agentPayload", agentPayload);
 
     const formData1 = new FormData();
+    formData1.append(
+      "agent",
+      new Blob([JSON.stringify(agentPayload)], { type: "application/json" })
+    );
 
-    formData1.append("agent", new Blob(
-      [JSON.stringify(dto)],
-      { type: "application/json" } 
-    ));
-    formData1.append("file", dto.cv);
-    const record = await agentApplicationService.submitMyApplication(formData1);
+    if (formData?.cv) {
+      formData1.append("file", formData.cv);
+    } 
 
-    console.log("formData1",formData1);
-    await createAgent(formData1);
+    try {
+      for (const [key, value] of formData1.entries()) {
+        if (typeof File !== "undefined" && value instanceof File) {
+          console.log("FormData part", key, { name: value.name, size: value.size, type: value.type });
+        } else {
+          console.log("FormData part", key, value);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
 
-    console.log("record", record);
-    setMockApplication(record);
-    setShowSubmittedDetails(false);
-
+    try {
+      await createAgent(formData1);
+      const data = await getMyAgents({ pageIndex: 0, pageSize: 50 });
+      const content = Array.isArray(data?.content) ? data.content : [];
+      setMyAgents(content);
+      resetForm();
+      setIsModalOpen(true);
+    } catch (err) {
+      setSubmitError(err?.message || "Göndərmək mümkün olmadı");
+    } finally {
+      setSubmitting(false);
+    }
 
     /*
       setSubmitting(true);
@@ -150,7 +210,6 @@ const AgentForm = () => {
       }
     */
 
-    setIsModalOpen(true);
   };
 
   const changeForm = action => {
@@ -185,130 +244,74 @@ const AgentForm = () => {
 
   return (
     <>
-      {mockApplication ? (
-        <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[40px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
-          <div className="flex flex-col gap-[16px]">
-            <div className="flex items-start justify-between gap-[12px]">
-              <div>
-                <h2 className="text-[20px] font-[600]">Agent müraciətiniz</h2>
-                <p className="text-[#737373] text-[14px] mt-[4px]">
-                  Müraciət ID: <span className="font-[500]">{mockApplication.id}</span>
-                </p>
-                <p className="text-[#737373] text-[14px] mt-[2px]">
-                  Göndərilmə tarixi: <span className="font-[500]">{new Date(mockApplication.submittedAt).toLocaleString()}</span>
-                </p>
-              </div>
-
-              <span
-                className={`px-[12px] py-[6px] rounded-[999px] text-[13px] font-[500] ${getStatusMeta(mockApplication.status).className}`}
-              >
-                {getStatusMeta(mockApplication.status).label}
-              </span>
+      <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[40px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
+        <div className="flex flex-col gap-[16px]">
+          <div className="flex items-start justify-between gap-[12px]">
+            <div>
+              <h2 className="text-[20px] font-[600]">Sorğularım</h2>
+              {/* <p className="text-[#737373] text-[14px] mt-[4px]">Backend tokenə görə yalnız sənin göndərdiklərini göstərir.</p> */}
             </div>
 
-            <div className="flex flex-wrap gap-[10px]">
-              <button
-                type="button"
-                onClick={() => setShowSubmittedDetails((v) => !v)}
-                className="text-white bg-[var(--primary-color)] rounded-[10px] py-[10px] px-[14px] hover:opacity-90"
-              >
-                {showSubmittedDetails ? "Formanı gizlət" : "Göndərdiyim formanı gör"}
-              </button>
-
-              <button
-                type="button"
-                onClick={resetMockApplication}
-                className="rounded-[10px] py-[10px] px-[14px] border-[1px] border-[rgba(0,0,0,0.2)] hover:bg-[rgba(0,0,0,0.03)]"
-              >
-                Yeni müraciət yarat
-              </button>
-            </div>
-
-            {showSubmittedDetails && (
-              <div className="mt-[8px] border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[14px]">
-                <div className="grid grid-cols-1 min-[768px]:grid-cols-2 gap-[12px]">
-                  <div>
-                    <p className="text-[13px] text-[#737373]">Ad Soyad</p>
-                    <p className="font-[500]">{mockApplication.data?.fullName || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#737373]">Əlaqə</p>
-                    <p className="font-[500]">{mockApplication.data?.email || "-"} • {mockApplication.data?.phone || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#737373]">Yaş</p>
-                    <p className="font-[500]">{mockApplication.data?.age || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#737373]">Ünvan</p>
-                    <p className="font-[500]">{mockApplication.data?.residentialAddress || "-"}</p>
-                  </div>
-                </div>
-
-                <div className="mt-[14px]">
-                  <p className="text-[14px] font-[600]">Təcrübələr</p>
-                  {(mockApplication.data?.experiences || []).length === 0 ? (
-                    <p className="text-[#737373] text-[14px] mt-[4px]">Təcrübə əlavə edilməyib.</p>
-                  ) : (
-                    <div className="mt-[8px] flex flex-col gap-[10px]">
-                      {(mockApplication.data?.experiences || []).map((exp, idx) => (
-                        <div key={idx} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[10px] p-[10px]">
-                          <p className="font-[500]">{exp?.position || "-"} • {exp?.company || "-"}</p>
-                          <p className="text-[#737373] text-[14px]">
-                            {exp?.startMonth || "-"} — {exp?.endMonth || "-"}
-                          </p>
-                          {exp?.description ? (
-                            <p className="text-[#737373] text-[14px] mt-[4px]">{exp.description}</p>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-[14px]">
-                  <p className="text-[14px] font-[600]">Təhsil</p>
-                  {(mockApplication.data?.educations || []).length === 0 ? (
-                    <p className="text-[#737373] text-[14px] mt-[4px]">Təhsil əlavə edilməyib.</p>
-                  ) : (
-                    <div className="mt-[8px] flex flex-col gap-[10px]">
-                      {(mockApplication.data?.educations || []).map((edu, idx) => (
-                        <div key={idx} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[10px] p-[10px]">
-                          <p className="font-[500]">{edu?.institution || "-"}</p>
-                          <p className="text-[#737373] text-[14px]">{edu?.degree || "-"}</p>
-                          <p className="text-[#737373] text-[14px]">
-                            {edu?.startMonth || "-"} — {edu?.endMonth || "-"}
-                          </p>
-                          {edu?.description ? (
-                            <p className="text-[#737373] text-[14px] mt-[4px]">{edu.description}</p>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-[14px]">
-                  <p className="text-[14px] font-[600]">CV</p>
-                  {(
-                    typeof mockApplication.data?.cv === "string"
-                      ? mockApplication.data.cv
-                      : mockApplication.data?.cv?.name
-                  ) ? (
-                    <p className="text-[#737373] text-[14px] mt-[4px]">
-                      {typeof mockApplication.data?.cv === "string"
-                        ? mockApplication.data.cv
-                        : mockApplication.data?.cv?.name}
-                    </p>
-                  ) : (
-                    <p className="text-[#737373] text-[14px] mt-[4px]">CV əlavə edilməyib.</p>
-                  )}
-                </div>
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={resetForm}
+              className="rounded-[10px] py-[10px] px-[14px] border-[1px] border-[rgba(0,0,0,0.2)] hover:bg-[rgba(0,0,0,0.03)]"
+            >
+              Yeni müraciət yarat
+            </button>
           </div>
-        </section>
-      ) : (
+
+          {myAgentsLoading ? (
+            <p className="text-[#737373] text-[14px]">Yüklənir...</p>
+          ) : myAgentsError ? (
+            <p className="text-red-600 text-[14px]">{myAgentsError}</p>
+          ) : myAgents.length === 0 ? (
+            <p className="text-[#737373] text-[14px]">Hələ sorğu yoxdur.</p>
+          ) : (
+            <div className="flex flex-col gap-[10px]">
+              {myAgents.map((agent) => {
+                const fullName = `${agent?.name || ""} ${agent?.surname || ""}`.trim();
+                const isExpanded = expandedAgentId === agent?.id;
+                return (
+                  <div key={agent?.id ?? fullName} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[14px]">
+                    <div className="flex flex-wrap items-center justify-between gap-[10px]">
+                      <div className="min-w-0">
+                        <p className="font-[600] truncate">{fullName || "-"}</p>
+                        <p className="text-[#737373] text-[14px]">ID: {agent?.id ?? "-"} • {agent?.email || "-"} • {agent?.phoneNumber || "-"}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setExpandedAgentId(isExpanded ? null : agent?.id)}
+                        className="text-white bg-[var(--primary-color)] rounded-[10px] py-[8px] px-[12px] hover:opacity-90"
+                      >
+                        {isExpanded ? "Gizlət" : "Ətraflı"}
+                      </button>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="mt-[12px] grid grid-cols-1 min-[768px]:grid-cols-2 gap-[12px]">
+                        <div>
+                          <p className="text-[13px] text-[#737373]">Yaş</p>
+                          <p className="font-[500]">{agent?.age ?? "-"}</p>
+                        </div>
+                        <div>
+                          <p className="text-[13px] text-[#737373]">Ünvan</p>
+                          <p className="font-[500]">{agent?.residentialAddress || "-"}</p>
+                        </div>
+                        <div className="min-[768px]:col-span-2">
+                          <p className="text-[13px] text-[#737373]">CV</p>
+                          <p className="font-[500]">{agent?.cvURL || "-"}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
         <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
           <div className="flex gap-[36px]">
             <div className='max-[768px]:hidden basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] pb-[46px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
@@ -527,7 +530,7 @@ const AgentForm = () => {
             </div>
           </div>
         </section>
-      )}
+
 
       {isModalOpen && (
         <ConfirmationModal
