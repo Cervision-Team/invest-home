@@ -37,7 +37,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
   const images = house?.medias?.filter((media) => !!media?.imageUrl) ?? [];
   const hasPublisherImage = Boolean(house?.publisher?.imageUrl);
   const publisherName = house?.publisher?.fullName?.trim() || "Elan sahibi";
-  
+
 
   const handleFavClick = (e) => {
     e.preventDefault();
@@ -195,7 +195,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           </div>
         </div>
 
-        <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-[16px] flex flex-col gap-[6px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
+        <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-2 flex flex-col gap-[2px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
           <div className="flex justify-between items-center gap-[16px]">
             <div className="hidden max-[769px]:flex items-center gap-[5px]">
               <span className="text-[14px] font-[600]">{house.price}</span>
@@ -228,21 +228,28 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             </span>
           </div>
 
-          <div className="flex max-[769px]:gap-[8px] gap-[12px] items-center font-[300] text-[12px]">
-            <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={BedIcon} alt="Beds" width={10} height={10} className="h-auto" />
-              <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.rooms} <span className="max-[769px]:hidden">beds</span>
-              </span>
-            </div>
+
+          <div className="flex max-[769px]:gap-[8px] gap-[12px] items-center font-[300] text-[16px]">
+            {
+              house.rooms && (
+                <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
+                  <Image src={BedIcon} alt="Beds" width={18} height={18} className="h-auto" />
+                  <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
+                    {house.rooms} <span className="max-[769px]:hidden">otaq</span>
+                  </span>
+                </div>
+              )
+
+            }
+
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={FloorIcon} alt="Floor" width={10} height={10} className="h-auto" />
+              <Image src={FloorIcon} alt="Floor" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
                 {house.floor}
               </span>
             </div>
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
-              <Image src={SquareMetersIcon} alt="Field" width={10} height={10} className="h-auto" />
+              <Image src={SquareMetersIcon} alt="Field" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
                 {house.area}
               </span>
@@ -250,7 +257,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           </div>
         </div>
 
-        <div className="max-[769px]:hidden px-[8px] py-[16px] flex justify-between gap-[8px]">
+        <div className="max-[769px]:hidden px-[8px] py-2 flex justify-between gap-[8px]">
           {
             isActive &&
             <div className="flex items-center gap-[8px] shrink min-w-0 overflow-hidden">
@@ -271,7 +278,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               </div>
 
               <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-                {publisherName}
+                {publisherName.split(" ").slice(0, 1).join(" ")} {publisherName.split(" ").slice(1, 2).join(" ")[0]}.
               </span>
 
             </div>
