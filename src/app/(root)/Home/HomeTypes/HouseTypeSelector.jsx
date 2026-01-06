@@ -44,65 +44,65 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
           </div>
         </Link>
         <div className="max-[431px]:hidden flex m-auto justify-between max-[1050px]:flex-col max-[1050px]:gap-4 ">
-          <div className="flex flex-row items-center justify-between w-full">
-            <h1 className="text-[var(--text-color-2)] text-[34px] font-[700] leading-[2.9rem]">
+          <div className="flex flex-row items-end justify-between w-full">
+            <h1 className="text-[var(--text-color-2)] text-[24px] font-[700] leading-[2.9rem]">
               {headingText}
             </h1>
-          <div className="flex gap-[22px] items-center justify-center">
-            <button
-              onClick={() => setActiveType("enSon")}
-              className={`cursor-pointer flex items-center just gap-[8px] px-[24px] py-[12px] rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors  duration-300 ease-in-out 
+            <div className="flex gap-4 items-center justify-center">
+              <button
+                onClick={() => setActiveType("enSon")}
+                className={`cursor-pointer flex items-center just gap-[8px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors  duration-300 ease-in-out 
           ${activeType === "enSon"
-                  ? "bg-[var(--primary-color)] text-[var(--white)]"
-                  : "bg-[var(--white)] text-[var(--primary-color)]"
-                }
+                    ? "bg-[var(--primary-color)] text-[var(--white)]"
+                    : "bg-[var(--white)] text-[var(--primary-color)]"
+                  }
           hover:bg-[var(--primary-color)] hover:text-[var(--white)] focus:bg-[var(--primary-color)] focus:text-[var(--white)] active:bg-[var(--primary-color)] active:text-[var(--white)]`}
-            >
-              <span className="text-[1.5rem] font-[500]"><GiBackwardTime /></span>
-              <span className="max-[530px]:hidden font-[500] whitespace-nowrap">
-                {/* {t("Ən son")} */}
-                Ən son
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveType("popular")}
-              className={`cursor-pointer flex items-center gap-[10px] px-[24px] py-[12px] rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors duration-300 ease-in-out 
+              >
+                <span className="text-[1.5rem] font-[500]"><GiBackwardTime /></span>
+                <span className="max-[530px]:hidden font-[500] whitespace-nowrap">
+                  {/* {t("Ən son")} */}
+                  Ən son
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveType("popular")}
+                className={`cursor-pointer flex items-center gap-[10px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors duration-300 ease-in-out 
           ${activeType === "popular"
-                  ? "bg-[var(--primary-color)] text-[var(--white)]"
-                  : "bg-[var(--white)] text-[var(--primary-color)] "
-                }
+                    ? "bg-[var(--primary-color)] text-[var(--white)]"
+                    : "bg-[var(--white)] text-[var(--primary-color)] "
+                  }
           hover:bg-[var(--primary-color)] hover:text-[var(--white)] focus:bg-[var(--primary-color)] focus:text-[var(--white)] active:bg-[var(--primary-color)] active:text-[var(--white)]`}
-            >
-              <span>
-                <AiFillFire className="text-[1.5rem]" />
-              </span>
-              <span className="max-[530px]:hidden font-[500] leading-[24px]">
-                {/* {t("Popular")} */}
-                Populyar
+              >
+                <span>
+                  <AiFillFire className="text-[1.5rem]" />
+                </span>
+                <span className="max-[530px]:hidden font-[500] leading-[24px]">
+                  {/* {t("Popular")} */}
+                  Populyar
 
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveType("endirimli")}
-              className={`cursor-pointer flex items-center gap-[10px] px-[24px] py-[12px] rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors duration-300 ease-in-out 
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveType("endirimli")}
+                className={`cursor-pointer flex items-center gap-[10px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors duration-300 ease-in-out 
           ${activeType === "endirimli"
-                  ? "bg-[var(--primary-color)] text-[var(--white)]"
-                  : "bg-[var(--white)] text-[var(--primary-color)]"
-                }
+                    ? "bg-[var(--primary-color)] text-[var(--white)]"
+                    : "bg-[var(--white)] text-[var(--primary-color)]"
+                  }
           hover:bg-[var(--primary-color)] hover:text-[var(--white)] focus:bg-[var(--primary-color)] focus:text-[var(--white)] active:bg-[var(--primary-color)] active:text-[var(--white)]`}
-            >
-              <span>
-                <TbCirclePercentageFilled className="text-[1.5rem]" />
-              </span>
-              <span className="max-[530px]:hidden font-[500] leading-[24px]" >
-                {/* {t("Endirimli")} */}
-                Endirimli
+              >
+                <span>
+                  <TbCirclePercentageFilled className="text-[1.5rem]" />
+                </span>
+                <span className="max-[530px]:hidden font-[500] leading-[24px]" >
+                  {/* {t("Endirimli")} */}
+                  Endirimli
 
 
-              </span>
-            </button>
+                </span>
+              </button>
+            </div>
           </div>
-                    </div>
         </div>
       </section>
     </>

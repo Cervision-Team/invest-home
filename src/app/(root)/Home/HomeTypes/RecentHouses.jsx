@@ -78,7 +78,7 @@ const RecentHouses = ({ houseType }) => {
       />
 
       <section
-        className="max-[431px]:mt-[10px] mt-[60px] max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[431px]:pr-0"
+        className="max-[431px]:mt-[10px] mt-[20px] max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] max-[431px]:pr-0"
         onMouseEnter={() => setShowArrows(true)}
         onMouseLeave={() => setShowArrows(false)}
         onTouchStart={() => setShowArrows(true)}

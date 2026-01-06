@@ -130,22 +130,22 @@ const ForSale = ({
   const getErrorMessage = (fieldName) => displayedErrors[fieldName];
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
-useEffect(() => {
-  const { buildingType, repairStatus, officeType, isMortgaged } = formik.values;
+  useEffect(() => {
+    const { buildingType, repairStatus, officeType, isMortgaged } = formik.values;
 
-  setActiveBuilding(prev =>
-    prev === buildingType ? prev : buildingType || null
-  );
-  setActiveRepaired(prev =>
-    prev === repairStatus ? prev : repairStatus || null
-  );
-  setActiveOfficeType(prev =>
-    prev === officeType ? prev : officeType || null
-  );
-  setIsMortgaged(prev =>
-    prev === !!isMortgaged ? prev : !!isMortgaged
-  );
-}, [formik.values]);
+    setActiveBuilding(prev =>
+      prev === buildingType ? prev : buildingType || null
+    );
+    setActiveRepaired(prev =>
+      prev === repairStatus ? prev : repairStatus || null
+    );
+    setActiveOfficeType(prev =>
+      prev === officeType ? prev : officeType || null
+    );
+    setIsMortgaged(prev =>
+      prev === !!isMortgaged ? prev : !!isMortgaged
+    );
+  }, [formik.values]);
 
   const shouldShowField = useCallback((fieldName) => {
     switch (fieldName) {
@@ -171,12 +171,12 @@ useEffect(() => {
           activePropertyType === 'object' ||
           (activePropertyType === 'office' && activeOfficeType !== 'businessCenter');
       case 'price':
-          return Boolean(activePropertyType)
-        // return activePropertyType === "house" ||
-        //   activePropertyType === "object" ||
-        //   (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
-        //   activePropertyType === "garage" ||
-        //   activePropertyType === "land";
+        return Boolean(activePropertyType)
+      // return activePropertyType === "house" ||
+      //   activePropertyType === "object" ||
+      //   (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
+      //   activePropertyType === "garage" ||
+      //   activePropertyType === "land";
       case 'buildingType':
         return (activePropertyType === 'apartment' ||
           activePropertyType === 'object' ||
@@ -249,11 +249,13 @@ useEffect(() => {
             color: #ef4444;
             font-size: 14px;
             margin-top: 4px;
+            position:absolute;
+            bottom: -24px;
           }
         `}
       </style>
 
-      <div className='flex flex-col justify-center gap-[30px] h-full border-b-[1px] border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
+      <div className='flex flex-col justify-center gap-[30px] h-full  border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
         <div className='flex flex-col gap-[30px]'>
           <h5 className='text-black text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
           <h6 className='text-black text-[20px]/[24px]'>Əmlak növü</h6>
@@ -401,7 +403,7 @@ useEffect(() => {
 
                 <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>
-                  {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
+                    {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
                   </p>
                   {hasError('isMortgaged') && <p className="error-text">{getErrorMessage('isMortgaged')}</p>}
 
@@ -435,7 +437,7 @@ useEffect(() => {
                     </p>
 
                     <div className='grid grid-cols-[148px_148px_148px_148px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="initialPayment" className='text-[#000] text-[16px]/[20px]'>İlkin ödəniş</label>
                         <input
                           type="number"
@@ -481,8 +483,8 @@ useEffect(() => {
                 )}
 
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
-                   {shouldShowField('price') && (
-                    <div className='grid gap-2'>
+                  {shouldShowField('price') && (
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
                       <div className="relative ">
                         <input
@@ -498,12 +500,12 @@ useEffect(() => {
                       {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
                     </div>
                   )}
-                  
-                  
+
+
                   {shouldShowField('area') && (
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 relative">
                       <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">
-                      {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
+                        {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
                       </label>
                       <div className="relative ">
                         <input
@@ -517,15 +519,15 @@ useEffect(() => {
                         />
                         <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">
                           {activePropertyType === 'house' ||
-          (activePropertyType === 'office' && activeOfficeType === 'gardenHouse') ? 'sot' : 'm²'}
-                          </span>
+                            (activePropertyType === 'office' && activeOfficeType === 'gardenHouse') ? 'sot' : 'm²'}
+                        </span>
                       </div>
                       {hasError('area') && <p className="error-text">{getErrorMessage('area')}</p>}
                     </div>
                   )}
 
                   {shouldShowField('landArea') && (
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 relative">
                       <label htmlFor="landArea" className="text-[#000] text-[20px]/[24px]">Torpağın sahəsi</label>
                       <div className="relative ">
                         <input
@@ -544,7 +546,7 @@ useEffect(() => {
                   )}
 
                   {shouldShowField('floor') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="floor" className='text-[#000] text-[20px]/[24px]'>Mərtəbə</label>
                       <input
                         type="number"
@@ -560,7 +562,7 @@ useEffect(() => {
                   )}
 
                   {shouldShowField('totalFloors') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="totalFloors" className='text-[#000] text-[20px]/[24px]'>Ümumi mərtəbələr</label>
                       <input
                         type="number"
@@ -576,7 +578,7 @@ useEffect(() => {
                   )}
 
                   {shouldShowField('rooms') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="rooms" className='text-[#000] text-[20px]/[24px]'>Otaq</label>
                       <input
                         type="number"
@@ -592,7 +594,7 @@ useEffect(() => {
                   )}
 
                   {shouldShowField('bathrooms') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="bathrooms" className='text-[#000] text-[20px]/[24px]'>Sanitar qovşağı</label>
                       <input
                         type="number"
@@ -607,7 +609,7 @@ useEffect(() => {
                     </div>
                   )}
 
-                 
+
                 </div>
               </>
             )}
