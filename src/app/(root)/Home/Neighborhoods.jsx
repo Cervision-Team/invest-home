@@ -11,7 +11,7 @@ const Neighborhoods = () => {
             {/* Changed background color to transparent and adjusted padding for better responsiveness */}
             <div className="flex flex-col gap-[30px] bg-transparent max-[769px]:pb-20">
               <div className="text-center flex flex-col gap-[40px] max-[769px]:gap-[20px]">
-                <h4 className="text-[var(--primary-color)] text-[1.5rem] font-400 max-[769px]:leading-[24px]">
+                <h4 className="text-[var(--primary-color)] text-[1.5rem] font-600 max-[769px]:leading-[24px]">
                   {/* {t("Şəhərə böyük sahələr")} */}
                   Şəhərdə aktiv sahələr
                 </h4>

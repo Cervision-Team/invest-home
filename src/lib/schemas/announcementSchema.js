@@ -108,13 +108,7 @@ const getForSaleOrRentValidationSchema = (
       .required("Sanitar qovşağı daxil edilməlidir");
   }
 
-  if (
-    propertyType === "house" ||
-    propertyType === "object" ||
-    (propertyType === "office" && officeType === "apartmentOffice") ||
-    propertyType === "garage" ||
-    propertyType === "land"
-  ) {
+  if (propertyType) {
     schema.price = Yup.number()
       .typeError("Qiymət rəqəm olmalıdır")
       .positive("Qiymət müsbət olmalıdır")
