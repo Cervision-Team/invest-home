@@ -130,22 +130,22 @@ const ForRent = ({
   const getErrorMessage = (fieldName) => displayedErrors[fieldName];
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
-useEffect(() => {
-  const { buildingType, repairStatus, officeType, isMortgaged } = formik.values;
+  useEffect(() => {
+    const { buildingType, repairStatus, officeType, isMortgaged } = formik.values;
 
-  setActiveBuilding(prev =>
-    prev === buildingType ? prev : buildingType || null
-  );
-  setActiveRepaired(prev =>
-    prev === repairStatus ? prev : repairStatus || null
-  );
-  setActiveOfficeType(prev =>
-    prev === officeType ? prev : officeType || null
-  );
-  setIsMortgaged(prev =>
-    prev === !!isMortgaged ? prev : !!isMortgaged
-  );
-}, [formik.values]);   // depend on the single object, not every field
+    setActiveBuilding(prev =>
+      prev === buildingType ? prev : buildingType || null
+    );
+    setActiveRepaired(prev =>
+      prev === repairStatus ? prev : repairStatus || null
+    );
+    setActiveOfficeType(prev =>
+      prev === officeType ? prev : officeType || null
+    );
+    setIsMortgaged(prev =>
+      prev === !!isMortgaged ? prev : !!isMortgaged
+    );
+  }, [formik.values]);   // depend on the single object, not every field
 
   const shouldShowField = useCallback((fieldName) => {
     switch (fieldName) {
@@ -171,11 +171,7 @@ useEffect(() => {
           activePropertyType === 'object' ||
           (activePropertyType === 'office' && activeOfficeType !== 'businessCenter');
       case 'price':
-        return activePropertyType === "house" ||
-          activePropertyType === "object" ||
-          (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
-          activePropertyType === "garage" ||
-          activePropertyType === "land";
+        return Boolean(activePropertyType)
       case 'buildingType':
         return (activePropertyType === 'apartment' ||
           activePropertyType === 'object' ||
@@ -400,7 +396,7 @@ useEffect(() => {
 
                 <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>
-                  {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
+                    {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
                   </p>
                   {hasError('isMortgaged') && <p className="error-text">{getErrorMessage('isMortgaged')}</p>}
 
@@ -480,10 +476,27 @@ useEffect(() => {
                 )}
 
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
+                  {shouldShowField('price') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
+                      <div className="relative ">
+                        <input
+                          type="number"
+                          id="price"
+                          value={formik.values.price || ''}
+                          onChange={(e) => handleInputChange('price', e.target.value)}
+                          onBlur={() => handleBlur("price")}
+                          className={`min-w-0 w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
+                          placeholder="Qiymət"
+                        />
+                      </div>
+                      {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
+                    </div>
+                  )}
                   {shouldShowField('area') && (
                     <div className="grid gap-2">
                       <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">
-                      {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
+                        {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
                       </label>
                       <div className="relative ">
                         <input
@@ -497,8 +510,8 @@ useEffect(() => {
                         />
                         <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 pointer-events-none">
                           {activePropertyType === 'house' ||
-          (activePropertyType === 'office' && activeOfficeType === 'gardenHouse') ? 'sot' : 'm²'}
-                          </span>
+                            (activePropertyType === 'office' && activeOfficeType === 'gardenHouse') ? 'sot' : 'm²'}
+                        </span>
                       </div>
                       {hasError('area') && <p className="error-text">{getErrorMessage('area')}</p>}
                     </div>
@@ -587,23 +600,7 @@ useEffect(() => {
                     </div>
                   )}
 
-                  {shouldShowField('price') && (
-                    <div className='grid gap-2'>
-                      <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
-                      <div className="relative ">
-                        <input
-                          type="number"
-                          id="price"
-                          value={formik.values.price || ''}
-                          onChange={(e) => handleInputChange('price', e.target.value)}
-                          onBlur={() => handleBlur("price")}
-                          className={`min-w-0 w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
-                          placeholder="Qiymət"
-                        />
-                      </div>
-                      {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
-                    </div>
-                  )}
+                  
                 </div>
               </>
             )}

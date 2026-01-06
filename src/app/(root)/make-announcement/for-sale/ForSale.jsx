@@ -171,11 +171,12 @@ useEffect(() => {
           activePropertyType === 'object' ||
           (activePropertyType === 'office' && activeOfficeType !== 'businessCenter');
       case 'price':
-        return activePropertyType === "house" ||
-          activePropertyType === "object" ||
-          (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
-          activePropertyType === "garage" ||
-          activePropertyType === "land";
+          return Boolean(activePropertyType)
+        // return activePropertyType === "house" ||
+        //   activePropertyType === "object" ||
+        //   (activePropertyType === "office" && activeOfficeType === "apartmentOffice") ||
+        //   activePropertyType === "garage" ||
+        //   activePropertyType === "land";
       case 'buildingType':
         return (activePropertyType === 'apartment' ||
           activePropertyType === 'object' ||
@@ -480,6 +481,25 @@ useEffect(() => {
                 )}
 
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
+                   {shouldShowField('price') && (
+                    <div className='grid gap-2'>
+                      <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
+                      <div className="relative ">
+                        <input
+                          type="number"
+                          id="price"
+                          value={formik.values.price || ''}
+                          onChange={(e) => handleInputChange('price', e.target.value)}
+                          onBlur={() => handleBlur("price")}
+                          className={`min-w-0 w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
+                          placeholder="Qiymət"
+                        />
+                      </div>
+                      {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
+                    </div>
+                  )}
+                  
+                  
                   {shouldShowField('area') && (
                     <div className="grid gap-2">
                       <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">
@@ -587,23 +607,7 @@ useEffect(() => {
                     </div>
                   )}
 
-                  {shouldShowField('price') && (
-                    <div className='grid gap-2'>
-                      <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
-                      <div className="relative ">
-                        <input
-                          type="number"
-                          id="price"
-                          value={formik.values.price || ''}
-                          onChange={(e) => handleInputChange('price', e.target.value)}
-                          onBlur={() => handleBlur("price")}
-                          className={`min-w-0 w-full h-10 pr-16 pl-[10px] py-2 input-field remove-arrow ${hasError('price') ? 'error' : 'border-black'}`}
-                          placeholder="Qiymət"
-                        />
-                      </div>
-                      {hasError('price') && <p className="error-text">{getErrorMessage('price')}</p>}
-                    </div>
-                  )}
+                 
                 </div>
               </>
             )}

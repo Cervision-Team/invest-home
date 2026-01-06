@@ -95,50 +95,50 @@ const Daily = ({
     [formik, clearErrorForField]
   );
 
-  
-    const updatePropertyType = useCallback((type) => {
-      setActivePropertyType(type);
-      formik.setFieldValue('propertyType', type);
-      clearErrorForField('propertyType');
-      
-      clearFieldsForPropertyType(type);
-      
-    }, [setActivePropertyType, formik, clearErrorForField, clearFieldsForPropertyType, activePropertyType]);
-  
-    // Updated office type handler
-    // const updateOfficeType = useCallback((type) => {
-    //   setActiveOfficeType(type);
-    //   formik.setFieldValue('officeType', type);
-    //   clearErrorForField('officeType');
-      
-    //   if (type === 'gardenHouse') {
-    //     formik.setFieldValue('buildingType', '');
-    //     setActiveBuilding(null);
-    //     clearErrorForField('buildingType');
-    //   }
-    // }, [formik, clearErrorForField]);
-  
-    const updateBuildingType = useCallback((type) => {
-      setActiveBuilding(type);
-      formik.setFieldValue('buildingType', type);
-      clearErrorForField('buildingType');
-    }, [formik, clearErrorForField]);
-  
-  
-      
-  
-    const displayedErrors = { ...(localErrors || {}), ...(stepErrors || {}) };
-  
-    const getErrorMessage = (fieldName) => displayedErrors[fieldName];
-    const hasError = (fieldName) => !!displayedErrors[fieldName];
-  
-useEffect(() => {
-  const current = formik.values.buildingType || null;
-  setActiveBuilding(prev => (prev === current ? prev : current));
-}, [formik.values.buildingType]); // keep .values.buildingType not the optional chain
-  
-    const shouldShowField = useCallback((fieldName) => {
-      switch (fieldName) {
+
+  const updatePropertyType = useCallback((type) => {
+    setActivePropertyType(type);
+    formik.setFieldValue('propertyType', type);
+    clearErrorForField('propertyType');
+
+    clearFieldsForPropertyType(type);
+
+  }, [setActivePropertyType, formik, clearErrorForField, clearFieldsForPropertyType, activePropertyType]);
+
+  // Updated office type handler
+  // const updateOfficeType = useCallback((type) => {
+  //   setActiveOfficeType(type);
+  //   formik.setFieldValue('officeType', type);
+  //   clearErrorForField('officeType');
+
+  //   if (type === 'gardenHouse') {
+  //     formik.setFieldValue('buildingType', '');
+  //     setActiveBuilding(null);
+  //     clearErrorForField('buildingType');
+  //   }
+  // }, [formik, clearErrorForField]);
+
+  const updateBuildingType = useCallback((type) => {
+    setActiveBuilding(type);
+    formik.setFieldValue('buildingType', type);
+    clearErrorForField('buildingType');
+  }, [formik, clearErrorForField]);
+
+
+
+
+  const displayedErrors = { ...(localErrors || {}), ...(stepErrors || {}) };
+
+  const getErrorMessage = (fieldName) => displayedErrors[fieldName];
+  const hasError = (fieldName) => !!displayedErrors[fieldName];
+
+  useEffect(() => {
+    const current = formik.values.buildingType || null;
+    setActiveBuilding(prev => (prev === current ? prev : current));
+  }, [formik.values.buildingType]); // keep .values.buildingType not the optional chain
+
+  const shouldShowField = useCallback((fieldName) => {
+    switch (fieldName) {
 
       case "guestCount":
       case "nightCount":
@@ -169,7 +169,8 @@ useEffect(() => {
         return true;
       case 'buildingType':
         return activePropertyType === 'apartmentDaily';
-
+      case 'price':
+        return Boolean(activePropertyType)
 
       default:
         return true;
