@@ -83,7 +83,7 @@ const Header = () => {
                         className="flex-shrink-0"
                       />
                   }
-                  <p className="main-logo-style max-[1270px]:hidden max-[1130px]:block max-[580px]:hidden max-[431px]:block max-[431px]:text-[16px] text-[20px] font-semibold text-xl whitespace-nowrap">
+                  <p translate="no" className="main-logo-style max-[1270px]:hidden max-[1130px]:block max-[580px]:hidden max-[431px]:block max-[431px]:text-[16px] text-[20px] font-semibold text-xl whitespace-nowrap">
                     INVEST <span className="text-[var(--primary-color)]">HOME</span>
                   </p>
                 </div>

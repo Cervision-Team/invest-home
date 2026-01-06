@@ -277,10 +277,10 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             </div>
           }
           <div className="flex items-center gap-[5px] shrink min-w-0 overflow-hidden">
-            <span className="text-[18px] font-[600] max-[1200]:text-[16px]">
+            <span className="text-[16px] font-[600] max-[1200]:text-[16px]">
               {house.price}
             </span>
-            <Image src={Manat} alt="Manat" width={14} height={14} />
+            <Image src={Manat} alt="Manat" width={12} height={12} />
           </div>
         </div>
       </div>

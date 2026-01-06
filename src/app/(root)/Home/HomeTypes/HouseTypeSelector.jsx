@@ -22,8 +22,6 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
         : "Endirimli evlər"
 
 
-  const descriptionText =
-    "Donec porttitor euismod dignissim. Nullam a lacinia ipsum, nec dignissim purus.";
 
   return (
     <>
@@ -46,14 +44,10 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
           </div>
         </Link>
         <div className="max-[431px]:hidden flex m-auto justify-between max-[1050px]:flex-col max-[1050px]:gap-4 ">
-          <div className="flex flex-col gap-[24px]">
+          <div className="flex flex-row items-center justify-between w-full">
             <h1 className="text-[var(--text-color-2)] text-[34px] font-[700] leading-[2.9rem]">
               {headingText}
             </h1>
-            <p className="text-[var(--text-color-3)] text-[16px] font-[400] leading-[1.6rem] max-[769px]:w-full">
-              {descriptionText}
-            </p>
-          </div>
           <div className="flex gap-[22px] items-center justify-center">
             <button
               onClick={() => setActiveType("enSon")}
@@ -108,6 +102,7 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
               </span>
             </button>
           </div>
+                    </div>
         </div>
       </section>
     </>
