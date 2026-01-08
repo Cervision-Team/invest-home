@@ -2,7 +2,7 @@ import axios from "../axiosInstance";
 
 export const getRoles = async () => {
   try {
-    const res = await axios.get("/roles");
+    const res = await axios.get("/api/roles");
     return res;
   } catch (err) {
     console.log(err);
@@ -12,7 +12,7 @@ export const getRoles = async () => {
 
 export const createRole = async ({ name }) => {
   try {
-    const res = await axios.post("/roles", { name });
+    const res = await axios.post("/api/roles", { name });
     return res;
   } catch (err) {
     console.log(err);
@@ -22,7 +22,7 @@ export const createRole = async ({ name }) => {
 
 export const updateRole = async ({ id, name }) => {
   try {
-    const res = await axios.put("/roles", { id, name });
+    const res = await axios.put("/api/roles", { id, name });
     return res;
   } catch (err) {
     console.log(err);
@@ -32,7 +32,7 @@ export const updateRole = async ({ id, name }) => {
 
 export const deleteRole = async (roleId) => {
   try {
-    const res = await axios.delete(`/roles/${roleId}`);
+    const res = await axios.delete(`/api/roles/${roleId}`);
     return res;
   } catch (err) {
     console.log(err);

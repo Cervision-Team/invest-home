@@ -4,45 +4,45 @@ import axios from "axios";
 
 const API_URL = "http://172.25.96.20:8081/api/auth/public";
 
-export const loginWithPhone = async ({ phoneNumber, password }) => {
+
+
+export const loginWithEmail = async ({ email, password }) => {
 	const response = await authAxiosInstance.post(
-		"/auth/login",
+		"/api/auth/login",
 		{
-			phoneNumber,
+			email,
 			password,
 		},
 	);
 	return response.data;
 };
 
-export const registerUser = async ({ fullName, phoneNumber, password }) => {
-	const response = await authAxiosInstance.post("/auth/sign-up", {
+export const registerUser = async ({ fullName, email, password }) => {
+	const response = await authAxiosInstance.post("/api/auth/sign-up", {
 		fullName,
-		phoneNumber,
+		email,
 		password,
 	});
 	return response.data;
 };
 
 export const verifyOTP = async (otp) => {
-	console.log("asfahsf");
-
-	const phoneNumber = localStorage.getItem("phoneNumber");
+	const email = localStorage.getItem("email");
 	const entranceType = localStorage.getItem("entranceType");
-	const response = await authAxiosInstance.post(`/auth/verify/otp`, {
+	const response = await authAxiosInstance.post(`/api/auth/verify/otp`, {
 		entranceType,
-		phoneNumber,
+		email,
 		otp,
 	});
 	return response.data;
 };
 
 export const resendOTP = async () => {
-	const phoneNumber = localStorage.getItem("phoneNumber");
+	const email = localStorage.getItem("email");
 	const entranceType = localStorage.getItem("entranceType");
-	const response = await authAxiosInstance.post(`/auth/resend/otp`, {
+	const response = await authAxiosInstance.post(`/api/auth/resend/otp`, {
 		entranceType,
-		phoneNumber,
+		email,
 	});
 	return response.data;
 };

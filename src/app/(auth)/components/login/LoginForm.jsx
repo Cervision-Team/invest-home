@@ -4,25 +4,24 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useRouter } from "next/navigation";
-import { loginWithPhone } from "@/lib/authService";
-import { toast } from "react-toastify";
+import { loginWithEmail } from "@/lib/authService";
 import Image from "next/image";
 import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
-import Phone from "../../../../../public/icons/phone-auth.svg";
-import { Eye, EyeOff } from "lucide-react";
+// import Mail from "../../../../../public/icons/mail.svg";
+import { Eye, EyeOff,Mail } from "lucide-react";
 import { useState } from "react";
 
 const ERROR_CODE = {
   USER_NOT_FOUND_BY_NUMBER: "Nömrə təyin olunmayıb",
+  USER_NOT_FOUND_BY_EMAIL: "Email təyin olunmayıb",
   PASSWORD_DONT_MATCH: "Şifrə yanlışdır",
 }
 
-const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 const schema = yup.object({
-  phone: yup
+  email: yup
     .string()
-    .required("Telefon nömrəsi vacibdir")
-    .matches(/^\d{9}$/, "Telefon nömrəsi 9 rəqəm olmalıdır"),
+    .required("Email vacibdir")
+    .email("Düzgün email daxil edin"),
   password: yup
     .string()
     .required("Şifrə vacibdir")
@@ -32,20 +31,39 @@ const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    register,
     setError,
+    register,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema), defaultValues: { prefix: "+994" }, });
+  } = useForm({ resolver: yupResolver(schema) });
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
-      const fullPhone = `${data.prefix}${data.phone}`;
-      const res = await loginWithPhone({ "phoneNumber": fullPhone, "password": data.password });
-      localStorage.setItem("access-token", res.token)
-      router.replace("/");
+      const res = await loginWithEmail({ email: data.email, password: data.password });
+
+      const token = res?.token;
+      if (token) {
+        localStorage.setItem("access-token", token);
+        localStorage.setItem("email", data.email);
+        router.replace("/");
+        return;
+      }
+
+      const otp =
+        typeof res === "string" || typeof res === "number"
+          ? String(res)
+          : String(res?.otp ?? "");
+
+      if (otp && otp.length === 4) {
+        localStorage.setItem("otp", otp);
+      } else {
+        localStorage.removeItem("otp");
+      }
+      localStorage.setItem("email", data.email);
+      localStorage.setItem("entranceType", "LOGIN");
+      router.replace("/otp");
     } catch (err) {
       const errorResponse = err.response.data.message
       const errorMessage = ERROR_CODE[errorResponse]
@@ -53,12 +71,13 @@ const LoginForm = () => {
 
       switch (errorIndex) {
         case 0:
-          setError("phone", {
+        case 1:
+          setError("email", {
             type: "server",
             message: errorMessage
           });
           break
-        case 1:
+        case 2:
           setError("password", {
             type: "server",
             message: errorMessage
@@ -74,48 +93,26 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full">
       <div className="flex flex-col gap-[27px]">
-        {/* Phone input */}
+        {/* Email input */}
         <div className="flex flex-col gap-[6px]">
-          <label htmlFor="phone" className="text-sm font-medium text-black">
-            Telefon<span className="text-red-500">*</span>
+          <label htmlFor="email" className="text-sm font-medium text-black">
+            Email<span className="text-red-500">*</span>
           </label>
           <div className="relative w-full">
-            <div className="flex gap-2">
-              <Controller
-                name="prefix"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    className="border border-black rounded-lg h-[44px] px-2"
-
-                  >
-                    <option value="+994">+994</option>
-
-                  </select>
-                )}
-              />
-
-              <Controller
-                name="phone"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="tel"
-                    id="phone"
-                    placeholder="50*********"
-                    className="h-[44px] px-4 border border-black w-full text-base rounded-lg"
-                  />
-                )}
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              placeholder="Email daxil edin"
+              {...register("email")}
+              className="h-[44px] px-4 border border-black w-full text-base rounded-lg"
+            />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <Image src={Phone.src} alt="phone" width={20} height={20} />
+              {/* <Image src={Mail.src} alt="mail" width={20} height={20} /> */}
+              <Mail size={20} />
             </span>
           </div>
-          {errors.phone && (
-            <p className="text-red-500 text-sm">{errors.phone.message}</p>
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
           )}
         </div>
         <div className="flex flex-col gap-1 mt-[4px]">
