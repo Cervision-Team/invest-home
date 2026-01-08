@@ -5,22 +5,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/lib/authService";
-import { toast } from "react-toastify";
 import Image from "next/image";
-import Phone from "../../../../../public/icons/phone-auth.svg";
-import Google from "../../../../../public/icons/google.svg";
-import EntryGate from "../EntryGate";
+// import Mail from "../../../../../public/icons/mail.svg";
 import Link from "next/link";
 import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 
 
 const ERROR_CODE = {
+  EMAIL_ALREADY_EXIST: "Bu email mövcuddur",
   PHONE_NUMBER_ALREADY_EXIST: "Bu nömrə mövcuddur",
 }
 
-const globalPhoneRegex = /^\+?[1-9]\d{7,14}$/;
 const schema = yup.object({
   fullName: yup
     .string()
@@ -30,10 +27,10 @@ const schema = yup.object({
       "Zəhmət olmasa həm ad, həm soyad daxil edin",
       (v) => v && v.trim().split(" ").length >= 2
     ),
-  phone: yup
+  email: yup
     .string()
-    .required("Telefon nömrəsi vacibdir")
-    .matches(/^\d{9}$/, "Telefon nömrəsi 9 rəqəm olmalıdır"),
+    .required("Email vacibdir")
+    .email("Düzgün email daxil edin"),
   password: yup
     .string()
     .required("Şifrə vacibdir")
@@ -52,22 +49,20 @@ const RegisterForm = () => {
     register,
     setError,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema), defaultValues: { prefix: "+994" }, });
+  } = useForm({ resolver: yupResolver(schema) });
   const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
-      const fullPhone = `${data.prefix}${data.phone}`;
-
       const res = await registerUser({
         fullName: data.fullName,
-        phoneNumber: fullPhone,
+        email: data.email,
         password: data.password,
       });
       localStorage.setItem("otp", res);
-      localStorage.setItem("phoneNumber", fullPhone);
+      localStorage.setItem("email", data.email);
       localStorage.setItem("entranceType", "SIGNUP");
       router.replace("/otp");
     } catch (err) {
@@ -77,7 +72,9 @@ const RegisterForm = () => {
 
       switch (errorIndex) {
         case 0:
-          setError("phone", {
+        case 1:
+        case 2:
+          setError("email", {
             type: "server",
             message: errorMessage
           });
@@ -108,46 +105,24 @@ const RegisterForm = () => {
         </div>
 
         <div className="flex flex-col gap-1 mt-[4px]">
-          <label htmlFor="phone" className="text-sm font-medium text-black">
-            Telefon<span className="text-red-500">*</span>
+          <label htmlFor="email" className="text-sm font-medium text-black">
+            Email<span className="text-red-500">*</span>
           </label>
           <div className="relative w-full">
-            <div className="flex gap-2">
-              <Controller
-                name="prefix"
-                control={control}
-                render={({ field }) => (
-                  <select
-                    {...field}
-                    className="border border-black rounded-lg h-[44px] px-2"
-
-                  >
-                    <option value="+994">+994</option>
-
-                  </select>
-                )}
-              />
-
-              <Controller
-                name="phone"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="tel"
-                    id="phone"
-                    placeholder="50*********"
-                    className="h-[44px] px-4 border border-black w-full text-base rounded-lg"
-                  />
-                )}
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              placeholder="Email daxil edin"
+              {...register("email")}
+              className="w-full border border-black p-2 rounded-md text-base placeholder:pl-2"
+            />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <Image src={Phone.src} alt="phone" width={20} height={20} />
+              {/* <Image src={Mail.src} alt="mail" width={20} height={20} /> */}
+              <Mail size={20} />
             </span>
           </div>
           <div className="h-[28px] text-sm text-red-500">
-            {errors.phone?.message}
+            {errors.email?.message}
           </div>
         </div>
         <div className="flex flex-col gap-1 mt-[4px]">

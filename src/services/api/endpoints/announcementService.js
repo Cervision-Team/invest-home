@@ -2,7 +2,7 @@ import axios from "../axiosInstance";
 
 export const createAnnouncement = async (formData) => {
 	try {
-		const res = await axios.post("/announcement", formData, {
+		const res = await axios.post("/api/announcement", formData, {
 			headers: {
 				"Content-Type": "multipart/form-data",
 			},
@@ -15,7 +15,7 @@ export const createAnnouncement = async (formData) => {
 
 export const getAnnouncement = async () => {
 	try {
-		const res = await axios.get("/announcement?pageIndex=0&pageSize=5");
+		const res = await axios.get("/api/announcement?pageIndex=0&pageSize=5");
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -23,7 +23,7 @@ export const getAnnouncement = async () => {
 };
 export const getAnnouncementFilter = async () => {
 	try {
-		const res = await axios.post("/announcement/main?page=0&size=10", {});
+		const res = await axios.post("/api/announcement/main?page=0&size=10", {});
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -31,7 +31,7 @@ export const getAnnouncementFilter = async () => {
 };
 export const getAnnouncementById = async (id) => {
 	try {
-		const res = await axios.get(`/announcement/${id}`);
+		const res = await axios.get(`/api/announcement/${id}`);
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -39,7 +39,7 @@ export const getAnnouncementById = async (id) => {
 };
 export const getAnnouncementByUser = async (status) => {
 	try {
-	const res = await axios.get(`/announcement/by-user?status=${status}&pageIndex=${0}&pageSize=${20}`);
+	const res = await axios.get(`/api/announcement/by-user?status=${status}&pageIndex=${0}&pageSize=${20}`);
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -47,7 +47,7 @@ export const getAnnouncementByUser = async (status) => {
 };
 export const getAnnouncementByStatus = async (status) => {
 	try {
-	const res = await axios.get(`/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${20}`);
+	const res = await axios.get(`/api/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${20}`);
 		return res.data;
 	} catch (err) {
 		console.log(err);
@@ -63,7 +63,7 @@ export const getMyArchivedAnnouncements = async () => getAnnouncementByUser("ARC
 export const assignAgent = async (announcementId, agentId) => {
 	try {
 		const res = await axios.patch(
-			`/announcement/${announcementId}/assign-agent`,{id:agentId}
+			`/api/announcement/${announcementId}/assign-agent`,{id:agentId}
 		);
 		return res.data;
 	} catch (err) {
@@ -74,7 +74,7 @@ export const assignAgent = async (announcementId, agentId) => {
 export const approveAnnouncement = async (announcementId, status) => {
 	try {
 		const res = await axios.patch(
-			`/announcement/${announcementId}/approve/${status}`
+			`/api/announcement/${announcementId}/approve/${status}`
 		);
 		return res.data;
 	} catch (err) {

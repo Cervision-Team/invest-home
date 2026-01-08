@@ -156,7 +156,7 @@ const OTPPage = () => {
             <div className="flex flex-col gap-[28px]">
               <h2 className="text-[24px] font-[600]">Giriş kodu</h2>
               <p>
-                Zəhmət olmasa, nömrənizə göndərilən 4 rəqəmli təsdiq kodunu
+                Zəhmət olmasa, emailinizə göndərilən 4 rəqəmli təsdiq kodunu
                 aşağıya daxil edin.
               </p>
             </div>
