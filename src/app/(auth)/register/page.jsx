@@ -6,6 +6,7 @@ import RegisterForm from "../components/register/RegisterForm";
 import X_Icon from "../../../../public/icons/x.svg";
 import Image from "next/image";
 import ProtectedLayout from "@/components/router/ProtectedLayout";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const RegisterPage = () => {
   return (
@@ -55,7 +56,11 @@ const RegisterPage = () => {
                       üçün hesab yaradın.
                     </p>
                   </div>
-                  <RegisterForm />
+                  <GoogleOAuthProvider
+                    clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+                  >
+                    <RegisterForm />
+                  </GoogleOAuthProvider>
                   <div className="min-[1025px]:hidden w-full flex flex-col items-center gap-[24px]">
                     <span>
                       Hesabınız varmı?{" "}

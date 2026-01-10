@@ -4,16 +4,11 @@ import axios from "axios";
 
 const API_URL = "http://172.25.96.20:8081/api/auth/public";
 
-
-
 export const loginWithEmail = async ({ email, password }) => {
-	const response = await authAxiosInstance.post(
-		"/api/auth/login",
-		{
-			email,
-			password,
-		},
-	);
+	const response = await authAxiosInstance.post("/api/auth/login", {
+		email,
+		password,
+	});
 	return response.data;
 };
 
@@ -49,10 +44,8 @@ export const resendOTP = async () => {
 
 export const loginWithGoogle = async (googleToken) => {
 	try {
-		const response = await axios.post(
-			`${API_URL}/login/with/google`,
-			{ token: googleToken }, // key must match backend
-			{ headers: { "Content-Type": "application/json" } }
+		const response = await authAxiosInstance.post(
+			`/api/auth/login/with/google?authCode=${googleToken}`
 		);
 		return response.data;
 	} catch (error) {
