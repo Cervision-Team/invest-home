@@ -22,9 +22,15 @@ const ProfileForm = ({ handleSubmit, onSubmit, register, isEditing, children }) 
                                 <input
                                     id={name}
                                     disabled={!isEditing}
-                                    {...register(name)}
+                                    {...(name === "birthDate"
+                                        ? register(name, {
+                                            validate: (value) =>
+                                                !value || /^\d{4}-\d{2}-\d{2}$/.test(value) || "YYYY-MM-DD formatında olmalıdır",
+                                        })
+                                        : register(name))}
                                     className="border border-[#6C707A] text-[#6C707A] text-[14px] px-3.5 py-3 bg-[#F8F9FC] rounded-lg"
-                                    type="text"
+                                    type={name === "birthDate" ? "date" : "text"}
+                                    lang={name === "birthDate" ? "en-CA" : undefined}
                                 />
                             </div>
                         ))}

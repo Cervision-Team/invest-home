@@ -245,13 +245,13 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={FloorIcon} alt="Floor" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.floor}
+                {house.floor} / {house.totalFloors}
               </span>
             </div>
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={SquareMetersIcon} alt="Field" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.area}
+                {house.area} m<sup>2</sup>
               </span>
             </div>
           </div>

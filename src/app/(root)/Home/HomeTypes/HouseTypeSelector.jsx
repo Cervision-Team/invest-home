@@ -49,21 +49,7 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
               {headingText}
             </h1>
             <div className="flex gap-4 items-center justify-center">
-              <button
-                onClick={() => setActiveType("enSon")}
-                className={`cursor-pointer flex items-center just gap-[8px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors  duration-300 ease-in-out 
-          ${activeType === "enSon"
-                    ? "bg-[var(--primary-color)] text-[var(--white)]"
-                    : "bg-[var(--white)] text-[var(--primary-color)]"
-                  }
-          hover:bg-[var(--primary-color)] hover:text-[var(--white)] focus:bg-[var(--primary-color)] focus:text-[var(--white)] active:bg-[var(--primary-color)] active:text-[var(--white)]`}
-              >
-                <span className="text-[1.5rem] font-[500]"><GiBackwardTime /></span>
-                <span className="max-[530px]:hidden font-[500] whitespace-nowrap">
-                  {/* {t("Ən son")} */}
-                  Ən son
-                </span>
-              </button>
+             
               <button
                 onClick={() => setActiveType("popular")}
                 className={`cursor-pointer flex items-center gap-[10px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors duration-300 ease-in-out 
@@ -99,6 +85,21 @@ const HouseTypeSelector = memo(({ houseType, activeType, setActiveType }) => {
                   Endirimli
 
 
+                </span>
+              </button>
+               <button
+                onClick={() => setActiveType("enSon")}
+                className={`cursor-pointer flex items-center just gap-[8px] px-[24px] py-2 rounded-[6.25rem]  border border-[var(--primary-color)] transition-colors  duration-300 ease-in-out 
+          ${activeType === "enSon"
+                    ? "bg-[var(--primary-color)] text-[var(--white)]"
+                    : "bg-[var(--white)] text-[var(--primary-color)]"
+                  }
+          hover:bg-[var(--primary-color)] hover:text-[var(--white)] focus:bg-[var(--primary-color)] focus:text-[var(--white)] active:bg-[var(--primary-color)] active:text-[var(--white)]`}
+              >
+                <span className="text-[1.5rem] font-[500]"><GiBackwardTime /></span>
+                <span className="max-[530px]:hidden font-[500] whitespace-nowrap">
+                  {/* {t("Ən son")} */}
+                  Ən son
                 </span>
               </button>
             </div>

@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import editIcon from "../../../../public/icons/profile/edit-icon.svg"
 import Image from 'next/image';
 import Search from '@/components/ui/dashboard/Search';
+import { toYMD } from '@/lib/formatDateTime';
 
 import Chat from '@/components/ui/dashboard/Chat';
 import { useUser } from '@/context/UserContext';
@@ -38,7 +39,7 @@ const Profile = () => {
       const roleName = userData?.roleName ?? userData?.role ?? userData?.role?.name;
       const userPayload = {
         fullName: data?.fullName,
-        birthDate: data?.birthDate,
+        birthDate: toYMD(data?.birthDate),
         phoneNumber: data?.phoneNumber,
         location: data?.location,
         email: data?.email,
