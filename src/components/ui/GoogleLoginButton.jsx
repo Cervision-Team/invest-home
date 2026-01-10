@@ -1,99 +1,97 @@
 "use client";
 
-import { useEffect } from "react";
 import Google from "../../../public/icons/google.svg"
 import Image from "next/image";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { loginWithGoogle } from "@/lib/authService";
+import { GoogleLogin } from "@react-oauth/google";
 
 
 export default function GoogleLoginButton() {
-  useEffect(() => {
-    const initializeGoogleButton = () => {
-      if (!window.google) {
-        console.log("Google Identity Services not loaded yet.");
-        return;
-      }
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-      window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        callback: handleGoogleResponse,
-        ux_mode: "popup",
-      });
-
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleLoginDiv"),
-        { theme: "outline", size: "large", width: "360" }
-      );
-    };
-
-    const handleGoogleResponse = async (response) => {
-      const token = response.credential;
-      console.log("JWT Token received");
-
+  const startGoogleLogin = useGoogleLogin({
+    scope: "openid email profile",
+    flow: 'implicit',
+    onSuccess: async (tokenResponse) => {
       try {
-        const res = await fetch(
-          `http://172.25.96.20:8081/api/auth/public/login/with/google?idToken=${encodeURIComponent(token)}`,
-          {
-            method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-            },
-            mode: 'cors', // Explicitly set CORS mode
-          }
-        );
+        setIsLoading(true);
+        console.log(tokenResponse);
 
-        const contentType = res.headers.get("content-type");
-        let data;
-        
-        if (contentType && contentType.includes("application/json")) {
-          data = await res.json();
-        } else {
-          data = await res.text();
-        }
+        const googleToken = tokenResponse?.access_token;
+        if (!googleToken) return;
 
-        if (!res.ok) {
-          console.error("Backend error:", data);
-          alert(`Login failed: ${typeof data === 'string' ? data : JSON.stringify(data)}`);
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
+        const data = await loginWithGoogle(googleToken);
+        console.log("Google login response data:", data);
 
-        console.log("Backend response:", data);
-        
-        // Handle successful login
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-          window.location.href = '/dashboard';
+        const token = data?.token;
+        if (token) {
+          localStorage.setItem("access-token", token);
+          router.replace("/");
+          return;
         }
-        
       } catch (err) {
-        console.error("Login error:", err);
+        console.error("Google login error:", err);
+      } finally {
+        setIsLoading(false);
       }
-    };
-
-    if (window.google) {
-      initializeGoogleButton();
-    } else {
-      const script = document.createElement("script");
-      script.src = "https://accounts.google.com/gsi/client";
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeGoogleButton;
-      document.body.appendChild(script);
-    }
-  }, []);
+    },
+    onError: (err) => {
+      console.error("Google login failed:", err);
+      setIsLoading(false);
+    },
+  });
 
   return (
-                         <button
-                             type="button"
-                             className="w-full flex items-center justify-center gap-2 border border-primary text-[#1B1F27] py-3 rounded-lg hover:bg-green-50 cursor-pointer"
-                         >
-                             <Image
-                                 src={Google.src}
-                                 alt="Google"
-                                 width={20}
-                                 height={20}
-                             />
-                             <span className="font-medium">Sign up with Google</span>
-                         </button>
-     
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          if (!isLoading) startGoogleLogin();
+        }}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center gap-2 border border-primary text-[#1B1F27] py-3 rounded-lg hover:bg-green-50 cursor-pointer disabled:opacity-60"
+      >
+        <Image
+          src={Google.src}
+          alt="Google"
+          width={20}
+          height={20}
+        />
+        <span className="font-medium">Sign up with Google</span>
+      </button>
+      <GoogleLogin
+        onSuccess={async (credentialResponse) => {
+          try {
+            setIsLoading(true);
+
+            const idToken = credentialResponse?.credential;
+            if (!idToken) return;
+
+            const data = await loginWithGoogle(idToken);
+            const token = data?.token;
+            if (token) {
+              localStorage.setItem("access-token", token);
+              router.replace("/");
+              return;
+            }
+
+            console.error("Google login: token not found in response", data);
+          } catch (err) {
+            console.error("Google login error:", err);
+          } finally {
+            setIsLoading(false);
+          }
+        }}
+        onError={() => {
+          console.log("Google login failed");
+          setIsLoading(false);
+        }}
+      />
+    </>
+
   );
 }
