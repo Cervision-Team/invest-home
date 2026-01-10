@@ -37,10 +37,14 @@ const Footer = () => {
                 <span translate="no" className="text-[var(--text-color-2)] font-semibold text-xl main-logo-style">INVEST <span className="text-[var(--primary-color)]">HOME</span></span>
               </div>
               <div className="flex flex-col gap-4 text-2">
-                <div className="flex items-center gap-2">
-                  <Image src={LocationBlack} alt="Location" width={20} height={20} />
-                  <span>Rusel Plaza, Babək pr.</span>
-                </div>
+                <Link target="_blank" href="https://maps.app.goo.gl/MUJrrzKGnX5e9faQ6">
+                  <div className="flex items-center gap-2">
+                    <Image src={LocationBlack} alt="Location" width={20} height={20} />
+                    <span>Rusel Plaza, Babək pr.</span>
+                  </div>
+                </Link> 
+
+
                 <div className="flex items-center gap-2">
                   <Image src={PhoneBlack} alt="Phone" width={20} height={20} />
                   <a href="tel:+994552224120">+994 55 222 41 20</a>

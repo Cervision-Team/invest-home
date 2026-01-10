@@ -4,6 +4,7 @@ import LanguageSelector from "./LanguageSelector";
 import LocationIcon from "../../../../public/icons/location.svg";
 import PhoneIcon from "../../../../public/icons/ic_sharp-phone.svg";
 import MailIcon from "../../../../public/icons/mail.svg";
+import Link from "next/link";
 
 const ContactHeader = () => {
   return (
@@ -11,7 +12,7 @@ const ContactHeader = () => {
       <section className="bg-primary max-[769px]:hidden">
         <div className="max-w-[1600px] mx-auto">
           <div className="px-[80px]  h-10 m-auto text-[16px] text-white flex flex-row justify-between items-center">
-            <div className="w-auto h-full flex flex-row items-center justify-start gap-[15px] flex-1 min-w-0 mr-[20px]">
+            <Link target="_blank" href="https://maps.app.goo.gl/MUJrrzKGnX5e9faQ6" className="w-auto h-full flex flex-row items-center justify-start gap-[15px] flex-1 min-w-0 mr-[20px]">
               <Image
                 src={LocationIcon}
                 width={12}
@@ -22,9 +23,9 @@ const ContactHeader = () => {
               <p className="leading-[22px] max-[1150px]:truncate">
                 Rusel plaza, Babək prospekti 10 e, Baku, Azerbaijan
               </p>
-            </div>
+            </Link>
             <div className="w-auto h-full flex flex-row items-center justify-between gap-[30px]">
-              <div className="w-auto h-full flex flex-row items-center justify-between gap-[6px]">
+              <Link href="tel:+994552224120" className="w-auto h-full flex flex-row items-center justify-between gap-[6px]">
                 <Image
                   src={PhoneIcon}
                   width={20}
@@ -34,8 +35,8 @@ const ContactHeader = () => {
                 />
 
                 <p className="flex flex-row leading-[22px] max-[1150px]:truncate">+994 55 222 41 20</p>
-              </div>
-              <div className="w-auto h-full flex flex-row items-center justify-between gap-[6px]">
+              </Link>
+              <Link href="mailto:info@investhome.az" className="w-auto h-full flex flex-row items-center justify-between gap-[6px]">
                 <Image
                   src={MailIcon}
                   width={18}
@@ -44,7 +45,7 @@ const ContactHeader = () => {
                   className="mb-[2px]"
                 />
                 <p className="flex flex-row leading-[22px]">info@investhome.az</p>
-              </div>
+              </Link>
               <LanguageSelector />
             </div>
           </div>
