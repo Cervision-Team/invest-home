@@ -45,7 +45,7 @@ export const resendOTP = async () => {
 export const loginWithGoogle = async (googleToken) => {
 	try {
 		const response = await authAxiosInstance.post(
-			`/api/auth/login/with/google?authCode=${googleToken}`
+			`/api/auth/google`,{ idToken: googleToken }
 		);
 		return response.data;
 	} catch (error) {
