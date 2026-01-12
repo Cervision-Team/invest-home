@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons';
 import Search from '@/components/ui/dashboard/Search';
 import { getAnnouncementByStatus } from '@/services/api/endpoints/announcementService';
 import React, { useEffect, useState } from 'react'
+import Loader from '@/components/ui/Loader';
 
 const PendingList = () => {
     const [search, setSearch] = useState();
@@ -36,8 +37,8 @@ const PendingList = () => {
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Gözləyən elanlar</h1>
 
             {loading ? (
-                <div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">
-                    Yüklənir...
+                <div className="w-full py-16 flex items-center justify-center border border-dashed rounded-xl">
+                    <Loader />
                 </div>
             ) : error ? (
                 <div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">

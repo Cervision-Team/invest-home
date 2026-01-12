@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import HouseCard from '@/components/ui/HouseCard'
 import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
+import Loader from '@/components/ui/Loader'
 import {
 	getMyActiveAnnouncements,
 	getMyArchivedAnnouncements,
@@ -90,8 +91,8 @@ const MyAnnouncementsPage = () => {
 			</div>
 
 			{loading ? (
-				<div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">
-					Yüklənir...
+				<div className="w-full py-16 flex items-center justify-center border border-dashed rounded-xl">
+					<Loader />
 				</div>
 			) : error ? (
 				<div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">

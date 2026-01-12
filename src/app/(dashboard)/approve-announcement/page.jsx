@@ -5,18 +5,27 @@ import photo from "../../../../public/images/profile/novruz.jpg"
 import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
 import { approveAnnouncement, getAnnouncementByUser } from '@/services/api/endpoints/announcementService'
+import Loader from '@/components/ui/Loader'
 
 const ApproveAnnouncmenet = () => {
     const [search, setSearch] = useState();
     const [announcementData, setAnnouncementData] = useState([])
     const [updatingId, setUpdatingId] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     const fetchAnnouncements = useCallback(async () => {
+        setLoading(true)
+        setError(null)
         try {
             const res = await getAnnouncementByUser("ASSIGNED_TO_AGENT");
             setAnnouncementData(res?.content ?? [])
         } catch (err) {
             console.log(err);
+            setError(err?.message || "Xəta baş verdi")
+            setAnnouncementData([])
+        } finally {
+            setLoading(false)
         }
     }, [])
 
@@ -47,7 +56,15 @@ const ApproveAnnouncmenet = () => {
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün müştərilər</h1>
 
-            {announcementData?.length ? (
+            {loading ? (
+                <div className="w-full py-16 flex items-center justify-center border border-dashed rounded-xl">
+                    <Loader />
+                </div>
+            ) : error ? (
+                <div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">
+                    {error}
+                </div>
+            ) : announcementData?.length ? (
                 <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 w-full gap-6 '>
                     {announcementData.map((announcement) => (
                         <div key={announcement?.id} className='rounded-[20px] shadow-[0px_4px_10px_0px_#00000026] p-5'>

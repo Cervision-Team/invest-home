@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import HouseCard from "@/components/ui/HouseCard";
- import { houseData } from "@/components/core/house"; 
+import Loader from "@/components/ui/Loader";
 
 const SimilarAnnouncements = () => {
   const [houses, setHouses] = useState([]);     // dynamic data
@@ -29,7 +29,9 @@ const SimilarAnnouncements = () => {
   if (loading) {
     return (
       <section className="max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]">
-        <p className="text-center py-10">Yüklənir...</p>
+        <div className="w-full flex items-center justify-center py-10">
+          <Loader />
+        </div>
       </section>
     );
   }

@@ -17,6 +17,7 @@ import metroWhite from "../../../../public/icons/metro-white.svg";
 import restaurantWhite from "../../../../public/icons/restaurant-white.svg";
 import marketplaceWhite from "../../../../public/icons/marketplace-white.svg";
 import { useEffect, useMemo, useState } from "react";
+import Loader from "@/components/ui/Loader";
 
 const items = [
   { type: "bus_stop", icon: BusStopPrimary, iconHover: BusStopWhite, width: 24, height: 24, name: "Dayanacaq" },
@@ -130,7 +131,9 @@ const Map = ({ lat, lng }) => {
           {!hasCoords ? (
             <p className="text-3 text-[14px]">Koordinat tapılmadı</p>
           ) : loading ? (
-            <p className="text-3 text-[14px]">Yüklənir...</p>
+            <div className="py-2">
+              <Loader />
+            </div>
           ) : nearby?.length ? (
             nearby.map((place) => (
               <div key={place.id} className="flex flex-row items-center justify-between">

@@ -8,6 +8,7 @@ import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import arrowRightWhite from "../../../../../public/icons/arrow-right-white-small.svg";
 import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
 import { createAgent, getMyAgents } from "@/services/api/endpoints/agentService";
+import Loader from "@/components/ui/Loader";
 
 const AgentForm = () => {
   const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
@@ -262,7 +263,9 @@ const AgentForm = () => {
           </div>
 
           {myAgentsLoading ? (
-            <p className="text-[#737373] text-[14px]">Yüklənir...</p>
+            <div className="py-2">
+              <Loader />
+            </div>
           ) : myAgentsError ? (
             <p className="text-red-600 text-[14px]">{myAgentsError}</p>
           ) : myAgents.length === 0 ? (

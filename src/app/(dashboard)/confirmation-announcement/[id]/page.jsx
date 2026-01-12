@@ -5,6 +5,7 @@ import { assignAgent, getAnnouncementById } from "@/services/api/endpoints/annou
 import { getAgent } from "@/services/api/endpoints/userService";
 import { AgentCard } from "./AgentCard";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import Loader from "@/components/ui/Loader";
 
 
 export default function ConfirmationAnnouncement() {
@@ -13,21 +14,39 @@ export default function ConfirmationAnnouncement() {
     const [announcement, setAnnouncement] = useState(null)
     const [agent, setAgent] = useState(null)
     const [isOpenConfirm,setIsOpenConfirm] = useState(false)
+    const [announcementLoading, setAnnouncementLoading] = useState(true)
+    const [agentsLoading, setAgentsLoading] = useState(true)
+    const [loadError, setLoadError] = useState(null)
     const router = useRouter();
     const { id } = useParams();
     useEffect(() => {
         (async () => {
-            const houseDetail = await getAnnouncementById(id)
-            setAnnouncement(houseDetail)
-            console.log("houseDetail", houseDetail);
-
+            setAnnouncementLoading(true)
+            setLoadError(null)
+            try {
+                const houseDetail = await getAnnouncementById(id)
+                setAnnouncement(houseDetail)
+            } catch (err) {
+                setAnnouncement(null)
+                setLoadError(err?.message || "Elan yüklənmədi")
+            } finally {
+                setAnnouncementLoading(false)
+            }
         })()
     }, [])
     useEffect(() => {
         (async () => {
-            const agents = await getAgent()
-            setAgent(agents)
-            console.log("agents", agents);
+            setAgentsLoading(true)
+            setLoadError(null)
+            try {
+                const agents = await getAgent()
+                setAgent(agents)
+            } catch (err) {
+                setAgent([])
+                setLoadError(err?.message || "Agentlər yüklənmədi")
+            } finally {
+                setAgentsLoading(false)
+            }
         })()
     }, [])
 
@@ -46,6 +65,24 @@ export default function ConfirmationAnnouncement() {
         } finally {
             setConfirming(false);
         }
+    }
+
+    if (announcementLoading || agentsLoading) {
+        return (
+            <div className="min-h-screen w-full flex items-center justify-center">
+                <Loader />
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div className="min-h-screen w-full flex items-center justify-center">
+                <div className="w-full max-w-xl py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl bg-white">
+                    {loadError}
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -82,14 +119,14 @@ export default function ConfirmationAnnouncement() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {agent?.map((agent) => (
+                        {Array.isArray(agent) ? agent.map((agent) => (
                             <AgentCard
                                 key={agent.id}
                                 agent={agent}
                                 selected={selectedAgent === agent.id}
                                 onSelect={setSelectedAgent}
                             />
-                        ))}
+                        )) : null}
                     </div>
 
                     <div className="mt-6 flex flex-col sm:flex-row items-center gap-3 justify-end">
