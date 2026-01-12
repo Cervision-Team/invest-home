@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import HouseTypeSelector from "../../Home/HomeTypes/HouseTypeSelector";
 import HouseCard from "@/components/ui/HouseCard";
 import { houseData } from "@/components/core/house";
+import Loader from "@/components/ui/Loader";
 
 
 const Page = () => {
@@ -24,7 +25,12 @@ const Page = () => {
       ? houses
       : houses.filter((house) => house.type === activeType);
 
-  if (loading) return <p className="text-center mt-10">Yüklənir...</p>;
+  if (loading)
+    return (
+      <div className="mt-10 flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   if (error) return <p className="text-center mt-10 text-red-500">Xəta baş verdi</p>;
 
   return (

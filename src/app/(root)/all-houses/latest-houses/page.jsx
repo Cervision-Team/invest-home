@@ -29,9 +29,6 @@ const Page = () => {
       ? houses
       : houses.filter((house) => house.type === activeType);
 
-  
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));     
-  sleep(1500);
   if (loading)
     return (
       <div className="mt-10 flex items-center justify-center">

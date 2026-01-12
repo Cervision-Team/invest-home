@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { houseData } from "@/components/core/house";
 import HouseCard from "@/components/ui/HouseCard";
+import Loader from "@/components/ui/Loader";
 
 
 
@@ -313,7 +314,7 @@ const FilterResults = () => {
 
         {loading && (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#02836F]"></div>
+            <Loader />
           </div>
         )}
         

@@ -5,8 +5,7 @@ export default function Loader({ className = "" }) {
         <div
             aria-label="Loading"
             role="status"
-            className="loader"
+            className={`loader ${className}`.trim()}
         />
     );
 }
-    

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import HouseCard from '@/components/ui/HouseCard';
 import { houseData } from '@/components/core/house'; // ✅ Import your mock data
+import Loader from '@/components/ui/Loader';
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -70,7 +71,12 @@ const Favorites = () => {
     });
   };
 
-  if (loading) return <p className="text-center py-4">Loading favorites...</p>;
+  if (loading)
+    return (
+      <div className="w-full flex items-center justify-center py-10">
+        <Loader />
+      </div>
+    );
   if (error) return <p className="text-center text-red-600 py-4">{error}</p>;
   if (favorites.length === 0) return <p className="text-center py-4">No favorites yet.</p>;
 

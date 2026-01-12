@@ -1,8 +1,11 @@
 import React from 'react'
+import Loader from "@/components/ui/Loader";
 
 const Loading = () => {
   return (
-    <div>Loading</div>
+    <div className="w-full py-16 flex items-center justify-center">
+      <Loader />
+    </div>
   )
 }
 

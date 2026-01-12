@@ -6,11 +6,14 @@ import { ToastContainer, toast } from "react-toastify";
 import { createRole, deleteRole, updateRole } from "@/services/api/endpoints/roleService";
 import RoleModal from "./components/RoleModal";
 import AccessControlTable from "./components/AccessControlTable";
+import Loader from "@/components/ui/Loader";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
     const [matrix, setMatrix] = useState({});
     const { fetchMenuPermission } = useMenuPermission();
+    const [pageLoading, setPageLoading] = useState(true);
+    const [pageError, setPageError] = useState(null);
 
     const [roleModalOpen, setRoleModalOpen] = useState(false);
     const [roleModalMode, setRoleModalMode] = useState("create");
@@ -53,7 +56,16 @@ const AccessControl = () => {
 
     useEffect(() => {
         (async () => {
-            await refreshMatrix({ preserveAccess: false });
+            setPageLoading(true);
+            setPageError(null);
+            try {
+                await refreshMatrix({ preserveAccess: false });
+            } catch (err) {
+                console.log(err);
+                setPageError(err?.message || "Məlumat yüklənmədi");
+            } finally {
+                setPageLoading(false);
+            }
         })();
     }, []);
 
@@ -162,18 +174,29 @@ const AccessControl = () => {
                 onClose={() => setRoleModalOpen(false)}
                 onSubmit={handleRoleSubmit}
             />
-            <AccessControlTable
-                matrix={matrix}
-                groupedClaims={groupedClaims}
-                access={access}
-                onToggleAccess={handleAccess}
-                onOpenUpdateRole={openUpdateRole}
-                onDeleteRole={handleRoleDelete}
-                onOpenCreateRole={openCreateRole}
-            />
+            {pageLoading ? (
+                <div className="w-full py-16 flex items-center justify-center border border-dashed rounded-xl">
+                    <Loader />
+                </div>
+            ) : pageError ? (
+                <div className="w-full py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl">
+                    {pageError}
+                </div>
+            ) : (
+                <AccessControlTable
+                    matrix={matrix}
+                    groupedClaims={groupedClaims}
+                    access={access}
+                    onToggleAccess={handleAccess}
+                    onOpenUpdateRole={openUpdateRole}
+                    onDeleteRole={handleRoleDelete}
+                    onOpenCreateRole={openCreateRole}
+                />
+            )}
 
             <button
                 onClick={handleSubmit}
+                disabled={pageLoading}
                 className="bg-primary hover:[#02836f] px-4 py-2 rounded-lg text-white mt-4 transition-all cursor-pointer"
             >
                 Yadda saxla

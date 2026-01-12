@@ -6,6 +6,7 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import { blogData } from "../../../components/core/BlogsData";
 import BlogCard from "@/components/ui/BlogCard";
+import Loader from "@/components/ui/Loader";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState(blogData);
@@ -33,8 +34,10 @@ const Blogs = () => {
 
   if (loading) {
     return (
-      <section className="py-20 text-center text-white bg-gray-800">
-        Loading blogs…
+      <section className="py-20 bg-gray-800">
+        <div className="w-full flex items-center justify-center">
+          <Loader />
+        </div>
       </section>
     );
   }

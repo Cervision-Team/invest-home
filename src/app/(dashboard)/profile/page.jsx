@@ -15,6 +15,7 @@ import { toYMD } from '@/lib/formatDateTime';
 
 import Chat from '@/components/ui/dashboard/Chat';
 import { useUser } from '@/context/UserContext';
+import Loader from '@/components/ui/Loader';
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,8 @@ const Profile = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const { register, handleSubmit, reset } = useForm();
   const { fetchUser } = useUser();
 
@@ -108,11 +111,25 @@ const Profile = () => {
   }
 
   useEffect(() => {
+    let alive = true;
     (async () => {
-      const res = await getUser();
-      setUserData(res.data);
-      reset(res.data);
-    })()
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const res = await getUser();
+        if (!alive) return;
+        setUserData(res.data);
+        reset(res.data);
+      } catch (err) {
+        if (!alive) return;
+        setLoadError(err?.message || "Profil yüklənmədi");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, [])
 
   const handleClose = (e) => {
@@ -124,6 +141,25 @@ const Profile = () => {
   const closeChat = () => {
     setIsChat(false)
   }
+
+  if (loading) {
+    return (
+      <main className='w-full flex items-center justify-center py-16'>
+        <Loader />
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className='w-full flex items-center justify-center py-16'>
+        <div className="w-full max-w-xl py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl bg-white">
+          {loadError}
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className='w-full flex flex-col gap-6'>
 

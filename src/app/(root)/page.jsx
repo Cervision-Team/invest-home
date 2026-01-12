@@ -12,21 +12,22 @@ import ClientCategoryWrapper from "@/components/core/ClientCategoryWrapper";
 import { Suspense } from "react";
 import RecentHousesSkeleton from "@/components/ui/skeleton/RecentHousesSkeleton";
 import OpenOffice from "./Home/OpenOffice";
+import Loader from "@/components/ui/Loader";
 
 
 export default function Home() {
   return (
     <>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="w-full py-10 flex items-center justify-center"><Loader /></div>}> 
         <ClientSliderWrapper />
       </Suspense> 
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="w-full py-10 flex items-center justify-center"><Loader /></div>}>
       <ClientCategoryWrapper />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="w-full py-10 flex items-center justify-center"><Loader /></div>}>
       <MobileSearch />
       </Suspense>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="w-full py-10 flex items-center justify-center"><Loader /></div>}>
       <MobileCategory />
       </Suspense>
       <Suspense fallback={<RecentHousesSkeleton />}>
