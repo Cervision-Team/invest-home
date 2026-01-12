@@ -11,18 +11,6 @@ import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
 import { UserProvider } from "@/context/UserContext";
 
-// ✅ Pass only serializable values (strings, not functions)
-const dashboardSidebarItems = [
-  { name: "Profilim", path: "/profile", icon: "profile" },
-  { name: "Statistika", path: "/statistics", icon: "statistic" },
-  { name: "Əməkdaşlar", path: "/employees", icon: "employees" },
-  { name: "Elan bazası", path: "/database-table", icon: "database" },
-  { name: "Sifarişlər", path: "/orders", icon: "order" },
-  { name: "Müştərilər", path: "/customers", icon: "customer" },
-  { name: "Balansım", path: "/wallet", icon: "wallet" },
-  { name: "Ödəniş tarixçəsi", path: "/transaction-history", icon: "wallet" },
-];
-
 export default function Layout({ children }) {
   return (
     <UserProvider>

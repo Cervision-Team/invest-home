@@ -88,7 +88,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
   };
 
   // Validate allFields (or with overrides). Builds errors map that only contains failing fields.
-  const checkFormValidity = async (overrides = {}) => {
+  const checkFormValidity = async (overrides = {}, options = {}) => {
+    const { showErrors = false } = options;
     // Build combined data from formData + overrides
     const currentStepData = allFields.reduce((acc, field) => {
       acc[field] = Object.prototype.hasOwnProperty.call(overrides, field) ? overrides[field] : formData[field];
@@ -119,16 +120,19 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
         });
 
         setErrors(prev => {
-          // Remove any previous errors for fields that no longer fail
+          // Always clear resolved errors, but only ADD new ones when showErrors=true
           const copy = { ...prev };
+
           allFields.forEach(f => {
             if (!newErrors[f]) delete copy[f];
           });
-          // Remove any previous nested experiences errors that no longer fail
+
           Object.keys(copy).forEach(k => {
             if (k.startsWith("experiences[") && !newErrors[k]) delete copy[k];
-              if (k.startsWith("educations[") && !newErrors[k]) delete copy[k];
+            if (k.startsWith("educations[") && !newErrors[k]) delete copy[k];
           });
+
+          if (!showErrors) return copy;
           return { ...copy, ...newErrors };
         });
 
@@ -143,7 +147,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
   // validateAllFields - explicitly shows errors for all fields (used when showAllErrors triggered)
   const validateAllFields = async () => {
-    await checkFormValidity();
+    await checkFormValidity({}, { showErrors: true });
   };
 
   // Trigger validateAllFields when showAllErrors becomes true
@@ -156,7 +160,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
   // Re-run validity check when form data changes
   useEffect(() => {
-    checkFormValidity();
+    checkFormValidity({}, { showErrors: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
@@ -314,7 +318,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
       description: "",
     });
     updateForm("experiences", next);
-    validateField("experiences", next);
   };
 
   const removeExperience = (index) => {
@@ -348,7 +351,6 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
       description: "",
     });
     updateForm("educations", next);
-    validateField("educations", next);
   };
 
   const removeEducation = (index) => {
@@ -418,12 +420,12 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
 
       `}</style>
 
-      <div className="min-w-0 max-[430px]:gap-[16px] max-[430px]:flex-col flex max-[1200px]:gap-[40px] gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]">
-        <div className="min-w-0 basis-[50%]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="min-w-0">
           <form action="">
-            <div className="flex flex-col gap-[16px]">
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Ad<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -440,8 +442,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
               </div>
 
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Soyad<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -459,8 +461,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               </div>
 
               {/* Email */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Email<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -478,8 +480,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               </div>
 
               {/* Phone */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Telefon<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -496,14 +498,12 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                 {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
               </div>
 
-              <div className="mt-[8px] flex items-center justify-between">
-                <label className="max-[430px]:hidden">
-                  Təcrübələr
-                </label>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <label className="text-sm font-medium text-slate-700">Təcrübələr</label>
                 <button
                   type="button"
                   onClick={addExperience}
-                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
                 >
                   + Təcrübə əlavə et
                 </button>
@@ -512,20 +512,20 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               {errors.experiences && <p className="text-red-500 text-sm">{errors.experiences}</p>}
 
               {(formData.experiences || []).map((exp, index) => (
-                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                <div key={index} className="rounded-xl border border-black/10 bg-white p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
+                    <p className="font-medium text-sm text-slate-900">Təcrübə {index + 1}</p>
                     <button
                       type="button"
                       onClick={() => removeExperience(index)}
-                      className="text-red-600 hover:text-red-800 text-[14px]"
+                      className="text-sm font-medium text-red-600 hover:text-red-800"
                     >
                       Sil
                     </button>
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Vəzifə<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Vəzifə<span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       placeholder="Məs: Satış meneceri"
@@ -537,8 +537,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     {getExpError(index, "position") && <p className="text-red-500 text-sm">{getExpError(index, "position")}</p>}
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Şirkət<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Şirkət<span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       placeholder="Məs: Invest Home"
@@ -550,9 +550,9 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     {getExpError(index, "company") && <p className="text-red-500 text-sm">{getExpError(index, "company")}</p>}
                   </div>
 
-                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Başlama tarixi<span className="text-red-500">*</span></label>
                       <input
                         type="month"
                         className={`input-field ${getExpError(index, "startMonth") ? "error" : ""}`}
@@ -563,8 +563,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                       {getExpError(index, "startMonth") && <p className="text-red-500 text-sm">{getExpError(index, "startMonth")}</p>}
                     </div>
 
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
                       <input
                         type="month"
                         disabled={Boolean(exp?.isCurrent)}
@@ -577,10 +577,10 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     </div>
                   </div>
 
-                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
+                  <label className="flex items-center gap-3 text-sm text-slate-600">
                     <input
                       type="checkbox"
-                      className="w-[16px] h-[16px] cursor-pointer"
+                      className="w-4 h-4 cursor-pointer"
                       style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
                       checked={Boolean(exp?.isCurrent)}
                       onChange={(e) => {
@@ -606,8 +606,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     Hazırda burada işləyirəm
                   </label>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Təsvir</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Təsvir</label>
                     <textarea
                       rows={3}
                       placeholder="Qısa təsvir (istəyə bağlı)"
@@ -624,18 +624,16 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
           </form>
         </div>
 
-        <div className="min-w-0 basis-[50%]">
+        <div className="min-w-0">
           <form action="">
-            <div className="flex flex-col gap-[16px]">
+            <div className="flex flex-col gap-4">
               {/* Educations */}
-              <div className="mt-[8px] flex items-center justify-between">
-                <label className="max-[430px]:hidden">
-                  Təhsil
-                </label>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <label className="text-sm font-medium text-slate-700">Təhsil</label>
                 <button
                   type="button"
                   onClick={addEducation}
-                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
                 >
                   + Təhsil əlavə et
                 </button>
@@ -644,20 +642,20 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               {errors.educations && <p className="text-red-500 text-sm">{errors.educations}</p>}
 
               {(formData.educations || []).map((edu, index) => (
-                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                <div key={index} className="rounded-xl border border-black/10 bg-white p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <p className="font-[500] text-[14px]">Təhsil {index + 1}</p>
+                    <p className="font-medium text-sm text-slate-900">Təhsil {index + 1}</p>
                     <button
                       type="button"
                       onClick={() => removeEducation(index)}
-                      className="text-red-600 hover:text-red-800 text-[14px]"
+                      className="text-sm font-medium text-red-600 hover:text-red-800"
                     >
                       Sil
                     </button>
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Təhsil müəssisəsi<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Təhsil müəssisəsi<span className="text-red-500">*</span></label>
                     <input
                       placeholder="Bakı Dövlət Universiteti"
                       className={`input-field ${getEduError(index, "institution") ? "error" : ""}`}
@@ -669,8 +667,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     {getEduError(index, "institution") && <p className="text-red-500 text-sm">{getEduError(index, "institution")}</p>}
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">İxtisas / Dərəcə<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">İxtisas / Dərəcə<span className="text-red-500">*</span></label>
                     <input
                       placeholder="Məs: Kompüter elmləri (Bakalavr)"
                       className={`input-field ${getEduError(index, "degree") ? "error" : ""}`}
@@ -682,9 +680,9 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     {getEduError(index, "degree") && <p className="text-red-500 text-sm">{getEduError(index, "degree")}</p>}
                   </div>
 
-                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Başlama tarixi<span className="text-red-500">*</span></label>
                       <input
                         type="month"
                         className={`input-field ${getEduError(index, "startMonth") ? "error" : ""}`}
@@ -695,8 +693,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                       {getEduError(index, "startMonth") && <p className="text-red-500 text-sm">{getEduError(index, "startMonth")}</p>}
                     </div>
 
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Bitmə tarixi<span className="text-red-500">*</span></label>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Bitmə tarixi<span className="text-red-500">*</span></label>
                       <input
                         type="month"
                         className={`input-field ${getEduError(index, "endMonth") ? "error" : ""}`}
@@ -708,8 +706,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Qeyd</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Qeyd</label>
                     <textarea
                       rows={3}
                       placeholder="Qısa qeyd (istəyə bağlı)"
@@ -724,8 +722,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               ))}
 
               {/* Age */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Yaşınız<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -745,8 +743,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               </div>
 
               {/* Address */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   Yaşadığınız Ünvan<span className="text-red-500">*</span>
                 </label>
                 <input
@@ -764,8 +762,8 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
               </div>
 
               {/* CV Upload */}
-              <div className="flex flex-col gap-[8px]">
-                <label className="max-[430px]:hidden" htmlFor="">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700" htmlFor="">
                   CV-nizi yükləyin<span className="text-red-500">*</span>
                 </label>
 
@@ -784,14 +782,11 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                   onDrop={handleDrop}
                 >
                   <div
-                    className={`input-field
-                      max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
-                      px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
-                      ${errors.cv ? 'error' : ''}`}
+                    className={`input-field flex items-center justify-between transition-all cursor-pointer ${errors.cv ? 'error' : ''}`}
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <p className="max-[430px]:text-primary line-clamp-1 truncate text-[14px]/[21px] text-[#7F7F87]">{formData.cv ? formData.cv.name : "CV faylınızı seçin"}</p>
-                    <div >{isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]" /> : formData.cv ? "✓" : "+"}</div>
+                    <div >{isUploading ? <GiSandsOfTime className="text-(--primary-color) text-[18px]" /> : formData.cv ? "✓" : "+"}</div>
                   </div>
 
                   {isUploading && (
@@ -801,7 +796,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                         <span>{Math.round(uploadProgress)}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-1">
-                        <div className="bg-[var(--primary-color)] h-1 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                        <div className="bg-(--primary-color) h-1 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
                       </div>
                     </div>
                   )}
@@ -819,7 +814,7 @@ const Preview = ({ formData, updateForm, onValidationChange, showAllErrors, setS
                             }}
                             className="text-blue-600 hover:text-blue-800"
                           >
-                            <FaRegEye className="text-[var(--primary-color)] text-[16px]" />
+                            <FaRegEye className="text-(--primary-color) text-[16px]" />
                           </button>
                         )}
                         <button

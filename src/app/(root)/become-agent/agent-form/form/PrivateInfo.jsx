@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { agentFormSchema } from "@/lib/schemas/agentSchema";
 
@@ -111,13 +110,13 @@ const PrivateInfo = ({
   const inputClass = (field) =>
     `max-[430px]:placeholder-primary max-[430px]:text-[16px]
      max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
-     outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
+     w-full outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
      input-field ${errors[field] ? "error" : ""}`;
 
   const baseInputClass = (hasError) =>
     `max-[430px]:placeholder-primary max-[430px]:text-[16px]
      max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
-     outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
+     w-full outline-none px-[14px] py-[10px] text-[14px] border-[1px] rounded-[8px]
      input-field ${hasError ? "error" : ""}`;
 
   const getExpError = (index, field) => errors[`experiences[${index}].${field}`];
@@ -148,7 +147,6 @@ const PrivateInfo = ({
       description: "",
     });
     updateForm("experiences", next);
-    validateField("experiences", next);
   };
 
   const removeExperience = (index) => {
@@ -208,18 +206,17 @@ const PrivateInfo = ({
         }
       `}</style>
 
-      <div className="flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]">
-        <div className="min-[1200px]:basis-[50%] w-full">
-          <form>
-            <div className="flex flex-col gap-[16px]">
+      <div className="w-full">
+        <form>
+          <div className="flex flex-col gap-4">
               {[
                 { name: "name", label: "Ad", required: true, placeholder: "Ad" },
                 { name: "surname", label: "Soyad", required: true, placeholder: "Soyad" },
                 { name: "email", label: "Email", required: true, placeholder: "investhomeaz@gmail.com", type: "email" },
                 { name: "phoneNumber", label: "Telefon", required: true, placeholder: "phoneNumber" },
               ].map(({ name, label, required, placeholder, type = "text" }) => (
-                <div key={name} className="flex flex-col gap-[8px]">
-                  <label className="max-[430px]:hidden">
+                <div key={name} className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-slate-700">
                     {label}
                     {required && <span className="text-red-500">*</span>}
                   </label>
@@ -238,12 +235,12 @@ const PrivateInfo = ({
                 </div>
               ))}
 
-              <div className="mt-[8px] flex items-center justify-between">
-                <label className="max-[430px]:hidden">Təcrübələr</label>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <label className="text-sm font-medium text-slate-700">Təcrübələr</label>
                 <button
                   type="button"
                   onClick={addExperience}
-                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
                 >
                   + Təcrübə əlavə et
                 </button>
@@ -252,20 +249,20 @@ const PrivateInfo = ({
               {errors.experiences && <p className="text-red-500 text-sm">{errors.experiences}</p>}
 
               {(formData.experiences || []).map((exp, index) => (
-                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                <div key={index} className="rounded-xl border border-black/10 bg-white p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <p className="font-[500] text-[14px]">Təcrübə {index + 1}</p>
+                    <p className="font-medium text-sm text-slate-900">Təcrübə {index + 1}</p>
                     <button
                       type="button"
                       onClick={() => removeExperience(index)}
-                      className="text-red-600 hover:text-red-800 text-[14px]"
+                      className="text-sm font-medium text-red-600 hover:text-red-800"
                     >
                       Sil
                     </button>
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Vəzifə<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Vəzifə<span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       placeholder="Məs: Satış meneceri"
@@ -277,8 +274,8 @@ const PrivateInfo = ({
                     {getExpError(index, "position") && <p className="text-red-500 text-sm">{getExpError(index, "position")}</p>}
                   </div>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Şirkət<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Şirkət<span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       placeholder="Məs: Invest Home"
@@ -290,9 +287,9 @@ const PrivateInfo = ({
                     {getExpError(index, "company") && <p className="text-red-500 text-sm">{getExpError(index, "company")}</p>}
                   </div>
 
-                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Başlama tarixi<span className="text-red-500">*</span></label>
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Başlama tarixi<span className="text-red-500">*</span></label>
                       <input
                         type="month"
                         className={baseInputClass(Boolean(getExpError(index, "startMonth")))}
@@ -303,8 +300,8 @@ const PrivateInfo = ({
                       {getExpError(index, "startMonth") && <p className="text-red-500 text-sm">{getExpError(index, "startMonth")}</p>}
                     </div>
 
-                    <div className="flex flex-col gap-[8px]">
-                      <label className="max-[430px]:hidden">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Bitmə tarixi{exp?.isCurrent ? "" : <span className="text-red-500">*</span>}</label>
                       <input
                         type="month"
                         disabled={Boolean(exp?.isCurrent)}
@@ -317,10 +314,10 @@ const PrivateInfo = ({
                     </div>
                   </div>
 
-                  <label className="flex items-center gap-[10px] text-[14px] text-[#737373]">
+                  <label className="flex items-center gap-3 text-sm text-slate-600">
                     <input
                       type="checkbox"
-                      className="w-[16px] h-[16px] cursor-pointer"
+                      className="w-4 h-4 cursor-pointer"
                       style={{ appearance: "auto", WebkitAppearance: "checkbox", accentColor: "var(--primary-color)" }}
                       checked={Boolean(exp?.isCurrent)}
                       onChange={(e) => {
@@ -346,8 +343,8 @@ const PrivateInfo = ({
                     Hazırda burada işləyirəm
                   </label>
 
-                  <div className="flex flex-col gap-[8px]">
-                    <label className="max-[430px]:hidden">Təsvir</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Təsvir</label>
                     <textarea
                       rows={3}
                       placeholder="Qısa təsvir (istəyə bağlı)"
@@ -360,13 +357,8 @@ const PrivateInfo = ({
                   </div>
                 </div>
               ))}
-            </div>
-          </form>
-        </div>
-
-        <div className="max-[1200px]:hidden flex items-center basis-[50%]">
-          <Image src="/gifs/building.gif" alt="building" width={519} height={389} />
-        </div>
+          </div>
+        </form>
       </div>
     </>
   );

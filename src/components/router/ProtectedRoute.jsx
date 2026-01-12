@@ -5,6 +5,7 @@ import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { extractMenuPaths, normalizePath } from "@/lib/auth/menuPermissionUtils";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
+import Loader from "@/components/ui/Loader";
 
 export default function ProtectedRoute({ children }) {
     const { menuPermission, fetchMenuPermission, menuLoading, menuLoaded } = useMenuPermission();
@@ -47,9 +48,21 @@ export default function ProtectedRoute({ children }) {
         }
     }, [token, menuLoaded, hasAccess, router]);
 
-    if (!token) return null;
-    if (!menuLoaded || menuLoading) return null;
-    if (hasAccess === false) return null;
+    if (!token || !menuLoaded || menuLoading || hasAccess === null) {
+        return (
+            <div className="min-h-[60vh] w-full flex items-center justify-center bg-white">
+                <Loader />
+            </div>
+        );
+    }
+
+    if (hasAccess === false) {
+        return (
+            <div className="min-h-[60vh] w-full flex items-center justify-center bg-white">
+                <Loader />
+            </div>
+        );
+    }
 
     return <>{children}</>;
 }

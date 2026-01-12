@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { agentFormSchema } from "@/lib/schemas/agentSchema";
 import { useState, useRef, useEffect } from "react";
 import { FaRegEye } from "react-icons/fa";
@@ -140,7 +139,6 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
       description: "",
     });
     updateForm("educations", next);
-    validateField("educations", next);
   };
 
   const removeEducation = (index) => {
@@ -333,16 +331,15 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
 
       `}</style>
 
-      <div className='flex gap-[95px] pb-[16px] min-[768px]:border-b-[1px] border-[rgba(0,0,0,0.2)]'>
-        <div className='min-[1200px]:basis-[50%] w-full'>
-          <form action="">
-            <div className='flex flex-col gap-[16px]'>
-              <div className="mt-[8px] flex items-center justify-between">
-                <label className="max-[430px]:hidden">Təhsil</label>
+      <div className="w-full">
+        <form>
+          <div className="flex flex-col gap-4">
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <label className="text-sm font-medium text-slate-700">Təhsil</label>
                 <button
                   type="button"
                   onClick={addEducation}
-                  className="text-white bg-[var(--primary-color)] rounded-[8px] py-[8px] px-[14px] hover:opacity-90"
+                  className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
                 >
                   + Təhsil əlavə et
                 </button>
@@ -351,20 +348,20 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
               {errors.educations && <p className="text-red-500 text-sm">{errors.educations}</p>}
 
               {(formData.educations || []).map((edu, index) => (
-                <div key={index} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[12px] flex flex-col gap-[12px]">
+                <div key={index} className="rounded-xl border border-black/10 bg-white p-4 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <p className="font-[500] text-[14px]">Təhsil {index + 1}</p>
+                    <p className="font-medium text-sm text-slate-900">Təhsil {index + 1}</p>
                     <button
                       type="button"
                       onClick={() => removeEducation(index)}
-                      className="text-red-600 hover:text-red-800 text-[14px]"
+                      className="text-sm font-medium text-red-600 hover:text-red-800"
                     >
                       Sil
                     </button>
                   </div>
 
-                  <div className='flex flex-col gap-[8px]'>
-                    <label className="max-[430px]:hidden" htmlFor="">Təhsil müəssisəsi<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Təhsil müəssisəsi<span className="text-red-500">*</span></label>
                     <input
                       placeholder='Bakı Dövlət Universiteti'
                       className={`input-field ${getEduError(index, "institution") ? 'error' : ''}`}
@@ -376,8 +373,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                     {getEduError(index, "institution") && <p className="text-red-500 text-sm">{getEduError(index, "institution")}</p>}
                   </div>
 
-                  <div className='flex flex-col gap-[8px]'>
-                    <label className="max-[430px]:hidden" htmlFor="">İxtisas / Dərəcə<span className="text-red-500">*</span></label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">İxtisas / Dərəcə<span className="text-red-500">*</span></label>
                     <input
                       placeholder='Məs: Kompüter elmləri (Bakalavr)'
                       className={`input-field ${getEduError(index, "degree") ? 'error' : ''}`}
@@ -389,9 +386,9 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                     {getEduError(index, "degree") && <p className="text-red-500 text-sm">{getEduError(index, "degree")}</p>}
                   </div>
 
-                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-[12px]">
-                    <div className='flex flex-col gap-[8px]'>
-                      <label className="max-[430px]:hidden" htmlFor="">Başlama tarixi<span className="text-red-500">*</span></label>
+                  <div className="grid grid-cols-1 min-[430px]:grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Başlama tarixi<span className="text-red-500">*</span></label>
                       <input
                         className={`input-field ${getEduError(index, "startMonth") ? 'error' : ''}`}
                         type="month"
@@ -402,8 +399,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                       {getEduError(index, "startMonth") && <p className="text-red-500 text-sm">{getEduError(index, "startMonth")}</p>}
                     </div>
 
-                    <div className='flex flex-col gap-[8px]'>
-                      <label className="max-[430px]:hidden" htmlFor="">Bitmə tarixi<span className="text-red-500">*</span></label>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-sm font-medium text-slate-700">Bitmə tarixi<span className="text-red-500">*</span></label>
                       <input
                         className={`input-field ${getEduError(index, "endMonth") ? 'error' : ''}`}
                         type="month"
@@ -415,8 +412,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                     </div>
                   </div>
 
-                  <div className='flex flex-col gap-[8px]'>
-                    <label className="max-[430px]:hidden" htmlFor="">Qeyd</label>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-medium text-slate-700">Qeyd</label>
                     <textarea
                       rows={3}
                       placeholder='Qısa qeyd (istəyə bağlı)'
@@ -431,8 +428,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
               ))}
 
               {/* Age Field */}
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Yaşınız<span className="text-red-500">*</span></label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700">Yaşınız<span className="text-red-500">*</span></label>
                 <input
                   placeholder='28'
                   className={`input-field remove-arrow ${errors.age ? 'error' : ''}`}
@@ -450,8 +447,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
               </div>
 
               {/* Address Field */}
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">Yaşadığınız Ünvan<span className="text-red-500">*</span></label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700">Yaşadığınız Ünvan<span className="text-red-500">*</span></label>
                 <input
                   placeholder='Xəzər ray., Mərdəkan qəs., Əli İsazade küç.'
                   className={`input-field ${errors.residentialAddress ? 'error' : ''}`}
@@ -467,8 +464,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
               </div>
 
               {/* Advanced CV Upload */}
-              <div className='flex flex-col gap-[8px]'>
-                <label className="max-[430px]:hidden" htmlFor="">CV-nizi yükləyin<span className="text-red-500">*</span></label>
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-slate-700">CV-nizi yükləyin<span className="text-red-500">*</span></label>
 
                 {/* Hidden file input */}
                 <input
@@ -490,18 +487,14 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                   onDrop={handleDrop}
                 >
                   <div
-                    className={`input-field
-                      max-[430px]:text-[16px] max-[430px]:p-[16px] max-[430px]:rounded-[16px] max-[430px]:border-primary
-                      px-[14px] py-[10px] border rounded-[8px] flex items-center justify-between transition-all cursor-pointer
-                      ${errors.cv ? 'error' : ''}
-                    `}
+                    className={`input-field flex items-center justify-between transition-all cursor-pointer ${errors.cv ? 'error' : ''}`}
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <p className='max-[430px]:text-primary line-clamp-1 truncate text-[14px]/[21px] text-[#7F7F87]'>
                       {formData.cv ? formData.cv.name : 'CV faylınızı seçin'}
                     </p>
                     <div>
-                      {isUploading ? <GiSandsOfTime className="text-[var(--primary-color)] text-[18px]" /> : formData.cv ? '✓' : '+'}
+                      {isUploading ? <GiSandsOfTime className="text-(--primary-color) text-[18px]" /> : formData.cv ? '✓' : '+'}
                     </div>
                   </div>
 
@@ -514,7 +507,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-1">
                         <div
-                          className="bg-[var(--primary-color)] h-1 rounded-full transition-all duration-300"
+                          className="bg-(--primary-color) h-1 rounded-full transition-all duration-300"
                           style={{ width: `${uploadProgress}%` }}
                         ></div>
                       </div>
@@ -535,7 +528,7 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                             }}
                             className="text-blue-600 hover:text-blue-800"
                           >
-                            <FaRegEye className="text-[var(--primary-color)] text-[16px]" />
+                            <FaRegEye className="text-(--primary-color) text-[16px]" />
                           </button>
                         )}
                         <button
@@ -556,17 +549,8 @@ const OtherInfo = ({ formData, updateForm, onValidationChange, showAllErrors, se
                 {/* Error message */}
                 {errors.cv && <p className="text-red-500 text-sm">{errors.cv}</p>}
               </div>
-            </div>
-          </form>
-        </div>
-        <div className='max-[1200px]:hidden flex items-center basis-[50%]'>
-          <Image
-            src="/gifs/market.gif"
-            alt=""
-            width={385}
-            height={385}
-          />
-        </div>
+          </div>
+        </form>
       </div>
     </>
   );
