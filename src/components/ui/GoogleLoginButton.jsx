@@ -90,6 +90,10 @@ export default function GoogleLoginButton() {
           console.log("Google login failed");
           setIsLoading(false);
         }}
+        width="500"
+        size="large"
+        text="signin_with"
+        useOneTap
       />
     </>
 
