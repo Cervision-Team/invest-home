@@ -1,18 +1,14 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import PrivateInfo from "./form/PrivateInfo";
 import OtherInfo from "./form/OtherInfo";
 import Preview from "./form/Preview";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
-import arrowRightWhite from "../../../../../public/icons/arrow-right-white-small.svg";
-import arrowLeftWhite from "../../../../../public/icons/arrow-left-white.svg";
 import { createAgent, getMyAgents } from "@/services/api/endpoints/agentService";
 import Loader from "@/components/ui/Loader";
+import { formatDateTime } from "@/lib/formatDateTime";
 
 const AgentForm = () => {
-  const accordionRefs = useRef([React.createRef(), React.createRef(), React.createRef()]);
-  const [height, setHeights] = useState(["0px", "0px", "0px"]);
   const [formIndex, setFormIndex] = useState(0);
   const [visitedSections, setVisitedSections] = useState([true, false, false]);
   const [formData, setFormData] = useState({
@@ -35,10 +31,22 @@ const AgentForm = () => {
   const [myAgentsLoading, setMyAgentsLoading] = useState(true);
   const [myAgentsError, setMyAgentsError] = useState(null);
   const [expandedAgentId, setExpandedAgentId] = useState(null);
+  const [showAllMyAgents, setShowAllMyAgents] = useState(false);
 
-  useEffect(() => {
-    openAccordion(0);
-  }, []);
+  const steps = [
+    {
+      title: "Şəxsi məlumatlar",
+      description: "Əlaqə və iş təcrübəsi",
+    },
+    {
+      title: "Digər məlumatlar",
+      description: "Təhsil, ünvan və CV",
+    },
+    {
+      title: "Ön baxış",
+      description: "Yekun yoxlama və təsdiq",
+    },
+  ];
 
   useEffect(() => {
     let alive = true;
@@ -60,8 +68,70 @@ const AgentForm = () => {
     };
   }, []);
 
+  // If list is collapsed back to 3 items, ensure the expanded item is visible
+  useEffect(() => {
+    if (showAllMyAgents) return;
+    if (!expandedAgentId) return;
+    const visibleIds = myAgents.slice(0, 3).map((a) => a?.id).filter((v) => v != null);
+    if (visibleIds.length > 0 && !visibleIds.includes(expandedAgentId)) {
+      setExpandedAgentId(null);
+    }
+  }, [expandedAgentId, myAgents, showAllMyAgents]);
+
   const updateForm = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const visibleAgents = showAllMyAgents ? myAgents : myAgents.slice(0, 3);
+
+  const getStatusMeta = (agent) => {
+    const raw = agent?.status ?? agent?.agentStatus ?? agent?.state ?? "pending";
+    const s = String(raw).trim().toLowerCase();
+
+    if (s === "pending" || s === "awaiting" || s === "in review" || s === "in_review") {
+      return {
+        key: "pending",
+        label: "Gözlənilir",
+        className: "bg-[#F59E0B1A] text-[#B45309]",
+      };
+    }
+
+    if (s === "approved" || s === "accepted" || s === "confirmed") {
+      return {
+        key: "approved",
+        label: "Təsdiqləndi",
+        className: "bg-[#10B9811A] text-[#047857]",
+      };
+    }
+
+    if (s === "rejected" || s === "declined" || s === "denied") {
+      return {
+        key: "rejected",
+        label: "İmtina",
+        className: "bg-[#EF44441A] text-[#B91C1C]",
+      };
+    }
+
+    const fallback = s
+      .replaceAll("_", " ")
+      .replaceAll("-", " ")
+      .replace(/(^|\s)\S/g, (m) => m.toUpperCase());
+
+    return {
+      key: s || "pending",
+      label: fallback || "Gözlənilir",
+      className: "bg-[#02836F0D] text-(--primary-color)",
+    };
+  };
+
+  const getCreatedAt = (agent) => agent?.createdAt ?? agent?.createdDate ?? agent?.created ?? agent?.createDate;
+
+  const tryGetUrl = (value) => {
+    if (!value) return null;
+    const s = String(value).trim();
+    if (!s) return null;
+    if (s.startsWith("http://") || s.startsWith("https://")) return s;
+    return null;
   };
 
   const resetForm = () => {
@@ -83,7 +153,6 @@ const AgentForm = () => {
     });
     setFormIndex(0);
     setVisitedSections([true, false, false]);
-    openAccordion(0);
   };
 
   const handleNextClick = () => {
@@ -226,224 +295,293 @@ const AgentForm = () => {
     });
 
     setFormIndex(index);
-    openAccordion(index);
   };
 
-  const openAccordion = indexToOpen => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const newHeights = accordionRefs.current.map((ref, i) => {
-          if (i === indexToOpen && ref.current) {
-            return `${ref.current.scrollHeight}px`;
-          }
-          return "0px";
-        });
-        setHeights(newHeights);
-      });
+  const goToStep = (nextIndex) => {
+    if (!Number.isInteger(nextIndex)) return;
+    if (nextIndex < 0 || nextIndex > 2) return;
+    if (nextIndex > formIndex) return; // only allow navigating back
+
+    setVisitedSections((prev) => {
+      const updated = [...prev];
+      updated[nextIndex] = true;
+      return updated;
     });
+    setFormIndex(nextIndex);
   };
 
   return (
     <>
-      <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[40px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
-        <div className="flex flex-col gap-[16px]">
-          <div className="flex items-start justify-between gap-[12px]">
-            <div>
-              <h2 className="text-[20px] font-[600]">Sorğularım</h2>
-              {/* <p className="text-[#737373] text-[14px] mt-[4px]">Backend tokenə görə yalnız sənin göndərdiklərini göstərir.</p> */}
-            </div>
+      <div className="w-full">
+        <div className="mb-6">
+          <h1 className="text-[#111] text-[24px] sm:text-[32px] font-semibold">
+            Agent olmaq üçün müraciət
+          </h1>
+          <p className="text-3 mt-2 max-w-2xl">
+            Məlumatları addım-addım doldurun. Son addımda ön baxış edib təsdiqləyə bilərsiniz.
+          </p>
+        </div>
 
-            <button
-              type="button"
-              onClick={resetForm}
-              className="rounded-[10px] py-[10px] px-[14px] border-[1px] border-[rgba(0,0,0,0.2)] hover:bg-[rgba(0,0,0,0.03)]"
-            >
-              Yeni müraciət yarat
-            </button>
-          </div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <aside className="xl:col-span-1 flex flex-col gap-6">
+            <div className="order-2 bg-white rounded-2xl shadow-sm border border-neutral-disabled/20 p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-[18px] font-semibold text-[#111]">Sorğularım</h2>
+                  <p className="text-sm text-3 mt-1">Əvvəl göndərdiyiniz müraciətlər</p>
+                </div>
 
-          {myAgentsLoading ? (
-            <div className="py-2">
-              <Loader />
-            </div>
-          ) : myAgentsError ? (
-            <p className="text-red-600 text-[14px]">{myAgentsError}</p>
-          ) : myAgents.length === 0 ? (
-            <p className="text-[#737373] text-[14px]">Hələ sorğu yoxdur.</p>
-          ) : (
-            <div className="flex flex-col gap-[10px]">
-              {myAgents.map((agent) => {
-                const fullName = `${agent?.name || ""} ${agent?.surname || ""}`.trim();
-                const isExpanded = expandedAgentId === agent?.id;
-                return (
-                  <div key={agent?.id ?? fullName} className="border-[1px] border-[rgba(0,0,0,0.12)] rounded-[12px] p-[14px]">
-                    <div className="flex flex-wrap items-center justify-between gap-[10px]">
-                      <div className="min-w-0">
-                        <p className="font-[600] truncate">{fullName || "-"}</p>
-                        <p className="text-[#737373] text-[14px]">ID: {agent?.id ?? "-"} • {agent?.email || "-"} • {agent?.phoneNumber || "-"}</p>
-                      </div>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="shrink-0 rounded-xl px-4 py-2 text-sm font-medium border border-neutral-disabled/25 bg-white hover:bg-neutral transition"
+                >
+                  Formu yenilə
+                </button>
+              </div>
+
+              <div className="mt-4">
+                {myAgentsLoading ? (
+                  <div className="py-4 flex items-center justify-center">
+                    <Loader />
+                  </div>
+                ) : myAgentsError ? (
+                  <p className="text-red-600 text-sm">{myAgentsError}</p>
+                ) : myAgents.length === 0 ? (
+                  <p className="text-3 text-sm">Hələ sorğu yoxdur.</p>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <div
+                      className={
+                        "flex flex-col gap-3 pr-1 overflow-y-auto " +
+                        (showAllMyAgents ? "max-h-[560px]" : "max-h-[420px]")
+                      }
+                    >
+                      {visibleAgents.map((agent) => {
+                        const fullName = `${agent?.name || ""} ${agent?.surname || ""}`.trim();
+                        const isExpanded = expandedAgentId === agent?.id;
+                        const statusMeta = getStatusMeta(agent);
+                        const createdAt = getCreatedAt(agent);
+
+                        const experiences = Array.isArray(agent?.experiences) ? agent.experiences : [];
+                        const educations = Array.isArray(agent?.educations) ? agent.educations : [];
+                        const cvDisplay = agent?.cvURL ?? agent?.cvUrl ?? agent?.cv ?? null;
+                        const cvUrl = tryGetUrl(cvDisplay);
+
+                        return (
+                          <div
+                            key={agent?.id ?? fullName}
+                            className="rounded-xl border border-neutral-disabled/20 bg-white p-4"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold truncate">{fullName || "-"}</p>
+                                <div className="mt-1 flex flex-wrap items-center gap-2">
+                                  <span className="text-3 text-xs">ID: {agent?.id ?? "-"}</span>
+                                  <span
+                                    className={
+                                      "text-xs px-2 py-0.5 rounded-full " +
+                                      (statusMeta?.className || "bg-[#F59E0B1A] text-[#B45309]")
+                                    }
+                                  >
+                                    {statusMeta?.label || "Gözlənilir"}
+                                  </span>
+                                  {createdAt ? (
+                                    <span className="text-3 text-xs">{formatDateTime(createdAt, { fallback: "" })}</span>
+                                  ) : null}
+                                </div>
+                                <p className="text-3 text-xs mt-1 truncate">{agent?.email || "-"}</p>
+                                <p className="text-3 text-xs mt-1 truncate">{agent?.phoneNumber || "-"}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setExpandedAgentId(isExpanded ? null : agent?.id)}
+                                className="shrink-0 rounded-xl px-3 py-2 text-sm font-medium bg-(--primary-color) text-white hover:opacity-90 transition"
+                              >
+                                {isExpanded ? "Gizlət" : "Ətraflı"}
+                              </button>
+                            </div>
+
+                            {isExpanded && (
+                              <div className="mt-4 rounded-xl border border-neutral-disabled/20 bg-neutral/40 p-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="text-xs text-3">Yaş</p>
+                                    <p className="text-sm font-medium text-[#111] mt-0.5">{agent?.age ?? "-"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-xs text-3">Ünvan</p>
+                                    <p className="text-sm font-medium text-[#111] mt-0.5 wrap-break-word">
+                                      {agent?.residentialAddress || "-"}
+                                    </p>
+                                  </div>
+
+                                  <div className="sm:col-span-2">
+                                    <div className="flex items-center justify-between gap-3">
+                                      <p className="text-xs text-3">CV</p>
+                                      {cvUrl ? (
+                                        <a
+                                          href={cvUrl}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-xs font-semibold text-(--primary-color) hover:underline"
+                                        >
+                                          Aç
+                                        </a>
+                                      ) : null}
+                                    </div>
+                                    <p className="text-sm font-medium text-[#111] mt-0.5 wrap-break-word">
+                                      {cvDisplay || "-"}
+                                    </p>
+                                  </div>
+
+                                  <div className="sm:col-span-2">
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                      <p className="text-xs text-3">Təcrübə</p>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-white border border-neutral-disabled/20 text-[#111]">
+                                        {experiences.length} ədəd
+                                      </span>
+                                    </div>
+                                    {experiences.length === 0 ? (
+                                      <p className="text-sm font-medium text-[#111] mt-1">-</p>
+                                    ) : (
+                                      <div className="mt-2 flex flex-col gap-2">
+                                        {experiences.slice(0, 2).map((exp, idx) => {
+                                          const title = [exp?.position, exp?.company].filter(Boolean).join(" • ");
+                                          const start = exp?.startDate ?? exp?.startMonth ?? "";
+                                          const end = exp?.endDate ?? exp?.endMonth ?? "";
+                                          const isCurrent = Boolean(exp?.current ?? exp?.isCurrent);
+                                          const range = start || end || isCurrent ? `${start || "?"} → ${isCurrent ? "Hazırda" : (end || "?")}` : null;
+                                          return (
+                                            <div key={exp?.id ?? idx} className="rounded-lg bg-white border border-neutral-disabled/20 p-3">
+                                              <p className="text-sm font-semibold text-[#111] truncate">{title || "-"}</p>
+                                              {range ? <p className="text-xs text-3 mt-1">{range}</p> : null}
+                                            </div>
+                                          );
+                                        })}
+                                        {experiences.length > 2 ? (
+                                          <p className="text-xs text-3">+ {experiences.length - 2} daha</p>
+                                        ) : null}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="sm:col-span-2">
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                      <p className="text-xs text-3">Təhsil</p>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-white border border-neutral-disabled/20 text-[#111]">
+                                        {educations.length} ədəd
+                                      </span>
+                                    </div>
+                                    {educations.length === 0 ? (
+                                      <p className="text-sm font-medium text-[#111] mt-1">-</p>
+                                    ) : (
+                                      <div className="mt-2 flex flex-col gap-2">
+                                        {educations.slice(0, 2).map((edu, idx) => {
+                                          const title = [edu?.institution, edu?.degree].filter(Boolean).join(" • ");
+                                          const start = edu?.startDate ?? edu?.startMonth ?? "";
+                                          const end = edu?.endDate ?? edu?.endMonth ?? "";
+                                          const range = start || end ? `${start || "?"} → ${end || "?"}` : null;
+                                          return (
+                                            <div key={edu?.id ?? idx} className="rounded-lg bg-white border border-neutral-disabled/20 p-3">
+                                              <p className="text-sm font-semibold text-[#111] truncate">{title || "-"}</p>
+                                              {range ? <p className="text-xs text-3 mt-1">{range}</p> : null}
+                                            </div>
+                                          );
+                                        })}
+                                        {educations.length > 2 ? (
+                                          <p className="text-xs text-3">+ {educations.length - 2} daha</p>
+                                        ) : null}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {myAgents.length > 3 ? (
                       <button
                         type="button"
-                        onClick={() => setExpandedAgentId(isExpanded ? null : agent?.id)}
-                        className="text-white bg-[var(--primary-color)] rounded-[10px] py-[8px] px-[12px] hover:opacity-90"
+                        onClick={() => setShowAllMyAgents((v) => !v)}
+                        className="mt-1 w-full rounded-xl px-4 py-2.5 text-sm font-semibold border border-neutral-disabled/25 bg-white hover:bg-neutral transition"
                       >
-                        {isExpanded ? "Gizlət" : "Ətraflı"}
+                        {showAllMyAgents ? "Daha az" : `Daha çox (${myAgents.length - 3})`}
                       </button>
-                    </div>
-
-                    {isExpanded && (
-                      <div className="mt-[12px] grid grid-cols-1 min-[768px]:grid-cols-2 gap-[12px]">
-                        <div>
-                          <p className="text-[13px] text-[#737373]">Yaş</p>
-                          <p className="font-[500]">{agent?.age ?? "-"}</p>
-                        </div>
-                        <div>
-                          <p className="text-[13px] text-[#737373]">Ünvan</p>
-                          <p className="font-[500]">{agent?.residentialAddress || "-"}</p>
-                        </div>
-                        <div className="min-[768px]:col-span-2">
-                          <p className="text-[13px] text-[#737373]">CV</p>
-                          <p className="font-[500]">{agent?.cvURL || "-"}</p>
-                        </div>
-                      </div>
-                    )}
+                    ) : null}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-        <section className="min-[430px]:bg-white min-[430px]:px-[32px] min-[430px]:pt-[40px] min-[430px]:pb-[68px] min-[430px]:rounded-[12px] min-[430px]:shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
-          <div className="flex gap-[36px]">
-            <div className='max-[768px]:hidden basis-[340px] min-h-[512px] px-[19px] pt-[34.5px] pb-[46px] rounded-[12px] border-[0.5px] border-[var(--primary-color)] shadow-[0_4px_10px_rgba(0,0,0,0.15)]'>
-              <div className="logo-container my-[15.5px]">
-                <div className='image-container flex items-center justify-center'>
-                  <Image
-                    src="/images/logo_Invest_Home.png"
-                    alt="logo"
-                    width={57}
-                    height={57}
-                  />
-                </div>
-                <div className='mt-[7px]'>
-                  <h1 className='text-center text-[20px] font-[600] main-logo-style'>INVEST <span className='text-[var(--primary-color)]'>HOME</span></h1>
-                </div>
+                )}
               </div>
-              <ul className="mt-[38px] flex flex-col gap-[16px]">
-                <div className="accordion">
-                  {/* accordion-head */}
-                  <div className='accordion-head flex gap-[6px]'>
-                    <div
-                      className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 0 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'
-                        }`}
-                    />
-                    <li
-                      className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 0
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : formIndex > 0
-                          ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                          : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
-                        }`}
-                    >
-                      Şəxsi məlumatlar
-                    </li>
-                  </div>
-                  {/* accordion-body */}
-                  <div
-                    ref={accordionRefs.current[0]}
-                    style={{ maxHeight: height[0] }}
-                    className={`transition-[max-height] overflow-hidden duration-300 ease-in-out accordion-body ml-[9px]`}
-                  >
-                    <div className='mt-[16px] flex flex-col gap-[28px]'>
-                      <div className='flex items-center gap-[10px] relative'>
-                        <div className="radio-container">
-                          <div className="radio-outline rounded-[100%] flex items-center justify-center border-[2px] border-[var(--primary-color)] w-[20px] h-[20px]">
-                            <div className="radio-base rounded-[100%] bg-[var(--primary-color)] w-[10px] h-[10px]"></div>
-                          </div>
-                        </div>
-                        <span className='text-[#737373] text-[16px]'>İş təcrübəsi 1</span>
-                        <div className='line absolute w-[1px] h-[28px] rounded-[1px] bg-[var(--primary-color)] left-[10px] top-[24px] translate-x-[-50%] translate-y-[0]'></div>
-                      </div>
-                      <div className='flex items-center gap-[10px] relative'>
-                        <div className="radio-container">
-                          <div className="radio-outline rounded-[100%] flex items-center justify-center border-[2px] border-[var(--primary-color)] w-[20px] h-[20px]">
-                            <div className="radio-base rounded-[100%] bg-[var(--primary-color)] w-[10px] h-[10px]"></div>
-                          </div>
-                        </div>
-                        <span className='text-[#737373] text-[16px]'>İş təcrübəsi 2</span>
-                        <div className='line absolute w-[1px] h-[28px] rounded-[1px] bg-[var(--primary-color)] left-[10px] top-[24px] translate-x-[-50%] translate-y-[0]'></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="accordion">
-                  <div className='accordion-head flex gap-[6px]'>
-                    <div
-                      className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 1 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'
-                        }`}
-                    />
-                    <li
-                      className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 1
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : formIndex > 1
-                          ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                          : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
-                        }`}
-                    >
-                      Digər məlumatlar
-                    </li>
-                  </div>
-                  <div
-                    ref={accordionRefs.current[1]}
-                    style={{ maxHeight: height[1] }}
-                    className={`transition-[max-height] overflow-hidden duration-300 ease-in-out accordion-body ml-[9px]`}
-                  >
-                    <div className='mt-[16px] flex flex-col gap-[28px]'>
-                      <div className='flex items-center gap-[10px] relative'>
-                        <div className="radio-container">
-                          <div className="radio-outline rounded-[100%] flex items-center justify-center border-[2px] border-[var(--primary-color)] w-[20px] h-[20px]">
-                            <div className="radio-base rounded-[100%] bg-[var(--primary-color)] w-[10px] h-[10px]"></div>
-                          </div>
-                        </div>
-                        <span className='text-[#737373] text-[16px]'>Ünvanınız</span>
-                        <div className='line absolute w-[1px] h-[28px] rounded-[1px] bg-[var(--primary-color)] left-[10px] top-[24px] translate-x-[-50%] translate-y-[0]'></div>
-                      </div>
-                      <div className='flex items-center gap-[10px] relative'>
-                        <div className="radio-container">
-                          <div className="radio-outline rounded-[100%] flex items-center justify-center border-[2px] border-[var(--primary-color)] w-[20px] h-[20px]">
-                            <div className="radio-base rounded-[100%] bg-[var(--primary-color)] w-[10px] h-[10px]"></div>
-                          </div>
-                        </div>
-                        <span className='text-[#737373] text-[16px]'>CV faylınızı yükləyin</span>
-                        <div className='line absolute w-[1px] h-[28px] rounded-[1px] bg-[var(--primary-color)] left-[10px] top-[24px] translate-x-[-50%] translate-y-[0]'></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="accordion">
-                  <div className=' accordion-head flex gap-[6px]'>
-                    <div
-                      className={`transition-colors duration-300 ease-in-out line rounded-[3px] w-[3px] ${formIndex >= 2 ? 'bg-[var(--primary-color)]' : 'bg-[#9CA3AF]'
-                        }`}
-                    />
-                    <li
-                      className={`transition-colors duration-300 ease-in-out w-[100%] font-[500] text-[14px] px-[20px] py-[16px] rounded-[8px] ${formIndex === 2
-                        ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                        : formIndex > 2
-                          ? 'bg-[#02836F1A] text-[var(--primary-color)]'
-                          : 'bg-[#fff] text-[#9CA3AF] shadow-[0px_4px_10px_rgba(217,217,217,0.32)]'
-                        }`}
-                    >
-                      Ön Baxış
-                    </li>
-                  </div>
-                </div>
-              </ul>
             </div>
 
-            <div className="basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-[100%] flex flex-col justify-between">
+            <div className="order-1 bg-white rounded-2xl shadow-sm border border-neutral-disabled/20 p-5">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-[18px] font-semibold text-[#111]">Addımlar</h2>
+                <span className="text-sm text-3">{formIndex + 1}/{steps.length}</span>
+              </div>
+
+              <ol className="mt-4 flex flex-col gap-2">
+                {steps.map((step, idx) => {
+                  const isActive = idx === formIndex;
+                  const isDone = idx < formIndex;
+                  const canGoBack = idx <= formIndex;
+
+                  return (
+                    <li key={step.title}>
+                      <button
+                        type="button"
+                        onClick={() => goToStep(idx)}
+                        disabled={!canGoBack}
+                        className={
+                          "w-full flex items-start gap-3 rounded-xl px-3 py-3 border transition text-left " +
+                          (isActive
+                            ? "border-(--primary-color) bg-[#02836F0D]"
+                            : "border-neutral-disabled/20 bg-white") +
+                          (canGoBack ? " hover:bg-neutral" : " opacity-60 cursor-not-allowed")
+                        }
+                      >
+                        <div
+                          className={
+                            "mt-0.5 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 " +
+                            (isDone
+                              ? "bg-(--primary-color) text-white"
+                              : isActive
+                                ? "bg-(--primary-color) text-white"
+                                : "bg-neutral text-[#111]")
+                          }
+                        >
+                          {isDone ? "✓" : idx + 1}
+                        </div>
+                        <div className="min-w-0">
+                          <div className={"font-medium truncate " + (isActive ? "text-[#111]" : "text-[#111]")}>{step.title}</div>
+                          <div className="text-xs text-3 mt-0.5">{step.description}</div>
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </aside>
+
+          <section className="xl:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-neutral-disabled/20 p-5 sm:p-8">
+              <div className="flex items-center justify-between gap-3 mb-6">
+                <div>
+                  <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#111]">
+                    {steps[formIndex]?.title}
+                  </h2>
+                  <p className="text-sm text-3 mt-1">{steps[formIndex]?.description}</p>
+                </div>
+
+                <span className="text-xs px-3 py-1 rounded-full bg-neutral text-[#111]">
+                  Addım {formIndex + 1}
+                </span>
+              </div>
+
               {formIndex === 0 ? (
                 <PrivateInfo
                   formData={formData}
@@ -471,68 +609,56 @@ const AgentForm = () => {
               )}
 
               {submitError && (
-                <p className="text-red-500 mt-4 text-center">{submitError}</p>
+                <p className="text-red-600 mt-6 text-sm">{submitError}</p>
               )}
 
-              <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-[20px] mt-[16px]`}>
-                {formIndex === 0 ? (
+              <div className="mt-8 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div>
+                  {formIndex > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => changeForm("decrement")}
+                      className="w-full sm:w-auto rounded-xl px-5 py-3 text-sm font-semibold border border-neutral-disabled/25 bg-white hover:bg-neutral transition"
+                    >
+                      Geriyə qayıt
+                    </button>
+                  ) : null}
+                </div>
+
+                {formIndex < 2 ? (
                   <button
+                    type="button"
                     onClick={handleNextClick}
                     disabled={!currentStepValid}
-                    className={`flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
-                      ? "bg-[var(--primary-color)] text-white hover:opacity-90"
-                      : "bg-gray-400 text-white cursor-not-allowed"
-                      }`}
+                    className={
+                      "w-full sm:w-auto rounded-xl px-6 py-3 text-sm font-semibold transition text-white " +
+                      (currentStepValid
+                        ? "bg-(--primary-color) hover:opacity-90"
+                        : "bg-neutral-disabled cursor-not-allowed")
+                    }
                   >
-                    <span className="font-[500] text-[16px]">Növbəti</span>
-                    <Image src={arrowRightWhite} alt="Arrow Right" />
+                    Növbəti
                   </button>
-                ) : formIndex === 2 ? (
-                  <>
-                    <button
-                      onClick={() => changeForm("decrement")}
-                      className="flex items-center gap-[12px] text-white bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90"
-                    >
-                      <Image src={arrowLeftWhite} alt="Arrow Left" />
-                      <span className="font-[500] text-[16px]">Geriyə Qayıt</span>
-                    </button>
-                    <button
-                      onClick={handleConfirmClick}
-                      disabled={submitting || !currentStepValid}
-                      className={`rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid && !submitting
-                        ? "bg-[var(--primary-color)] text-white hover:opacity-90"
-                        : "bg-gray-400 text-white cursor-not-allowed"
-                        }`}
-                    >
-                      {submitting ? "Yüklənir..." : "Təsdiqlə"}
-                    </button>
-                  </>
                 ) : (
-                  <>
-                    <button
-                      onClick={() => changeForm("decrement")}
-                      className="flex items-center gap-[12px] text-white bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] hover:opacity-90"
-                    >
-                      <Image src={arrowLeftWhite} alt="Arrow Left" />
-                      <span className="font-[500] text-[16px]">Geriyə Qayıt</span>
-                    </button>
-                    <button
-                      onClick={handleNextClick}
-                      disabled={!currentStepValid}
-                      className={`flex items-center gap-[12px] rounded-[8px] py-[12px] px-[34px] transition-all duration-200 ${currentStepValid
-                        ? "bg-[var(--primary-color)] text-white hover:opacity-90"
-                        : "bg-gray-400 text-white cursor-not-allowed"
-                        }`}
-                    >
-                      <span className="font-[500] text-[16px]">Növbəti</span>
-                      <Image src={arrowRightWhite} alt="Arrow Right" />
-                    </button>
-                  </>
+                  <button
+                    type="button"
+                    onClick={handleConfirmClick}
+                    disabled={submitting || !currentStepValid}
+                    className={
+                      "w-full sm:w-auto rounded-xl px-6 py-3 text-sm font-semibold transition text-white " +
+                      (currentStepValid && !submitting
+                        ? "bg-(--primary-color) hover:opacity-90"
+                        : "bg-neutral-disabled cursor-not-allowed")
+                    }
+                  >
+                    {submitting ? "Göndərilir..." : "Təsdiqlə"}
+                  </button>
                 )}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
+      </div>
 
 
       {isModalOpen && (
