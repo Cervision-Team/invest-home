@@ -240,11 +240,13 @@ const Daily = ({
             color: #ef4444;
             font-size: 14px;
             margin-top: 4px;
+            position:absolute;
+            bottom: -24px;
           }
 
         `}
       </style>
-      <div className='flex flex-col justify-center gap-[30px] h-full border-b-[1px] border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
+      <div className='flex flex-col justify-center gap-[30px] h-full border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
         <div className='flex flex-col gap-[30px]'>
           <h5 className='text-[#000] text-[24px]/[28px] font-medium'>
             Xüsusiyyətlər
@@ -296,7 +298,7 @@ const Daily = ({
               {activePropertyType === 'apartmentDaily' && (
                 <div className='grid grid-cols-2 max-[1365px]:grid-cols-1 gap-[35px] mt-[28px]'>
                   {shouldShowField('buildingType') && (
-                    <div className='grid gap-[12px]'>
+                    <div className='grid gap-[12px] relative'>
                       <h6 className='text-[#000] text-[20px]/[24px]'>Bina</h6>
 
                       <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
@@ -325,7 +327,7 @@ const Daily = ({
 
               <div className='w-full grid grid-cols-[350px_350px] max-[1340px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[540px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="guestCount" className='text-[#000] text-[20px]/[24px]'>Qonaq sayı</label>
                   <input
                     type="number"
@@ -339,7 +341,7 @@ const Daily = ({
                   {hasError('guestCount') && <p className="error-text">{getErrorMessage('guestCount')}</p>}
                 </div>
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="nightCount" className='text-[#000] text-[20px]/[24px]'>Gecə sayı</label>
                   <input
                     type="number"
@@ -353,7 +355,7 @@ const Daily = ({
                   {hasError('nightCount') && <p className="error-text">{getErrorMessage('nightCount')}</p>}
                 </div>
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="checkInTime" className='text-[#000] text-[20px]/[24px]'>Giriş vaxtı</label>
                   <input
                     type="number"
@@ -367,7 +369,7 @@ const Daily = ({
                   {hasError('checkInTime') && <p className="error-text">{getErrorMessage('checkInTime')}</p>}
                 </div>
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="checkOutTime" className='text-[#000] text-[20px]/[24px]'>Çıxış vaxtı</label>
                   <input
                     type="number"
@@ -381,7 +383,7 @@ const Daily = ({
                   {hasError('checkOutTime') && <p className="error-text">{getErrorMessage('checkOutTime')}</p>}
                 </div>
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="dailyRate" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
                   <div className="relative">
                     <input
@@ -397,7 +399,7 @@ const Daily = ({
                   {hasError('dailyRate') && <p className="error-text">{getErrorMessage('dailyRate')}</p>}
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2 relative">
                   <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">Sahə</label>
                   <div className="relative">
                     <input
@@ -415,7 +417,7 @@ const Daily = ({
                 </div>
 
                 {shouldShowField('landArea') && (
-                  <div className="grid gap-2">
+                  <div className="grid gap-2 relative">
                     <label htmlFor="landArea" className="text-[#000] text-[20px]/[24px]">Torpağın sahəsi</label>
                     <div className="relative">
                       <input
@@ -434,7 +436,7 @@ const Daily = ({
                 )}
 
                 {shouldShowField('floor') && (
-                  <div className='grid gap-2'>
+                  <div className='grid gap-2 relative'>
                     <label htmlFor="floor" className='text-[#000] text-[20px]/[24px]'>Mərtəbə</label>
                     <input
                       type="number"
@@ -450,7 +452,7 @@ const Daily = ({
                 )}
 
                 {shouldShowField('totalFloors') && (
-                  <div className='grid gap-2'>
+                  <div className='grid gap-2 relative'>
                     <label htmlFor="totalFloors" className='text-[#000] text-[20px]/[24px]'>Ümumi mərtəbələr</label>
                     <input
                       type="number"
@@ -466,7 +468,7 @@ const Daily = ({
                 )}
 
                 {shouldShowField('rooms') && (
-                  <div className='grid gap-2'>
+                  <div className='grid gap-2 relative'>
                     <label htmlFor="rooms" className='text-[#000] text-[20px]/[24px]'>Otaq</label>
                     <input
                       type="number"
@@ -482,7 +484,7 @@ const Daily = ({
                 )}
 
 
-                <div className='grid gap-2'>
+                <div className='grid gap-2 relative'>
                   <label htmlFor="bathrooms" className='text-[#000] text-[20px]/[24px]'>Sanitar qovşağı</label>
                   <input
                     type="number"

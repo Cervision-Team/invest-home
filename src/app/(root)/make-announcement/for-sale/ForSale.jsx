@@ -349,7 +349,7 @@ const ForSale = ({
                 {shouldShowField('repairStatus') && (
                   <div className='grid grid-cols-2 max-[1365px]:grid-cols-1 gap-[35px] mt-[28px]'>
                     {shouldShowField('buildingType') && (
-                      <div className='grid gap-[12px]'>
+                      <div className='grid gap-[12px] relative'>
                         <h6 className='text-[#000] text-[20px]/[24px]'>Bina</h6>
 
                         <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
@@ -374,7 +374,7 @@ const ForSale = ({
                       </div>
                     )}
 
-                    <div className='grid gap-[12px]'>
+                    <div className='grid gap-[12px] relative'>
                       <h6 className='text-[#000] text-[20px]/[24px]'>Təmiri</h6>
 
                       <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
@@ -395,8 +395,8 @@ const ForSale = ({
                           Təmirsiz
                         </button>
                       </div>
-                    </div>
                     {hasError('repairStatus') && <p className="error-text">{getErrorMessage('repairStatus')}</p>}
+                    </div>
 
                   </div>
                 )}
