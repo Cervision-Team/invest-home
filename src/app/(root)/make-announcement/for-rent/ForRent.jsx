@@ -244,13 +244,15 @@ const ForRent = ({
             color: #ef4444;
             font-size: 14px;
             margin-top: 4px;
+            position:absolute;
+            bottom: -24px;
           }
 
         `}
       </style>
 
-      <div className='flex flex-col justify-center gap-[30px] h-full border-b-[1px] border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
-        <div className='flex flex-col gap-[30px]'>
+      <div className='flex flex-col justify-center gap-[30px] h-full  border-[rgba(0,0,0,0.2)] overflow-y-auto hide-scrollbar pl-[2px]'>
+        <div className='flex flex-col gap-[30px] relative'>
           <h5 className='text-[#000] text-[24px]/[28px] font-medium'>Xüsusiyyətlər</h5>
           <h6 className='text-[#000] text-[20px]/[24px]'>Əmlak növü</h6>
           {hasError('propertyType') && <p className="error-text">{getErrorMessage('propertyType')}</p>}
@@ -301,7 +303,7 @@ const ForRent = ({
             />
           </div>
           {activePropertyType === 'office' && (
-            <div className='w-full grid gap-[12px] mt-[36px]'>
+            <div className='w-full grid gap-[12px] mt-[36px] relative'>
               <h6 className='text-[#000] text-[20px]/[24px]'>Ofisin tipi</h6>
 
               <div className='grid grid-cols-[181px_181px_181px] max-[1145px]:grid-cols-3 max-[890px]:grid-cols-1 max-[890px]:gap-[23px]'>
@@ -342,7 +344,7 @@ const ForRent = ({
                 {shouldShowField('repairStatus') && (
                   <div className='grid grid-cols-2 max-[1365px]:grid-cols-1 gap-[35px] mt-[28px]'>
                     {shouldShowField('buildingType') && (
-                      <div className='grid gap-[12px]'>
+                      <div className='grid gap-[12px] relative'>
                         <h6 className='text-[#000] text-[20px]/[24px]'>Bina</h6>
 
                         <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
@@ -367,7 +369,7 @@ const ForRent = ({
                       </div>
                     )}
 
-                    <div className='grid gap-[12px]'>
+                    <div className='grid gap-[12px] relative'>
                       <h6 className='text-[#000] text-[20px]/[24px]'>Təmiri</h6>
 
                       <div className='grid grid-cols-[181px_181px] max-[890px]:grid-cols-2 max-[768px]:grid-cols-[181px_181px] max-[460px]:grid-cols-1 max-[460px]:gap-[23px]'>
@@ -388,13 +390,13 @@ const ForRent = ({
                           Təmirsiz
                         </button>
                       </div>
+                      {hasError('repairStatus') && <p className="error-text">{getErrorMessage('repairStatus')}</p>}
                     </div>
-                    {hasError('repairStatus') && <p className="error-text">{getErrorMessage('repairStatus')}</p>}
 
                   </div>
                 )}
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+                <div className='flex flex-col items-start justify-center gap-2 mt-[28px] relative'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>
                     {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
                   </p>
@@ -430,7 +432,7 @@ const ForRent = ({
                     </p>
 
                     <div className='grid grid-cols-[148px_148px_148px_148px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="initialPayment" className='text-[#000] text-[16px]/[20px]'>İlkin ödəniş</label>
                         <input
                           type="number"
@@ -444,7 +446,7 @@ const ForRent = ({
                         {hasError('initialPayment') && <p className="error-text">{getErrorMessage('initialPayment')}</p>}
                       </div>
 
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="monthlyPayment" className='text-[#000] text-[16px]/[20px]'>Aylıq ödəniş</label>
                         <input
                           type="number"
@@ -458,7 +460,7 @@ const ForRent = ({
                         {hasError('monthlyPayment') && <p className="error-text">{getErrorMessage('monthlyPayment')}</p>}
                       </div>
 
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="remainingMonths" className='text-[#000] text-[16px]/[20px]'>Qalıq ay</label>
                         <input
                           type="number"
@@ -477,7 +479,7 @@ const ForRent = ({
 
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
                   {shouldShowField('price') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="price" className='text-[#000] text-[20px]/[24px]'>Qiyməti</label>
                       <div className="relative ">
                         <input
@@ -494,7 +496,7 @@ const ForRent = ({
                     </div>
                   )}
                   {shouldShowField('area') && (
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 relative">
                       <label htmlFor="area" className="text-[#000] text-[20px]/[24px]">
                         {activePropertyType === 'house' ? "Evin tikili sahəsi" : "Sahə"}
                       </label>
@@ -518,7 +520,7 @@ const ForRent = ({
                   )}
 
                   {shouldShowField('landArea') && (
-                    <div className="grid gap-2">
+                    <div className="grid gap-2 relative">
                       <label htmlFor="landArea" className="text-[#000] text-[20px]/[24px]">Torpağın sahəsi</label>
                       <div className="relative ">
                         <input
@@ -537,7 +539,7 @@ const ForRent = ({
                   )}
 
                   {shouldShowField('floor') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="floor" className='text-[#000] text-[20px]/[24px]'>Mərtəbə</label>
                       <input
                         type="number"
@@ -553,7 +555,7 @@ const ForRent = ({
                   )}
 
                   {shouldShowField('totalFloors') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="totalFloors" className='text-[#000] text-[20px]/[24px]'>Ümumi mərtəbələr</label>
                       <input
                         type="number"
@@ -569,7 +571,7 @@ const ForRent = ({
                   )}
 
                   {shouldShowField('rooms') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="rooms" className='text-[#000] text-[20px]/[24px]'>Otaq</label>
                       <input
                         type="number"
@@ -585,7 +587,7 @@ const ForRent = ({
                   )}
 
                   {shouldShowField('bathrooms') && (
-                    <div className='grid gap-2'>
+                    <div className='grid gap-2 relative'>
                       <label htmlFor="bathrooms" className='text-[#000] text-[20px]/[24px]'>Sanitar qovşağı</label>
                       <input
                         type="number"

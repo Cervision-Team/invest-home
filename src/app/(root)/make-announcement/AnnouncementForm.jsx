@@ -110,7 +110,6 @@ const AnnouncementForm = () => {
     onSubmit: async (values) => {
       const formData = new FormData();
 
-      // 1️⃣ DTO üçün JSON obyektini formalaşdır
       const dto = {
         announcementType: values.announcementType,
         propertyType: values.propertyType,
@@ -162,42 +161,29 @@ const AnnouncementForm = () => {
 
       console.log(dto);
 
-      // 2️⃣ dto JSON kimi əlavə olunur (RequestParam("dto"))
       formData.append("announcement", new Blob(
         [JSON.stringify(dto)],
-        { type: "application/json" } // <-- vacibdir
+        { type: "application/json" } 
       ));
 
-      // 3️⃣ şəkilləri əlavə et
       values.images.forEach((img) => {
         if (img.file instanceof File) {
           formData.append("images", img.file);
         }
       });
 
-      // 4️⃣ videolar varsa əlavə et
       values.videos.forEach((vid) => {
         if (vid.file instanceof File) {
           formData.append("videos", vid.file);
         }
       });
-      // 🔹 Sadə text/string/number tipləri əlavə edirik
-      // Object.keys(dto).forEach((key) => {
-      //   // images, videos və s. xaric
-      //   if (!["images", "videos", "uploadedFiles"].includes(key)) {
-      //     formData.append(key, values[key]);
-      //   }
-      // });
-      // 🔹 Əgər əlavə fayllar (uploadedFiles) varsa
+
       values.uploadedFiles.forEach((file) => {
         if (file instanceof File) {
           formData.append("uploadedFiles", file);
         }
       });
 
-
-
-      // 5️⃣ backend çağırışı
       await createAnnouncement(formData);
     },
 
