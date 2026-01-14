@@ -31,13 +31,13 @@ export default function Home() {
       <MobileCategory />
       </Suspense>
       <Suspense fallback={<RecentHousesSkeleton />}>
-      <RecentHouses houseType="Ən son siyahıya alınmış əmlaklar" />
+      <RecentHouses houseType="Ən son siyahıya alınmış əmlaklar" defaultActiveType="popular" />
       </Suspense>
       <Suspense fallback={<RecentHousesSkeleton />}>
-      <RecentHouses houseType="Satılıq əmlaklar" />
+      <RecentHouses houseType="Satılıq əmlaklar" defaultActiveType="enSon" />
       </Suspense>
       <Suspense fallback={<RecentHousesSkeleton />}>
-      <RecentHouses houseType="Kirayə evlər" />
+      <RecentHouses houseType="Kirayə evlər" defaultActiveType="enSon" />
       </Suspense>
       <Neighborhoods />
       <Services />

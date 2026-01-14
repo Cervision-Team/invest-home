@@ -18,7 +18,7 @@ const ClipboardIcon = "/icons/clipboard.svg";
 const MetroIcon = "/icons/metro.svg";
 const SquareMetersIcon = "/icons/Square Meters.svg";
 const ShareSvg = "/icons/share.svg";
-const BedIcon = "/icons/guidance_hotel-room.svg";
+const BedIcon = "/icons/bed-icon.svg";
 const FloorIcon = "/icons/ph_building-light.svg";
 const Manat = "/icons/fa6-solid_manat-sign.svg";
 const VideoSvg = "/icons/lets-icons_video-fill.svg";
@@ -38,10 +38,26 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
   const hasPublisherImage = Boolean(house?.publisher?.imageUrl);
   const publisherName = house?.publisher?.fullName?.trim() || "Elan sahibi";
 
+  // const toText = (value) => {
+  //   if (value == null) return "";
+  //   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  //     return String(value);
+  //   }
+  //   if (Array.isArray(value)) {
+  //     return value.map(toText).filter(Boolean).join(", ");
+  //   }
+  //   if (typeof value === "object") {
+  //     if (value?.label != null) return toText(value.label);
+  //     if (value?.name != null) return toText(value.name);
+  //     if (value?.title != null) return toText(value.title);
+  //   }
+  //   return "";
+  // };
+
 
   const handleFavClick = (e) => {
     e.preventDefault();
-    onToggleFavorite?.(house.id);
+    onToggleFavorite?.(house?.id);
 
     // if (isFavorite) {
     //   await fetch(`/api/favorites/${house.id}`, { method: "DELETE" });
@@ -54,7 +70,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
   };
 
   return (
-    <Link href={`/house-detail/${house.id}`} className="group">
+    <Link href={`/house-detail/${house?.id}`} className="group">
       <style jsx>{`
         .dynamic-dots {
           display: flex;
@@ -87,11 +103,11 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               setActiveSlide(swiper.realIndex);
             }}
             navigation={{
-              nextEl: `.custom-next-${house.id}`,
-              prevEl: `.custom-prev-${house.id}`,
+              nextEl: `.custom-next-${house?.id}`,
+              prevEl: `.custom-prev-${house?.id}`,
             }}
             pagination={{
-              el: `.custom-pagination-${house.id}`,
+              el: `.custom-pagination-${house?.id}`,
               clickable: true,
               renderBullet: function (index, className) {
                 const isMobile =
@@ -113,8 +129,8 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             }}
             className="w-full"
           >
-            <div className={`card custom-prev-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
-            <div className={`card custom-next-${house.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
+            <div className={`card custom-prev-${house?.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
+            <div className={`card custom-next-${house?.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
             {images.length
               ? images.map((media, index) => {
                 const imageUrl = media.imageUrl;
@@ -198,13 +214,14 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
         <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-2 flex flex-col gap-[2px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
           <div className="flex justify-between items-center gap-[16px]">
             <div className="hidden max-[769px]:flex items-center gap-[5px]">
-              <span className="text-[14px] font-[600]">{house.price}</span>
+              <span className="text-[14px] font-[600]">{house?.price}</span>
               <Image src={Manat} alt="Manat" width={10} height={10} />
             </div>
             <div className="name max-[769px]:hidden shrink min-w-0 overflow-hidden">
               <h3 className="whitespace-nowrap font-[500] text-[16px] text-[#111111]">
-                {house.propertyType}
+                {house?.propertyType?.displayName||"Əmlak növü qeyd edilməyib"}
               </h3>
+             
             </div>
             <div className="shrink-0 share cursor-pointer">
               <Image src={ShareSvg} alt="Share" width={20} height={20} />
@@ -214,7 +231,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           <div className="flex items-center gap-[11px]">
             <CiLocationOn className="text-[var(--text-color-3)] hidden max-[769px]:inline-block" />
             <span className="font-[500] text-[var(--text-color-3)] text-[14px] whitespace-nowrap max-[769px]:hidden">
-              {house.selectedAddress}
+              {house?.selectedAddress}
             </span>
             <Image
               src={MetroIcon}
@@ -231,11 +248,11 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
           <div className="flex max-[769px]:gap-[8px] gap-[12px] items-center font-[300] text-[16px]">
             {
-              house.rooms && (
+              house?.rooms && (
                 <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
                   <Image src={BedIcon} alt="Beds" width={18} height={18} className="h-auto" />
                   <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                    {house.rooms} <span className="max-[769px]:hidden">otaq</span>
+                    {house?.rooms} <span className="max-[769px]:hidden">otaq</span>
                   </span>
                 </div>
               )
@@ -245,13 +262,13 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={FloorIcon} alt="Floor" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.floor} / {house.totalFloors}
+                {house?.floor}/{house?.totalFloors}
               </span>
             </div>
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={SquareMetersIcon} alt="Field" width={18} height={18} className="h-auto" />
               <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
-                {house.area} m<sup>2</sup>
+                {house?.area} m<sup>2</sup>
               </span>
             </div>
           </div>
@@ -278,14 +295,15 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               </div>
 
               <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-                {publisherName.split(" ").slice(0, 1).join(" ")} {publisherName.split(" ").slice(1, 2).join(" ")[0]}.
+                {publisherName.split(" ").slice(0, 1).join(" ")}
+                {publisherName.split(" ")[1]?.[0] ? ` ${publisherName.split(" ")[1][0]}.` : ""}
               </span>
 
             </div>
           }
           <div className="flex items-center gap-[5px] shrink min-w-0 overflow-hidden">
             <span className="text-[16px] font-[600] max-[1200]:text-[16px]">
-              {house.price}
+              {house?.price}
             </span>
             <Image src={Manat} alt="Manat" width={12} height={12} />
           </div>
