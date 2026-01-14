@@ -194,7 +194,7 @@ const HeroAndDetails = ({ id }) => {
         <div className='mt-[20px] px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
           <div className='flex justify-between items-start gap-4'>
             <h1 className='text-[#111] text-[22px] lg:text-[32px] leading-[1.2] font-medium max-[431px]:text-[14px]'>
-              {house?.announcementType == "SELL" ? "Satılır" : "Kiraye"},{" "}
+              {house?.announcementType?.displayName},{" "}
               {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
               {house?.rooms} otaq,{" "}
               {house?.area} m2,{" "}
@@ -306,7 +306,7 @@ const HeroAndDetails = ({ id }) => {
                   <PrimarySimpleButton icon={HouseDetailsFloor} name={`${house?.floor}/${house?.totalFloors}`} />
                   <PrimarySimpleButton icon={HouseDetailsSquare} name={`${house?.area} m2`} />
                   {
-                    house?.repairStatus === "RENEWED" ?
+                    house?.repairStatus?.code === "RENEWED" ?
                       <PrimarySimpleButton icon={HouseDetailsPaint} name="Tam Təmirli" />
                       :
                       <PrimarySimpleButton icon={HouseDetailsPaint} name="Təmirsiz" />
@@ -351,9 +351,9 @@ const HeroAndDetails = ({ id }) => {
                   Xüsusiyyətlər
                 </h1>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {house?.features.map((item, idx) => (
-                    <div key={idx} className="flex flex-row gap-3 items-center text-[#2B2B2B] text-base sm:text-[20px]">
+                    <ul key={idx} className="flex flex-row gap-3 items-center text-[#2B2B2B] text-base sm:text-[20px]">
                       {/* <Image
                         src={item}
                         alt={item}
@@ -361,8 +361,8 @@ const HeroAndDetails = ({ id }) => {
                         height={24}
                         unoptimized
                       /> */}
-                      <p>{item}</p>
-                    </div>
+                      <li className='list-disc ml-6'>{item.displayName}</li>
+                    </ul>
                   ))}
                   {/* {[
                     { icon: Elevator, label: "Lift" },
@@ -454,7 +454,7 @@ const HeroAndDetails = ({ id }) => {
           <div className="w-full bg-white px-4 py-2.5 flex items-center justify-between gap-3 shadow-md" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <h1 className='text-[#111] text-[16px] leading-[1.2] font-medium truncate'>
-                {house?.announcementType == "SELL" ? "Satılır" : "Kiraye"},{" "}
+                {house?.announcementType?.displayName},{" "}
                 {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
                 {house?.rooms} otaq,{" "}
                 {house?.area} m2,{" "}
