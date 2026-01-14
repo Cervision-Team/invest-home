@@ -14,9 +14,9 @@ import { houseData } from "../../../../components/core/house";
 import RecentHousesSkeleton from '@/components/ui/skeleton/RecentHousesSkeleton';
 import { getAnnouncement, getAnnouncementFilter } from '@/services/api/endpoints/announcementService';
 
-const RecentHouses = ({ houseType }) => {
+const RecentHouses = ({ houseType, defaultActiveType = "enSon" }) => {
   // const { t } = useTranslation();
-  const [activeType, setActiveType] = useState("enSon");
+  const [activeType, setActiveType] = useState(defaultActiveType);
   const [houses, setHouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

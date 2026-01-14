@@ -7,7 +7,7 @@ const AnncTypeButton = ({src, srcOnHover, text, isActive, onClick}) => {
   return (
     <>
       <div
-        className={`h-[64px] flex justify-center items-center gap-[8px] border border-solid rounded-[8px] transition-colors duration-200 cursor-pointer
+        className={`h-[143px] flex justify-center items-center gap-[8px] border border-solid rounded-[14px] transition-colors duration-200 cursor-pointer
         ${isActive ? 'border-primary bg-primary text-white' : 'border-[#E9E9E9] bg-[#FAFAFA] text-black hover:border-[#26B5A0] hover:bg-primary hover:text-white'}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -16,10 +16,10 @@ const AnncTypeButton = ({src, srcOnHover, text, isActive, onClick}) => {
         <Image
             src={(isHovered || isActive) && srcOnHover ? srcOnHover : src}
             alt="house-icon"
-            width={24}
-            height={24}
+            width={40}
+            height={40}
         />
-        <span className='text-[14px]'>{text}</span>
+        <span className='text-[20px]'>{text}</span>
       </div>
     </>
   )
