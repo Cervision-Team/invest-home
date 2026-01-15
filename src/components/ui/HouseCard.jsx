@@ -219,9 +219,12 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             </div>
             <div className="name max-[769px]:hidden shrink min-w-0 overflow-hidden">
               <h3 className="whitespace-nowrap font-[500] text-[16px] text-[#111111]">
-                {house?.propertyType?.displayName||"Əmlak növü qeyd edilməyib"}
+                {house?.announcementType?.displayName}{" "}
+                {house?.propertyType?.displayName || "Əmlak növü qeyd edilməyib"},{" "}
+                {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
+                {house?.rooms} otaq,{" "}
+                {house?.area} m2{" "}
               </h3>
-             
             </div>
             <div className="shrink-0 share cursor-pointer">
               <Image src={ShareSvg} alt="Share" width={20} height={20} />
