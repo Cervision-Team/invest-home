@@ -21,9 +21,12 @@ export const getAnnouncement = async () => {
 		console.log(err);
 	}
 };
-export const getAnnouncementFilter = async () => {
+export const getAnnouncementFilter = async (filter = {}, { page = 0, size = 10 } = {}) => {
 	try {
-		const res = await axios.post("/api/announcement/main?page=0&size=10", {});
+		const res = await axios.post(
+			`/api/announcement/main?page=${page}&size=${size}`,
+			filter
+		);
 		return res.data;
 	} catch (err) {
 		console.log(err);

@@ -66,121 +66,197 @@ export const SamplePrevArrow = ({ swiperRef }) => {
   );
 }
 
+// const categories = [
+//   { 
+//     id: 1, 
+//     label: "Bütün", 
+//     icon: All,
+//     filter: "all",
+//     route: "/listings", 
+//     announcementTypes: ["sell", "rent", "daily", "roommate"],
+//     propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+//   },
+//   {
+//     id: 2,
+//     label: "İpoteka",
+//     icon: Mortgage,
+//     filter: "mortgage",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent", "daily", "roommate"],
+//     propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+//   },
+//   { 
+//     id: 3, 
+//     label: "Satılıq", 
+//     icon: Sale,
+//     filter: "sell",
+//     route: "/listings",
+//     announcementTypes: ["sell"],
+//     propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
+//   },
+//   { 
+//     id: 4, 
+//     label: "Kirayə", 
+//     icon: Rent,
+//     filter: "rent",
+//     route: "/listings",
+//     announcementTypes: ["rent", "daily", "roommate"],
+//     propertyTypes: ["apartment", "house", "office", "object"]
+//   },
+//   { 
+//     id: 5, 
+//     label: "Populyar elanlar", 
+//     icon: Popular,
+//     filter: "popular",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent", "daily"],
+//     propertyTypes: ["apartment", "house", "office", "object"]
+//   },
+//   { 
+//     id: 6, 
+//     label: "Qonşuluq əmlakları", 
+//     icon: Neighbour,
+//     filter: "roommate",
+//     route: "/listings",
+//     announcementTypes: ["roommate"],
+//     propertyTypes: ["apartment"]
+//   },
+//   { 
+//     id: 7, 
+//     label: "Mənzil", 
+//     icon: Building,
+//     filter: "apartment",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent", "daily", "roommate"],
+//     propertyTypes: ["apartment"]
+//   },
+//   { 
+//     id: 8, 
+//     label: "Bağ Evi", 
+//     icon: Datcha,
+//     filter: "house",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent", "daily"],
+//     propertyTypes: ["house"]
+//   },
+//   { 
+//     id: 9, 
+//     label: "Obyekt", 
+//     icon: Store,
+//     filter: "object",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent"],
+//     propertyTypes: ["object"]
+//   },
+//   { 
+//     id: 10, 
+//     label: "Torpaq", 
+//     icon: Land,
+//     filter: "land",
+//     route: "/listings",
+//     announcementTypes: ["sell"],
+//     propertyTypes: ["land"]
+//   },
+//   { 
+//     id: 11, 
+//     label: "Ofis", 
+//     icon: Office,
+//     filter: "office",
+//     route: "/listings",
+//     announcementTypes: ["sell", "rent"],
+//     propertyTypes: ["office"]
+//   },
+// ];
+
 const categories = [
-  { 
-    id: 1, 
-    label: "Bütün", 
+  {
+    id: 1,
+    label: "Bütün",
     icon: All,
     filter: "all",
-    route: "/listings", 
-    announcementTypes: ["sell", "rent", "daily", "roommate"],
-    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
   },
   {
     id: 2,
     label: "İpoteka",
     icon: Mortgage,
     filter: "mortgage",
-    route: "/listings",
-    announcementTypes: ["sell", "rent", "daily", "roommate"],
-    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
   },
-  { 
-    id: 3, 
-    label: "Satılıq", 
+  {
+    id: 3,
+    label: "Satılıq",
     icon: Sale,
     filter: "sell",
-    route: "/listings",
     announcementTypes: ["sell"],
-    propertyTypes: ["apartment", "house", "office", "object", "land", "garage"]
   },
-  { 
-    id: 4, 
-    label: "Kirayə", 
+  {
+    id: 4,
+    label: "Kirayə",
     icon: Rent,
     filter: "rent",
-    route: "/listings",
-    announcementTypes: ["rent", "daily", "roommate"],
-    propertyTypes: ["apartment", "house", "office", "object"]
+    announcementTypes: ["rent"],
   },
-  { 
-    id: 5, 
-    label: "Populyar elanlar", 
+  {
+    id: 5,
+    label: "Populyar elanlar",
     icon: Popular,
     filter: "popular",
-    route: "/listings",
-    announcementTypes: ["sell", "rent", "daily"],
-    propertyTypes: ["apartment", "house", "office", "object"]
   },
-  { 
-    id: 6, 
-    label: "Qonşuluq əmlakları", 
-    icon: Neighbour,
-    filter: "roommate",
-    route: "/listings",
-    announcementTypes: ["roommate"],
-    propertyTypes: ["apartment"]
-  },
-  { 
-    id: 7, 
-    label: "Mənzil", 
+  // { 
+  //   id: 6, 
+  //   label: "Qonşuluq əmlakları", 
+  //   icon: Neighbour,
+  //   filter: "roommate",
+  // },
+  {
+    id: 7,
+    label: "Mənzil",
     icon: Building,
     filter: "apartment",
-    route: "/listings",
-    announcementTypes: ["sell", "rent", "daily", "roommate"],
     propertyTypes: ["apartment"]
   },
-  { 
-    id: 8, 
-    label: "Bağ Evi", 
+  {
+    id: 8,
+    label: "Bağ Evi",
     icon: Datcha,
     filter: "house",
-    route: "/listings",
-    announcementTypes: ["sell", "rent", "daily"],
     propertyTypes: ["house"]
   },
-  { 
-    id: 9, 
-    label: "Obyekt", 
+  {
+    id: 9,
+    label: "Obyekt",
     icon: Store,
     filter: "object",
-    route: "/listings",
-    announcementTypes: ["sell", "rent"],
     propertyTypes: ["object"]
   },
-  { 
-    id: 10, 
-    label: "Torpaq", 
+  {
+    id: 10,
+    label: "Torpaq",
     icon: Land,
     filter: "land",
-    route: "/listings",
-    announcementTypes: ["sell"],
     propertyTypes: ["land"]
   },
-  { 
-    id: 11, 
-    label: "Ofis", 
+  {
+    id: 11,
+    label: "Ofis",
     icon: Office,
     filter: "office",
-    route: "/listings",
-    announcementTypes: ["sell", "rent"],
     propertyTypes: ["office"]
   },
-];
+]
 
-function Category({ 
+function Category({
   listings = [],
   loading = false,
-  showNavigation = true, 
+  showNavigation = true,
   onCategoryChange,
-  activeId: externalActiveId, 
+  activeId: externalActiveId,
 }) {
   const [activeId, setActiveId] = useState(externalActiveId || null);
   const [hover, setHover] = useState(-1);
   const [categoriesWithCount, setCategoriesWithCount] = useState(categories);
   const swiperRef = useRef(null);
   const isMobile = useMediaQuery('(max-width: 430px)');
-  const router = useRouter(); 
+  const router = useRouter();
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -189,55 +265,56 @@ function Category({
     }
   }, [externalActiveId]);
 
-  useEffect(() => {
-    if (listings && listings.length > 0) {
-      const updatedCategories = categories.map(category => {
-        let count = 0;
-        
-        if (category.filter === "all") {
-          count = listings.length;
-        } else if (category.filter === "popular") {
-          count = listings.filter(listing => 
-            listing.isPopular || 
-            listing.viewCount > 100 || 
-            listing.favoriteCount > 10
-          ).length;
-        } else {
-          count = listings.filter(listing => {
-            const matchesAnnouncementType = category.announcementTypes.includes(listing.announcementType);
-            const matchesPropertyType = category.propertyTypes.includes(listing.propertyType);
-            return matchesAnnouncementType && matchesPropertyType;
-          }).length;
-        }
 
-        return {
-          ...category,
-          count: count
-        };
-      });
 
-      setCategoriesWithCount(updatedCategories);
+  const handleCategoryClick = (categoryId) => {
+    setActiveId(categoryId);
+    const selectedCategory = categories.find(cat => cat.id === categoryId);
+
+    if (showNavigation && selectedCategory) {
+      let categoryParams = {};
+      switch (selectedCategory.filter) {
+        case 'all':
+          categoryParams = {};
+          break;
+        case 'popular':
+          categoryParams = { popular: true };
+          break;
+        case 'mortgage':
+          categoryParams = { mortgage: true };
+          break;
+        case 'sell':
+          categoryParams = { announcementType: 'sell' };
+          break;
+        case 'rent':
+          categoryParams = { announcementType: 'rent' };
+          break;
+        case 'apartment':
+          categoryParams = { propertyType: 'apartment' };
+          break;
+        case 'house':
+          categoryParams = { propertyType: 'house' };
+          break;
+        case 'object':
+          categoryParams = { propertyType: 'object' };
+          break;
+        case 'land':
+          categoryParams = { propertyType: 'land' };
+          break;
+        case 'office':
+          categoryParams = { propertyType: 'office' };
+          break;
+        default:
+          categoryParams = {};
+      }
+      const searchParams = new URLSearchParams({...categoryParams,categoryId: categoryId});
+      router.push(`/all-houses/category-lists?${searchParams.toString()}`);
     }
-  }, [listings]);
-
-const handleCategoryClick = (categoryId) => {
-  setActiveId(categoryId);
-  const selectedCategory = categories.find(cat => cat.id === categoryId);
-
-  if (showNavigation && selectedCategory) {
-    const searchParams = new URLSearchParams({
-      category: selectedCategory.filter,
-      announcementTypes: selectedCategory.announcementTypes.join(','),
-      propertyTypes: selectedCategory.propertyTypes.join(','),
-      categoryId: categoryId.toString()
-    });
-    router.push(`/all-houses/category-lists?${searchParams.toString()}`);
-  }
-};
-return (
+  };
+  return (
     <>
-      {isMobile ? 
-        '' 
+      {isMobile ?
+        ''
         :
         <section className="max-[1200px]:mt-[60px] max-[1000px]:mt-[50px] mt-[40px] mb-[30px] max-w-[1600px] mx-auto px-[80px] max-[1025]:px-[20px] max-[426px]:px-[16px]">
           <div className="w-full flex justify-start">
