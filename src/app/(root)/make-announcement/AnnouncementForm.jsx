@@ -304,6 +304,10 @@ const AnnouncementForm = () => {
     setFormIndex(index);
     openAccordion(index);
 
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     setStepErrors({});
   };
 

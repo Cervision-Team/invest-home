@@ -338,7 +338,7 @@ const getMediaValidationSchema = () =>
       .test("pictureCount", "Ən çox 20 şəkil yükləyə bilərsiniz", function (images) {
         const selectedMedia = this.parent.selectedMedia || [];
         if (!images || !selectedMedia.includes("picture")) return true;
-        return images.length <= 20;
+        return images.length <= 50;
       }),
     videos: Yup.array()
       .of(Yup.mixed())
