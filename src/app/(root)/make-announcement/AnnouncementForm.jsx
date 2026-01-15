@@ -219,7 +219,9 @@ const AnnouncementForm = () => {
     const fieldsToReset = [
       'propertyType', 'officeType', 'buildingType', 'repairStatus',
       'price', 'monthlyRent', 'dailyRate', 'roomType', 'area', 'landArea',
-      'floor', 'totalFloors', 'rooms', 'bathrooms'
+      'floor', 'totalFloors', 'rooms', 'bathrooms',
+      'mortgage',
+      'exit'
     ];
 
     fieldsToReset.forEach(field => {
@@ -384,7 +386,14 @@ const AnnouncementForm = () => {
         } else if (formType === 'buy') {
           return <DailyAnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />
         } else {
-          return <AnncDetails {...commonProps} activePropertyType={formik.values.propertyType} />;
+          return (
+            <AnncDetails
+              {...commonProps}
+              activePropertyType={formik.values.propertyType}
+              showExit={formik.values.announcementType === 'sell'}
+              showMortgage={formik.values.announcementType === 'sell'}
+            />
+          );
         }
       case 3:
         return <Location {...commonProps} />
@@ -564,7 +573,7 @@ case 3:
                 <>
                   <button
                     onClick={() => changeForm("decrement")}
-                    disabled={isValidatingStep}
+                    disabled={isValidatingStep || formik.isSubmitting}
                     className='max-[768px]:justify-center cursor-pointer flex items-center gap-3 text-[white] bg-primary rounded-lg py-3 px-[34px] hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed'
                   >
                     <Image src={arrowLeftWhite} alt="Arrow Left White" />
@@ -572,14 +581,24 @@ case 3:
                   </button>
                   <button
                     onClick={handleConfirmClick}
-                    disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`max-[768px]:justify-center cursor-pointer rounded-lg py-3 px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-primary text-[white] hover:opacity-90'
-                      : 'bg-gray-400 text-white cursor-not-allowed'
+                    disabled={!isCurrentStepValid() || isValidatingStep || formik.isSubmitting}
+                    className={`max-[768px]:justify-center cursor-pointer rounded-lg py-3 px-[34px] transition-all duration-200 ${
+                      isCurrentStepValid() && !isValidatingStep
+                        ? formik.isSubmitting
+                          ? 'bg-primary text-[white] opacity-70 cursor-not-allowed'
+                          : 'bg-primary text-[white] hover:opacity-90'
+                        : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
-                    <span className='font-medium text-[16px]'>
-                      {isValidatingStep ? 'Yoxlanılır...' : 'Təsdiqlə'}
+                    <span className='font-medium text-[16px] flex items-center justify-center gap-2'>
+                      {formik.isSubmitting && (
+                        <span className="inline-block size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      )}
+                      {isValidatingStep
+                        ? 'Yoxlanılır...'
+                        : formik.isSubmitting
+                          ? 'Göndərilir...'
+                          : 'Təsdiqlə'}
                     </span>
                   </button>
                 </>

@@ -263,6 +263,14 @@ export const anncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
+export const anncDetailsRentOutSchema = Yup.object().shape({
+  features: Yup.array().of(Yup.string()),
+  description: Yup.string()
+    .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
+    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .required("Təsvir vacibdir"),
+});
+
 // Step 2 - DailyAnncDetails (formerly Step 3)
 
 export const dailyAnncDetailsSchema = Yup.object().shape({
@@ -382,9 +390,10 @@ export const getValidationSchema = (step, formType, formValues = {}) => {
       }
       return Yup.object().shape({}); // Default for step 1 if no announcementType
     case 2: // This is now the third step
-      return formType === "rentIn"
-        ? roommateAnncDetailsSchema : formType === "buy" ? dailyAnncDetailsSchema
-        : anncDetailsSchema;
+      if (formType === "rentIn") return roommateAnncDetailsSchema;
+      if (formType === "buy") return dailyAnncDetailsSchema;
+      if (formValues.announcementType === "rentOut") return anncDetailsRentOutSchema;
+      return anncDetailsSchema;
     case 3: // This is now the fourth step
       return locationValidationSchema;
     case 4: // This is now the fifth step
