@@ -396,7 +396,7 @@ const ForRent = ({
                   </div>
                 )}
 
-                <div className='flex flex-col items-start justify-center gap-2 mt-[28px] relative'>
+                {/* <div className='flex flex-col items-start justify-center gap-2 mt-[28px] relative'>
                   <p className='text-[#000] text-[16px]/[20px] font-medium'>
                     {activePropertyType === 'garage' ? "Hazırda kreditdədir?" : "Hazırda ipoteka və ya kreditdədir?"}
                   </p>
@@ -423,7 +423,7 @@ const ForRent = ({
                     />
                     <label htmlFor="no" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
                   </div>
-                </div>
+                </div> */}
 
                 {isMortgaged && (
                   <div className='w-full grid gap-[18px] mt-[40px]'>
