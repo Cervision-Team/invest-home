@@ -280,9 +280,8 @@ export default function DataTable() {
               onClick={() =>
                 setOpenMenu((prev) => (prev === row.id ? null : row.id))
               }
-              className={`p-1 rounded text-xl cursor-pointer ${
-                openMenu === row.id ? "bg-gray-300" : "hover:bg-gray-200"
-              }`}
+              className={`p-1 rounded text-xl cursor-pointer ${openMenu === row.id ? "bg-gray-300" : "hover:bg-gray-200"
+                }`}
             >
               ⋮
             </button>
@@ -394,7 +393,7 @@ export default function DataTable() {
         min: selectedValue?.min ?? "",
         max: selectedValue?.max ?? "",
       });
-    }, [selectedValue]); 
+    }, [selectedValue]);
 
     const getLabel = (type) => {
       if (columnKey === "price")
@@ -574,11 +573,10 @@ export default function DataTable() {
                     />
                     <span className="w-5 h-5 flex items-center justify-center rounded-full border-[0.6px] border-[#E1E6EF] group-hover:border-primary transition-all">
                       <span
-                        className={`w-3 h-3 rounded-full transition-all ${
-                          selectedValue === opt.value
+                        className={`w-3 h-3 rounded-full transition-all ${selectedValue === opt.value
                             ? "bg-primary"
                             : "bg-transparent group-hover:bg-primary"
-                        }`}
+                          }`}
                       ></span>
                     </span>
                   </label>
@@ -683,11 +681,10 @@ export default function DataTable() {
                 />
                 <span className="w-5 h-5 flex items-center justify-center rounded-full border border-[#E1E6EF] group-hover:border-primary">
                   <span
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      selectedValue === opt
+                    className={`w-3 h-3 rounded-full transition-all ${selectedValue === opt
                         ? "bg-primary"
                         : "bg-transparent group-hover:bg-primary"
-                    }`}
+                      }`}
                   />
                 </span>
               </label>
@@ -765,11 +762,10 @@ export default function DataTable() {
             key={opt}
             className={`flex items-center gap-4 group cursor-pointer mx-5 px-3 py-2 rounded-[10px]
 
-            ${
-              selectedRadios.includes(opt)
+            ${selectedRadios.includes(opt)
                 ? "bg-[#E0F5F1]"
                 : "hover:bg-[#E0F5F1]"
-            }
+              }
           `}
           >
             <input
@@ -783,11 +779,10 @@ export default function DataTable() {
 
             <span className="w-5 h-5 flex items-center justify-center rounded-full border group-hover:border-primary border-[#E1E6EF]">
               <span
-                className={`w-3 h-3 rounded-full transition-all ${
-                  selectedRadios.includes(opt)
+                className={`w-3 h-3 rounded-full transition-all ${selectedRadios.includes(opt)
                     ? "bg-primary"
                     : "group-hover:bg-primary"
-                }`}
+                  }`}
               />
             </span>
             <span>{opt}</span>
@@ -886,7 +881,7 @@ export default function DataTable() {
         options={[
           { value: "Var", label: "Var" },
           { value: "Yoxdur", label: "Yoxdur" }
-        ]}        selectedValue={filters["mortgage"]}
+        ]} selectedValue={filters["mortgage"]}
         onSelect={(value) => {
           onSelect(value);
           onClose();
@@ -912,11 +907,11 @@ export default function DataTable() {
     ),
     repair_type: ({ onSelect, onClose }) => (
       <RadioFilterDropdown
-      options={[
-  { value: "Əla", label: "Əla" },
-  { value: "Orta", label: "Orta" },
-  { value: "Zəif", label: "Zəif" }
-]}
+        options={[
+          { value: "Əla", label: "Əla" },
+          { value: "Orta", label: "Orta" },
+          { value: "Zəif", label: "Zəif" }
+        ]}
         selectedValue={filters["repair_type"]}
         onSelect={(value) => {
           onSelect(value);
@@ -1001,7 +996,7 @@ export default function DataTable() {
         onSelect={onSelect}
       />
     ),
-    propertyType: ({onClose }) => (
+    propertyType: ({ onClose }) => (
       <PropertypeFilterDropdown
         columnKey="propertyType"
         groups={[
@@ -1050,70 +1045,70 @@ export default function DataTable() {
     setShowSuccess(true);
   };
 
-// const handleEditSave = async (updatedData) => {
-//   try {
-//     // Make API call to update database
-//     const response = await fetch(`/api/properties/update/${editRow.announcementId}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(updatedData),
-//     });
+  // const handleEditSave = async (updatedData) => {
+  //   try {
+  //     // Make API call to update database
+  //     const response = await fetch(`/api/properties/update/${editRow.announcementId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(updatedData),
+  //     });
 
-//     if (!response.ok) {
-//       throw new Error('Failed to update property');
-//     }
+  //     if (!response.ok) {
+  //       throw new Error('Failed to update property');
+  //     }
 
-//     const result = await response.json();
-    
-//     // Update local state with new data
-//     setData((prev) =>
-//       prev.map((d) => (d.announcementId === editRow.announcementId ? { ...d, ...updatedData } : d))
-//     );
-    
-//     setEditRow(null);
-//     setSuccessMessage("Dəyişikliklər uğurla yadda saxlanıldı.");
-//     setShowSuccess(true);
-    
-//   } catch (error) {
-//     console.error('Error updating property:', error);
-//     alert('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
-//   }
-// };
+  //     const result = await response.json();
 
-const handleAddProperty = async (newData) => {
-  try {
-    // 1. Send new property to your backend
-    const response = await fetch(`/api/properties/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newData),
-    });
+  //     // Update local state with new data
+  //     setData((prev) =>
+  //       prev.map((d) => (d.announcementId === editRow.announcementId ? { ...d, ...updatedData } : d))
+  //     );
 
-    if (!response.ok) {
-      throw new Error("Failed to create property");
+  //     setEditRow(null);
+  //     setSuccessMessage("Dəyişikliklər uğurla yadda saxlanıldı.");
+  //     setShowSuccess(true);
+
+  //   } catch (error) {
+  //     console.error('Error updating property:', error);
+  //     alert('Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.');
+  //   }
+  // };
+
+  const handleAddProperty = async (newData) => {
+    try {
+      // 1. Send new property to your backend
+      const response = await fetch(`/api/properties/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create property");
+      }
+
+      const result = await response.json();
+
+      // 2. Add new property to local table state
+      setData((prev) => [...prev, result]);
+
+      // 3. Close modal
+      setAddModal(false);
+
+      // 4. Show success message
+      setSuccessMessage("Əmlak uğurla əlavə olundu.");
+      setShowSuccess(true);
+
+    } catch (error) {
+      console.error("Error creating property:", error);
+      alert("Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
     }
-
-    const result = await response.json();
-
-    // 2. Add new property to local table state
-    setData((prev) => [...prev, result]);
-
-    // 3. Close modal
-    setAddModal(false);
-
-    // 4. Show success message
-    setSuccessMessage("Əmlak uğurla əlavə olundu.");
-    setShowSuccess(true);
-
-  } catch (error) {
-    console.error("Error creating property:", error);
-    alert("Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.");
-  }
-};
+  };
 
   const handleDeleteSelected = () => {
     setData((prev) => prev.filter((d) => !selected[d.announcementId]));
@@ -1135,7 +1130,6 @@ const handleAddProperty = async (newData) => {
 
   return (
     <div>
-      {/* Search + Buttons */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <div className="w-full md:max-w-md">
           <Search search={search} setSearch={setSearch} />
@@ -1144,11 +1138,10 @@ const handleAddProperty = async (newData) => {
           <button
             onClick={() => setDeleteModal(true)}
             disabled={Object.keys(selected).length === 0}
-            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${
-              Object.keys(selected).length === 0
+            className={`px-[14px] py-[12px] bg-primary text-white rounded-[8px] ${Object.keys(selected).length === 0
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer"
-            }`}
+              }`}
           >
             <Image
               src={deleteHome}
@@ -1170,7 +1163,6 @@ const handleAddProperty = async (newData) => {
         </div>
       </div>
       <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>
-      {/* Table */}
       <div
         className="h-[520px] overflow-y-auto overflow-x-auto scrollbar-custom"
       >
@@ -1183,15 +1175,13 @@ const handleAddProperty = async (newData) => {
                     key={header.id}
                     className={`
                       text-left whitespace-nowrap sticky overflow-visible top-0 z-40 text-[14px] font-[500] align-middle leading-none bg-white
-                      ${
-                        header.id === "select"
-                          ? "left-0 z-50 bg-white px-4"
-                          : "p-4"
+                      ${header.id === "select"
+                        ? "left-0 z-50 bg-white px-4"
+                        : "p-4"
                       }
-                      ${
-                        header.id === "actions"
-                          ? "bg-white right-0 bg-white p-4 z-50"
-                          : "p-4"
+                      ${header.id === "actions"
+                        ? "bg-white right-0 bg-white p-4 z-50"
+                        : "p-4"
                       }
                     `}
                   >
@@ -1214,12 +1204,11 @@ const handleAddProperty = async (newData) => {
                         className={`
                       ${header.id === "select" ? "hidden" : ""}
                       ${header.id === "actions" ? "hidden" : ""}
-                     ${
-                       filterDropdowns[header.column.id] &&
-                       filterColumn === header.column.id
-                         ? "bg-gray-300 rounded-full cursor-pointer"
-                         : "rounded-full hover:bg-gray-200 cursor-pointer"
-                     }
+                     ${filterDropdowns[header.column.id] &&
+                            filterColumn === header.column.id
+                            ? "bg-gray-300 rounded-full cursor-pointer"
+                            : "rounded-full hover:bg-gray-200 cursor-pointer"
+                          }
                     `}
                         height="20"
                         viewBox="0 0 20 20"
@@ -1299,15 +1288,13 @@ const handleAddProperty = async (newData) => {
                     key={cell.id}
                     className={`
                       whitespace-nowrap sticky text-[14px] font-[500] align-middle leading-none
-                      ${
-                        cell.column.id === "select"
-                          ? "left-0 bg-white z-40"
-                          : ""
+                      ${cell.column.id === "select"
+                        ? "left-0 bg-white z-40"
+                        : ""
                       }
-                      ${
-                        cell.column.id === "actions"
-                          ? "right-0 bg-white z-10"
-                          : ""
+                      ${cell.column.id === "actions"
+                        ? "right-0 bg-white z-10"
+                        : ""
                       }
                       ${cell.column.id === "photo" ? "p-0" : "py-8 px-4"}
                     `}
@@ -1321,16 +1308,14 @@ const handleAddProperty = async (newData) => {
         </table>
       </div>
 
-      {/* Edit Modal */}
-{editRow && (
-  <EditPropertyModal
-    editRow={editRow}
-    onClose={() => setEditRow(null)}
-    onSave={handleEditSave}
-  />
-)}
+      {editRow && (
+        <EditPropertyModal
+          editRow={editRow}
+          onClose={() => setEditRow(null)}
+          onSave={handleEditSave}
+        />
+      )}
 
-      {/* Delete Modal */}
       {deleteModal && (
         <ModalLayout title="Təsdiqlə" onClose={() => setDeleteModal(false)}>
           <p className="text-gray-700 text-center mb-6">
@@ -1353,13 +1338,12 @@ const handleAddProperty = async (newData) => {
         </ModalLayout>
       )}
 
-      {/* Add Modal */}
       {addModal && (
-  <AddPropertyModal
-    onClose={() => setAddModal(false)}
-    onSave={handleAddProperty}
-  />
-)}
+        <AddPropertyModal
+          onClose={() => setAddModal(false)}
+          onSave={handleAddProperty}
+        />
+      )}
 
       {showSuccess && (
         <div
@@ -1383,7 +1367,6 @@ const handleAddProperty = async (newData) => {
   );
 }
 
-// Modal Layout
 function ModalLayout({ children, onClose }) {
   return (
     <div
