@@ -4,7 +4,7 @@ import * as Yup from "yup";
 const NewAnncValidationSchema = Yup.object().shape({
   announcementType: Yup.string()
     .required("Elan növü seçilməlidir")
-    .oneOf(["sell", "buy", "rentOut", "rentIn"], "Düzgün elan növü seçin"),
+    .oneOf(["sell", "buy", "rent", "rentIn"], "Düzgün elan növü seçin"),
 });
 
 // Step 1 - ForSale & ForRent (dynamic) (formerly Step 2)
@@ -263,7 +263,7 @@ export const anncDetailsSchema = Yup.object().shape({
     .required("Təsvir vacibdir"),
 });
 
-export const anncDetailsRentOutSchema = Yup.object().shape({
+export const anncDetailsRentSchema = Yup.object().shape({
   features: Yup.array().of(Yup.string()),
   description: Yup.string()
     .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
@@ -373,7 +373,7 @@ export const getValidationSchema = (step, formType, formValues = {}) => {
     case 1: // This is now the second step
       if (
         formValues.announcementType === "sell" ||
-        formValues.announcementType === "rentOut"
+        formValues.announcementType === "rent"
       ) {
         return getForSaleOrRentValidationSchema(
           formValues.propertyType,
@@ -392,7 +392,7 @@ export const getValidationSchema = (step, formType, formValues = {}) => {
     case 2: // This is now the third step
       if (formType === "rentIn") return roommateAnncDetailsSchema;
       if (formType === "buy") return dailyAnncDetailsSchema;
-      if (formValues.announcementType === "rentOut") return anncDetailsRentOutSchema;
+      if (formValues.announcementType === "rent") return anncDetailsRentSchema;
       return anncDetailsSchema;
     case 3: // This is now the fourth step
       return locationValidationSchema;

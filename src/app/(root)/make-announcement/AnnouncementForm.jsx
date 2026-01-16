@@ -352,7 +352,7 @@ const AnnouncementForm = () => {
                 setActivePropertyType={(type) => formik.setFieldValue('propertyType', type)}
               />
             );
-          case 'rentOut':
+          case 'rent':
             return (
               <ForRent
                 {...commonProps}
