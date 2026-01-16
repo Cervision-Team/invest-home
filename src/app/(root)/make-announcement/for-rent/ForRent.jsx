@@ -425,7 +425,7 @@ const ForRent = ({
                   </div>
                 </div> */}
 
-                {isMortgaged && (
+                {/* {isMortgaged && (
                   <div className='w-full grid gap-[18px] mt-[40px]'>
                     <p className='text-[#000] text-[16px]/[20px] font-medium'>
                       {activePropertyType === 'garage' ? "Kredit məlumatları" : "İpoteka/Kredit məlumatları"}
@@ -475,7 +475,7 @@ const ForRent = ({
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
 
                 <div className='grid grid-cols-[350px_350px] max-[1350px]:grid-cols-2 max-[900px]:grid-cols-1 max-[768px]:grid-cols-2 max-[600px]:grid-cols-1 gap-x-[38px] gap-y-[38px] mt-[40px]'>
                   {shouldShowField('price') && (

@@ -29,7 +29,7 @@ import Link from 'next/link';
 import { hasAccessUrl } from "@/lib/auth/checkAccess";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
 import { extractMenuPaths, normalizePath } from "@/lib/auth/menuPermissionUtils";
-import { formatDateTime } from "@/lib/formatDateTime";
+import { formatDateTime, formatTimeAgo } from "@/lib/formatDateTime";
 
 const defaultProfileIcon = "/icons/profile.svg";
 
@@ -440,7 +440,7 @@ const HeroAndDetails = ({ id }) => {
                 <div className="flex flex-col justify-between">
                   <p className="text-[#111] max-[431px]:text-[16px] text-[20px] font-[500] leading-none ">{agentName}</p>
                   <p className="text-black max-[431px]:text-[12px] text-[14px] font-[500] leading-none">Agent</p>
-                  <p className="text-black/50 max-[431px]:text-[10px] text-[12px] font-[500] leading-none text-[rgba(0, 0, 0, 0.5)]">{formatDateTime(house?.createdAt)}</p>
+                  <p className="text-black/50 max-[431px]:text-[10px] text-[12px] font-[500] leading-none text-[rgba(0, 0, 0, 0.5)]">{formatTimeAgo(house?.createdAt, { absoluteStyle: "az-long" })}</p>
                 </div>
               </div>
             </div>
