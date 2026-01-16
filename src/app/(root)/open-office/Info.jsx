@@ -3,14 +3,14 @@ import React from 'react'
 
 const InfoCard = ({image, title, description }) => {
   return (
-    <div className='w-[411px] h-auto flex flex-col gap-4 items-start'>
-         <div className="relative w-[411px] h-[272px] rounded-[30px] overflow-hidden">
+    <div className='w-full max-w-[411px] h-auto flex flex-col gap-4 items-start '>
+         <div className="relative w-full aspect-[411/272] rounded-[30px] overflow-hidden">
         <Image
           src={image}
           alt={title}
           fill
           className="object-cover"
-          sizes="411px"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 411px"
         />
       </div>
         <h3 className='text-[#091226] text-[21px]/[25px] font-semibold'>{title}</h3>
@@ -22,14 +22,14 @@ const InfoCard = ({image, title, description }) => {
 const Info = () => {
   return (
     <>
-      <div className='w-full h-auto px-20 flex flex-col justify-center'>
-        <h2 className='text-[#141414] text-center text-[38px]/[46px] font-semibold'>
+      <div className='w-full h-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center'>
+        <h2 className='text-[#141414] text-center text-2xl sm:text-3xl lg:text-[38px] leading-tight lg:leading-[46px] font-semibold'>
             Uğur bizim yanaşmamızın nəticəsidir.
         </h2>
-        <h4 className='text-[#3F444D] text-center text-[18px]/[21px] mt-[18px]'>
+        <h4 className='text-[#3F444D] text-center text-sm sm:text-base lg:text-[18px] leading-relaxed lg:leading-[21px] mt-3 sm:mt-[18px]'>
             İnvest Home ilə olduğunuz zaman uğur qaçılmazdır!
         </h4>
-        <div className='flex flex-row flex-wrap justify-between gap-y-13 mt-13'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-y-13 mt-10 lg:mt-13'>
             <InfoCard 
                 image="/images/open-office/office-2.jpg"
                 title="Təcrübəli Komanda"
