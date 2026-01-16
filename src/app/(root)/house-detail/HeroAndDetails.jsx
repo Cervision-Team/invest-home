@@ -35,6 +35,7 @@ const defaultProfileIcon = "/icons/profile.svg";
 
 const HeroAndDetails = ({ id }) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
   const [fav, setFav] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [showMore, setShowMore] = useState(false);
@@ -165,6 +166,24 @@ const HeroAndDetails = ({ id }) => {
       }
     }
   }, [selectedIndex]);
+
+  useEffect(() => {
+    if (!previewImage) return;
+    if (!naturalSize.width || !naturalSize.height) return;
+
+    const update = () => {
+      setDimensions(computeScaledDimensions(naturalSize.width, naturalSize.height));
+    };
+
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }, [previewImage, naturalSize.width, naturalSize.height]);
+
   if (!house) {
     return Loading()
   }
@@ -181,11 +200,35 @@ const HeroAndDetails = ({ id }) => {
 
   const openPreview = (image) => {
     setPreviewImage(image);
+    setDimensions({ width: 0, height: 0 });
+    setNaturalSize({ width: 0, height: 0 });
   };
 
   const closePreview = () => {
     setPreviewImage(null);
     setDimensions({ width: 0, height: 0 });
+    setNaturalSize({ width: 0, height: 0 });
+  };
+
+  const computeScaledDimensions = (w, h) => {
+    if (!w || !h) return { width: 0, height: 0 };
+    if (typeof window === 'undefined') return { width: 0, height: 0 };
+
+    const maxWidth = window.innerWidth * 0.85;
+    const maxHeight = window.innerHeight - 180;
+    const scale = Math.min(maxWidth / w, maxHeight / h);
+    return {
+      width: Math.max(1, Math.floor(w * scale)),
+      height: Math.max(1, Math.floor(h * scale)),
+    };
+  };
+
+  const goToPreviewIndex = (nextIndex) => {
+    const safeIndex = Math.max(0, Math.min(nextIndex, (house?.medias?.length ?? 1) - 1));
+    setSelectedIndex(safeIndex);
+    setPreviewImage(house?.medias?.[safeIndex]?.imageUrl ?? null);
+    setDimensions({ width: 0, height: 0 });
+    setNaturalSize({ width: 0, height: 0 });
   };
 
   return (
@@ -236,7 +279,11 @@ const HeroAndDetails = ({ id }) => {
                       <SwiperSlide key={image.id}>
                         <div
                           className='relative w-full h-[233px] cursor-pointer'
-                          onClick={() => openPreview(image.imageUrl)}
+                          onClick={() => {
+                            const idx = house?.medias?.findIndex((m) => m?.id === image?.id) ?? 0;
+                            setSelectedIndex(idx >= 0 ? idx : 0);
+                            openPreview(image.imageUrl);
+                          }}
                         >
                           <Image
                             alt={"house_image"}
@@ -278,7 +325,10 @@ const HeroAndDetails = ({ id }) => {
                           ref={(el) => (thumbnailRefs.current[idx] = el)}
                           className="relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-opacity hover:opacity-80"
                           onMouseEnter={() => setSelectedIndex(idx)}
-                          onClick={() => openPreview(image.imageUrl)}
+                          onClick={() => {
+                            setSelectedIndex(idx);
+                            openPreview(image.imageUrl);
+                          }}
                         >
                           <Image
                             alt={`house_thumbnail_${idx}`}
@@ -469,7 +519,7 @@ const HeroAndDetails = ({ id }) => {
               </h1>
             </div>
 
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="flex items-center gap-3 flex-shrink-0 flex-wrap justify-end">
               <div className="flex flex-col items-end gap-0.5">
                 <h2 className="text-[18px] font-[500] leading-none">{house?.price} AZN</h2>
                 <p className="text-[13px] font-[400] leading-none text-gray-600">{Math.floor(house?.price / house?.area)} AZN / m2</p>
@@ -495,7 +545,7 @@ const HeroAndDetails = ({ id }) => {
                 </div>
               </div>
 
-              <div className="flex gap-2 scale-90">
+              <div className="hidden md:flex gap-2 scale-90">
                 <ConnectionButton name="Zəng et" />
                 <ConnectionButton name="Mesaj yaz" />
               </div>
@@ -514,14 +564,16 @@ const HeroAndDetails = ({ id }) => {
 
           <div className="flex-1 flex items-center justify-center w-full relative px-4 py-2">
             <button
-              className="cursor-pointer absolute left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
+              className="cursor-pointer absolute left-2 sm:left-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-1.5 sm:p-2 hover:bg-black/70"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedIndex((prev) => (prev > 0 ? prev - 1 : house?.medias.length - 1));
-                setPreviewImage(house?.medias[selectedIndex > 0 ? selectedIndex - 1 : house?.medias.length - 1].imageUrl);
+                const count = house?.medias?.length ?? 0;
+                if (!count) return;
+                const next = selectedIndex > 0 ? selectedIndex - 1 : count - 1;
+                goToPreviewIndex(next);
               }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="26" height="26" className="sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
@@ -554,31 +606,23 @@ const HeroAndDetails = ({ id }) => {
                 onLoadingComplete={(img) => {
                   const naturalWidth = img.naturalWidth;
                   const naturalHeight = img.naturalHeight;
-                  const maxWidth = window.innerWidth * 0.85;
-                  const maxHeight = (window.innerHeight) - 180;
-
-                  const scale = Math.min(
-                    maxWidth / naturalWidth,
-                    maxHeight / naturalHeight
-                  );
-
-                  setDimensions({
-                    width: naturalWidth * scale,
-                    height: naturalHeight * scale,
-                  });
+                  setNaturalSize({ width: naturalWidth, height: naturalHeight });
+                  setDimensions(computeScaledDimensions(naturalWidth, naturalHeight));
                 }}
               />
             )}
 
             <button
-              className="cursor-pointer absolute right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-2 hover:bg-black/70"
+              className="cursor-pointer absolute right-2 sm:right-4 z-[10001] text-white hover:text-gray-300 transition-colors bg-black/50 rounded-full p-1.5 sm:p-2 hover:bg-black/70"
               onClick={(e) => {
                 e.stopPropagation();
-                setSelectedIndex((prev) => (prev < house?.medias.length - 1 ? prev + 1 : 0));
-                setPreviewImage(house?.medias[selectedIndex < house?.medias.length - 1 ? selectedIndex + 1 : 0].imageUrl);
+                const count = house?.medias?.length ?? 0;
+                if (!count) return;
+                const next = selectedIndex < count - 1 ? selectedIndex + 1 : 0;
+                goToPreviewIndex(next);
               }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="26" height="26" className="sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
@@ -598,9 +642,7 @@ const HeroAndDetails = ({ id }) => {
                     : 'opacity-60 hover:opacity-100'
                     }`}
                   onMouseEnter={() => {
-                    setSelectedIndex(idx);
-                    setPreviewImage(image.imageUrl);
-                    setDimensions({ width: 0, height: 0 });
+                    goToPreviewIndex(idx);
                   }}
                 >
                   <Image
