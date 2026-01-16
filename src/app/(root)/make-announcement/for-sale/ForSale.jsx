@@ -436,7 +436,7 @@ const ForSale = ({
                       {activePropertyType === 'garage' ? "Kredit məlumatları" : "İpoteka/Kredit məlumatları"}
                     </p>
 
-                    <div className='grid grid-cols-[148px_148px_148px_148px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
+                    <div className='grid grid-cols-[230px_230px_230px] max-[1270px]:grid-cols-[148px_148px] max-[890px]:grid-cols-2 max-[400px]:grid-cols-1 gap-[24px]'>
                       <div className='grid gap-2 relative'>
                         <label htmlFor="initialPayment" className='text-[#000] text-[16px]/[20px]'>İlkin ödəniş</label>
                         <input
@@ -445,13 +445,13 @@ const ForSale = ({
                           value={formik.values.initialPayment || ''}
                           onChange={(e) => handleInputChange('initialPayment', e.target.value)}
                           onBlur={() => handleBlur("initialPayment")}
-                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('initialPayment') ? 'error' : 'border-black'}`}
+                          className={`w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('initialPayment') ? 'error' : 'border-black'}`}
                           placeholder="Məs: 10000"
                         />
                         {hasError('initialPayment') && <p className="error-text">{getErrorMessage('initialPayment')}</p>}
                       </div>
 
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="monthlyPayment" className='text-[#000] text-[16px]/[20px]'>Aylıq ödəniş</label>
                         <input
                           type="number"
@@ -459,13 +459,13 @@ const ForSale = ({
                           value={formik.values.monthlyPayment || ''}
                           onChange={(e) => handleInputChange('monthlyPayment', e.target.value)}
                           onBlur={() => handleBlur("monthlyPayment")}
-                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('monthlyPayment') ? 'error' : 'border-black'}`}
+                          className={`w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('monthlyPayment') ? 'error' : 'border-black'}`}
                           placeholder="Məs: 500"
                         />
                         {hasError('monthlyPayment') && <p className="error-text">{getErrorMessage('monthlyPayment')}</p>}
                       </div>
 
-                      <div className='grid gap-2'>
+                      <div className='grid gap-2 relative'>
                         <label htmlFor="remainingMonths" className='text-[#000] text-[16px]/[20px]'>Qalıq ay</label>
                         <input
                           type="number"
@@ -473,7 +473,7 @@ const ForSale = ({
                           value={formik.values.remainingMonths || ''}
                           onChange={(e) => handleInputChange('remainingMonths', e.target.value)}
                           onBlur={() => handleBlur("remainingMonths")}
-                          className={`min-w-0 w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingMonths') ? 'error' : 'border-black'}`}
+                          className={`w-full h-10 px-[10px] py-2 input-field remove-arrow ${hasError('remainingMonths') ? 'error' : 'border-black'}`}
                           placeholder="Məs: 6"
                         />
                         {hasError('remainingMonths') && <p className="error-text">{getErrorMessage('remainingMonths')}</p>}
