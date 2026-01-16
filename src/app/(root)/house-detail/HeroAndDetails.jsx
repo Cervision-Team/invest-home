@@ -391,13 +391,13 @@ const HeroAndDetails = ({ id }) => {
             </div>
           </div>
 
-          <div className="lg:sticky lg:flex-[0_0_411px] top-[95px] w-full min-w-0 rounded-[20px] bg-white shadow-[0px_2px_10px_0px_rgba(2,131,111,0.15)] max-[431px]:px-[16px] max-[431px]:py-[20px] px-[34px] py-[32px] flex flex-col gap-[41px] self-start">
+          <div className="lg:sticky lg:flex-[0_0_500px] top-[95px] w-full min-w-0 rounded-[20px] bg-white shadow-[0px_2px_10px_0px_rgba(2,131,111,0.15)] max-[431px]:px-[16px] max-[431px]:py-[20px] px-[34px] py-[32px] flex flex-col gap-[41px] self-start">
             <div className='max-[431px]:items-center flex flex-col w-full min-[431px]:gap-[41px] max-[431px]:flex-row-reverse max-[431px]:justify-between max-[431px]:gap-6'>
               <div className='flex flex-col gap-4 relative max-[431px]:flex-1 max-[431px]:min-w-0'>
                 {canSeeActivateButton && (
                   <Link
                     href={`/confirmation-announcement/${id}`}
-                    className='static lg:absolute lg:right-0 lg:top-0 mt-4 lg:mt-0 ml-auto w-40 max-[500px]:w-32 max-[431px]:w-28 h-10 max-[431px]:h-9 rounded-xl border border-solid border-primary group overflow-hidden'
+                    className='static lg:absolute lg:right-0 lg:top-0 mt-4 lg:mt-0 ml-auto w-35 max-[500px]:w-32 max-[431px]:w-28 h-10 max-[431px]:h-9 rounded-xl border border-solid border-primary group overflow-hidden'
                   >
                     <div className='absolute inset-0 w-0 h-full transition-all duration-800 group-hover:w-full'
                       style={{
