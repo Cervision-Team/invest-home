@@ -49,7 +49,7 @@ const getCroppedBlob = async (imageSrc, pixelCrop) => {
     });
 };
 
-const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
+const Summary = ({ isEditing, handleToggle, onCancelEdit, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
     const fileInputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -282,9 +282,21 @@ const Summary = ({ isEditing, handleToggle, user, onImageSelected, onRequestDele
                     </div>
                 </div>
 
-                <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6'>
+                <div className='flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
                     {isEditing ? (
-                        <button type='submit' className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'>Yadda saxla</button>
+                        <>
+                            <button
+                                type='button'
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onCancelEdit?.();
+                                }}
+                                className='bg-white text-[#1B1F27] font-medium py-3 px-6 rounded-lg cursor-pointer border border-black/10 hover:bg-black/5'
+                            >
+                                Ləğv et
+                            </button>
+                            <button type='submit' className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer hover:opacity-95'>Yadda saxla</button>
+                        </>
                     ) : (
                         <button
                             type='button'
