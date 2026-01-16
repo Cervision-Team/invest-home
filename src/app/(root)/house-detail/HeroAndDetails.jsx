@@ -192,8 +192,8 @@ const HeroAndDetails = ({ id }) => {
     <>
       <section className='max-w-[1600px] mx-[auto]'>
         <div className='mt-[20px] px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
-          <div className='flex justify-between items-start gap-4'>
-            <h1 className='text-[#111] text-[22px] lg:text-[32px] leading-[1.2] font-medium max-[431px]:text-[14px]'>
+          <div className='flex justify-between items-start gap-4 min-w-0'>
+            <h1 className='flex-1 min-w-0 break-words text-[#111] text-[22px] lg:text-[32px] leading-[1.2] font-medium max-[431px]:text-[14px]'>
               {house?.announcementType?.displayName},{" "}
               {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "}
               {house?.rooms} otaq,{" "}
@@ -220,8 +220,8 @@ const HeroAndDetails = ({ id }) => {
           </div>
         </div>
 
-        <div className='mt-[20px] relative flex max-[769px]:flex-col-reverse gap-[20px] justify-between items-start px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
-          <div className='basis-[708px] max-[431px]:px-[0]'>
+        <div className='mt-[20px] relative flex flex-col-reverse lg:flex-row gap-[20px] lg:justify-between items-start px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
+          <div className='w-full min-w-0 lg:basis-[708px] lg:flex-1 max-[431px]:px-[0]'>
             <div ref={containerRef} className='min-[431px]:p-[20px] min-[430px]:rounded-[20px] min-[431px]:bg-[rgba(255,255,255,0.50)] min-[431px]:shadow-[0px_4px_10px_0px_rgba(2,131,111,0.10)] flex flex-col gap-[30px]'>
 
               {isMobile ? (
@@ -263,7 +263,10 @@ const HeroAndDetails = ({ id }) => {
                     />
                   </div>
 
-                  <div className="flex gap-[4px] overflow-hidden">
+                  <div
+                    ref={thumbnailContainerRef}
+                    className="flex gap-[4px] w-full max-w-full min-w-0 overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                  >
                     {house?.medias.slice(0, maxVisibleThumbnails).map((image, idx) => {
                       const isLastVisible = idx === maxVisibleThumbnails - 1;
                       const remainingCount = house?.medias.length - maxVisibleThumbnails;
@@ -272,7 +275,8 @@ const HeroAndDetails = ({ id }) => {
                       return (
                         <div
                           key={idx}
-                          className="relative min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-opacity hover:opacity-80"
+                          ref={(el) => (thumbnailRefs.current[idx] = el)}
+                          className="relative shrink-0 min-w-[70px] w-[70px] h-[50px] rounded-[4px] overflow-hidden cursor-pointer transition-opacity hover:opacity-80"
                           onMouseEnter={() => setSelectedIndex(idx)}
                           onClick={() => openPreview(image.imageUrl)}
                         >
@@ -387,16 +391,19 @@ const HeroAndDetails = ({ id }) => {
             </div>
           </div>
 
-          <div className="min-[769px]:sticky min-[768px]:basis-[411px] top-[95px] max-[769px]:w-full rounded-[20px] bg-white shadow-[0px_2px_10px_0px_rgba(2,131,111,0.15)] max-[431px]:px-[16px] max-[431px]:py-[20px] px-[34px] py-[32px] flex flex-col gap-[41px] self-start">
-            <div className='max-[431px]:items-center flex flex-col min-[431px]:gap-[41px] max-[431px]:flex-row-reverse max-[431px]:justify-between'>
-              <div className='flex flex-col gap-4 relative'>
+          <div className="lg:sticky lg:flex-[0_0_411px] top-[95px] w-full min-w-0 rounded-[20px] bg-white shadow-[0px_2px_10px_0px_rgba(2,131,111,0.15)] max-[431px]:px-[16px] max-[431px]:py-[20px] px-[34px] py-[32px] flex flex-col gap-[41px] self-start">
+            <div className='max-[431px]:items-center flex flex-col w-full min-[431px]:gap-[41px] max-[431px]:flex-row-reverse max-[431px]:justify-between max-[431px]:gap-6'>
+              <div className='flex flex-col gap-4 relative max-[431px]:flex-1 max-[431px]:min-w-0'>
                 {canSeeActivateButton && (
-                  <Link href={`/confirmation-announcement/${id}`} className='absolute right-0 w-40 h-10 rounded-xl border border-solid border-primary group overflow-hidden'>
+                  <Link
+                    href={`/confirmation-announcement/${id}`}
+                    className='static lg:absolute lg:right-0 lg:top-0 mt-4 lg:mt-0 ml-auto w-40 max-[500px]:w-32 max-[431px]:w-28 h-10 max-[431px]:h-9 rounded-xl border border-solid border-primary group overflow-hidden'
+                  >
                     <div className='absolute inset-0 w-0 h-full transition-all duration-800 group-hover:w-full'
                       style={{
                         background: 'linear-gradient(90deg, #02836F 0%, #1A1919 100%)',
                       }}></div>
-                    <button className='relative z-10 w-full h-full flex items-center justify-center text-primary text-base font-medium cursor-pointer transition-colors duration-800 group-hover:text-[#FFFEFE]'>
+                    <button className='relative z-10 w-full h-full flex items-center justify-center text-primary text-base max-[500px]:text-sm font-medium cursor-pointer transition-colors duration-800 group-hover:text-[#FFFEFE]'>
                       Agent seç
                     </button>
                   </Link>
@@ -410,7 +417,7 @@ const HeroAndDetails = ({ id }) => {
                 </p>
               </div>
 
-              <div className="flex gap-[14px] max-h-[62px]">
+              <div className="flex gap-[14px] max-h-[62px] shrink-0">
                 <div className='relative h-[62px] w-[62px] max-[431px]:h-[50px] max-[431px]:w-[50px]'>
                   {hasAgentAvatar ? (
                     <Image
