@@ -17,6 +17,8 @@ import Chat from '@/components/ui/dashboard/Chat';
 import { useUser } from '@/context/UserContext';
 import Loader from '@/components/ui/Loader';
 
+import { buildPhoneNumber, mapUserToFormDefaults } from './profileFormUtils';
+
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [successText, setSuccessText] = useState("Dəyişikliklər uğurla yadda saxlanıldı.");
@@ -31,7 +33,7 @@ const Profile = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { fetchUser } = useUser();
 
 
@@ -40,10 +42,14 @@ const Profile = () => {
 
     try {
       const roleName = userData?.roleName ?? userData?.role ?? userData?.role?.name;
+      const phoneNumber = buildPhoneNumber({
+        phoneCountryCode: data?.phoneCountryCode,
+        phoneLocalNumber: data?.phoneLocalNumber,
+      }) || data?.phoneNumber;
       const userPayload = {
         fullName: data?.fullName,
         birthDate: toYMD(data?.birthDate),
-        phoneNumber: data?.phoneNumber,
+        phoneNumber,
         location: data?.location,
         email: data?.email,
         ...(roleName ? { roleName } : {}),
@@ -58,10 +64,9 @@ const Profile = () => {
         setAvatarVersion(Date.now());
       }
 
-      // Refresh local + global user (so header/sidebar updates immediately)
       const res = await getUser();
       setUserData(res.data);
-      reset(res.data);
+      reset(mapUserToFormDefaults(res.data));
       await fetchUser({ force: true });
 
       setIsEditing(false);
@@ -76,6 +81,13 @@ const Profile = () => {
   const handleToggle = () => {
     setIsEditing(true)
   }
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setSelectedProfileImage(null);
+    setImageResetKey((k) => k + 1);
+    reset(mapUserToFormDefaults(userData));
+  };
 
   const requestDeleteImage = () => {
     setIsDeleteOpen(true);
@@ -94,7 +106,7 @@ const Profile = () => {
         await deleteUserImage();
         const res = await getUser();
         setUserData(res.data);
-        reset(res.data);
+        reset(mapUserToFormDefaults(res.data));
         setAvatarVersion(Date.now());
         await fetchUser({ force: true });
       }
@@ -119,7 +131,7 @@ const Profile = () => {
         const res = await getUser();
         if (!alive) return;
         setUserData(res.data);
-        reset(res.data);
+        reset(mapUserToFormDefaults(res.data));
       } catch (err) {
         if (!alive) return;
         setLoadError(err?.message || "Profil yüklənmədi");
@@ -164,12 +176,13 @@ const Profile = () => {
     <main className='w-full flex flex-col gap-6'>
 
       <section className='relative'>
-        <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register}>
+        <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} errors={errors}>
           <Summary
             isChat={isChat}
             setIsChat={setIsChat}
             isEditing={isEditing}
             handleToggle={handleToggle}
+            onCancelEdit={handleCancelEdit}
             user={userData}
             onImageSelected={(file) => setSelectedProfileImage(file)}
             onRequestDeleteImage={requestDeleteImage}
