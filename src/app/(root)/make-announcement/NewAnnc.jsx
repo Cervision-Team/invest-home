@@ -9,7 +9,7 @@ const NewAnnc = ({ activeButton, onAnnouncementTypeChange }) => {
 
     const buttons = [
     { type: 'sell', text: 'Satıram', icon: 'selling' },
-    { type: 'rentOut', text: 'Kirayə verirəm', icon: 'renting' },
+    { type: 'rent', text: 'Kirayə verirəm', icon: 'renting' },
     // { type: 'buy', text: 'Alıram', icon: 'buying' },
     // { type: 'rentIn', text: 'Kirayə axtarıram', icon: 'searching-for-rent' },
   ];
