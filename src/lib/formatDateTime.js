@@ -68,6 +68,7 @@ export function formatTimeAgo(value, options = {}) {
     fallback = "",
     now = new Date(),
     maxHours = 24,
+    maxDays = 30,
     absoluteStyle = "az-long",
   } = options;
 
@@ -90,6 +91,9 @@ export function formatTimeAgo(value, options = {}) {
 
   const diffHours = Math.floor(diffMinutes / 60);
   if (diffHours < maxHours) return `${diffHours} saat əvvəl`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays <= maxDays) return `${diffDays} gün əvvəl`;
 
   return formatDateTime(date, { style: absoluteStyle, fallback });
 }

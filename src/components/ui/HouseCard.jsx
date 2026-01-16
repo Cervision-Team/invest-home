@@ -12,6 +12,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { formatTimeAgo } from "@/lib/formatDateTime";
 
 const Imagesvg = "/icons/image.svg";
 const PaintIcon = "/icons/paint.svg";
@@ -358,10 +359,15 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
                 )}
               </div>
 
-              <span className="whitespace-nowrap text-[14px] text-[#111] font-[500]">
-                {publisherName.split(" ").slice(0, 1).join(" ")}
-                {publisherName.split(" ")[1]?.[0] ? ` ${publisherName.split(" ")[1][0]}.` : ""}
-              </span>
+              <div className="min-w-0">
+                <span className="block whitespace-nowrap text-[14px] text-[#111] font-[500] truncate">
+                  {publisherName.split(" ").slice(0, 1).join(" ")}
+                  {publisherName.split(" ")[1]?.[0] ? ` ${publisherName.split(" ")[1][0]}.` : ""}
+                </span>
+                <span className="block text-[12px] text-black/50 whitespace-nowrap">
+                  {formatTimeAgo(house?.createdAt, { absoluteStyle: "az-long" })}
+                </span>
+              </div>
 
             </div>
           }
