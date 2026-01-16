@@ -11,6 +11,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const Imagesvg = "/icons/image.svg";
 const PaintIcon = "/icons/paint.svg";
@@ -37,6 +38,41 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
   const images = house?.medias?.filter((media) => !!media?.imageUrl) ?? [];
   const hasPublisherImage = Boolean(house?.publisher?.imageUrl);
   const publisherName = house?.publisher?.fullName?.trim() || "Elan sahibi";
+  const isMobile = useMediaQuery("(max-width: 431px)");
+
+  const dotItems = React.useMemo(() => {
+    const total = images.length;
+    const maxDots = isMobile ? 5 : 7;
+    if (total <= maxDots) {
+      return Array.from({ length: total }, (_, index) => ({ type: "dot", index }));
+    }
+
+    const first = 0;
+    const last = total - 1;
+    const windowSize = maxDots - 4; 
+    const half = Math.floor(windowSize / 2);
+
+    let start = activeSlide - half;
+    let end = activeSlide + half;
+
+    start = Math.max(1, start);
+    end = Math.min(last - 1, end);
+
+    while (end - start + 1 < windowSize) {
+      if (start > 1) start -= 1;
+      else if (end < last - 1) end += 1;
+      else break;
+    }
+
+    const items = [{ type: "dot", index: first }];
+    if (start > 1) items.push({ type: "ellipsis", key: "left" });
+    for (let index = start; index <= end; index += 1) {
+      items.push({ type: "dot", index });
+    }
+    if (end < last - 1) items.push({ type: "ellipsis", key: "right" });
+    items.push({ type: "dot", index: last });
+    return items;
+  }, [images.length, activeSlide, isMobile]);
 
   // const toText = (value) => {
   //   if (value == null) return "";
@@ -76,6 +112,9 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           display: flex;
           align-items: center;
           gap: 3px;
+          max-width: 140px;
+          overflow: hidden;
+          flex-wrap: nowrap;
         }
 
         .dot {
@@ -89,6 +128,14 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
         .dot.active {
           background-color: #d9d9d9cc;
+        }
+
+        .dot.ellipsis {
+          width: 14px;
+          height: 6px;
+          border-radius: 999px;
+          background-color: rgba(217, 217, 217, 0.5);
+          cursor: default;
         }
       `}</style>
       <div className="mb-3 card shadow-[0_2px_8px_rgba(0,0,0,0.15)] overflow-hidden rounded-[8px] select-none cursor-pointer">
@@ -184,13 +231,27 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               onClick={(e) => e.preventDefault()}
               className="dynamic-dots"
             >
-              {images?.map((_, index) => (
-                <div
-                  key={index}
-                  className={`dot ${index === activeSlide ? "active" : ""}`}
-                ></div>
-              ))}
+              {dotItems.map((item, idx) => {
+                if (item.type === "ellipsis") {
+                  return <div key={`ellipsis-${item.key}-${idx}`} className="dot ellipsis" aria-hidden="true" />;
+                }
+
+                return (
+                  <div
+                    key={item.index}
+                    className={`dot ${item.index === activeSlide ? "active" : ""}`}
+                    aria-label={`Slide ${item.index + 1}`}
+                    role="presentation"
+                  />
+                );
+              })}
             </div>
+
+            {images.length > 1 && (
+              <span className="text-white text-[10px] max-[431px]:text-[9px] select-none">
+                {activeSlide + 1}/{images.length}
+              </span>
+            )}
             <div
               onClick={(e) => {
                 e.preventDefault();
