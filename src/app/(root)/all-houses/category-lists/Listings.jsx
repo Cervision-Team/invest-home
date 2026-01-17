@@ -4,15 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import HouseCard from "@/components/ui/HouseCard";
 import Loader from "@/components/ui/Loader";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/FromShadcn/Pagination";
+import PaginationControls from "@/components/ui/PaginationControls";
 import { getAnnouncementFilter } from "@/services/api/endpoints/announcementService";
 
 function parsePage(raw) {
@@ -99,7 +91,11 @@ export default function ListingsPage() {
           mortgage: mortgage === "true" ? true : undefined,
         };
 
-        const filtered = await getAnnouncementFilter(filter, {
+        const hasAnyFilter = Object.values(filter).some(
+          (v) => v !== undefined && v !== null
+        );
+
+        const filtered = await getAnnouncementFilter(hasAnyFilter ? filter : {}, {
           page: page - 1,
           size: pageSize,
         });
@@ -128,7 +124,6 @@ export default function ListingsPage() {
 
     setPage(safeNext);
     updateUrlPage(safeNext);
-    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   if (loading) {
@@ -169,93 +164,13 @@ export default function ListingsPage() {
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <div className="mt-10 flex flex-col items-center gap-3">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(page - 1);
-                  }}
-                  className={
-                    page === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {getPaginationItems(page, totalPages).map((item, idx) => {
-                if (item === "ellipsis") {
-                  return (
-                    <PaginationItem key={`ellipsis-${idx}`}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  );
-                }
-
-                const pageNumber = item;
-                const isActive = pageNumber === page;
-                return (
-                  <PaginationItem key={pageNumber}>
-                    <PaginationLink
-                      href="#"
-                      isActive={isActive}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handlePageChange(pageNumber);
-                      }}
-                    >
-                      {pageNumber}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(page + 1);
-                  }}
-                  className={
-                    page >= totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-
-          <div className="text-sm text-gray-500">
-            Səhifə {page} / {totalPages}
-          </div>
-        </div>
-      )}
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        scrollTargetRef={topRef}
+        scrollOffset={110}
+      />
     </div>
   );
-}
-
-function getPaginationItems(currentPage, totalPages) {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
-  const leftSibling = Math.max(currentPage - 1, 1);
-  const rightSibling = Math.min(currentPage + 1, totalPages);
-  const showLeftEllipsis = leftSibling > 2;
-  const showRightEllipsis = rightSibling < totalPages - 1;
-
-  if (!showLeftEllipsis && showRightEllipsis) {
-    return [1, 2, 3, 4, 5, "ellipsis", totalPages];
-  }
-
-  if (showLeftEllipsis && !showRightEllipsis) {
-    return [1, "ellipsis", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-  }
-
-  return [1, "ellipsis", currentPage - 1, currentPage, currentPage + 1, "ellipsis", totalPages];
 }

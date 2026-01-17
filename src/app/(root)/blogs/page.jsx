@@ -3,15 +3,7 @@ import React, { Suspense, useRef, useState } from 'react';
 import { blogData } from '@/components/core/BlogsData';
 import Image from 'next/image';
 import BlogCard from '@/components/ui/BlogCard';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../../../components/ui/FromShadcn/Pagination";
+import PaginationControls from '@/components/ui/PaginationControls';
 import Link from 'next/link';
 
 
@@ -35,36 +27,7 @@ const Page = () => {
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
-      if (blogsRef.current) {
-        const offset = 100;
-        const elementTop = blogsRef.current.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: elementTop - offset,
-          behavior: 'smooth'
-        });
-      }
     }
-  };
-
-  const getVisiblePages = (currentPage, totalPages) => {
-    const visibleCount = 4;
-    let startPage = 1;
-
-    if (totalPages <= visibleCount) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    if (currentPage <= 4) {
-      return [1, 2, 3, 4];
-    }
-
-    startPage = currentPage - 1;
-
-    if (startPage + visibleCount - 1 > totalPages) {
-      startPage = totalPages - visibleCount + 1;
-    }
-
-    return Array.from({ length: visibleCount }, (_, i) => startPage + i);
   };
 
   return (
@@ -146,44 +109,14 @@ const Page = () => {
           ))}
         </div>
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              />
-            </PaginationItem>
-
-            {getVisiblePages(currentPage, totalPages).map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="#"
-                  isActive={currentPage === page}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(page);
-                  }}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            {totalPages > Math.max(...getVisiblePages(currentPage, totalPages)) && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <PaginationControls
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          scrollTargetRef={blogsRef}
+          scrollOffset={100}
+          showSummary={false}
+        />
       </div>
     </>
   );
