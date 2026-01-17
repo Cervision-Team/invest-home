@@ -54,7 +54,7 @@ const ApproveAnnouncmenet = () => {
                     <Button />
                 </div>
             </div>
-            <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Bütün müştərilər</h1>
+            <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Təsdiqlənmə gözləyən elanlar</h1>
 
             {loading ? (
                 <div className="w-full py-16 flex items-center justify-center border border-dashed rounded-xl">
