@@ -132,7 +132,7 @@ const getForSaleOrRentValidationSchema = (
       .typeError("Qalıq ay rəqəm olmalıdır")
       .integer("Tam ədəd olmalıdır")
       .min(0, "0 və ya daha böyük olmalıdır")
-      .max(11, "Qalıq ay 11-dən çox ola bilməz")
+      // .max(11, "Qalıq ay 11-dən çox ola bilməz")
       .required("Qalıq ay daxil edilməlidir");
   }
 
