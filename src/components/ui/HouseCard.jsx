@@ -316,7 +316,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
           <div className="flex max-[769px]:gap-[10px] gap-[12px] items-center font-[300] text-[16px] max-[769px]:text-[14px]">
             {
-              house?.rooms && (
+              house?.rooms ? (
                 <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
                   <Image src={BedIcon} alt="Beds" width={18} height={18} className="h-auto" />
                   <span className="font-[400] whitespace-nowrap">
@@ -324,7 +324,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
                   </span>
                 </div>
               )
-
+              :null
             }
 
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
