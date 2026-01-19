@@ -11,6 +11,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { MapPin } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { formatTimeAgo } from "@/lib/formatDateTime";
 
@@ -301,20 +302,24 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               <Image src={ShareSvg} alt="Share" width={20} height={20} />
             </div>
           </div>
-          <div className="flex items-center gap-[2px]">
-            <CiLocationOn size={24} className="text-[var(--text-color-3)] max-[769px]:inline-block" />
-            <span className="font-[500] text-[var(--text-color-3)] text-[14px] whitespace-nowrap max-[769px]:hidden">
+          <div className="flex items-center gap-0.5 min-w-0">
+            <MapPin
+              size={18}
+              strokeWidth={2.4}
+              className="text-[#111111] shrink-0 -ml-0.5"
+            />
+            <span className="min-w-0 font-[500] text-[#111111] text-[14px] truncate">
               {house?.selectedAddress}lorem ipsum dolor sit amet
             </span>
           </div>
 
 
-          <div className="flex max-[769px]:gap-[8px] gap-[12px] items-center font-[300] text-[16px]">
+          <div className="flex max-[769px]:gap-[10px] gap-[12px] items-center font-[300] text-[16px] max-[769px]:text-[14px]">
             {
               house?.rooms && (
                 <div className="beds flex max-[769px]:gap-[4px] gap-[6px] items-center">
                   <Image src={BedIcon} alt="Beds" width={18} height={18} className="h-auto" />
-                  <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
+                  <span className="font-[400] whitespace-nowrap">
                     {house?.rooms} <span className="max-[769px]:hidden">otaq</span>
                   </span>
                 </div>
@@ -324,13 +329,13 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
             <div className="floor flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={FloorIcon} alt="Floor" width={18} height={18} className="h-auto" />
-              <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
+              <span className="font-[400] whitespace-nowrap">
                 {house?.floor}/{house?.totalFloors}
               </span>
             </div>
             <div className="field flex max-[769px]:gap-[4px] gap-[6px] items-center">
               <Image src={SquareMetersIcon} alt="Field" width={18} height={18} className="h-auto" />
-              <span className="max-[769px]:text-[8px] font-[400] whitespace-nowrap">
+              <span className="font-[400] whitespace-nowrap">
                 {house?.area} m<sup>2</sup>
               </span>
             </div>
