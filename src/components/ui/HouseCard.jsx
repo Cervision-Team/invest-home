@@ -50,7 +50,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
 
     const first = 0;
     const last = total - 1;
-    const windowSize = maxDots - 4; 
+    const windowSize = maxDots - 4;
     const half = Math.floor(windowSize / 2);
 
     let start = activeSlide - half;
@@ -177,8 +177,18 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             }}
             className="w-full"
           >
-            <div className={`card custom-prev-${house?.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-prev drop-shadow-md`}></div>
-            <div className={`card custom-next-${house?.id} opacity-0 group-hover:opacity-100 transition-opacity swiper-button-next drop-shadow-md `}></div>
+            <div
+              className={`card custom-prev-${house?.id} swiper-button-prev mx-1 drop-shadow-md
+              opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity
+              w-10! h-10! rounded-full bg-white/50 pr-1 backdrop-blur-xs
+              shadow-[0_8px_18px_rgba(0,0,0,0.18)] `}
+            />
+            <div
+              className={`card custom-next-${house?.id} swiper-button-next mx-1 drop-shadow-md
+              opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity
+              w-10! h-10! rounded-full bg-white/50 pl-1 backdrop-blur-xs
+              shadow-[0_8px_18px_rgba(0,0,0,0.18)] `}
+            />
             {images.length
               ? images.map((media, index) => {
                 const imageUrl = media.imageUrl;
@@ -273,7 +283,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
           </div>
         </div>
 
-        <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-2 flex flex-col gap-[2px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
+        <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-2 flex flex-col gap-[3px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
           <div className="flex justify-between items-center gap-[16px]">
             <div className="hidden max-[769px]:flex items-center gap-[5px]">
               <span className="text-[14px] font-[600]">{house?.price}</span>
@@ -284,28 +294,17 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
                 {/* {house?.announcementType?.displayName}{" "} */}
                 {house?.propertyType?.displayName || "Əmlak növü qeyd edilməyib"}{" "}
                 {/* {house?.buildingType == "newBuilding" ? "Yeni tikili" : "kohne tikili"},{" "} */}
-               
+
               </h3>
             </div>
             <div className="shrink-0 share cursor-pointer">
               <Image src={ShareSvg} alt="Share" width={20} height={20} />
             </div>
           </div>
-
-          <div className="flex items-center gap-[11px]">
-            <CiLocationOn className="text-[var(--text-color-3)] hidden max-[769px]:inline-block" />
+          <div className="flex items-center gap-[2px]">
+            <CiLocationOn size={24} className="text-[var(--text-color-3)] max-[769px]:inline-block" />
             <span className="font-[500] text-[var(--text-color-3)] text-[14px] whitespace-nowrap max-[769px]:hidden">
-              {house?.selectedAddress}
-            </span>
-            <Image
-              src={MetroIcon}
-              alt="Metro"
-              width={18}
-              height={18}
-              className="w-[18px] h-auto hidden max-[769px]:block"
-            />
-            <span className="font-[500] text-[var(--text-color-3)] text-[10px] whitespace-nowrap hidden max-[769px]:block">
-              N.Nərimanov
+              {house?.selectedAddress}lorem ipsum dolor sit amet
             </span>
           </div>
 
@@ -336,6 +335,8 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               </span>
             </div>
           </div>
+
+
         </div>
 
         <div className="max-[769px]:hidden px-[8px] py-2 flex justify-between gap-[8px]">

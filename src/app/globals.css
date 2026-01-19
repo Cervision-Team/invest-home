@@ -212,8 +212,11 @@ body {
 }
 
 .card {
-	--swiper-theme-color: white;
-	--swiper-navigation-size: 28px;
+	--swiper-theme-color: rgba(0, 0, 0, 0.6);
+	--swiper-navigation-size: 18px;
+}
+.card :is(.swiper-button-prev, .swiper-button-next)::after {
+	-webkit-text-stroke: 1px var(--swiper-theme-color);
 }
 
 .menu-icon.active :is(path, ellipse) {
