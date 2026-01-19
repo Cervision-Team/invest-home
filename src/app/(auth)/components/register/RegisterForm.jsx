@@ -11,6 +11,7 @@ import Link from "next/link";
 import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import { useState } from "react";
 import { Eye, EyeOff, Mail } from "lucide-react";
+import { emailSchema, passwordSchema } from "@/lib/schemas/authSchemas";
 
 
 const ERROR_CODE = {
@@ -27,18 +28,8 @@ const schema = yup.object({
       "Zəhmət olmasa həm ad, həm soyad daxil edin",
       (v) => v && v.trim().split(" ").length >= 2
     ),
-  email: yup
-    .string()
-    .required("Email vacibdir")
-    .email("Düzgün email daxil edin"),
-  password: yup
-    .string()
-    .required("Şifrə vacibdir")
-    .min(8, "Şifrə ən azı 8 simvol olmalıdır")
-    .matches(/[A-Z]/, "Şifrədə ən azı bir böyük hərf olmalıdır")
-    .matches(/[a-z]/, "Şifrədə ən azı bir kiçik hərf olmalıdır")
-    .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır")
-    .matches(/[^A-Za-z0-9]/, "Şifrədə ən azı bir xüsusi simvol olmalıdır"),
+  email: emailSchema,
+  password: passwordSchema,
   terms: yup.boolean().oneOf([true], "Zəhmət olmasa şərtləri qəbul edin"),
 });
 
