@@ -28,6 +28,7 @@ const AnnouncementForm = () => {
   const [stepErrors, setStepErrors] = useState({});
   const [isValidatingStep, setIsValidatingStep] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [locationNextAttempted, setLocationNextAttempted] = useState(false);
 
 
   const formik = useFormik({
@@ -204,6 +205,12 @@ const AnnouncementForm = () => {
   }, []);
 
   useEffect(() => {
+    if (formIndex === 3) {
+      setLocationNextAttempted(false);
+    }
+  }, [formIndex]);
+
+  useEffect(() => {
   }, [
     formIndex,
     formik.values.announcementType,
@@ -248,6 +255,9 @@ const AnnouncementForm = () => {
   };
 
   const handleNextClick = async () => {
+    if (formIndex === 3) {
+      setLocationNextAttempted(true);
+    }
     const isValid = await validateCurrentStep();
 
     if (isValid) {
@@ -400,7 +410,7 @@ const AnnouncementForm = () => {
           );
         }
       case 3:
-        return <Location {...commonProps} />
+        return <Location {...commonProps} showErrors={locationNextAttempted} />
       case 4:
         return <Media {...commonProps} />
       default:
@@ -618,10 +628,18 @@ case 3:
                   </button>
                   <button
                     onClick={handleNextClick}
-                    disabled={!isCurrentStepValid() || isValidatingStep}
-                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-3 rounded-lg py-3 px-[34px] transition-all duration-200 ${isCurrentStepValid() && !isValidatingStep
-                      ? 'bg-primary text-[white] hover:opacity-90'
-                      : 'bg-gray-400 text-white cursor-not-allowed'
+                    disabled={
+                      isValidatingStep ||
+                      (formIndex === 3 && locationNextAttempted && Object.keys(stepErrors).length > 0) ||
+                      (formIndex !== 3 && (!isCurrentStepValid() || Object.keys(stepErrors).length > 0))
+                    }
+                    className={`max-[768px]:justify-center cursor-pointer flex items-center gap-3 rounded-lg py-3 px-[34px] transition-all duration-200 ${
+                      (formIndex === 3
+                        ? !(locationNextAttempted && Object.keys(stepErrors).length > 0) && !isValidatingStep
+                        : isCurrentStepValid() && !isValidatingStep
+                      )
+                        ? 'bg-primary text-[white] hover:opacity-90'
+                        : 'bg-gray-400 text-white cursor-not-allowed'
                       }`}
                   >
                     <span className='font-medium text-[16px]'>
