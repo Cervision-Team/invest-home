@@ -320,11 +320,12 @@ export const locationValidationSchema = Yup.object({
     .required('Ünvan daxil edilməlidir')
     .max(200, 'Ünvan 200 simvoldan çox ola bilməz'),
 
-  searchQuery: Yup.string()
-    .max(100, 'Axtarış sorğusu 100 simvoldan çox ola bilməz'),
-
-  latitude: Yup.number().nullable(),
-  longitude: Yup.number().nullable()
+  latitude: Yup.number()
+    .typeError('Xəritədən dəqiq yeri seçin')
+    .required('Xəritədən dəqiq yeri seçin'),
+  longitude: Yup.number()
+    .typeError('Xəritədən dəqiq yeri seçin')
+    .required('Xəritədən dəqiq yeri seçin')
 });
 
 // Step 4 - Media (formerly Step 5)
