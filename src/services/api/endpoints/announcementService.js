@@ -40,6 +40,35 @@ export const getAnnouncementById = async (id) => {
 		console.log(err);
 	}
 };
+
+export const getAnnouncementCity = async () => {
+	try {
+		const res = await axios.get("/api/announcement/city");
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+export const getAnnouncementDistrict = async (cityId) => {
+	try {
+		if (cityId == null || cityId === "") return [];
+		const res = await axios.get(`/api/announcement/district/${cityId}`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+export const getAnnouncementSettlement = async (districtId) => {
+	try {
+		if (districtId == null || districtId === "") return [];
+		const res = await axios.get(`/api/announcement/settlement/${districtId}`);
+		return res.data;
+	} catch (err) {
+		console.log(err);
+	}
+};
 export const getAnnouncementByUser = async (status) => {
 	try {
 	const res = await axios.get(`/api/announcement/by-user?status=${status}&pageIndex=${0}&pageSize=${20}`);

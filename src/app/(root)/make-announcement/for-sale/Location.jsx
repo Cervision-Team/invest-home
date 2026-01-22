@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronDown, X } from 'lucide-react'
 import { azeCity, azeDistrict, azeSettlement } from '@/components/core/RealEstateData';
+import { getAnnouncementCity, getAnnouncementDistrict, getAnnouncementSettlement } from '@/services/api/endpoints/announcementService';
 
 const Location = ({
   formik,
@@ -28,6 +29,20 @@ const Location = ({
   const [mapLoaded, setMapLoaded] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState(formik.values.selectedAddress || '')
 
+  const [cityOptions, setCityOptions] = useState(azeCity)
+  const [isCityLoading, setIsCityLoading] = useState(false)
+  const [cityLoadError, setCityLoadError] = useState('')
+
+  const [selectedCityId, setSelectedCityId] = useState(null)
+  const [districtOptions, setDistrictOptions] = useState(azeDistrict)
+  const [isDistrictLoading, setIsDistrictLoading] = useState(false)
+  const [districtLoadError, setDistrictLoadError] = useState('')
+
+  const [selectedDistrictId, setSelectedDistrictId] = useState(null)
+  const [settlementOptions, setSettlementOptions] = useState([])
+  const [isSettlementLoading, setIsSettlementLoading] = useState(false)
+  const [settlementLoadError, setSettlementLoadError] = useState('')
+
   const [isSettlementSearching, setIsSettlementSearching] = useState(false)
   const [settlementSearchError, setSettlementSearchError] = useState('')
 
@@ -46,6 +61,158 @@ const Location = ({
     return keys.map((k) => `${k}:${String(errorsObj[k])}`).join('|');
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCities = async () => {
+      setIsCityLoading(true);
+      setCityLoadError('');
+      try {
+        const data = await getAnnouncementCity();
+        if (!isMounted) return;
+
+        const normalized = Array.isArray(data)
+          ? data
+            .filter((x) => x && (x.name || x.id))
+            .map((x) => ({
+              id: x.id,
+              value: String(x.name ?? ''),
+              label: String(x.name ?? ''),
+            }))
+            .filter((x) => x.value)
+          : [];
+
+        if (normalized.length) {
+          setCityOptions(normalized);
+
+          if (selectedCity) {
+            const match = normalized.find((c) => c.value === selectedCity || c.label === selectedCity);
+            if (match?.id != null) setSelectedCityId(match.id);
+          }
+        } else {
+          setCityOptions(azeCity);
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setCityOptions(azeCity);
+        setCityLoadError('Şəhər siyahısı yüklənmədi');
+      } finally {
+        if (isMounted) setIsCityLoading(false);
+      }
+    };
+
+    loadCities();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadDistricts = async () => {
+      setDistrictLoadError('');
+
+      if (selectedCityId == null || selectedCityId === '') {
+        setDistrictOptions([]);
+        return;
+      }
+
+      setIsDistrictLoading(true);
+      try {
+        const data = await getAnnouncementDistrict(selectedCityId);
+        if (!isMounted) return;
+
+        const normalized = Array.isArray(data)
+          ? data
+            .filter((x) => x && (x.name || x.id))
+            .map((x) => ({
+              id: x.id,
+              value: String(x.name ?? ''),
+              label: String(x.name ?? ''),
+            }))
+            .filter((x) => x.value)
+          : [];
+
+        if (normalized.length) {
+          setDistrictOptions(normalized);
+
+          if (selectedDistrict) {
+            const match = normalized.find((d) => d.value === selectedDistrict || d.label === selectedDistrict);
+            if (match?.id != null) setSelectedDistrictId(match.id);
+          }
+        } else {
+          // City might not have any districts
+          setDistrictOptions([]);
+          if (selectedDistrict) {
+            setSelectedDistrict('');
+            setSelectedDistrictId(null);
+          }
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setDistrictOptions([]);
+        setDistrictLoadError('Rayon siyahısı yüklənmədi');
+      } finally {
+        if (isMounted) setIsDistrictLoading(false);
+      }
+    };
+
+    loadDistricts();
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCityId]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSettlements = async () => {
+      setSettlementLoadError('');
+
+      if (selectedDistrictId == null || selectedDistrictId === '') {
+        setSettlementOptions([]);
+        return;
+      }
+
+      setIsSettlementLoading(true);
+      try {
+        const data = await getAnnouncementSettlement(selectedDistrictId);
+        if (!isMounted) return;
+
+        const normalized = Array.isArray(data)
+          ? data
+            .filter((x) => x && (x.name || x.id))
+            .map((x) => ({
+              id: x.id,
+              value: String(x.name ?? ''),
+              label: String(x.name ?? ''),
+            }))
+            .filter((x) => x.value)
+          : [];
+
+        if (normalized.length) {
+          setSettlementOptions(normalized);
+        } else {
+          // District might not have any settlements
+          setSettlementOptions([]);
+          if (selectedSettlement) setSelectedSettlement('');
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setSettlementOptions([]);
+        setSettlementLoadError('Qəsəbə siyahısı yüklənmədi');
+      } finally {
+        if (isMounted) setIsSettlementLoading(false);
+      }
+    };
+
+    loadSettlements();
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedDistrictId]);
+
 
   // Mock validation function
   const validateLocationStep = async (data) => {
@@ -55,13 +222,7 @@ const Location = ({
       errors.selectedCity = 'Şəhər seçilməlidir';
     }
 
-    if (!data.selectedDistrict) {
-      errors.selectedDistrict = 'Rayon seçilməlidir';
-    }
-
-    if (!data.selectedSettlement) {
-      errors.selectedSettlement = 'Qəsəbə seçilməlidir';
-    }
+    // District/Settlement are optional (some cities may not have them)
 
     if (!data.selectedAddress) {
       errors.selectedAddress = 'Ünvan daxil edilməlidir';
@@ -152,6 +313,13 @@ const Location = ({
     formik.setFieldValue('latitude', null);
     formik.setFieldValue('longitude', null);
 
+    setSelectedCity('');
+    setSelectedCityId(null);
+    setSelectedDistrict('');
+    setSelectedDistrictId(null);
+    setSelectedSettlement('');
+    setSettlementOptions([]);
+
     setTouched({});
 
     // Remove marker from map
@@ -213,13 +381,16 @@ const Location = ({
   };
 
   const getGeocodeQueryForSettlement = useCallback((settlementValue) => {
-    const settlement = azeSettlement.find((loc) => loc.value === settlementValue);
-    if (!settlement) return '';
+    const settlement = settlementOptions.find((loc) => loc.value === settlementValue || loc.label === settlementValue)
+      || azeSettlement.find((loc) => loc.value === settlementValue || loc.label === settlementValue);
+
+    const label = settlement?.label || settlementValue;
+    if (!label) return '';
 
     // Intentionally keep this query settlement-only (no city/district)
     // to avoid geocoder biasing results toward the selected city.
-    return `${settlement.label} qəsəbəsi, Azerbaijan`;
-  }, []);
+    return `${label} qəsəbəsi, Azerbaijan`;
+  }, [settlementOptions]);
 
   const focusMapToSettlement = useCallback(async (settlementValue = selectedSettlement) => {
     setSettlementSearchError('');
@@ -445,6 +616,15 @@ const Location = ({
 
   const handleSelectCity = (value, label) => {
     setSelectedCity(value)
+
+    const cityMatch = cityOptions.find((c) => c.value === value || c.label === label);
+    setSelectedCityId(cityMatch?.id ?? null);
+
+    // Reset downstream selects when city changes
+    setSelectedDistrict('');
+    setSelectedDistrictId(null);
+    setSelectedSettlement('');
+    setSettlementOptions([]);
     setIsCityOpen(false)
     setTouched(prev => ({ ...prev, selectedCity: true }));
     setIsDistrictOpen(false)
@@ -453,6 +633,12 @@ const Location = ({
 
   const handleSelectDistrict = (value, label) => {
     setSelectedDistrict(value)
+
+    const districtMatch = districtOptions.find((d) => d.value === value || d.label === label);
+    setSelectedDistrictId(districtMatch?.id ?? null);
+
+    setSelectedSettlement('');
+    setSettlementOptions([]);
     setIsDistrictOpen(false)
     setTouched(prev => ({ ...prev, selectedDistrict: true }));
     setIsCityOpen(false)
@@ -492,9 +678,10 @@ const Location = ({
     );
   };
 
-  const selectedCityLabel = azeCity.find(loc => loc.value === selectedCity)?.label || 'Şəhər seçin'
-  const selectedDistrictLabel = azeDistrict.find(loc => loc.value === selectedDistrict)?.label || 'Rayon seçin'
-  const selectedSettlementLabel = azeSettlement.find(loc => loc.value === selectedSettlement)?.label || 'Qəsəbə seçin'
+  const selectedCityLabel = cityOptions.find(loc => loc.value === selectedCity || loc.label === selectedCity)?.label || 'Şəhər seçin'
+  const selectedDistrictLabel = districtOptions.find(loc => loc.value === selectedDistrict || loc.label === selectedDistrict)?.label || 'Rayon seçin'
+  const selectedSettlementLabel = settlementOptions.find(loc => loc.value === selectedSettlement || loc.label === selectedSettlement)?.label
+    || 'Qəsəbə seçin'
 
   return (
     <div className="w-full h-full pb-4 px-2 -mx-2  flex items-start justify-start max-h-[500px] overflow-y-auto">
@@ -519,6 +706,7 @@ const Location = ({
                     closeAllDropdowns()
                     setIsCityOpen(!isCityOpen)
                   }}
+                  disabled={isCityLoading}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${showErrors && (validationErrors.selectedCity || stepErrors?.selectedCity) ? 'error-field border-red-500' : (isCityOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 'border-black')} ${selectedCity ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -534,16 +722,22 @@ const Location = ({
 
                 {isCityOpen && (
                   <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom ">
-                    {azeCity.map((location) => (
-                      <button
-                        key={location.value}
-                        type="button"
-                        onClick={() => handleSelectCity(location.value, location.label)}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0 "
-                      >
-                        <span className="text-gray-900 font-medium">{location.label}</span>
-                      </button>
-                    ))}
+                    {isCityLoading ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Yüklənir...</div>
+                    ) : cityLoadError ? (
+                      <div className="px-4 py-3 text-sm text-red-600">{cityLoadError}</div>
+                    ) : (
+                      cityOptions.map((location) => (
+                        <button
+                          key={location.id ?? location.value}
+                          type="button"
+                          onClick={() => handleSelectCity(location.value, location.label)}
+                          className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0 "
+                        >
+                          <span className="text-gray-900 font-medium">{location.label}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -562,6 +756,7 @@ const Location = ({
                     closeAllDropdowns()
                     setIsDistrictOpen(!isDistrictOpen)
                   }}
+                  disabled={isDistrictLoading || !selectedCityId}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${showErrors && (validationErrors.selectedDistrict || stepErrors?.selectedDistrict) ? 'error-field border-red-500' : (isDistrictOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 'border-black')} ${selectedDistrict ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -577,16 +772,26 @@ const Location = ({
 
                 {isDistrictOpen && (
                   <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom">
-                    {azeDistrict.map((location) => (
-                      <button
-                        key={location.value}
-                        type="button"
-                        onClick={() => handleSelectDistrict(location.value, location.label)}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
-                      >
-                        <span className="text-gray-900 font-medium">{location.label}</span>
-                      </button>
-                    ))}
+                    {!selectedCityId ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Əvvəlcə şəhər seçin</div>
+                    ) : isDistrictLoading ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Yüklənir...</div>
+                    ) : districtLoadError ? (
+                      <div className="px-4 py-3 text-sm text-red-600">{districtLoadError}</div>
+                    ) : !districtOptions.length ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Bu şəhər üçün rayon yoxdur</div>
+                    ) : (
+                      districtOptions.map((location) => (
+                        <button
+                          key={location.id ?? location.value}
+                          type="button"
+                          onClick={() => handleSelectDistrict(location.value, location.label)}
+                          className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        >
+                          <span className="text-gray-900 font-medium">{location.label}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -605,6 +810,7 @@ const Location = ({
                     closeAllDropdowns()
                     setIsSettlementOpen(!isSettlementOpen)
                   }}
+                  disabled={isSettlementLoading || !selectedDistrictId}
                   className={`w-full px-3 py-2 text-left bg-white border rounded-lg shadow-sm transition-all duration-200 flex items-center justify-between hover:border-[#26B5A0] focus:outline-none focus:ring-2 focus:ring-[#26B5A0] focus:border-[#26B5A0] ${showErrors && (validationErrors.selectedSettlement || stepErrors?.selectedSettlement) ? 'error-field border-red-500' : (isSettlementOpen ? 'border-[#26B5A0] ring-2 ring-[#26B5A0]' : 'border-black')} ${selectedSettlement ? 'text-gray-900' : 'text-black'}`}
                 >
                   <span className="truncate">
@@ -620,16 +826,26 @@ const Location = ({
 
                 {isSettlementOpen && (
                   <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-60 overflow-auto scrollbar-custom ">
-                    {azeSettlement.map((location) => (
-                      <button
-                        key={location.value}
-                        type="button"
-                        onClick={() => handleSelectSettlement(location.value, location.label)}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
-                      >
-                        <span className="text-gray-900 font-medium">{location.label}</span>
-                      </button>
-                    ))}
+                    {!selectedDistrictId ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Əvvəlcə rayon seçin</div>
+                    ) : isSettlementLoading ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Yüklənir...</div>
+                    ) : settlementLoadError ? (
+                      <div className="px-4 py-3 text-sm text-red-600">{settlementLoadError}</div>
+                    ) : !settlementOptions.length ? (
+                      <div className="px-4 py-3 text-sm text-gray-600">Bu rayon üçün qəsəbə yoxdur</div>
+                    ) : (
+                      settlementOptions.map((location) => (
+                        <button
+                          key={location.id ?? location.value}
+                          type="button"
+                          onClick={() => handleSelectSettlement(location.value, location.label)}
+                          className="w-full px-4 py-3 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        >
+                          <span className="text-gray-900 font-medium">{location.label}</span>
+                        </button>
+                      ))
+                    )}
                   </div>
                 )}
               </div>

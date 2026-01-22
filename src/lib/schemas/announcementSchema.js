@@ -311,10 +311,12 @@ export const locationValidationSchema = Yup.object({
     .required('Şəhər seçilməlidir'),
 
   selectedDistrict: Yup.string()
-    .required('Rayon seçilməlidir'),
+    .nullable()
+    .notRequired(),
 
   selectedSettlement: Yup.string()
-    .required('Qəsəbə seçilməlidir'),
+    .nullable()
+    .notRequired(),
 
   selectedAddress: Yup.string()
     .required('Ünvan daxil edilməlidir')
