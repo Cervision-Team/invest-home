@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import openOfficeImg from '../../../../public/images/openoffice.jpg'
 
 const OpenOffice = () => {
   return (
@@ -9,7 +10,7 @@ const OpenOffice = () => {
         <div className='relative flex w-full h-auto flex-col items-center justify-start gap-10 px-4 py-8 sm:px-7 sm:py-9 md:flex-row md:gap-[60px]'>
           <div className='relative w-full max-w-[485px] aspect-485/324'>
             <Image
-              src='/images/openoffice.jpg'
+              src={openOfficeImg}
               alt='OpenOffice Logo'
               fill
               sizes='(max-width: 768px) 100vw, 485px'
