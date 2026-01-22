@@ -15,6 +15,7 @@ const OpenOffice = () => {
               fill
               sizes='(max-width: 768px) 100vw, 485px'
               className='object-cover'
+              unoptimized
             />
           </div>
 
