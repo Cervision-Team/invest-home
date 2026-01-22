@@ -497,7 +497,7 @@ const Location = ({
   const selectedSettlementLabel = azeSettlement.find(loc => loc.value === selectedSettlement)?.label || 'Qəsəbə seçin'
 
   return (
-    <div className="w-full h-full pb-4 px-2 -mx-2 border-b border-gray-300 flex items-start justify-start max-h-[500px] overflow-y-auto">
+    <div className="w-full h-full pb-4 px-2 -mx-2  flex items-start justify-start max-h-[500px] overflow-y-auto">
       <div className="w-full">
         <div className='flex flex-col items-start justify-center space-y-8'>
           <h5 className='text-black text-2xl font-medium'>
@@ -673,7 +673,7 @@ const Location = ({
           </div>
 
           {/* Map Section */}
-          <div className="flex flex-col items-start justify-center gap-3 w-full">
+          <div className="relative flex flex-col items-start justify-center gap-3 w-full">
             <h6 className="text-black text-xl font-medium">Xəritədə seçin</h6>
             <p className="text-gray-600 text-sm">
               Dəqiq ünvan üçün xəritədə istədiyiniz yeri klikləyin. Markeri sürükləyərək yerini dəyişə bilərsiniz.
@@ -701,8 +701,9 @@ const Location = ({
                 Koordinatlar: {Number(formik.values.latitude).toFixed(6)}, {Number(formik.values.longitude).toFixed(6)}
               </p>
             )}
-
-            <ErrorMessage fieldName="location" />
+            <div className='absolute bottom-0 w-full '>
+              <ErrorMessage fieldName="location" />
+            </div>
 
             <div className="relative w-full" style={{ height: '400px' }}>
               {!mapLoaded && (
