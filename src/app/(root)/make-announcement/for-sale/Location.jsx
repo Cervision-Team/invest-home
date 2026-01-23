@@ -392,6 +392,62 @@ const Location = ({
     return `${label} qəsəbəsi, Azerbaijan`;
   }, [settlementOptions]);
 
+  const geocodeAndFocusMap = useCallback(async (query) => {
+    if (!query) return;
+    if (!mapInstanceRef.current) return;
+
+    if (!window.google?.maps?.Geocoder) {
+      throw new Error('Xəritə servisi yüklənməyib');
+    }
+
+    const geocoder = new window.google.maps.Geocoder();
+    const { results } = await new Promise((resolve, reject) => {
+      geocoder.geocode({ address: query, region: 'AZ' }, (results, status) => {
+        if (status === 'OK' && results?.length) {
+          resolve({ results, status });
+          return;
+        }
+        if (status === 'ZERO_RESULTS') {
+          reject(new Error('Nəticə tapılmadı'));
+          return;
+        }
+        reject(new Error('Xəritədə axtarış alınmadı'));
+      });
+    });
+
+    const first = results[0];
+    if (first?.geometry?.viewport) {
+      mapInstanceRef.current.fitBounds(first.geometry.viewport);
+    } else if (first?.geometry?.location) {
+      mapInstanceRef.current.setCenter(first.geometry.location);
+      mapInstanceRef.current.setZoom(12);
+    }
+  }, []);
+
+  const getGeocodeQueryForCity = useCallback((cityValue) => {
+    const city = cityOptions.find((loc) => loc.value === cityValue || loc.label === cityValue)
+      || azeCity.find((loc) => loc.value === cityValue || loc.label === cityValue);
+
+    const label = city?.label || cityValue;
+    if (!label) return '';
+    return `${label}, Azerbaijan`;
+  }, [cityOptions]);
+
+  const getGeocodeQueryForDistrict = useCallback((districtValue) => {
+    const district = districtOptions.find((loc) => loc.value === districtValue || loc.label === districtValue)
+      || azeDistrict.find((loc) => loc.value === districtValue || loc.label === districtValue);
+
+    const districtLabel = district?.label || districtValue;
+    if (!districtLabel) return '';
+
+    const cityLabel = cityOptions.find((loc) => loc.value === selectedCity || loc.label === selectedCity)?.label
+      || azeCity.find((loc) => loc.value === selectedCity || loc.label === selectedCity)?.label
+      || selectedCity;
+
+    if (cityLabel) return `${districtLabel}, ${cityLabel}, Azerbaijan`;
+    return `${districtLabel}, Azerbaijan`;
+  }, [districtOptions, cityOptions, selectedCity]);
+
   const focusMapToSettlement = useCallback(async (settlementValue = selectedSettlement) => {
     setSettlementSearchError('');
 
@@ -407,26 +463,9 @@ const Location = ({
 
     setIsSettlementSearching(true);
     try {
-      const geocoder = new window.google.maps.Geocoder();
-      const { results } = await new Promise((resolve, reject) => {
-        geocoder.geocode({ address: query, region: 'AZ' }, (results, status) => {
-          if (status === 'OK' && results?.length) {
-            resolve({ results, status });
-            return;
-          }
-          if (status === 'ZERO_RESULTS') {
-            reject(new Error('Bu qəsəbə üçün nəticə tapılmadı'));
-            return;
-          }
-          reject(new Error('Xəritədə axtarış alınmadı'));
-        });
-      });
-
-      const first = results[0];
-      if (first?.geometry?.viewport) {
-        mapInstanceRef.current.fitBounds(first.geometry.viewport);
-      } else if (first?.geometry?.location) {
-        mapInstanceRef.current.setCenter(first.geometry.location);
+      await geocodeAndFocusMap(query);
+      // Settlements usually need a bit closer view
+      if (mapInstanceRef.current?.getZoom?.() < 13) {
         mapInstanceRef.current.setZoom(13);
       }
     } catch (err) {
@@ -434,7 +473,35 @@ const Location = ({
     } finally {
       setIsSettlementSearching(false);
     }
-  }, [getGeocodeQueryForSettlement, selectedSettlement]);
+  }, [getGeocodeQueryForSettlement, selectedSettlement, geocodeAndFocusMap]);
+
+  const focusMapToCity = useCallback(async (cityValue = selectedCity) => {
+    if (!cityValue) return;
+    const query = getGeocodeQueryForCity(cityValue);
+    if (!query) return;
+    try {
+      await geocodeAndFocusMap(query);
+      if (mapInstanceRef.current?.getZoom?.() > 10) {
+        mapInstanceRef.current.setZoom(10);
+      }
+    } catch (err) {
+      console.warn('City map focus failed:', err);
+    }
+  }, [selectedCity, getGeocodeQueryForCity, geocodeAndFocusMap]);
+
+  const focusMapToDistrict = useCallback(async (districtValue = selectedDistrict) => {
+    if (!districtValue) return;
+    const query = getGeocodeQueryForDistrict(districtValue);
+    if (!query) return;
+    try {
+      await geocodeAndFocusMap(query);
+      if (mapInstanceRef.current?.getZoom?.() < 12) {
+        mapInstanceRef.current.setZoom(12);
+      }
+    } catch (err) {
+      console.warn('District map focus failed:', err);
+    }
+  }, [selectedDistrict, getGeocodeQueryForDistrict, geocodeAndFocusMap]);
 
   // Pan map function
   const panMap = useCallback((direction) => {
@@ -629,6 +696,10 @@ const Location = ({
     setTouched(prev => ({ ...prev, selectedCity: true }));
     setIsDistrictOpen(false)
     setIsSettlementOpen(false)
+
+    if (mapLoaded) {
+      focusMapToCity(value);
+    }
   }
 
   const handleSelectDistrict = (value, label) => {
@@ -643,6 +714,10 @@ const Location = ({
     setTouched(prev => ({ ...prev, selectedDistrict: true }));
     setIsCityOpen(false)
     setIsSettlementOpen(false)
+
+    if (mapLoaded) {
+      focusMapToDistrict(value);
+    }
   }
 
   const handleSelectSettlement = (value, label) => {
@@ -664,6 +739,22 @@ const Location = ({
     if (!selectedSettlement) return;
     focusMapToSettlement(selectedSettlement);
   }, [mapLoaded, selectedSettlement, focusMapToSettlement]);
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+    if (!selectedCity) return;
+    if (!selectedDistrict && !selectedSettlement) {
+      focusMapToCity(selectedCity);
+    }
+  }, [mapLoaded, selectedCity, selectedDistrict, selectedSettlement, focusMapToCity]);
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+    if (!selectedDistrict) return;
+    if (!selectedSettlement) {
+      focusMapToDistrict(selectedDistrict);
+    }
+  }, [mapLoaded, selectedDistrict, selectedSettlement, focusMapToDistrict]);
 
 
   const ErrorMessage = ({ error, fieldName }) => {
