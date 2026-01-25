@@ -84,7 +84,6 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full">
       <div className="flex flex-col gap-[27px]">
-        {/* Email input */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="email" className="text-sm font-medium text-black">
             Email<span className="text-red-500">*</span>
@@ -98,7 +97,6 @@ const LoginForm = () => {
               className="h-11 px-4 border border-black w-full text-base rounded-lg"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              {/* <Image src={Mail.src} alt="mail" width={20} height={20} /> */}
               <Mail size={20} />
             </span>
           </div>
@@ -147,7 +145,6 @@ const LoginForm = () => {
             {errors.password?.message}
           </div>
         </div>
-        {/* Buttons */}
         <div className="flex flex-col gap-6">
           <button
             type="submit"
@@ -162,7 +159,7 @@ const LoginForm = () => {
             <span className="h-px w-full bg-[#866AB4]" />
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center flex-col">
             <GoogleLoginButton />
           </div>
         </div>

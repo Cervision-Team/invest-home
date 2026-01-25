@@ -7,7 +7,6 @@ import Image from "next/image";
 import InvestHomeLogo from "../../../../public/images/logo.png";
 import Link from "next/link";
 import X_Icon from "../../../../public/icons/x.svg";
-import ProtectedLayout from "@/components/router/ProtectedLayout";
 import MessageModal from "@/components/ui/MessageModal";
 
 const OTPPage = () => {
@@ -136,7 +135,7 @@ const OTPPage = () => {
   }, []);
 
   return (
-    <ProtectedLayout>
+    <>
       <MessageModal
         isOpen={modal.open}
         variant={modal.variant}
@@ -232,7 +231,7 @@ const OTPPage = () => {
           </div>
         </div>
       </section>
-    </ProtectedLayout>
+    </>
   );
 };
 
