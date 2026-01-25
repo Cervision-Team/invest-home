@@ -7,9 +7,10 @@ import { loginWithEmail } from "@/lib/authService";
 import Image from "next/image";
 import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 // import Mail from "../../../../../public/icons/mail.svg";
-import { Eye, EyeOff,Mail } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { useState } from "react";
 import { loginSchema } from "@/lib/schemas/authSchemas";
+import Link from "next/link";
 
 const ERROR_CODE = {
   USER_NOT_FOUND_BY_NUMBER: "Nömrə təyin olunmayıb",
@@ -130,6 +131,15 @@ const LoginForm = () => {
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
+          </div>
+
+          <div className="mt-2 flex items-center justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-primary hover:opacity-90"
+            >
+              Şifrəmi unutdum
+            </Link>
           </div>
 
 

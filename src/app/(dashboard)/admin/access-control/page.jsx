@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { getAccessControl, upadteAccessControl } from "@/services/api/endpoints/accessControlService";
 import { useMenuPermission } from "@/context/MenuPermissionContext";
-import { ToastContainer, toast } from "react-toastify";
 import { createRole, deleteRole, updateRole } from "@/services/api/endpoints/roleService";
 import RoleModal from "./components/RoleModal";
 import AccessControlTable from "./components/AccessControlTable";
 import Loader from "@/components/ui/Loader";
+import MessageModal from "@/components/ui/MessageModal";
 
 const AccessControl = () => {
     const [access, setAccess] = useState([]);
@@ -14,6 +14,13 @@ const AccessControl = () => {
     const { fetchMenuPermission } = useMenuPermission();
     const [pageLoading, setPageLoading] = useState(true);
     const [pageError, setPageError] = useState(null);
+
+    const [messageModal, setMessageModal] = useState({
+        open: false,
+        variant: "success",
+        title: "",
+        message: "",
+    });
 
     const [roleModalOpen, setRoleModalOpen] = useState(false);
     const [roleModalMode, setRoleModalMode] = useState("create");
@@ -97,9 +104,20 @@ const AccessControl = () => {
                 }));
             const res = await upadteAccessControl(payload)
             fetchMenuPermission({ force: true });
-            toast.success(res.data)
+            setMessageModal({
+                open: true,
+                variant: "success",
+                title: "Uğurlu",
+                message: res.data,
+            });
         } catch (err) {
             console.log(err);
+            setMessageModal({
+                open: true,
+                variant: "error",
+                title: "Xəta",
+                message: err?.response?.data?.message || "Xəta baş verdi",
+            });
         }
     };
 
@@ -122,15 +140,15 @@ const AccessControl = () => {
         try {
             if (roleModalMode === "create") {
                 const res = await createRole({ name });
-                toast.success(res?.data || "Role yaradıldı");
+                setMessageModal({ open: true, variant: "success", title: "Uğurlu", message: res?.data || "Role yaradıldı" });
             } else {
                 const res = await updateRole({ id: activeRoleId, name });
-                toast.success(res?.data || "Role yeniləndi");
+                setMessageModal({ open: true, variant: "success", title: "Uğurlu", message: res?.data || "Role yeniləndi" });
             }
             setRoleModalOpen(false);
             await refreshMatrix({ preserveAccess: true });
         } catch (err) {
-            toast.error("Xəta baş verdi");
+            setMessageModal({ open: true, variant: "error", title: "Xəta", message: "Xəta baş verdi" });
         } finally {
             setRoleSubmitting(false);
         }
@@ -139,10 +157,10 @@ const AccessControl = () => {
     const handleRoleDelete = async (roleId) => {
         try {
             await deleteRole(roleId);
-            toast.success("Role silindi");
+            setMessageModal({ open: true, variant: "success", title: "Uğurlu", message: "Role silindi" });
             await refreshMatrix({ preserveAccess: true });
         } catch (err) {
-            toast.error("Xəta baş verdi");
+            setMessageModal({ open: true, variant: "error", title: "Xəta", message: "Xəta baş verdi" });
         }
     };
 
@@ -164,7 +182,15 @@ const AccessControl = () => {
 
     return (
         <section className="w-full">
-            <ToastContainer />
+            <MessageModal
+                isOpen={messageModal.open}
+                variant={messageModal.variant}
+                title={messageModal.title}
+                message={messageModal.message}
+                primaryText="Bağla"
+                onPrimary={() => setMessageModal((p) => ({ ...p, open: false }))}
+                onClose={() => setMessageModal((p) => ({ ...p, open: false }))}
+            />
             <RoleModal
                 open={roleModalOpen}
                 title={roleModalMode === "create" ? "Yeni role əlavə et" : "Role yenilə"}
