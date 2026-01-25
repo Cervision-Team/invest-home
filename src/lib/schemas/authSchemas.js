@@ -27,3 +27,13 @@ export const loginSchema = yup
     password: loginPasswordSchema,
   })
   .required();
+
+export const resetPasswordSchema = yup
+  .object({
+    password: passwordSchema,
+    confirmPassword: yup
+      .string()
+      .required("Şifrənin təkrarı vacibdir")
+      .oneOf([yup.ref("password")], "Şifrələr uyğun deyil"),
+  })
+  .required();

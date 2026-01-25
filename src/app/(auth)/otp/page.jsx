@@ -3,12 +3,12 @@
 import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { verifyOTP, resendOTP } from "@/lib/authService";
-import { toast } from "react-toastify";
 import Image from "next/image";
 import InvestHomeLogo from "../../../../public/images/logo.png";
 import Link from "next/link";
 import X_Icon from "../../../../public/icons/x.svg";
 import ProtectedLayout from "@/components/router/ProtectedLayout";
+import MessageModal from "@/components/ui/MessageModal";
 
 const OTPPage = () => {
   const inputRefs = useRef([]);
@@ -16,6 +16,12 @@ const OTPPage = () => {
   const [minutes, setMinutes] = useState(1);
   const [seconds, setSeconds] = useState(0);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [modal, setModal] = useState({
+    open: false,
+    variant: "success",
+    title: "",
+    message: "",
+  });
 
   const router = useRouter();
 
@@ -38,15 +44,27 @@ const OTPPage = () => {
 
       if (token) {
         localStorage.setItem("access-token", token);
-        toast.success("Giriş uğurlu!");
-        router.push("/");
+        setModal({
+          open: true,
+          variant: "success",
+          title: "Uğurlu",
+          message: "Giriş uğurlu!",
+        });
       } else {
-        toast.error("Token alınmadı!");
+        setModal({
+          open: true,
+          variant: "error",
+          title: "Xəta",
+          message: "Token alınmadı!",
+        });
       }
     } catch (error) {
-      toast.error(
-        "OTP xətası: " + (error?.response?.data?.message || "Xəta baş verdi")
-      );
+      setModal({
+        open: true,
+        variant: "error",
+        title: "Xəta",
+        message: "OTP xətası: " + (error?.response?.data?.message || "Xəta baş verdi"),
+      });
     }
   };
 
@@ -119,28 +137,41 @@ const OTPPage = () => {
 
   return (
     <ProtectedLayout>
+      <MessageModal
+        isOpen={modal.open}
+        variant={modal.variant}
+        title={modal.title}
+        message={modal.message}
+        primaryText={modal.variant === "success" ? "Davam et" : "Bağla"}
+        onPrimary={() => {
+          setModal((prev) => ({ ...prev, open: false }));
+          if (modal.variant === "success") router.push("/");
+        }}
+        onClose={() => setModal((prev) => ({ ...prev, open: false }))}
+      />
+
       <section className="min-[431px]:bg-primary min-h-screen min-[431px]:text-white text-center min-[431px]:flex min-[431px]:items-center">
-        <div className="max-w-[1600px] mx-auto py-[20px] px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px] flex flex-col gap-[36px]">
+        <div className="max-w-[1600px] mx-auto py-5 px-20 max-[1025px]:px-5 max-[431px]:px-4 flex flex-col gap-9">
           <div className="min-[1024px]:hidden flex justify-between items-center">
-            <div className="flex gap-[7px] items-center font-[600] text-[18px]">
+            <div className="flex gap-[7px] items-center font-semibold text-[18px]">
               <Image
                 src={"/images/logo.png"}
                 alt="Invest Home Logo"
                 width={50}
                 height={50}
                 priority
-                className="flex-shrink-0"
+                className="shrink-0"
               />
               <span>Invest Home</span>
             </div>
             <Link href={"/"}>
-              <div className="w-[24px] h-[24px] flex items-center justify-center">
+              <div className="w-6 h-6 flex items-center justify-center">
                 <Image src={X_Icon} width={13} height={13} alt="x_icon" />
               </div>
             </Link>
           </div>
-          <div className="flex flex-col gap-[40px]">
-            <div className="max-[431px]:hidden flex flex-col items-center gap-[12px]">
+          <div className="flex flex-col gap-10">
+            <div className="max-[431px]:hidden flex flex-col items-center gap-3">
               <Image
                 src={InvestHomeLogo}
                 width={100}
@@ -148,27 +179,27 @@ const OTPPage = () => {
                 className="rounded-full"
                 alt="logo"
               />
-              <span className=" text-[20px] font-[500]">Invest Home</span>
+              <span className=" text-[20px] font-medium">Invest Home</span>
             </div>
-            <h1 className="max-[431px]:hidden text-[36px] font-[600]">
+            <h1 className="max-[431px]:hidden text-[36px] font-semibold">
               "Yeni evinizi tapmağa bir addım yaxınsınız"
             </h1>
-            <div className="flex flex-col gap-[28px]">
-              <h2 className="text-[24px] font-[600]">Giriş kodu</h2>
+            <div className="flex flex-col gap-7">
+              <h2 className="text-[24px] font-semibold">Giriş kodu</h2>
               <p>
                 Zəhmət olmasa, emailinizə göndərilən 4 rəqəmli təsdiq kodunu
                 aşağıya daxil edin.
               </p>
             </div>
             <form className="remove-arrow">
-              <div className="flex items-center justify-center gap-[16px]">
+              <div className="flex items-center justify-center gap-4">
                 {values.map((val, index) => (
                   <input
                     style={{ caretColor: "transparent", userSelect: "none" }}
                     key={index}
                     type="number"
                     placeholder="_"
-                    className="w-[48px] h-[48px] p-[17px] rounded-[8px] border-2 border-neutral max-[431px]:border-primary bg-transparent text-[19px] text-neutral-text max-[431px]:text-[black] text-center focus:outline-none placeholder:text-neutral-text min-[431px]:disabled:border-[#8a8b8c] disabled:border-[#E1E6EF]"
+                    className="w-12 h-12 p-[17px] rounded-lg border-2 border-neutral max-[431px]:border-primary bg-transparent text-[19px] text-neutral-text max-[431px]:text-[black] text-center focus:outline-none placeholder:text-neutral-text min-[431px]:disabled:border-[#8a8b8c] disabled:border-[#E1E6EF]"
                     value={val}
                     ref={(el) => (inputRefs.current[index] = el)}
                     disabled={index !== 0 && values[index - 1] === ""}
@@ -178,7 +209,7 @@ const OTPPage = () => {
                 ))}
               </div>
             </form>
-            <div className="flex flex-col gap-[40px] items-center">
+            <div className="flex flex-col gap-10 items-center">
               <button
                 disabled={seconds > 0 || minutes > 0}
                 onClick={handleResend}
@@ -191,7 +222,7 @@ const OTPPage = () => {
                 </span>
               </button>
               <button
-                className="cursor-pointer max-w-[361px] py-[11px] w-full rounded-[8px] border-[1px] border-white text-[16px] max-[431px]:text-white max-[431px]:bg-primary"
+                className="cursor-pointer max-w-[361px] py-[11px] w-full rounded-lg border border-white text-[16px] max-[431px]:text-white max-[431px]:bg-primary"
                 onClick={handleVerify}
                 disabled={!isButtonActive}
               >
