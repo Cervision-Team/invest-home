@@ -10,7 +10,6 @@ import { resetPassword } from "@/lib/authService";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import X_Icon from "../../../../public/icons/x.svg";
-import ProtectedLayout from "@/components/router/ProtectedLayout";
 import MessageModal from "@/components/ui/MessageModal";
 
 export default function ResetPasswordPage() {
@@ -62,7 +61,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <ProtectedLayout>
+    <>
       <MessageModal
         isOpen={modal.open}
         variant={modal.variant}
@@ -206,6 +205,6 @@ export default function ResetPasswordPage() {
           </div>
         </div>
       </section>
-    </ProtectedLayout>
+    </>
   );
 }
