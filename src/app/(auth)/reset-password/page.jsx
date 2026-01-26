@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { resetPasswordSchema } from "@/lib/schemas/authSchemas";
-import { resetPassword } from "@/lib/authService";
+import { getAuthErrorMessageFromAxios, resetPassword } from "@/lib/authService";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import X_Icon from "../../../../public/icons/x.svg";
@@ -24,8 +24,9 @@ export default function ResetPasswordPage() {
     message: "",
   });
 
-  const token = useMemo(() => searchParams?.get("token") || "", [searchParams]);
-
+  const token = useMemo(() => searchParams?.get("code") || "", [searchParams]);
+  console.log(token);
+  
   const {
     control,
     handleSubmit,
@@ -55,7 +56,7 @@ export default function ResetPasswordPage() {
         message: "Şifrə uğurla yeniləndi. İndi giriş edin.",
       });
     } catch (err) {
-      const message = err?.response?.data?.message || "Xəta baş verdi";
+      const message = getAuthErrorMessageFromAxios(err, "Xəta baş verdi");
       setModal({ open: true, variant: "error", title: "Xəta", message });
     }
   };
@@ -194,7 +195,7 @@ export default function ResetPasswordPage() {
               </div>
             </div>
 
-            <div className="py-5 max-[1025px]:hidden w-[50%] px-20 max-[1025px]:px-5 max-[431px]:px-4 flex items-center justify-center">
+            <div className="py-5 max-[1025px]:hidden w-[50%] px-20 max-[1025px]:px-5 max-[431px]:px-4 flex items-center justify-center text-center">
               <div className="max-w-[520px] text-white">
                 <h2 className="text-[32px] font-semibold mb-3">Yeni şifrə təyin edin</h2>
                 <p className="text-white/90">
