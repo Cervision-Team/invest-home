@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
-import { requestPasswordReset } from "@/lib/authService";
+import { getAuthErrorMessageFromAxios, requestPasswordReset } from "@/lib/authService";
 import { Mail } from "lucide-react";
 import X_Icon from "../../../../public/icons/x.svg";
 import MessageModal from "@/components/ui/MessageModal";
@@ -35,7 +35,7 @@ export default function ForgotPasswordPage() {
 
     const onSubmit = async (data) => {
         try {
-            // await requestPasswordReset({ email: data.email });
+            await requestPasswordReset({ email: data.email });
             setSubmitted(true);
             setModal({
                 open: true,
@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
                 message: "Şifrə yeniləmə linki emailinizə göndərildi.",
             });
         } catch (err) {
-            const message = err?.response?.data?.message || "Xəta baş verdi";
+            const message = getAuthErrorMessageFromAxios(err, "Xəta baş verdi");
             setModal({ open: true, variant: "error", title: "Xəta", message });
         }
     };
@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
                             </div>
                         </div>
 
-                        <div className="py-5 max-[1025px]:hidden w-[50%] px-20 max-[1025px]:px-5 max-[431px]:px-4 flex items-center justify-center">
+                        <div className="py-5 max-[1025px]:hidden w-[50%] px-20 max-[1025px]:px-5 max-[431px]:px-4 flex items-center justify-center text-center">
                             <div className="max-w-[520px] text-white">
                                 <h2 className="text-[32px] font-semibold mb-3">Təhlükəsiz şifrə yeniləmə</h2>
                                 <p className="text-white/90">

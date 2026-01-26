@@ -72,6 +72,67 @@ const AnncDetails = ({
   const getErrorMessage = (fieldName) => displayedErrors[fieldName];
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
+  const apartmentLikeFeatures = [
+    { id: 'parking', label: 'Parking' },
+    { id: 'furniture', label: 'Mebel' },
+    { id: 'bigAppliances', label: 'Böyük məişət texnikası' },
+    { id: 'balcony', label: 'Çardaq' },
+    { id: 'lift', label: 'Lift' },
+    { id: 'smallAppliances', label: 'Kiçik məişət texnikası' },
+    { id: 'heatingSystem', label: 'İstilik sistemi' },
+    { id: 'coolingSystem', label: 'Soyutma sistemi' },
+  ];
+
+  const houseFeatures = [
+    { id: 'doubleStone', label: 'Qoşa daşla' },
+    { id: 'combi', label: 'Kombi' },
+    { id: 'interfloorMonolith', label: 'Mərtəbə arası monolit' },
+    { id: 'gas', label: 'Qaz' },
+    { id: 'waterTank', label: 'Su çəni' },
+    { id: 'chair', label: 'Kürsü' },
+    { id: 'sewage', label: 'Mərkəzi kanalizasiya' },
+  ];
+
+  const garageFeatures = [
+    { id: 'separateBuilding', label: 'Ayrı tikili' },
+    { id: 'underground', label: 'Bina altı' },
+  ];
+
+  const houseOrGarageFeatures = [
+    { id: 'light', label: 'İşıq' },
+    { id: 'water', label: 'Su' },
+  ];
+
+  const securityFeature = { id: 'security', label: 'Təhlükəsizlik sistemi' };
+
+  const featureOptions = (() => {
+    const result = [];
+
+    if (activePropertyType !== 'house') {
+      if (activePropertyType !== 'land' && activePropertyType !== 'garage') {
+        result.push(...apartmentLikeFeatures);
+      }
+
+      if (activePropertyType !== 'land') {
+        result.push(securityFeature);
+      }
+    }
+
+    if (activePropertyType === 'garage') {
+      result.push(...garageFeatures);
+    }
+
+    if (activePropertyType === 'house') {
+      result.push(...houseFeatures);
+    }
+
+    if (activePropertyType === 'garage' || activePropertyType === 'house') {
+      result.push(...houseOrGarageFeatures);
+    }
+
+    return result;
+  })();
+
   return (
     <>
       <style>
@@ -215,278 +276,22 @@ const AnncDetails = ({
                 <div className='grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full
                    grid-cols-3 max-[1360px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[590px]:grid-cols-1'
                   >
-
-                  {activePropertyType !== 'house' && (
-                  <>
-                  {activePropertyType !== 'land' && activePropertyType !== 'garage' && (
-                    <>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="parking"
-                          name="features"
-                          value="parking"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('parking')}
-                          onChange={() => handleFeatureChange('parking')}
-                        />
-                        <label htmlFor="parking" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Parking</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="furniture"
-                          name="features"
-                          value="furniture"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('furniture')}
-                          onChange={() => handleFeatureChange('furniture')}
-                        />
-                        <label htmlFor="furniture" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mebel</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="bigAppliances"
-                          name="features"
-                          value="bigAppliances"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('bigAppliances')}
-                          onChange={() => handleFeatureChange('bigAppliances')}
-                        />
-                        <label htmlFor="bigAppliances" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Böyük məişət texnikası</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="balcony"
-                          name="features"
-                          value="balcony"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('balcony')}
-                          onChange={() => handleFeatureChange('balcony')}
-                        />
-                        <label htmlFor="balcony" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Çardaq</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="lift"
-                          name="features"
-                          value="lift"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('lift')}
-                          onChange={() => handleFeatureChange('lift')}
-                        />
-                        <label htmlFor="lift" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Lift</label>
-                      </div>
-
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="smallAppliances"
-                          name="features"
-                          value="smallAppliances"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('smallAppliances')}
-                          onChange={() => handleFeatureChange('smallAppliances')}
-                        />
-                        <label htmlFor="smallAppliances" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kiçik məişət texnikası</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="heatingSystem"
-                          name="features"
-                          value="heatingSystem"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('heatingSystem')}
-                          onChange={() => handleFeatureChange('heatingSystem')}
-                        />
-                        <label htmlFor="heatingSystem" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>İstilik sistemi</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="coolingSystem"
-                          name="features"
-                          value="coolingSystem"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('coolingSystem')}
-                          onChange={() => handleFeatureChange('coolingSystem')}
-                        />
-                        <label htmlFor="coolingSystem" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Soyutma sistemi</label>
-                      </div>
-                    </>
-                  )}
-
-                    {(activePropertyType !== 'land') && (
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="security"
-                          name="features"
-                          value="security"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('security')}
-                          onChange={() => handleFeatureChange('security')}
-                        />
-                        <label htmlFor="security" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Təhlükəsizlik sistemi</label>
-                      </div>
-                  )}
-                  </>
-                )}
-
-                {(activePropertyType === 'garage') && (
-                  <>
-                    <div className='flex items-center'>
+                  {featureOptions.map(({ id, label }) => (
+                    <div className='flex items-center' key={id}>
                       <input
                         type="checkbox"
-                        id="separateBuilding"
+                        id={id}
                         name="features"
-                        value="separateBuilding"
+                        value={id}
                         className='shrink-0 svg-checkbox'
-                        checked={(formik.values.features || []).includes('separateBuilding')}
-                        onChange={() => handleFeatureChange('separateBuilding')}
+                        checked={(formik.values.features || []).includes(id)}
+                        onChange={() => handleFeatureChange(id)}
                       />
-                      <label htmlFor="separateBuilding" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Ayrı tikili</label>
+                      <label htmlFor={id} className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>
+                        {label}
+                      </label>
                     </div>
-                    <div className='flex items-center'>
-                      <input
-                        type="checkbox"
-                        id="underground"
-                        name="features"
-                        value="underground"
-                        className='shrink-0 svg-checkbox'
-                        checked={(formik.values.features || []).includes('underground')}
-                        onChange={() => handleFeatureChange('underground')}
-                      />
-                      <label htmlFor="underground" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Bina altı</label>
-                    </div>
-                  </>
-                )}
-
-
-
-                  {activePropertyType === 'house' && (
-                  <>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="doubleStone"
-                          name="features"
-                          value="doubleStone"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('doubleStone')}
-                          onChange={() => handleFeatureChange('doubleStone')}
-                        />
-                        <label htmlFor="doubleStone" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Qoşa daşla</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="combi"
-                          name="features"
-                          value="combi"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('combi')}
-                          onChange={() => handleFeatureChange('combi')}
-                        />
-                        <label htmlFor="combi" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kombi</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="interfloorMonolith"
-                          name="features"
-                          value="interfloorMonolith"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('interfloorMonolith')}
-                          onChange={() => handleFeatureChange('interfloorMonolith')}
-                        />
-                        <label htmlFor="interfloorMonolith" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mərtəbə arası monolit</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="gas"
-                          name="features"
-                          value="gas"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('gas')}
-                          onChange={() => handleFeatureChange('gas')}
-                        />
-                        <label htmlFor="gas" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Qaz</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="waterTank"
-                          name="features"
-                          value="waterTank"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('waterTank')}
-                          onChange={() => handleFeatureChange('waterTank')}
-                        />
-                        <label htmlFor="waterTank" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Su çəni</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="chair"
-                          name="features"
-                          value="chair"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('chair')}
-                          onChange={() => handleFeatureChange('chair')}
-                        />
-                        <label htmlFor="chair" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Kürsü</label>
-                      </div>
-                      <div className='flex items-center'>
-                        <input
-                          type="checkbox"
-                          id="sewage"
-                          name="features"
-                          value="sewage"
-                          className='shrink-0 svg-checkbox'
-                          checked={(formik.values.features || []).includes('sewage')}
-                          onChange={() => handleFeatureChange('sewage')}
-                        />
-                        <label htmlFor="sewage" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Mərkəzi kanalizasiya</label>
-                      </div>
-                  </>
-                )}
-
-                {(activePropertyType === 'garage' || activePropertyType === 'house') && (
-                  <>
-                  <div className='flex items-center'>
-                  <input
-                    type="checkbox"
-                    id="light"
-                    name="features"
-                    value="light"
-                    className='shrink-0 svg-checkbox'
-                    checked={(formik.values.features || []).includes('light')}
-                    onChange={() => handleFeatureChange('light')}
-                    />
-                  <label htmlFor="light" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>İşıq</label>
-                </div>
-                <div className='flex items-center'>
-                  <input
-                    type="checkbox"
-                    id="water"
-                    name="features"
-                    value="water"
-                    className='shrink-0 svg-checkbox'
-                    checked={(formik.values.features || []).includes('water')}
-                    onChange={() => handleFeatureChange('water')}
-                  />
-                  <label htmlFor="water" className='ml-[6px] text-[#000] text-[16px]/[22px] whitespace-nowrap'>Su</label>
-                </div>
-                   </>
-                  )}
-
-
+                  ))}
                 </div>
               </div>
 

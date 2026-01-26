@@ -1,8 +1,19 @@
 "use client";
 import authAxiosInstance from "@/services/api/authAxiosInstance";
-import axios from "axios";
 
-const API_URL = "http://172.25.96.20:8081/api/auth/public";
+export const AUTH_ERROR_CODE_MESSAGES = {
+	RESET_PASSWORD_TOKEN_INVALID_OR_EXPIRED: "Yeniden cehd edin",
+};
+
+export const getAuthErrorMessage = (backendMessage, fallbackMessage = "Xəta baş verdi") => {
+	if (!backendMessage) return fallbackMessage;
+	return AUTH_ERROR_CODE_MESSAGES[backendMessage] || backendMessage;
+};
+
+export const getAuthErrorMessageFromAxios = (err, fallbackMessage = "Xəta baş verdi") => {
+	const backendMessage = err?.response?.data?.message;
+	return getAuthErrorMessage(backendMessage, fallbackMessage);
+};
 
 export const loginWithEmail = async ({ email, password }) => {
 	const response = await authAxiosInstance.post("/api/auth/login", {
@@ -55,16 +66,14 @@ export const loginWithGoogle = async (googleToken) => {
 };
 
 export const requestPasswordReset = async ({ email }) => {
-	const response = await authAxiosInstance.post("/api/auth/forgot-password", {
-		email,
-	});
+	const response = await authAxiosInstance.post(`/api/auth/forgot-password?email=${email}`);
 	return response.data;
 };
 
 export const resetPassword = async ({ token, password }) => {
 	const response = await authAxiosInstance.post("/api/auth/reset-password", {
 		token,
-		password,
+		newPassword: password,
 	});
 	return response.data;
 };
