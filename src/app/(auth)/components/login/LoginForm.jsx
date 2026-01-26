@@ -16,7 +16,16 @@ const ERROR_CODE = {
   USER_NOT_FOUND_BY_NUMBER: "Nömrə təyin olunmayıb",
   USER_NOT_FOUND_BY_EMAIL: "Email təyin olunmayıb",
   PASSWORD_DONT_MATCH: "Şifrə yanlışdır",
+  EMAIL_OR_PASSWORD_INCORRECT: "Email və ya şifrə yanlışdır"
 }
+
+const AUTH_INVALID_CREDENTIALS_CODES = new Set([
+  "USER_NOT_FOUND_BY_NUMBER",
+  "USER_NOT_FOUND_BY_EMAIL",
+  "PASSWORD_DONT_MATCH",
+  "EMAIL_OR_PASSWORD_INCORRECT",
+  "INVALID_LOGIN_OR_PASSWORD",
+]);
 
 const LoginForm = () => {
   const {
@@ -27,14 +36,18 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(loginSchema) });
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const router = useRouter();
 
   const onSubmit = async (data) => {
+    setServerError("");
     try {
       const res = await loginWithEmail({ email: data.email, password: data.password });
 
       const token = res?.token;
+      // console.log(token);
+
       if (token) {
         localStorage.setItem("access-token", token);
         localStorage.setItem("email", data.email);
@@ -54,29 +67,29 @@ const LoginForm = () => {
       }
       localStorage.setItem("email", data.email);
       localStorage.setItem("entranceType", "LOGIN");
-      router.replace("/otp");
-    } catch (err) {
-      const errorResponse = err.response.data.message
-      const errorMessage = ERROR_CODE[errorResponse]
-      const errorIndex = Object.keys(ERROR_CODE).indexOf(errorResponse);
 
-      switch (errorIndex) {
-        case 0:
-        case 1:
-          setError("email", {
-            type: "server",
-            message: errorMessage
-          });
-          break
-        case 2:
-          setError("password", {
-            type: "server",
-            message: errorMessage
-          });
-          break;
-        default:
-          console.log("Unknown backend error:", errorResponse);
-          break;
+      if (otp && otp.length === 4) {
+        router.replace("/otp");
+        return;
+      }
+
+      const backendCode = res?.message;
+      if (backendCode && AUTH_INVALID_CREDENTIALS_CODES.has(backendCode)) {
+        setServerError("Email və ya şifrə yanlışdır");
+        return;
+      }
+
+      if (backendCode) {
+        console.log("Unknown backend error:", backendCode);
+      }
+    } catch (err) {
+      const backendCode = err?.response?.data?.message;
+      if (backendCode && AUTH_INVALID_CREDENTIALS_CODES.has(backendCode)) {
+        setServerError("Email və ya şifrə yanlışdır");
+        return;
+      }
+      if (backendCode) {
+        console.log("Unknown backend error:", backendCode);
       }
     }
   };
@@ -84,6 +97,13 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full">
       <div className="flex flex-col gap-[27px]">
+        {serverError ? (
+          <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-red-300 text-red-600">!</span>
+            <span>{serverError}</span>
+          </div>
+        ) : null}
+
         <div className="flex flex-col gap-1.5">
           <label htmlFor="email" className="text-sm font-medium text-black">
             Email<span className="text-red-500">*</span>
