@@ -6,6 +6,7 @@ export const addAgentDefaultValues = {
   birthDate: "",
   phone: "+994",
   role: "",
+  roleName: "",
   email: "",
   address: "",
   note: "",
@@ -30,6 +31,7 @@ export const addAgentSchema = yup
       .required("Telefon vacibdir")
       .matches(/^\+994\d{9}$/, "Telefon formatı: +994501234567"),
     role: yup.string().trim().nullable().transform((v) => (v === "" ? null : v)),
+    roleName: yup.string().trim().required("Rol seçin"),
     email: emailSchema,
     address: yup
       .string()

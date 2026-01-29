@@ -63,11 +63,11 @@ export default function MessageModal({
       <style>{modalStyles}</style>
 
       <div
-        className="fixed inset-0 h-screen w-full bg-black/40 backdrop-blur-[3px] z-999"
+        className="fixed inset-0 h-screen w-full bg-black/40 backdrop-blur-[3px] z-[9999]"
         onClick={onClose}
       />
 
-      <div className="fixed inset-0 z-1000 flex items-center justify-center animate-fadeIn">
+      <div className="fixed inset-0 z-[10000] flex items-center justify-center animate-fadeIn">
         <div className="px-4 flex min-w-0">
           <div className="w-[414px] min-w-0 bg-[#FAFAFA] rounded-[20px] flex flex-col items-center justify-center shadow-[0_4px_24px_0_rgba(0,0,0,0.18)] py-10 px-6 animate-modalSlideIn">
             <Icon className={`${iconColor}`} size={64} />

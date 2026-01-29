@@ -9,10 +9,11 @@ import {
   editAgentDefaultValues,
   editAgentSchema,
 } from "@/lib/schemas/editAgentSchema";
+import { getRoles } from "@/services/api/endpoints/roleService";
 
 const labelCls = "text-[12px] text-black/70";
 const inputCls =
-  "w-full h-9 rounded-[8px] border border-black/15 bg-white px-3 text-[14px] text-[#0A0D14] placeholder:text-black/40 outline-none focus:border-(--primary-color)";
+  "w-full h-9 rounded-lg border border-black/15 bg-white px-3 text-[14px] text-[#0A0D14] placeholder:text-black/40 outline-none focus:border-(--primary-color)";
 const errorCls = "mt-1 text-[12px] text-[#FF403D]";
 
 const Field = ({ label, required, error, children }) => {
@@ -35,7 +36,8 @@ const toFormValues = (agent) => {
     fullName: agent.fullName ?? "",
     birthDate: agent.birthDate ?? "",
     phone: agent.phone ?? "+994",
-    role: agent.role ?? "",
+    role: agent?.position ?? agent?.jobTitle ?? agent?.role ?? "",
+    roleName: agent?.roleName ?? agent?.role?.name ?? "",
     email: agent.email ?? "",
     address: agent.address ?? "",
     note: agent.note ?? "",
@@ -45,6 +47,7 @@ const toFormValues = (agent) => {
 
 const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [roles, setRoles] = useState([]);
 
   const defaultValues = useMemo(() => toFormValues(agent), [agent]);
 
@@ -66,12 +69,40 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await getRoles();
+        const list = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.data?.roles)
+            ? res.data.roles
+            : [];
+
+        if (!alive) return;
+        setRoles(list.filter((r) => r && r.name));
+      } catch (err) {
+        if (!alive) return;
+        setRoles([]);
+        console.log("Error fetching roles:", err);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (isOpen) reset(defaultValues);
   }, [isOpen, reset, defaultValues]);
 
   if (!isOpen) return null;
 
   const submit = async (values) => {
+    console.log("[EditAgentModal] submit values:", { id: agent?.id, values });
     await onSubmit?.(values);
     onClose?.();
   };
@@ -143,31 +174,43 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
                 <input {...register("address")} className={inputCls} />
               </Field>
 
-              <div className="md:col-span-2">
-                <Field label="Şifrə" required error={errors.password?.message}>
-                  <div className="relative">
-                    <input
-                      {...register("password")}
-                      className={`${inputCls} pr-10`}
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md flex items-center justify-center hover:bg-black/5"
-                      aria-label={showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
-                      title={showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
-                    >
-                      {showPassword ? (
-                        <EyeOff size={18} className="text-black/55" />
-                      ) : (
-                        <Eye size={18} className="text-black/55" />
-                      )}
-                    </button>
-                  </div>
-                </Field>
-              </div>
+              <Field label="Rol" required error={errors.roleName?.message}>
+                <select {...register("roleName")} className={inputCls}>
+                  <option value="">Rol seçin</option>
+                  {roles
+                    .slice()
+                    .sort((a, b) => String(a?.name).localeCompare(String(b?.name)))
+                    .map((r) => (
+                      <option key={r?.id ?? r?.name} value={r?.name}>
+                        {r?.name}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+
+              <Field label="Şifrə" required error={errors.password?.message}>
+                <div className="relative">
+                  <input
+                    {...register("password")}
+                    className={`${inputCls} pr-10`}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md flex items-center justify-center hover:bg-black/5"
+                    aria-label={showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
+                    title={showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} className="text-black/55" />
+                    ) : (
+                      <Eye size={18} className="text-black/55" />
+                    )}
+                  </button>
+                </div>
+              </Field>
 
               <div className="md:col-span-2">
                 <Field label="Əlavə qeyd" error={errors.note?.message}>
@@ -184,7 +227,7 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-9 px-4 rounded-[8px] bg-(--primary-color) text-white text-[14px] font-medium hover:opacity-90 disabled:opacity-50"
+                className="h-9 px-4 rounded-lg bg-(--primary-color) text-white text-[14px] font-medium hover:opacity-90 disabled:opacity-50"
               >
                 Yadda saxla
               </button>

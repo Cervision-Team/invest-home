@@ -17,31 +17,37 @@ const EmployeesActions = ({
   selectedCount = 0,
   deleteDisabled = false,
   editDisabled = false,
+  showDelete = true,
+  showEdit = true,
 }) => {
   return (
     <div className="flex items-center gap-3 md:gap-4">
-      <button
-        type="button"
-        onClick={onDelete}
-        disabled={deleteDisabled}
-        title={deleteDisabled ? "Seçilmiş əməkdaş yoxdur" : "Sil"}
-        aria-label="Sil"
-        className={`${deleteBtn} bg-[#BFE4DB] text-[#0B3B34] hover:bg-[#A9DBCF]`}
-      >
-        <Trash2 size={18} />
-        <span className="text-[14px] font-medium">{selectedCount} sil</span>
-      </button>
+      {showDelete && (
+        <button
+          type="button"
+          onClick={onDelete}
+          disabled={deleteDisabled}
+          title={deleteDisabled ? "Seçilmiş əməkdaş yoxdur" : "Sil"}
+          aria-label="Sil"
+          className={`${deleteBtn} bg-[#BFE4DB] text-[#0B3B34] hover:bg-[#A9DBCF]`}
+        >
+          <Trash2 size={18} />
+          <span className="text-[14px] font-medium">{selectedCount} sil</span>
+        </button>
+      )}
 
-      <button
-        type="button"
-        onClick={onEdit}
-        disabled={editDisabled}
-        title={editDisabled ? "Update üçün 1 əməkdaş seç" : "Update"}
-        aria-label="Update"
-        className={`${baseBtn} bg-white text-[#0B3B34] border border-(--primary-color) hover:bg-[#F5FFFC]`}
-      >
-        <Pencil size={18} />
-      </button>
+      {showEdit && (
+        <button
+          type="button"
+          onClick={onEdit}
+          disabled={editDisabled}
+          title={editDisabled ? "Update üçün 1 əməkdaş seç" : "Update"}
+          aria-label="Update"
+          className={`${baseBtn} bg-white text-[#0B3B34] border border-(--primary-color) hover:bg-[#F5FFFC]`}
+        >
+          <Pencil size={18} />
+        </button>
+      )}
 
       <button
         type="button"
