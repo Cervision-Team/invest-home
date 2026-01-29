@@ -52,13 +52,13 @@ const ConfirmationModal = ({ isOpen,setIsOpen=() => {}, text, buttonText = "Əsa
     <>
       <style>{modalStyles}</style>
 
-      <div class="fixed inset-0 h-[100vh] w-full bg-black/40 backdrop-blur-[3px] z-999"></div>
+      <div className="fixed inset-0 h-screen w-full bg-black/40 backdrop-blur-[3px] z-9999"></div>
 
-      <div className="fixed inset-0 z-[1000] flex items-center justify-center animate-fadeIn">
+      <div className="fixed inset-0 z-10000 flex items-center justify-center animate-fadeIn">
 
-        <div className='px-[16px] flex min-w-0'>
+        <div className='px-4 flex min-w-0'>
           <div
-            className="w-[414px] min-w-0 h-[400px] bg-[#FAFAFA] rounded-[20px] flex flex-col items-center justify-center shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] py-[48px] animate-modalSlideIn"
+            className="w-[414px] min-w-0 h-[400px] bg-[#FAFAFA] rounded-[20px] flex flex-col items-center justify-center shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] py-12 animate-modalSlideIn"
           >
             <Image
               src={ConfirmationLetter}
@@ -71,8 +71,8 @@ const ConfirmationModal = ({ isOpen,setIsOpen=() => {}, text, buttonText = "Əsa
               {text}
             </p>
             <Link href={url} onClick={() => setIsOpen(false)}>
-              <button  className="cursor-pointer flex items-center gap-[12px] text-white bg-[var(--primary-color)] rounded-[8px] py-[12px] px-[34px] mt-6">
-                <span className="font-[500] text-[16px]">{buttonText}</span>
+              <button className="cursor-pointer flex items-center gap-3 text-white bg-(--primary-color) rounded-lg py-3 px-[34px] mt-6">
+                <span className="font-medium text-[16px]">{buttonText}</span>
               </button>
             </Link>
           </div>

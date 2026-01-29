@@ -2,29 +2,74 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Pencil } from "lucide-react";
 
 import whatsappIcon from "../../../../public/icons/profile/whatsapp-icon.svg";
 import instagramIcon from "../../../../public/icons/profile/instagram-icon.svg";
 import linkedinIcon from "../../../../public/icons/profile/linkedin-icon.svg";
 
-import agentsData from "@/components/core/AgentsData";
 import Search from "@/components/ui/dashboard/Search";
 import EmployeesActions from "@/components/ui/dashboard/EmployeesActions";
 import { Button as ChatNotificationButtons } from "@/components/ui/dashboard/Buttons/ProfileButtons";
 import AddAgentModal from "@/components/ui/dashboard/AddAgentModal";
 import EditAgentModal from "@/components/ui/dashboard/EditAgentModal";
-import { agentMock } from "@/lib/mock/agentMock";
+import { getEmployee, saveEmployee } from "@/services/api/endpoints/userService";
+import Loader from "@/components/ui/Loader";
+import MessageModal from "@/components/ui/MessageModal";
+
+const defaultProfileIcon = "/icons/profile.svg";
 
 const Employees = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
-  const [employees, setEmployees] = useState(agentsData);
-  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [employees, setEmployees] = useState([]);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [confirmAddOpen, setConfirmAddOpen] = useState(false);
+  const [pendingAddValues, setPendingAddValues] = useState(null);
+  const [isSavingAdd, setIsSavingAdd] = useState(false);
+  const [messageModal, setMessageModal] = useState({
+    open: false,
+    variant: "success",
+    title: "",
+    message: "",
+  });
+
+  const refreshEmployees = async () => {
+    const res = await getEmployee();
+    setEmployees(res?.data || []);
+  };
+
+
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const res = await getEmployee();
+        if (!alive) return;
+        setEmployees(res?.data || []);
+      } catch (error) {
+        if (!alive) return;
+        setLoadError(error?.message || "Əməkdaşlar yüklənmədi");
+        console.log("Error fetching employees:", error);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const filteredEmployees = useMemo(() => {
     const q = (search || "").trim().toLowerCase();
@@ -35,95 +80,156 @@ const Employees = () => {
     );
   }, [employees, search]);
 
-  const selectedCount = selectedIds.size;
-  const selectedEmployee = useMemo(() => {
-    if (selectedIds.size !== 1) return null;
-    const onlyId = Array.from(selectedIds)[0];
-    return employees.find((e) => String(e?.id) === String(onlyId)) || null;
-  }, [employees, selectedIds]);
+  const groupedEmployees = useMemo(() => {
+    const groups = new Map();
 
-  const toggleSelected = (id) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      const key = String(id);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
+    for (const agent of filteredEmployees || []) {
+      const key = String(agent?.role || agent?.roleName || "Digər").trim() || "Digər";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(agent);
+    }
 
-  const onDelete = () => {
-    if (selectedIds.size === 0) return;
-
-    const ok = window.confirm(`${selectedIds.size} əməkdaş silinsin?`);
-    if (!ok) return;
-
-    setEmployees((prev) =>
-      prev.filter((e) => !selectedIds.has(String(e?.id)))
+    return Array.from(groups.entries()).sort(([a], [b]) =>
+      String(a).localeCompare(String(b), "az")
     );
-    setSelectedIds(new Set());
-  };
-
-  const onEdit = () => {
-    if (!selectedEmployee) return;
-    setIsEditOpen(true);
-  };
+  }, [filteredEmployees]);
 
   const onAdd = () => setIsAddOpen(true);
 
   const handleAddAgent = async (values) => {
-    const nextId =
-      typeof crypto !== "undefined" && crypto?.randomUUID
-        ? crypto.randomUUID()
-        : String(Date.now());
+    setPendingAddValues(values);
+    setConfirmAddOpen(true);
+    return false;
+  };
 
+  const confirmAdd = async () => {
+    if (!pendingAddValues || isSavingAdd) return;
 
-    const newAgent = {
-      id: nextId,
-      // name: (values.fullName || "").split(" ")[0] || "Agent",
-      fullName: values.fullName,
-      role: values.role || "Agent",
-      email: values.email,
-      phone: values.phone,
-      address: values.address || "",
-      birthDate: values.birthDate || "",
-      note: values.note || "",
+    const payload = {
+      fullName: pendingAddValues?.fullName,
+      email: pendingAddValues?.email,
+      phoneNumber: pendingAddValues?.phone,
+      position: pendingAddValues?.role,
+      role: pendingAddValues?.roleName,
+      birthDate: pendingAddValues?.birthDate,
+      location: pendingAddValues?.address,
+      aboutMe: pendingAddValues?.note,
     };
 
-    setEmployees((prev) => [newAgent, ...prev]);
-    setSelectedIds(new Set([String(nextId)]));
+    console.log("[Employees] saveEmployee payload (add):", payload);
+
+    setIsSavingAdd(true);
+    try {
+      await saveEmployee(payload);
+      await refreshEmployees();
+      setConfirmAddOpen(false);
+      setPendingAddValues(null);
+      setIsAddOpen(false);
+      setMessageModal({
+        open: true,
+        variant: "success",
+        title: "Uğurlu",
+        message: "Əməkdaş uğurla yaradıldı",
+      });
+    } catch (err) {
+      console.log("Error saving employee:", err);
+      setConfirmAddOpen(false);
+      setMessageModal({
+        open: true,
+        variant: "error",
+        title: "Xəta",
+        message: err?.response?.data?.message || "Əməkdaşı əlavə etmək alınmadı",
+      });
+    } finally {
+      setIsSavingAdd(false);
+    }
   };
 
   const editAgentSource = useMemo(() => {
-    console.log("agentMock",agentMock);
-    console.log("selectedemployee",selectedEmployee);
-    
-    if (selectedEmployee) return { ...agentMock, ...selectedEmployee };
-    return agentMock;
-  }, [selectedEmployee]);
+    if (!editingEmployee) return null;
+    return { ...editingEmployee };
+  }, [editingEmployee]);
 
   const handleEditAgent = async (values) => {
-    const idToUpdate = String(editAgentSource?.id);
+    const payload = {
+      fullName: values?.fullName,
+      email: values?.email,
+      phoneNumber: values?.phone,
+      position: values?.role,
+      role: values?.roleName,
+      birthDate: values?.birthDate,
+      location: values?.address,
+      aboutMe: values?.note,
+    };
 
-    setEmployees((prev) =>
-      prev.map((e) => {
-        if (String(e?.id) !== idToUpdate) return e;
-        return {
-          ...e,
-          fullName: values.fullName,
-          role: values.role || e.role,
-          email: values.email,
-          phone: values.phone,
-          address: values.address || "",
-          birthDate: values.birthDate || "",
-          note: values.note || "",
-        };
-      })
-    );
+    console.log("[Employees] saveEmployee payload (edit):", {
+      id: editAgentSource?.id,
+      payload,
+    });
+
+    try {
+      await saveEmployee(payload);
+      await refreshEmployees();
+      setMessageModal({
+        open: true,
+        variant: "success",
+        title: "Uğurlu",
+        message: "Əməkdaş uğurla yeniləndi",
+      });
+    } catch (err) {
+      console.log("Error saving employee:", err);
+      setMessageModal({
+        open: true,
+        variant: "error",
+        title: "Xəta",
+        message: err?.response?.data?.message || "Əməkdaşı yeniləmək alınmadı",
+      });
+      throw err;
+    }
   };
+
+  if (loading) {
+    return (
+      <main className="w-full flex items-center justify-center py-16">
+        <Loader />
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="w-full flex items-center justify-center py-16">
+        <div className="w-full max-w-xl py-16 flex items-center justify-center text-lg text-gray-500 border border-dashed rounded-xl bg-white">
+          {loadError}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="w-full h-full">
+      <MessageModal
+        isOpen={messageModal.open}
+        variant={messageModal.variant}
+        title={messageModal.title}
+        message={messageModal.message}
+        primaryText="Bağla"
+        onClose={() => setMessageModal((p) => ({ ...p, open: false }))}
+        onPrimary={() => setMessageModal((p) => ({ ...p, open: false }))}
+      />
+
+      <MessageModal
+        isOpen={confirmAddOpen}
+        variant="success"
+        title="Təsdiq"
+        message="Əməkdaş yaradılsın?"
+        primaryText={isSavingAdd ? "Yaradılır..." : "Təsdiqlə"}
+        secondaryText="Ləğv et"
+        onClose={() => !isSavingAdd && setConfirmAddOpen(false)}
+        onSecondary={() => !isSavingAdd && setConfirmAddOpen(false)}
+        onPrimary={confirmAdd}
+      />
+
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10">
         <div className="w-full md:max-w-md">
           <Search search={search} setSearch={setSearch} />
@@ -131,12 +237,9 @@ const Employees = () => {
 
         <div className="flex items-center gap-3 md:gap-6 md:justify-end">
           <EmployeesActions
-            onDelete={onDelete}
-            onEdit={onEdit}
             onAdd={onAdd}
-            selectedCount={selectedCount}
-            deleteDisabled={selectedCount === 0}
-            editDisabled={selectedCount !== 1}
+            showDelete={false}
+            showEdit={false}
           />
 
           <ChatNotificationButtons />
@@ -147,102 +250,110 @@ const Employees = () => {
         Bütün əməkdaşlar
       </h1>
 
-      <section
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-6 gap-x-4 pr-2 hide-scrollbar"
-      >
-        {filteredEmployees.map((agent) => {
-          const idKey = String(agent?.id);
-          const isSelected = selectedIds.has(idKey);
+      {groupedEmployees.map(([roleLabel, list]) => (
+        <div key={roleLabel} className="mb-10">
+          <h2 className="text-[#1B1F27] text-[16px] font-semibold mb-4">
+            {roleLabel}
+          </h2>
 
-          return (
-            <div
-              key={agent?.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => router.push(`/about-us/${agent.id}`)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  router.push(`/about-us/${agent.id}`);
-                }
-              }}
-              className={`group relative flex flex-col items-center justify-between rounded-2xl cursor-pointer transition-colors border bg-white hover:bg-[#FAFAFA] ${isSelected
-                  ? "border-(--primary-color) bg-[#F5FFFC]"
-                  : "border-black/10"
-                }`}
-            >
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleSelected(agent?.id);
-                }}
-                aria-label={isSelected ? "Seçimi ləğv et" : "Əməkdaşı seç"}
-                title={isSelected ? "Seçimi ləğv et" : "Əməkdaşı seç"}
-                className={`absolute left-3 top-3 w-5 h-5 rounded-sm flex items-center justify-center border transition-colors ${isSelected
-                    ? "bg-(--primary-color) border-(--primary-color) text-white"
-                    : "bg-white border-black/20 text-transparent hover:border-black/30"
-                  }`}
-              >
-                <Check size={14} />
-              </button>
+          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-6 gap-x-4 pr-2 hide-scrollbar">
+            {list.map((agent) => {
+              const avatarSrc = agent?.imageUrl || agent?.image?.url;
+              const hasAvatar = Boolean(avatarSrc);
 
-              <div className="w-full px-4 pt-6 pb-4 flex flex-col items-center">
-                <div className="w-[120px] h-[120px]">
-                  <Image
-                    src={agent.image}
-                    alt={agent.name}
-                    className={`w-full h-full object-cover rounded-full ${isSelected
-                        ? "ring-2 ring-(--primary-color) ring-offset-2"
-                        : ""
-                      }`}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2.5 items-center mt-5 text-center">
-                  <p className="text-[16px] text-[#1B1F27] font-medium">
-                    {agent.fullName}
-                  </p>
-                  <strong className="text-[14px] text-[#02836F] font-semibold">
-                    {agent.role}
-                  </strong>
-                </div>
-
-                <div className="flex gap-2 mt-4">
+              return (
+                <div
+                  key={agent?.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push(`/about-us/${agent.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      router.push(`/about-us/${agent.id}`);
+                    }
+                  }}
+                  className="group relative flex flex-col items-center justify-between rounded-2xl cursor-pointer transition-colors border bg-white hover:bg-[#FAFAFA] border-black/10"
+                >
                   <button
                     type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
-                    aria-label="Whatsapp"
-                    title="Whatsapp"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setEditingEmployee(agent);
+                      setIsEditOpen(true);
+                    }}
+                    aria-label="Update"
+                    title="Update"
+                    className="absolute right-3 top-3 w-9 h-9 rounded-xl flex items-center justify-center border border-black/10 bg-white text-[#0B3B34] hover:bg-[#F5FFFC]"
                   >
-                    <Image src={whatsappIcon} alt="whatsapp" />
+                    <Pencil size={18} />
                   </button>
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
-                    aria-label="Instagram"
-                    title="Instagram"
-                  >
-                    <Image src={instagramIcon} alt="instagram" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
-                    aria-label="LinkedIn"
-                    title="LinkedIn"
-                  >
-                    <Image src={linkedinIcon} alt="linkedin" />
-                  </button>
+
+                  <div className="w-full px-4 pt-6 pb-4 flex flex-col items-center">
+                    <div className="w-[120px] h-[120px]">
+                      {hasAvatar ? (
+                        <Image
+                          src={avatarSrc}
+                          alt={agent?.fullName || "Employee"}
+                          className="w-full h-full object-cover rounded-full"
+                          width={120}
+                          height={120}
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full rounded-full bg-(--primary-color) flex items-center justify-center"
+                        >
+                          <Image src={defaultProfileIcon} alt="Default avatar" width={28} height={28} />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2.5 items-center mt-5 text-center">
+                      <p className="text-[16px] text-[#1B1F27] font-medium">
+                        {agent.fullName}
+                      </p>
+                      <strong className="text-[14px] text-[#02836F] font-semibold">
+                        {agent.position}
+                      </strong>
+                    </div>
+
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        type="button"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
+                        aria-label="Whatsapp"
+                        title="Whatsapp"
+                      >
+                        <Image src={whatsappIcon} alt="whatsapp" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
+                        aria-label="Instagram"
+                        title="Instagram"
+                      >
+                        <Image src={instagramIcon} alt="instagram" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-6 h-6 bg-black rounded-full flex items-center justify-center"
+                        aria-label="LinkedIn"
+                        title="LinkedIn"
+                      >
+                        <Image src={linkedinIcon} alt="linkedin" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </section>
+              );
+            })}
+          </section>
+        </div>
+      ))}
 
       <AddAgentModal
         isOpen={isAddOpen}
@@ -251,7 +362,10 @@ const Employees = () => {
       />
       <EditAgentModal
         isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
+        onClose={() => {
+          setIsEditOpen(false);
+          setEditingEmployee(null);
+        }}
         onSubmit={handleEditAgent}
         agent={editAgentSource}
       />

@@ -56,3 +56,23 @@ export const getAgent = async () =>{
 		console.log(err);
 	}
 }
+
+
+export const getEmployee = () =>{
+	try {
+		const res = axios.get(`/api/user/employees`);
+		return res;
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+export const saveEmployee = async (employee) => {
+	try {
+		const res = await axios.post(`/api/user/save-employee`, employee);
+		return res;
+	} catch (err) {
+		console.log(err);
+		throw err;
+	}
+};
