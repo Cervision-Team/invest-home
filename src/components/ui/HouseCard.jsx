@@ -201,6 +201,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
                       fill
                       sizes="(max-width: 768px) 100vw, 302px"
                       className="object-cover"
+                      unoptimized
                     />
                   </div>
 
