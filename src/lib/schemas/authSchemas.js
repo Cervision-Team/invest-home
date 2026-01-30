@@ -9,6 +9,31 @@ export const passwordSchema = yup
   .matches(/\d/, "Şifrədə ən azı bir rəqəm olmalıdır")
   .matches(/[^A-Za-z0-9]/, "Şifrədə ən azı bir xüsusi simvol olmalıdır");
 
+export const optionalPasswordSchema = yup
+  .string()
+  .nullable()
+  .transform((v) => (v === "" ? null : v))
+  .test("password-rules", function (value) {
+    if (!value) return true;
+    
+    if (value.length < 8) {
+      return this.createError({ message: "Şifrə ən azı 8 simvol olmalıdır" });
+    }
+    if (!/[A-Z]/.test(value)) {
+      return this.createError({ message: "Şifrədə ən azı bir böyük hərf olmalıdır" });
+    }
+    if (!/[a-z]/.test(value)) {
+      return this.createError({ message: "Şifrədə ən azı bir kiçik hərf olmalıdır" });
+    }
+    if (!/\d/.test(value)) {
+      return this.createError({ message: "Şifrədə ən azı bir rəqəm olmalıdır" });
+    }
+    if (!/[^A-Za-z0-9]/.test(value)) {
+      return this.createError({ message: "Şifrədə ən azı bir xüsusi simvol olmalıdır" });
+    }
+    return true;
+  });
+
 export const emailSchema = yup
   .string()
   .required("Email vacibdir")

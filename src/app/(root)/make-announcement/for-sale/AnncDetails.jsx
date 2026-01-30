@@ -55,6 +55,8 @@ const AnncDetails = ({
   }, [handleInputChange]);
 
   const handleFeatureChange = useCallback((feature) => {
+    console.log("feature",feature);
+    
     const currentFeatures = formik.values.features || [];
     let newFeatures;
 
@@ -73,14 +75,17 @@ const AnncDetails = ({
   const hasError = (fieldName) => !!displayedErrors[fieldName];
 
   const apartmentLikeFeatures = [
-    { id: 'parking', label: 'Parking' },
-    { id: 'furniture', label: 'Mebel' },
-    { id: 'bigAppliances', label: 'Böyük məişət texnikası' },
-    { id: 'balcony', label: 'Çardaq' },
-    { id: 'lift', label: 'Lift' },
-    { id: 'smallAppliances', label: 'Kiçik məişət texnikası' },
-    { id: 'heatingSystem', label: 'İstilik sistemi' },
-    { id: 'coolingSystem', label: 'Soyutma sistemi' },
+    { id: 'GAS', label: 'Qaz' },
+    { id: 'BALCONY', label: 'Balkon' },
+    { id: 'CONDITIONER', label: 'Kondisioner' },
+    { id: 'WATER', label: 'Su' },
+    { id: 'COMBI_SYSTEM', label: 'Kombi sistemi' },
+    { id: 'FURNISHED', label: 'Əşyalı' },
+    { id: 'LIGHT', label: 'İşıq' },
+    { id: 'CENTRAL_HEATING', label: 'Mərkəzi istilik sistemi' },
+    { id: 'KITCHEN_FURNITURE', label: 'Mətbəx mebeli' },
+    { id: 'ELEVATOR', label: 'Lift' },
+
   ];
 
   const houseFeatures = [
@@ -107,28 +112,28 @@ const AnncDetails = ({
 
   const featureOptions = (() => {
     const result = [];
+    result.push(...apartmentLikeFeatures);
+    // if (activePropertyType !== 'house') {
+    //   if (activePropertyType !== 'land' && activePropertyType !== 'garage') {
+    //     result.push(...apartmentLikeFeatures);
+    //   }
 
-    if (activePropertyType !== 'house') {
-      if (activePropertyType !== 'land' && activePropertyType !== 'garage') {
-        result.push(...apartmentLikeFeatures);
-      }
+    //   if (activePropertyType !== 'land') {
+    //     result.push(securityFeature);
+    //   }
+    // }
 
-      if (activePropertyType !== 'land') {
-        result.push(securityFeature);
-      }
-    }
+    // if (activePropertyType === 'garage') {
+    //   result.push(...garageFeatures);
+    // }
 
-    if (activePropertyType === 'garage') {
-      result.push(...garageFeatures);
-    }
+    // if (activePropertyType === 'house') {
+    //   result.push(...houseFeatures);
+    // }
 
-    if (activePropertyType === 'house') {
-      result.push(...houseFeatures);
-    }
-
-    if (activePropertyType === 'garage' || activePropertyType === 'house') {
-      result.push(...houseOrGarageFeatures);
-    }
+    // if (activePropertyType === 'garage' || activePropertyType === 'house') {
+    //   result.push(...houseOrGarageFeatures);
+    // }
 
     return result;
   })();
@@ -199,83 +204,84 @@ const AnncDetails = ({
         `}
       </style>
 
-      <div className="h-full pb-[16px] border-b border-[rgba(0,0,0,0.2)]">
+      <div className="h-full pb-[16px] border-[rgba(0,0,0,0.2)]">
         <div className="flex items-start justify-start gap-[95px] max-h-[444px] overflow-y-auto hide-scrollbar pl-[2px]">
           <form action="" className="w-full">
             <div className='flex flex-col items-start justify-center'>
               <h5 className='text-[#000] text-[24px]/[28px] font-medium'>
                 Detallar
               </h5>
-
-              {showExit && (
-                <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-                  <p className='text-[#000] text-[16px]/[20px] font-medium'>Çıxarış?</p>
-                  {hasError('exit') && <p className="error-text">{getErrorMessage('exit')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input
-                      type="radio"
-                      id="exitTheres"
-                      name="exit"
-                      value="theres"
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.exit === 'theres'}
-                      onChange={(e) => handleRadioChange('exit', e.target.value)}
-                      onBlur={() => handleBlur('exit')}
-                    />
-                    <label htmlFor="exitTheres" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Var</label>
-                    <input
-                      type="radio"
-                      id="exitTheresNot"
-                      name="exit"
-                      value="theresNot"
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.exit === 'theresNot'}
-                      onChange={(e) => handleRadioChange('exit', e.target.value)}
-                      onBlur={() => handleBlur('exit')}
-                    />
-                    <label htmlFor="exitTheresNot" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Yoxdur</label>
+              <div className='grid grid-cols-1 lg:grid-cols-2 gap-x-[62px] gap-y-[13px]'>
+                {showExit && (
+                  <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+                    <p className='text-[#000] text-[16px]/[20px] font-medium'>Çıxarış?</p>
+                    {hasError('exit') && <p className="error-text">{getErrorMessage('exit')}</p>}
+                    <div className='flex flex-row items-center justify-center mt-[9px]'>
+                      <input
+                        type="radio"
+                        id="exitTheres"
+                        name="exit"
+                        value="theres"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.exit === 'theres'}
+                        onChange={(e) => handleRadioChange('exit', e.target.value)}
+                        onBlur={() => handleBlur('exit')}
+                      />
+                      <label htmlFor="exitTheres" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Var</label>
+                      <input
+                        type="radio"
+                        id="exitTheresNot"
+                        name="exit"
+                        value="theresNot"
+                        className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.exit === 'theresNot'}
+                        onChange={(e) => handleRadioChange('exit', e.target.value)}
+                        onBlur={() => handleBlur('exit')}
+                      />
+                      <label htmlFor="exitTheresNot" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Yoxdur</label>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
 
-              {showMortgage && (
-                <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
-                  <p className='text-[#000] text-[20px]/[24px]'>İpotekaya yararlıdır?</p>
-                  {hasError('mortgage') && <p className="error-text">{getErrorMessage('mortgage')}</p>}
-                  <div className='flex flex-row items-center justify-center mt-[9px]'>
-                    <input
-                      type="radio"
-                      id="mortgageYes"
-                      name="mortgage"
-                      value="yes"
-                      className='w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.mortgage === 'yes'}
-                      onChange={(e) => handleRadioChange('mortgage', e.target.value)}
-                      onBlur={() => handleBlur('mortgage')}
-                    />
-                    <label htmlFor="mortgageYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
-                    <input
-                      type="radio"
-                      id="mortgageNo"
-                      name="mortgage"
-                      value="no"
-                      className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
-                      checked={formik.values.mortgage === 'no'}
-                      onChange={(e) => handleRadioChange('mortgage', e.target.value)}
-                      onBlur={() => handleBlur('mortgage')}
-                    />
-                    <label htmlFor="mortgageNo" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
+                {showMortgage && (
+                  <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
+                    <p className='text-[#000] text-[20px]/[24px]'>İpotekaya yararlıdır?</p>
+                    {hasError('mortgage') && <p className="error-text">{getErrorMessage('mortgage')}</p>}
+                    <div className='flex flex-row items-center justify-center mt-[9px]'>
+                      <input
+                        type="radio"
+                        id="mortgageYes"
+                        name="mortgage"
+                        value="yes"
+                        className='w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.mortgage === 'yes'}
+                        onChange={(e) => handleRadioChange('mortgage', e.target.value)}
+                        onBlur={() => handleBlur('mortgage')}
+                      />
+                      <label htmlFor="mortgageYes" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Bəli</label>
+                      <input
+                        type="radio"
+                        id="mortgageNo"
+                        name="mortgage"
+                        value="no"
+                        className='ml-[60px] w-[20px] h-[20px] accent-[#1B8F7D]'
+                        checked={formik.values.mortgage === 'no'}
+                        onChange={(e) => handleRadioChange('mortgage', e.target.value)}
+                        onBlur={() => handleBlur('mortgage')}
+                      />
+                      <label htmlFor="mortgageNo" className='ml-[6px] text-[#000] text-[16px]/[22px]'>Xeyr</label>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               <div className='flex flex-col items-start justify-center gap-2 mt-[28px]'>
                 <p className='text-[#000] text-[20px]/[24px]'>Əlavə xüsusiyyətlər</p>
                 {hasError('features') && <p className="error-text">{getErrorMessage('features')}</p>}
                 <div className='grid gap-x-[62px] gap-y-[13px] mt-[9px] w-full
                    grid-cols-3 max-[1360px]:grid-cols-2 max-[1090px]:grid-cols-1 max-[768px]:grid-cols-2 max-[590px]:grid-cols-1'
-                  >
+                >
                   {featureOptions.map(({ id, label }) => (
                     <div className='flex items-center' key={id}>
                       <input
@@ -295,7 +301,7 @@ const AnncDetails = ({
                 </div>
               </div>
 
-              <div className='w-full flex flex-col items-start justify-center gap-2 mt-[28px]'>
+              <div className='w-full flex flex-col items-start justify-center gap-2 mt-[28px] relative'>
                 <p className='text-[#000] text-[20px]/[24px]'>Təsviri</p>
                 <div className=' mt-[9px] w-full'>
                   <textarea
@@ -306,13 +312,13 @@ const AnncDetails = ({
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     onBlur={() => handleBlur('description')}
                     maxLength={5000}
-                    minLength={50}
+                    minLength={20}
                   />
                   <p className='text-[#6C707A] text-[14px] mt-[8px] text-right'>
                     {(formik.values.description || '').length}/5000
                   </p>
                 </div>
-                {hasError('description') && <p className="error-text">{getErrorMessage('description')}</p>}
+                {hasError('description') && <p className="error-text absolute bottom-0">{getErrorMessage('description')}</p>}
               </div>
 
             </div>

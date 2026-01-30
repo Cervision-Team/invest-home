@@ -9,7 +9,7 @@ import {
   editAgentDefaultValues,
   editAgentSchema,
 } from "@/lib/schemas/editAgentSchema";
-import { getRoles } from "@/services/api/endpoints/roleService";
+// import { getRoles } from "@/services/api/endpoints/roleService";
 
 const labelCls = "text-[12px] text-black/70";
 const inputCls =
@@ -31,23 +31,25 @@ const Field = ({ label, required, error, children }) => {
 
 const toFormValues = (agent) => {
   if (!agent) return editAgentDefaultValues;
+  console.log(agent);
+
   return {
     ...editAgentDefaultValues,
     fullName: agent.fullName ?? "",
     birthDate: agent.birthDate ?? "",
-    phone: agent.phone ?? "+994",
-    role: agent?.position ?? agent?.jobTitle ?? agent?.role ?? "",
-    roleName: agent?.roleName ?? agent?.role?.name ?? "",
+    phoneNumber: agent.phoneNumber ?? "+994",
+    position: agent?.position ?? "",
+    role: agent?.role ?? "",
     email: agent.email ?? "",
-    address: agent.address ?? "",
-    note: agent.note ?? "",
+    location: agent.location ?? "",
+    aboutMe: agent.aboutMe ?? "",
     password: agent.password ?? "",
   };
 };
 
-const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
+const EditAgentModal = ({ isOpen, onClose, onSubmit, agent,roles }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [roles, setRoles] = useState([]);
+  // const [roles, setRoles] = useState([]);
 
   const defaultValues = useMemo(() => toFormValues(agent), [agent]);
 
@@ -68,32 +70,32 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
     return () => document.body.classList.remove("no-scroll");
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    let alive = true;
+  // useEffect(() => {
+  //   if (!isOpen) return;
+  //   let alive = true;
 
-    (async () => {
-      try {
-        const res = await getRoles();
-        const list = Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res?.data?.roles)
-            ? res.data.roles
-            : [];
+  //   (async () => {
+  //     try {
+  //       const res = await getRoles();
+  //       const list = Array.isArray(res?.data)
+  //         ? res.data
+  //         : Array.isArray(res?.data?.roles)
+  //           ? res.data.roles
+  //           : [];
 
-        if (!alive) return;
-        setRoles(list.filter((r) => r && r.name));
-      } catch (err) {
-        if (!alive) return;
-        setRoles([]);
-        console.log("Error fetching roles:", err);
-      }
-    })();
+  //       if (!alive) return;
+  //       setRoles(list.filter((r) => r && r.name));
+  //     } catch (err) {
+  //       if (!alive) return;
+  //       setRoles([]);
+  //       console.log("Error fetching roles:", err);
+  //     }
+  //   })();
 
-    return () => {
-      alive = false;
-    };
-  }, [isOpen]);
+  //   return () => {
+  //     alive = false;
+  //   };
+  // }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) reset(defaultValues);
@@ -102,11 +104,10 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
   if (!isOpen) return null;
 
   const submit = async (values) => {
-    console.log("[EditAgentModal] submit values:", { id: agent?.id, values });
     await onSubmit?.(values);
     onClose?.();
   };
-
+  
   return (
     <>
       <div className="fixed inset-0 z-9998 bg-black/40" onClick={onClose} />
@@ -137,10 +138,10 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
                 <input {...register("birthDate")} className={inputCls} type="date" />
               </Field>
 
-              <Field label="Telefon" required error={errors.phone?.message}>
+              <Field label="Telefon" required error={errors.phoneNumber?.message}>
                 <div className="relative">
                   <input
-                    {...register("phone")}
+                    {...register("phoneNumber")}
                     className={`${inputCls} pr-10`}
                     inputMode="tel"
                   />
@@ -162,33 +163,34 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
                 </div>
               </Field>
 
-              <Field label="Vəzifəsi" error={errors.role?.message}>
-                <input {...register("role")} className={inputCls} />
+              <Field label="Vəzifəsi" error={errors.position?.message}>
+                <input {...register("position")} className={inputCls} />
               </Field>
 
               <Field label="Email" required error={errors.email?.message}>
                 <input {...register("email")} className={inputCls} inputMode="email" />
               </Field>
 
-              <Field label="Yaşayış ünvanı" error={errors.address?.message}>
-                <input {...register("address")} className={inputCls} />
+              <Field label="Yaşayış ünvanı" error={errors.location?.message}>
+                <input {...register("location")} className={inputCls} />
               </Field>
 
-              <Field label="Rol" required error={errors.roleName?.message}>
-                <select {...register("roleName")} className={inputCls}>
-                  <option value="">Rol seçin</option>
-                  {roles
-                    .slice()
-                    .sort((a, b) => String(a?.name).localeCompare(String(b?.name)))
-                    .map((r) => (
-                      <option key={r?.id ?? r?.name} value={r?.name}>
-                        {r?.name}
-                      </option>
-                    ))}
-                </select>
-              </Field>
+              {
+                defaultValues?.role && roles &&
+                <Field label="Rol" required error={errors.role?.message}>
+                  <select {...register("role")} className={inputCls}>
+                    <option value="" disabled>Rol seçin</option>
+                    {roles
+                      .map((role) => (
+                        <option key={role?.id ?? role?.name} value={role?.name}>
+                          {role?.name}
+                        </option>
+                      ))}
+                  </select>
+                </Field>
+              }
 
-              <Field label="Şifrə" required error={errors.password?.message}>
+              <Field label="Şifrə" error={errors.password?.message}>
                 <div className="relative">
                   <input
                     {...register("password")}
@@ -213,9 +215,9 @@ const EditAgentModal = ({ isOpen, onClose, onSubmit, agent }) => {
               </Field>
 
               <div className="md:col-span-2">
-                <Field label="Əlavə qeyd" error={errors.note?.message}>
+                <Field label="Əlavə qeyd" error={errors.aboutMe?.message}>
                   <textarea
-                    {...register("note")}
+                    {...register("aboutMe")}
                     className="w-full min-h-32 rounded-[10px] border border-black/15 bg-white px-3 py-3 text-[14px] text-[#0A0D14] placeholder:text-black/40 outline-none focus:border-(--primary-color)"
                     placeholder="Buraya yazın...."
                   />

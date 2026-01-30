@@ -405,7 +405,7 @@ const HeroAndDetails = ({ id }) => {
                   Xüsusiyyətlər
                 </h1>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col ">
                   {house?.features.map((item, idx) => (
                     <ul key={idx} className="flex flex-row gap-3 items-center text-[#2B2B2B] text-base sm:text-[20px]">
                       {/* <Image

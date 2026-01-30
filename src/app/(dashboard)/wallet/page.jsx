@@ -18,7 +18,7 @@ const Wallet = () => {
         <main className='w-full '>
             <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-end mb-10'>
                 <div className='flex gap-3 md:gap-6 md:justify-end'>
-                    <Button />
+                    {/* <Button /> */}
                 </div>
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Balansım</h1>

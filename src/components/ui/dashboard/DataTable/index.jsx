@@ -1159,7 +1159,7 @@ export default function DataTable() {
               className="w-[18px] h-[20px] py-[2px] px-[3px]"
             />
           </button>
-          <Button />
+          {/* <Button /> */}
         </div>
       </div>
       <p className="text-[20px] font-[600] mb-[40px]">Bütün elanlar</p>

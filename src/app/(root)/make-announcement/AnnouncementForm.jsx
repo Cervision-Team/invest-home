@@ -30,6 +30,13 @@ const AnnouncementForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [locationNextAttempted, setLocationNextAttempted] = useState(false);
 
+  const getApiErrorMessage = useCallback((error) => {
+    const data = error?.response?.data;
+    if (typeof data === 'string' && data.trim()) return data;
+    if (data?.message) return data.message;
+    return error?.message || 'Elan göndərilməsində xəta baş verdi';
+  }, []);
+
 
   const formik = useFormik({
     initialValues: {
@@ -281,13 +288,13 @@ const AnnouncementForm = () => {
 
     if (isValid) {
       try {
-        const res = await formik.submitForm();
-        // console.log(res);
-
+        setStepErrors({});
+        await formik.submitForm();
         setIsModalOpen(true);
       } catch (error) {
         console.error('Form submission error:', error);
-        setStepErrors({ general: 'Form göndərilməsində xəta' });
+        setIsModalOpen(false);
+        setStepErrors({ general: getApiErrorMessage(error) });
       }
     }
   };
@@ -565,6 +572,12 @@ case 3:
 
           <div className='basis-[calc(100%-376px)] min-[768px]:min-w-[50%] max-[768px]:min-w-full flex flex-col justify-between'>
             {renderFormContent()}
+
+            {stepErrors?.general && (
+              <div className="mt-4 flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                <span>{stepErrors.general}</span>
+              </div>
+            )}
 
             <div className={`buttons-container ${formIndex === 0 ? "min-[768px]:justify-end" : "justify-between"} flex max-[768px]:flex-col-reverse gap-5 mt-4`}>
               {formIndex === 0 ? (

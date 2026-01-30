@@ -1,15 +1,15 @@
 import * as yup from "yup";
-import { emailSchema, passwordSchema } from "./authSchemas";
+import { emailSchema, optionalPasswordSchema } from "./authSchemas";
 
 export const editAgentDefaultValues = {
   fullName: "",
   birthDate: "",
-  phone: "+994",
+  phoneNumber: "+994",
+  position: "",
   role: "",
-  roleName: "",
   email: "",
-  address: "",
-  note: "",
+  location: "",
+  aboutMe: "",
   password: "",
 };
 
@@ -25,20 +25,20 @@ export const editAgentSchema = yup
         const d = new Date(v);
         return !Number.isNaN(d.getTime());
       }),
-    phone: yup
+    phoneNumber: yup
       .string()
       .trim()
       .required("Telefon vacibdir")
       .matches(/^\+994\d{9}$/, "Telefon formatı: +994501234567"),
-    role: yup.string().trim().nullable().transform((v) => (v === "" ? null : v)),
-    roleName: yup.string().trim().required("Rol seçin"),
+    position: yup.string().trim().nullable().transform((v) => (v === "" ? null : v)),
+    role: yup.string().trim().required("Rol seçin"),
     email: emailSchema,
-    address: yup
+    location: yup
       .string()
       .trim()
       .nullable()
       .transform((v) => (v === "" ? null : v)),
-    note: yup.string().trim().nullable().transform((v) => (v === "" ? null : v)),
-    password: passwordSchema,
+    aboutMe: yup.string().trim().nullable().transform((v) => (v === "" ? null : v)),
+    password: optionalPasswordSchema,
   })
   .required();

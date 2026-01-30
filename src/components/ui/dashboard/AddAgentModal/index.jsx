@@ -128,10 +128,10 @@ const AddAgentModal = ({ isOpen, onClose, onSubmit }) => {
                 />
               </Field>
 
-              <Field label="Telefon" required error={errors.phone?.message}>
+              <Field label="Telefon" required error={errors.phoneNumber?.message}>
                 <div className="relative">
                   <input
-                    {...register("phone")}
+                    {...register("phoneNumber")}
                     className={`${inputCls} pr-10`}
                     placeholder="+994501234567"
                     inputMode="tel"
@@ -154,9 +154,9 @@ const AddAgentModal = ({ isOpen, onClose, onSubmit }) => {
                 </div>
               </Field>
 
-              <Field label="Vəzifəsi" error={errors.role?.message}>
+              <Field label="Vəzifəsi" error={errors.position?.message}>
                 <input
-                  {...register("role")}
+                  {...register("position")}
                   className={inputCls}
                   placeholder="----"
                 />
@@ -171,16 +171,16 @@ const AddAgentModal = ({ isOpen, onClose, onSubmit }) => {
                 />
               </Field>
 
-              <Field label="Yaşayış ünvanı" error={errors.address?.message}>
+              <Field label="Yaşayış ünvanı" error={errors.location?.message}>
                 <input
-                  {...register("address")}
+                  {...register("location")}
                   className={inputCls}
                   placeholder="Heydər Əliyev pr."
                 />
               </Field>
 
-              <Field label="Rol" required error={errors.roleName?.message}>
-                <select {...register("roleName")} className={inputCls}>
+              <Field label="Rol" required error={errors.role?.message}>
+                <select {...register("role")} className={inputCls}>
                   <option value="">Rol seçin</option>
                   {roles
                     .slice()
@@ -193,7 +193,7 @@ const AddAgentModal = ({ isOpen, onClose, onSubmit }) => {
                 </select>
               </Field>
 
-              <Field label="Şifrə" required error={errors.password?.message}>
+              <Field label="Şifrə" error={errors.password?.message}>
                 <div className="relative">
                   <input
                     {...register("password")}
@@ -219,9 +219,9 @@ const AddAgentModal = ({ isOpen, onClose, onSubmit }) => {
               </Field>
 
               <div className="md:col-span-2">
-                <Field label="Əlavə qeyd" error={errors.note?.message}>
+                <Field label="Əlavə qeyd" error={errors.aboutMe?.message}>
                   <textarea
-                    {...register("note")}
+                    {...register("aboutMe")}
                     className="w-full min-h-32 rounded-[10px] border border-black/15 bg-white px-3 py-3 text-[14px] text-[#0A0D14] placeholder:text-black/40 outline-none focus:border-(--primary-color)"
                     placeholder="Buraya yazın...."
                   />
