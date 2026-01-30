@@ -4,9 +4,10 @@ import React from 'react'
 const Models = () => {
   return (
     <>
-      <div className='w-full h-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center items-center'>
+      <section className='w-full'>
+        <div className='max-w-[1600px] mx-auto px-20 max-[1025px]:px-5 max-[431px]:px-4 flex flex-col justify-center items-center'>
         <h2 className='text-[#1B1F27] text-center text-2xl sm:text-3xl lg:text-[32px] leading-tight lg:leading-[46px] font-medium'>Onlar qazandı, indi növbə səndə!</h2>
-        <h4 className='text-[#3F444D] text-center text-sm sm:text-base lg:text-[16px] leading-relaxed lg:leading-[20px] mt-3 sm:mt-4'>Agentlərimizin sizə ilham olacaq uğur hekayələrini dinləyin.</h4>
+        <h4 className='text-[#3F444D] text-center text-sm sm:text-base lg:text-[16px] leading-relaxed lg:leading-5 mt-3 sm:mt-4'>Agentlərimizin sizə ilham olacaq uğur hekayələrini dinləyin.</h4>
 
           <div className="w-full flex justify-center mt-10 sm:mt-15">
             <div className="flex flex-nowrap items-center justify-center overflow-x-auto md:overflow-visible px-2 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -41,7 +42,8 @@ const Models = () => {
           <p className='w-full max-w-[628px] text-[#3F444D] text-center text-sm sm:text-base lg:text-[16px] leading-relaxed lg:leading-[22px] mt-8 sm:mt-11 px-2'>“Təcrübəni yenidən kəşf etməyə ehtiyac yoxdur! İnvest Home-la sınaqlardan keçmiş biliklərdən yararlan, inkişafa doğru
              addımla və uğurunu indi başlat!”</p>
           <h3 className='text-black text-center text-2xl sm:text-3xl lg:text-[32px] leading-tight lg:leading-[49px] font-medium mt-5 sm:mt-7'>Novruz Hüseynov</h3>
-      </div>
+        </div>
+      </section>
     </>
   )
 }
