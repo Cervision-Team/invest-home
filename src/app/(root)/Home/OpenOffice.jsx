@@ -6,8 +6,8 @@ import openOfficeImg from '../../../../public/images/openoffice.jpg'
 const OpenOffice = () => {
   return (
     <>
-      <div className='w-full h-auto px-4 sm:px-6 lg:px-20'>
-        <div className='relative flex w-full h-auto flex-col items-center justify-start gap-10 px-4 py-8 sm:px-7 sm:py-9 md:flex-row md:gap-[60px]'>
+      <section className='w-full h-auto max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
+        <div className='relative flex w-full h-auto flex-col items-center justify-start gap-10 py-8 sm:py-9 md:flex-row md:gap-[60px]'>
           <div className='relative w-full max-w-[485px] aspect-485/324'>
             <Image
               src={openOfficeImg}
@@ -73,7 +73,7 @@ const OpenOffice = () => {
             </defs>
           </svg>
         </div>
-      </div>
+      </section>
     </>
   )
 }

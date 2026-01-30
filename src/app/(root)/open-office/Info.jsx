@@ -4,7 +4,10 @@ import React from 'react'
 const InfoCard = ({image, title, description }) => {
   return (
     <div className='w-full max-w-[411px] h-auto flex flex-col gap-4 items-start '>
-         <div className="relative w-full aspect-[411/272] rounded-[30px] overflow-hidden">
+         <div
+          className="relative w-full rounded-[30px] overflow-hidden"
+          style={{ aspectRatio: '411 / 272' }}
+        >
         <Image
           src={image}
           alt={title}
@@ -22,7 +25,8 @@ const InfoCard = ({image, title, description }) => {
 const Info = () => {
   return (
     <>
-      <div className='w-full h-auto px-4 sm:px-8 lg:px-20 flex flex-col justify-center'>
+      <section className='w-full'>
+        <div className='max-w-[1600px] mx-auto px-20 max-[1025px]:px-5 max-[431px]:px-4 flex flex-col justify-center'>
         <h2 className='text-[#141414] text-center text-2xl sm:text-3xl lg:text-[38px] leading-tight lg:leading-[46px] font-semibold'>
             Uğur bizim yanaşmamızın nəticəsidir.
         </h2>
@@ -66,7 +70,8 @@ const Info = () => {
                 unikal təcrübə qazandırır."
                 />
         </div>
-      </div>
+        </div>
+      </section>
     </>
   )
 }

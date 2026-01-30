@@ -21,10 +21,14 @@ export default function Layout({ children }) {
               <main className="bg-white">
                 <ContactHeader />
                 <Header />
-                <div className="flex flex-col lg:flex-row items-start gap-6 px-4 sm:px-6 lg:px-10 xl:px-20 mt-6 lg:mt-10">
-                  <Sidebar variant="dashboard" />
-                  <div className="flex-1 min-w-0 w-full">{children}</div>
-                </div>
+                <section className="w-full">
+                  <div className="max-w-[1600px] mx-auto px-20 max-[1025px]:px-5 max-[431px]:px-4">
+                    <div className="flex flex-col lg:flex-row items-start gap-6 py-10">
+                      <Sidebar variant="dashboard" />
+                      <div className="flex-1 min-w-0 w-full">{children}</div>
+                    </div>
+                  </div>
+                </section>
                 <TabBar />
                 <Footer />
                 <SubFooter />
