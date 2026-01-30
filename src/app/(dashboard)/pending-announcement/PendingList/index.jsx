@@ -30,7 +30,7 @@ const PendingList = () => {
                     <Search search={search} setSearch={setSearch} />
                 </div>
                 <div className='flex gap-3 md:gap-6 md:justify-end'>
-                    <Button />
+                    {/* <Button /> */}
                 </div>
             </div>
 

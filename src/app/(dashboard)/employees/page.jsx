@@ -14,9 +14,10 @@ import EmployeesActions from "@/components/ui/dashboard/EmployeesActions";
 import { Button as ChatNotificationButtons } from "@/components/ui/dashboard/Buttons/ProfileButtons";
 import AddAgentModal from "@/components/ui/dashboard/AddAgentModal";
 import EditAgentModal from "@/components/ui/dashboard/EditAgentModal";
-import { getEmployee, saveEmployee } from "@/services/api/endpoints/userService";
+import { getEmployee, getEmployeeById, saveEmployee, updateEmployee } from "@/services/api/endpoints/userService";
 import Loader from "@/components/ui/Loader";
 import MessageModal from "@/components/ui/MessageModal";
+import { getRoles } from "@/services/api/endpoints/roleService";
 
 const defaultProfileIcon = "/icons/profile.svg";
 
@@ -28,6 +29,7 @@ const Employees = () => {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
+  const [isEditLoading, setIsEditLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [confirmAddOpen, setConfirmAddOpen] = useState(false);
@@ -39,12 +41,38 @@ const Employees = () => {
     title: "",
     message: "",
   });
+  const [roles, setRoles] = useState([]);
 
   const refreshEmployees = async () => {
     const res = await getEmployee();
     setEmployees(res?.data || []);
   };
 
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await getRoles();
+        const list = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res?.data?.roles)
+            ? res.data.roles
+            : [];
+
+        if (!alive) return;
+        setRoles(list.filter((r) => r && r.name));
+      } catch (err) {
+        if (!alive) return;
+        setRoles([]);
+        console.log("Error fetching roles:", err);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
 
   useEffect(() => {
@@ -96,6 +124,29 @@ const Employees = () => {
 
   const onAdd = () => setIsAddOpen(true);
 
+  const openEdit = async (employee) => {
+    const id = employee?.id;
+    if (!id || isEditLoading) return;
+
+    setIsEditLoading(true);
+    try {
+      const res = await getEmployeeById(id);
+      const full = res?.data || employee;
+      setEditingEmployee(full);
+      setIsEditOpen(true);
+    } catch (err) {
+      console.log("Error fetching employee by id:", err);
+      setMessageModal({
+        open: true,
+        variant: "error",
+        title: "Xəta",
+        message: err?.response?.data?.message || "Əməkdaş məlumatları yüklənmədi",
+      });
+    } finally {
+      setIsEditLoading(false);
+    }
+  };
+
   const handleAddAgent = async (values) => {
     setPendingAddValues(values);
     setConfirmAddOpen(true);
@@ -108,12 +159,12 @@ const Employees = () => {
     const payload = {
       fullName: pendingAddValues?.fullName,
       email: pendingAddValues?.email,
-      phoneNumber: pendingAddValues?.phone,
-      position: pendingAddValues?.role,
-      role: pendingAddValues?.roleName,
+      phoneNumber: pendingAddValues?.phoneNumber,
+      position: pendingAddValues?.position,
+      role: pendingAddValues?.role,
       birthDate: pendingAddValues?.birthDate,
-      location: pendingAddValues?.address,
-      aboutMe: pendingAddValues?.note,
+      location: pendingAddValues?.location,
+      aboutMe: pendingAddValues?.aboutMe,
     };
 
     console.log("[Employees] saveEmployee payload (add):", payload);
@@ -151,16 +202,20 @@ const Employees = () => {
   }, [editingEmployee]);
 
   const handleEditAgent = async (values) => {
+    console.log("clicked");
+    
     const payload = {
       fullName: values?.fullName,
       email: values?.email,
-      phoneNumber: values?.phone,
-      position: values?.role,
-      role: values?.roleName,
+      phoneNumber: values?.phoneNumber,
+      position: values?.position,
+      role: values?.role,
       birthDate: values?.birthDate,
-      location: values?.address,
-      aboutMe: values?.note,
+      location: values?.location,
+      aboutMe: values?.aboutMe,
     };
+    console.log(payload);
+    
 
     console.log("[Employees] saveEmployee payload (edit):", {
       id: editAgentSource?.id,
@@ -168,7 +223,7 @@ const Employees = () => {
     });
 
     try {
-      await saveEmployee(payload);
+      await updateEmployee(editAgentSource?.id, payload);
       await refreshEmployees();
       setMessageModal({
         open: true,
@@ -242,7 +297,7 @@ const Employees = () => {
             showEdit={false}
           />
 
-          <ChatNotificationButtons />
+          {/* <ChatNotificationButtons /> */}
         </div>
       </div>
 
@@ -280,8 +335,7 @@ const Employees = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setEditingEmployee(agent);
-                      setIsEditOpen(true);
+                      openEdit(agent);
                     }}
                     aria-label="Update"
                     title="Update"
@@ -368,6 +422,7 @@ const Employees = () => {
         }}
         onSubmit={handleEditAgent}
         agent={editAgentSource}
+        roles={roles}
       />
     </main>
   );

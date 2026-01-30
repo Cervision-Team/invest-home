@@ -67,9 +67,30 @@ export const getEmployee = () =>{
 	}
 }
 
+export const getEmployeeById = async (id) => {
+	try {
+		if (id == null || id === "") throw new Error("Employee id is required");
+		const res = await axios.get(`/api/user/employee/${id}`);
+		return res;
+	} catch (err) {
+		console.log(err);
+		throw err;
+	}
+};
+
 export const saveEmployee = async (employee) => {
 	try {
 		const res = await axios.post(`/api/user/save-employee`, employee);
+		return res;
+	} catch (err) {
+		console.log(err);
+		throw err;
+	}
+};
+
+export const updateEmployee = async (id, employee) => {
+	try {
+		const res = await axios.put(`/api/user/employee/${id}`, employee);
 		return res;
 	} catch (err) {
 		console.log(err);

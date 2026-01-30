@@ -259,7 +259,7 @@ export const anncDetailsSchema = Yup.object().shape({
   features: Yup.array().of(Yup.string()),
   description: Yup.string()
     .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
-    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .min(20, "Təsvir ən azı 20 simvol olmalıdır")
     .required("Təsvir vacibdir"),
 });
 
@@ -267,7 +267,7 @@ export const anncDetailsRentSchema = Yup.object().shape({
   features: Yup.array().of(Yup.string()),
   description: Yup.string()
     .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
-    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .min(20, "Təsvir ən azı 20 simvol olmalıdır")
     .required("Təsvir vacibdir"),
 });
 
@@ -277,7 +277,7 @@ export const dailyAnncDetailsSchema = Yup.object().shape({
   features: Yup.array().of(Yup.string()),
   description: Yup.string()
     .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
-    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .min(20, "Təsvir ən azı 20 simvol olmalıdır")
     .required("Təsvir vacibdir"),
 });
 
@@ -301,7 +301,7 @@ export const roommateAnncDetailsSchema = Yup.object().shape({
   visitors: Yup.string().required("Əks cinsin gəlməsi seçilməlidir"),
   description: Yup.string()
     .max(5000, "Təsvir 5000 simvoldan çox olmamalıdır")
-    .min(50, "Təsvir ən azı 50 simvol olmalıdır")
+    .min(20, "Təsvir ən azı 20 simvol olmalıdır")
     .required("Təsvir vacibdir"),
 });
 

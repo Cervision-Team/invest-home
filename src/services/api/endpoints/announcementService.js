@@ -10,6 +10,7 @@ export const createAnnouncement = async (formData) => {
 		return res.data;
 	} catch (err) {
 		console.log(err);
+		throw err;
 	}
 };
 
@@ -79,7 +80,7 @@ export const getAnnouncementByUser = async (status) => {
 };
 export const getAnnouncementByStatus = async (status) => {
 	try {
-	const res = await axios.get(`/api/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${20}`);
+	const res = await axios.get(`/api/announcement/by-status?status=${status}&pageIndex=${0}&pageSize=${100}`);
 		return res.data;
 	} catch (err) {
 		console.log(err);

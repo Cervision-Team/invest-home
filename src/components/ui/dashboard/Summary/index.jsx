@@ -309,7 +309,7 @@ const Summary = ({ isEditing, handleToggle, onCancelEdit, user, onImageSelected,
                             Redaktə et
                         </button>
                     )}
-                    <Button />
+                    {/* <Button /> */}
                 </div>
             </div>
 

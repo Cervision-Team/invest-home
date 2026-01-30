@@ -43,7 +43,7 @@ const TransactionHistory = () => {
                     <Search search={search} setSearch={setSearch} />
                 </div>
                 <div className='flex gap-3 md:gap-6 md:justify-end'>
-                    <Button />
+                    {/* <Button /> */}
                 </div>
             </div>
             <h1 className='text-[#1B1F27] text-[20px] font-semibold mb-8'>Ödənişlərim</h1>
