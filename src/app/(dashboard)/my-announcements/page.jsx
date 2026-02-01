@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/dashboard/Buttons/ProfileButtons'
 import Search from '@/components/ui/dashboard/Search'
 import Loader from '@/components/ui/Loader'
 import {
-	getMyActiveAnnouncements,
+	getMyApprovedAnnouncements,
 	getMyArchivedAnnouncements,
 	getMyAssignedToAgentAnnouncements,
 	getMyPendingAnnouncements,
 	getMyRejectedAnnouncements,
-	getMyStoppedAnnouncements,
+	getMySoldAnnouncements,
 } from '@/services/api/endpoints/announcementService'
 
 const MyAnnouncementsPage = () => {
@@ -21,11 +21,12 @@ const MyAnnouncementsPage = () => {
 	const [error, setError] = useState(null);
 
 	const steps = [
-		{ key: 'ACTIVE', label: 'Aktiv', fetcher: getMyActiveAnnouncements },
-		{ key: 'PENDING', label: 'Gözləyir', fetcher: getMyPendingAnnouncements },
-		{ key: 'ASSIGNED_TO_AGENT', label: 'Agent Seçilir', fetcher: getMyAssignedToAgentAnnouncements },
+		{ key: 'APPROVED', label: 'Təsdiqlənmiş', fetcher: getMyApprovedAnnouncements },
+		{ key: 'PENDING', label: 'Gözləmədə', fetcher: getMyPendingAnnouncements },
+		{ key: 'ASSIGNED_TO_AGENT', label: 'Agentə Təyin Edilmiş', fetcher: getMyAssignedToAgentAnnouncements },
 		{ key: 'REJECTED', label: 'Redd edilmiş', fetcher: getMyRejectedAnnouncements },
-		{ key: 'ARCHIVED', label: 'Arxivlənmiş', fetcher: getMyArchivedAnnouncements },
+		{ key: 'ARCHIVED', label: 'Arxivləşdirilmiş', fetcher: getMyArchivedAnnouncements },
+		{ key: 'SOLD', label: 'Satılmış', fetcher: getMySoldAnnouncements },
 	];
 	const [activeStep, setActiveStep] = useState(steps[0].key);
 
