@@ -1,6 +1,8 @@
 export function parseFiltersFromSearchParams(searchParams) {
   const announcementType = searchParams.get("announcementType") || "all";
-  const propertyTypes = searchParams.getAll("propertyTypes") || [];
+  const legacyPropertyTypes = searchParams.getAll("propertyTypes") || [];
+  const propertyType = searchParams.getAll("propertyType") || [];
+  const propertyTypes = (legacyPropertyTypes.length > 0 ? legacyPropertyTypes : propertyType) || [];
   const location = searchParams.get("location") || "";
   const priceMin = searchParams.get("priceMin") || "";
   const priceMax = searchParams.get("priceMax") || "";
@@ -8,7 +10,7 @@ export function parseFiltersFromSearchParams(searchParams) {
 
   const additionalFilters = {};
   for (const [key, value] of searchParams.entries()) {
-    if (["announcementType","propertyTypes","location","priceMin","priceMax","rooms"].includes(key)) continue;
+    if (["announcementType","propertyTypes","propertyType","location","priceMin","priceMax","rooms"].includes(key)) continue;
 
     if (value === "true" || value === "false") additionalFilters[key] = (value === "true");
     else if (!isNaN(value) && value !== "") additionalFilters[key] = Number(value);

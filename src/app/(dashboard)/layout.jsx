@@ -5,7 +5,7 @@ import TabBar from "@/components/common/Footer/TabBar";
 import ContactHeader from "@/components/common/Header/ContactHeader";
 import Header from "@/components/common/Header/Header";
 import Sidebar from "@/components/common/Sidebar/Sidebar";
-import ProtectedLayout from "@/components/router/ProtectedLayout";
+// import ProtectedLayout from "@/components/router/ProtectedLayout";
 import ProtectedRoute from "@/components/router/ProtectedRoute";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
@@ -16,7 +16,7 @@ export default function Layout({ children }) {
     <UserProvider>
       <MenuPermissionProvider>
         <LangProvider>
-          <ProtectedLayout>
+          {/* <ProtectedLayout> */}
             <ProtectedRoute>
               <main className="bg-white">
                 <ContactHeader />
@@ -34,7 +34,7 @@ export default function Layout({ children }) {
                 <SubFooter />
               </main>
             </ProtectedRoute>
-          </ProtectedLayout>
+          {/* </ProtectedLayout> */}
         </LangProvider>
       </MenuPermissionProvider>
     </UserProvider>
