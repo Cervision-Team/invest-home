@@ -94,6 +94,16 @@ export const getMyRejectedAnnouncements = async () => getAnnouncementByUser("REJ
 export const getMyArchivedAnnouncements = async () => getAnnouncementByUser("ARCHIVED");
 export const getMySoldAnnouncements = async () => getAnnouncementByUser("SOLD");
 
+export const getAnnouncementCountsByStatus = async () => {
+	try {
+		const res = await axios.get("/api/announcement/counts-by-status");
+		return res.data;
+	} catch (err) {
+		console.log(err);
+		throw err;
+	}
+};
+
 export const assignAgent = async (announcementId, agentId) => {
 	try {
 		const res = await axios.patch(
