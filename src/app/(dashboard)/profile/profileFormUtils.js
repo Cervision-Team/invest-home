@@ -30,5 +30,9 @@ export const mapUserToFormDefaults = (user) => {
     ...user,
     phoneCountryCode,
     phoneLocalNumber,
+    aboutMe: user?.aboutMe ?? "",
+    whatsapp: user?.whatsapp ?? "",
+    instagram: user?.instagram ?? "",
+    linkedin: user?.linkedin ?? "",
   };
 };

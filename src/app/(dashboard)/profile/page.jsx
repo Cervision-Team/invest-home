@@ -24,6 +24,7 @@ const Profile = () => {
   const [successText, setSuccessText] = useState("Dəyişikliklər uğurla yadda saxlanıldı.");
   const [isChat, setIsChat] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [userData, setUserData] = useState(null);
   const [selectedProfileImage, setSelectedProfileImage] = useState(null);
   const [imageResetKey, setImageResetKey] = useState(0);
@@ -36,9 +37,16 @@ const Profile = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { fetchUser } = useUser();
 
+  const normalizeOptional = (value) => {
+    const v = typeof value === "string" ? value.trim() : value;
+    return v ? v : null;
+  };
+
 
   const onSubmit = async (data) => {
-    if (!isEditing) return;
+    if (!isEditing || isSaving) return;
+
+    setIsSaving(true);
 
     try {
       const roleName = userData?.roleName ?? userData?.role ?? userData?.role?.name;
@@ -52,6 +60,10 @@ const Profile = () => {
         phoneNumber,
         location: data?.location,
         email: data?.email,
+        aboutMe: normalizeOptional(data?.aboutMe),
+        whatsapp: normalizeOptional(data?.whatsapp),
+        instagram: normalizeOptional(data?.instagram),
+        linkedin: normalizeOptional(data?.linkedin),
         ...(roleName ? { roleName } : {}),
       };
 
@@ -75,6 +87,8 @@ const Profile = () => {
     } catch (err) {
       setSuccessText("Dəyişiklikləri yadda saxlamaq alınmadı. Yenidən cəhd edin.");
       setIsOpen(true);
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -176,11 +190,12 @@ const Profile = () => {
     <main className='w-full flex flex-col gap-6'>
 
       <section className='relative'>
-        <ProfileForm isEditing={isEditing} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} errors={errors}>
+        <ProfileForm isEditing={isEditing} isSubmitting={isSaving} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} errors={errors}>
           <Summary
             isChat={isChat}
             setIsChat={setIsChat}
             isEditing={isEditing}
+            isSaving={isSaving}
             handleToggle={handleToggle}
             onCancelEdit={handleCancelEdit}
             user={userData}
@@ -198,7 +213,7 @@ const Profile = () => {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-xl px-6 sm:px-[40px] pt-8 pb-6 w-[90%] max-w-[420px] flex flex-col items-center gap-4"
+              className="bg-white rounded-2xl shadow-xl px-6 sm:px-10 pt-8 pb-6 w-[90%] max-w-[420px] flex flex-col items-center gap-4"
             >
               <p className='text-center font-medium text-xl'>Şəkli silmək istədiyinizə əminsiniz?</p>
               <p className='text-center text-sm text-black/60'>Bu əməliyyat geri qaytarılmır.</p>

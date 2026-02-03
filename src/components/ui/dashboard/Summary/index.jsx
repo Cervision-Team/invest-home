@@ -49,7 +49,7 @@ const getCroppedBlob = async (imageSrc, pixelCrop) => {
     });
 };
 
-const Summary = ({ isEditing, handleToggle, onCancelEdit, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
+const Summary = ({ isEditing, isSaving = false, handleToggle, onCancelEdit, user, onImageSelected, onRequestDeleteImage, imageResetKey, avatarVersion }) => {
     const fileInputRef = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -287,24 +287,38 @@ const Summary = ({ isEditing, handleToggle, onCancelEdit, user, onImageSelected,
                         <>
                             <button
                                 type='button'
+                                disabled={isSaving}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     onCancelEdit?.();
                                 }}
-                                className='bg-white text-[#1B1F27] font-medium py-3 px-6 rounded-lg cursor-pointer border border-black/10 hover:bg-black/5'
+                                className='bg-white text-[#1B1F27] font-medium py-3 px-6 rounded-lg cursor-pointer border border-black/10 hover:bg-black/5 disabled:opacity-60 disabled:cursor-not-allowed'
                             >
                                 Ləğv et
                             </button>
-                            <button type='submit' className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer hover:opacity-95'>Yadda saxla</button>
+                            <button
+                                type='submit'
+                                disabled={isSaving}
+                                aria-busy={isSaving}
+                                className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer hover:opacity-95 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed'
+                            >
+                                <span className='flex items-center justify-center gap-2'>
+                                    {isSaving && (
+                                        <span className="inline-block size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                    )}
+                                    {isSaving ? 'Yadda saxlanılır...' : 'Yadda saxla'}
+                                </span>
+                            </button>
                         </>
                     ) : (
                         <button
                             type='button'
+                            disabled={isSaving}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleToggle?.();
                             }}
-                            className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer'
+                            className='bg-[#02836F] text-white font-medium py-3 px-6 rounded-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed'
                         >
                             Redaktə et
                         </button>
