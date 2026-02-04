@@ -5,8 +5,8 @@ import Image from "next/image";
 function Services() {
     return (
         <section id="service" className="mt-20 max-[431px]:mt-[0px] max-w-[1600px] mx-auto font-primary bg-text-6 px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]">
-            <div className="flex flex-col items-center text-center gap-6 max-[769px]:gap-3 mb-10 max-[431px]:mb-[50px]">
-                <h3 className="text-primary text-center text-[48px]/[44px] leading-[28px] font-[400] max-[769px]:text-[1.5rem] max-[769px]:leading-[24px]">
+            <div className="flex flex-col items-center text-center gap-2 max-[769px]:gap-3 mb-10 max-[431px]:mb-[50px]">
+                <h3 className="text-primary text-center text-[24px] font-[400] max-[769px]:text-[1.5rem] max-[769px]:leading-[24px]">
                     Xidmətlərimiz
                 </h3>
                 <h2 className="max-[431px]:text-[20px] max-[431px]:leading-[23px] text-[#0B090A] font-[500] text-[34px] leading-[46px] max-w-2xl max-[769px]:text-[1.5rem]">

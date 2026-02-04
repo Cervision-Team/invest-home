@@ -11,14 +11,6 @@ import whatsappIcon from "../../../../public/icons/profile/whatsapp-icon.svg";
 import instagramIcon from "../../../../public/icons/profile/instagram-icon.svg";
 import linkedinIcon from "../../../../public/icons/profile/linkedin-icon.svg";
 
-// async function fetchAgents() {
-//   const res = await fetch('https://backend.com/api/agents', {
-//     cache: 'no-store',
-//   });
-//   if (!res.ok) throw new Error('Failed to fetch agents from backend');
-//   return res.json();
-// }
-
 export default function Agents() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +66,6 @@ export default function Agents() {
     const perItem = 1.5;
     if(allEmployees.length<8) return 10;
     return Math.max(28, Math.min(60, base + allEmployees.length * perItem));
-    // return 28;
   }, [allEmployees.length]);
 
   const renderEmployeeCard = (employee, keySuffix) => {
@@ -89,7 +80,7 @@ export default function Agents() {
         href={`/about-us/${employee?.id}`}
         className="ih-marquee-card group relative min-h-80 rounded-2xl cursor-pointer  transition-colors bg-red-200! focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 overflow-hidden"
       >
-        <div className="w-full h-full px-5 pt-7 pb-4 flex flex-col items-center bg-white rounded-lg">
+        <div className="w-full h-full px-5 pt-7 pb-7 flex flex-col items-center bg-white rounded-lg">
           <div className="w-[120px] h-[120px] rounded-full ring-2 ring-[rgba(2,131,111,0.12)] ring-offset-4 ring-offset-white">
             {hasAvatar ? (
               <Image
@@ -123,7 +114,7 @@ export default function Agents() {
             </div>
           </div>
 
-          <div className="mt-auto pt-4 w-full flex items-center justify-center gap-2">
+          <div className="mt-auto pt-4 w-full flex items-center justify-center gap-2 ">
             <button
               type="button"
               onClick={(e) => {
@@ -171,9 +162,9 @@ export default function Agents() {
       id="group"
       className="mt-[54px] max-w-[1600px] mx-auto w-auto flex flex-col gap-20 px-20 max-[1025px]:px-5 max-[431px]:px-4"
     >
-      <div className="text-center flex flex-col gap-5">
+      <div className="text-center flex flex-col gap-2">
         <h5 className="text-primary text-[20px] font-medium">KOMANDAMIZLA TANIŞ OLUN</h5>
-        <h2 className="text-black text-[49px] max-[431px]:text-[20px] font-semibold">
+        <h2 className="text-black text-[34px] max-[431px]:text-[20px] font-medium">
           Mütəxəssislər Qrupumuz
         </h2>
       </div>
