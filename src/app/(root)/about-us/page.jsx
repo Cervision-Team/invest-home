@@ -1,33 +1,39 @@
-import React from 'react'
-import agentsData from "@/components/core/AgentsData";
-import AgentCard from "@/components/ui/AgentsCard";
 import Agents from "../Home/Agents";
-import BeAgent from '../Home/BeAgent';
+import BeAgent from "../Home/BeAgent";
 import AboutPageImage from "../../../../public/images/AboutPagePhoto.jpg";
 
-const page = () => {
+export default function Page() {
     return (
         <>
-            <div className='min-h-[400px] bg-gray-100 pt-[62px] text-start'
-                style={{
-                    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.14) 9.13%, rgba(32, 32, 32, 0.70) 100%), url(${AboutPageImage.src})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}>
-                <div className='max-w-[1600px] mx-auto px-[80px] max-[1025px]:px-[20px] max-[431px]:px-[16px]'>
-                    <h1 className='text-white text-[40px] max-[769px]:text-[24px] italic font-medium'>
-                        Biz Kimik?
-                    </h1>
+            <section className="relative isolate min-h-[440px] pt-[62px] text-start">
+                <div
+                    className="absolute inset-0 bg-gray-100"
+                    style={{
+                        backgroundImage: `url(${AboutPageImage.src})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                    }}
+                />
+                <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/35 to-black/5" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/10 via-black/25 to-black/55" />
 
-                    <p className="max-w-[700px] mt-10 text-white text-[24px] max-[769px]:text-[16px] font-medium">
-İnvestHome daşınmaz əmlakda etibarlı tərəfdaşınızdır. Təcrübəmiz və bazar biliklərimizlə sizə ən uyğun evi tapmağa, alqı-satqı və kirayə prosesini rahat və şəffaf şəkildə keçirməyə kömək edirik.
-                    </p>
+                <div className="relative max-w-[1600px] mx-auto px-20 max-[1025px]:px-5 max-[431px]:px-4">
+                    <div className="min-h-[440px] py-14 max-[769px]:py-10 flex items-end">
+                        <div className="max-w-[760px]">
+                            <h1 className="text-white text-[44px] max-[769px]:text-[28px] italic font-semibold leading-tight">
+                                Biz Kimik?
+                            </h1>
+
+                            <p className="max-w-[720px] mt-6 text-white/90 text-[22px] max-[769px]:text-[16px] font-medium leading-relaxed">
+                                İnvestHome daşınmaz əmlakda etibarlı tərəfdaşınızdır. Təcrübəmiz və bazar biliklərimizlə sizə ən uyğun evi tapmağa, alqı-satqı və kirayə prosesini rahat və şəffaf şəkildə keçirməyə kömək edirik.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
             <Agents />
             <BeAgent />
         </>
-    )
+    );
 }
-
-export default page
