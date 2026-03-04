@@ -277,12 +277,12 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
             </div>
           </div>
 
-          <div className="z-1 metro bottom-[12px] left-[8px] absolute max-[769px]:hidden flex items-center gap-[3px] bg-white py-[2.5px] px-[10px] rounded-[8px]">
+          {/* <div className="z-1 metro bottom-[12px] left-[8px] absolute max-[769px]:hidden flex items-center gap-[3px] bg-white py-[2.5px] px-[10px] rounded-[8px]">
             <Image src={MetroIcon} alt="Metro" width={18} height={18} className="h-auto" />
             <span className="font-[400] text-[var(--text-color-3)] text-[10px] whitespace-nowrap">
               N.Nərimanov
             </span>
-          </div>
+          </div> */}
         </div>
 
         <div className="overflow-hidden content-container max-[769px]:mx-[5px] mx-[8px] max-[769px]:py-[14px] py-2 flex flex-col gap-[3px] max-[769px]:border-b-0 border-b border-[rgba(0,0,0,0.2)]">
@@ -310,7 +310,7 @@ const HouseCard = ({ house, isFavorite = false, onToggleFavorite, isActive = tru
               className="text-[#111111] shrink-0 -ml-0.5"
             />
             <span className="min-w-0 font-[500] text-[#111111] text-[14px] truncate">
-              {house?.selectedAddress}lorem ipsum dolor sit amet
+              {house?.selectedAddress}
             </span>
           </div>
 
