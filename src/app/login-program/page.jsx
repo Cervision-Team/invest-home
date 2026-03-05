@@ -18,7 +18,7 @@ const page = () => {
 
   // Əgər onsuz da login olunubsa, root səhifəyə yönləndir
   useEffect(() => {
-    if (localStorage.getItem("sessionLogin") === "true") {
+    if (localStorage.getItem("apolloLogin") === "true") {
       router.push("/");
     }
   }, []);
@@ -63,7 +63,7 @@ const page = () => {
     setTouched({ name: true, password: true });
 
     if (!nameError && !passwordError) {
-      const allowedUsers = [{ name: "Administrator", password: "investhome5465#" }];
+      const allowedUsers = [{ name: "Administrator", password: "Apollo19181988!" }];
       const isAuthorized = allowedUsers.some(
         (u) =>
           u.name.toLowerCase() === formData.name.trim().toLowerCase() &&
@@ -75,7 +75,7 @@ const page = () => {
         return;
       }
 
-      localStorage.setItem("sessionLogin", "true");
+      localStorage.setItem("apolloLogin", "true");
       router.push("/");
     }
   };
