@@ -5,14 +5,14 @@ import TabBar from "@/components/common/Footer/TabBar";
 import ContactHeader from "@/components/common/Header/ContactHeader";
 import Header from "@/components/common/Header/Header";
 import ScrollToTop from "@/components/core/ScrollToTop";
-// import ProtectedLayout from "@/components/router/ProtectedLayout";
+import ProtectedLayout from "@/components/router/ProtectedLayout";
 import { LangProvider } from "@/context/LangContext";
 import { MenuPermissionProvider } from "@/context/MenuPermissionContext";
 import { UserProvider } from "@/context/UserContext";
 
 export default function Layout({ children }) {
   return (
-    // <ProtectedLayout>
+    <ProtectedLayout>
       <LangProvider>
         <UserProvider>
           <MenuPermissionProvider>
@@ -28,6 +28,6 @@ export default function Layout({ children }) {
           </MenuPermissionProvider>
         </UserProvider>
       </LangProvider>
-    // </ProtectedLayout>
+    </ProtectedLayout>
   );
 }
